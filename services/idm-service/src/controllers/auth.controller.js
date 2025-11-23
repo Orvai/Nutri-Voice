@@ -31,8 +31,10 @@ const registerUser = async (req, res, next) => {
   try {
     const result = await A.registerUser(req.body);
     res.status(201).json({
-      message: 'Successfully registered', id: result.id,});
-  } catch (e) {
+      message: 'Successfully registered',
+      id: result.id,
+      role: result.role,
+    });  } catch (e) {
     next(e);
   }
 };

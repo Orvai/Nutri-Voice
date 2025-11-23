@@ -16,8 +16,7 @@ const createUser = async (attributes) => {
             phone: parsed.phone,
             firstName: parsed.firstName,
             lastName: parsed.lastName,
-            role: parsed.role ?? 'trainee'
-            }
+            role: parsed.role ?? 'client'            }
     });
 };
 

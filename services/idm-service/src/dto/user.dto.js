@@ -3,8 +3,7 @@ const { z } = require('zod');
 
 
 const userStatusEnum = z.enum(['active', 'deleted', 'locked']);
-const userRoleEnum = z.enum(['trainer', 'trainee', 'admin']);
-
+const userRoleEnum = z.enum(['trainer', 'client', 'admin']);
 // RESPONSE: full user returned by the API
 const userResponseDto = z.object({
     id: z.string(), // use .uuid() if you enforce UUIDs

@@ -33,7 +33,12 @@ const {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/FoodItemResponseDto'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/FoodItemResponseDto'
  */
 const createFoodItemController = async (req, res, next) => {
   try {
@@ -54,6 +59,25 @@ const createFoodItemController = async (req, res, next) => {
  *     tags:
  *       - Food
  *     summary: List food items
+ *     description: Returns all food items, optionally filtered by a name or description search term.
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         required: false
+ *     responses:
+ *       200:
+ *         description: List of food items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/FoodItemResponseDto'
  */
 const listFoodItemsController = async (req, res, next) => {
   try {
@@ -71,6 +95,33 @@ const listFoodItemsController = async (req, res, next) => {
  *     tags:
  *       - Food
  *     summary: Update a food item
+ *     description: Updates a food item by its identifier.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/FoodItemUpdateRequestDto'
+ *     responses:
+ *       200:
+ *         description: Food item updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/FoodItemResponseDto'
  */
 const updateFoodItemController = async (req, res, next) => {
   try {
@@ -91,6 +142,25 @@ const updateFoodItemController = async (req, res, next) => {
  *     tags:
  *       - Food
  *     summary: Delete a food item by ID
+ *     description: Deletes a food item and returns a confirmation message.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Food item deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 const deleteFoodItemController = async (req, res, next) => {
   try {
@@ -108,6 +178,7 @@ const deleteFoodItemController = async (req, res, next) => {
  *     tags:
  *       - Food
  *     summary: List food items by category
+ *     description: Retrieves food items filtered by category.
  *     parameters:
  *       - in: query
  *         name: category
@@ -148,6 +219,7 @@ const listByCategoryController = async (req, res, next) => {
  *     tags:
  *       - Food
  *     summary: Search food items by name
+ *     description: Searches food items that contain the provided name value.
  *     parameters:
  *       - in: query
  *         name: name

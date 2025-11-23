@@ -18,8 +18,10 @@ const authRequired = (req, res, next) => {
 
     // Attach user data from token
     req.auth = {
+      sessionId: payload.sid,
       userId: payload.sub,
       role: payload.role,
+      accessToken: token
     };
 
     next();

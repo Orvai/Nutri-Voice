@@ -16,8 +16,8 @@ module.exports = (req, _res, next) => {
     }
   }
 
-  // A coach may only access menus of his own clients
-  if (role === 'coach') {
+  // A trainer may only access menus of their own clients
+  if (role === 'trainer') {
     // Valid for:
     // /client-menus
     // /client-menus/:id → handled in service

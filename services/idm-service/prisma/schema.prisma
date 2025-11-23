@@ -12,7 +12,7 @@ datasource db {
 model User {
   id            String   @id @default(uuid())
   status        String   @default("active")
-  role          String   @default("trainee")
+  role          String   @default("client")  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   email         String   @unique

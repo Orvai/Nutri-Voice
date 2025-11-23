@@ -8,7 +8,7 @@ const swaggerDefinition = {
         version: '1.0.0',
         description: 'Menu service for food items, meal templates, daily templates, and client menus',
     },
-    servers: [{ url: 'http://localhost:4002' }],
+    servers: [{ url: 'http://localhost:3002' }],
     components: {
         schemas: {
             ...dtoSchemas,

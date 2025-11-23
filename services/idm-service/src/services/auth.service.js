@@ -45,8 +45,7 @@ async function registerUser(payload) {
     });
 
     await createCredential(user.id, 'password', {password: data.password});
-    return {id: user.id};
-}
+    return {id: user.id, role: user.role};}
 
 // ---------------- CREDENTIALS ----------------
 const createCredential = async (userId, type, data = {}) => {
