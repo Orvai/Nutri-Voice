@@ -1,0 +1,137 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")   // use pooled for app runtime
+  directUrl = env("DIRECT_URL")     // use direct (5432) for migrate
+}
+
+model User {
+  id            String   @id @default(uuid())
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  email         String   @unique
+  phone         String
+  firstName     String
+  lastName      String
+  lastLoginAt   DateTime?
+  loginFailures Int      @default(0)
+  lockUntil     DateTime?
+
+  credentials   Credential[]
+  sessions      Session[]
+  subscriptions Subscription[]
+  info          UserInformation?
+  mfaDevices    MFADevice[]
+}
+
+model Credential {
+  id           String   @id @default(uuid())
+  userId       String
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  type         String   // password|oauth|sso
+  passwordHash String?
+  externalId   String?
+  revokedAt    DateTime?
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MFADevice {
+  id        String   @id @default(uuid())
+  userId    String
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  type      String   // totp
+  secret    String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id          String   @id @default(uuid())
+  userId      String
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ip          String?
+  userAgent   String?
+  expiresAt   DateTime
+  mfaVerified Boolean  @default(false)
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  userId    String
+  orgId     String?
+  userType  String   // internal|customer
+  type      String   // free|pro|organization
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  startDate DateTime
+  endDate   DateTime?
+
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org       Organization? @relation(fields: [orgId], references: [id])
+}
+
+model Organization {
+  id           String   @id @default(uuid())
+  name         String
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  domain       String?
+  address      String?
+  country      String?
+  industry     String?
+  contactEmail String?
+  contactPhone String?
+  size         Int?
+
+  subscriptions Subscription[]
+}
+
+model UserInformation {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  dateOfBirth     String?
+  gender          String?
+  address         String?
+  city            String?
+  country         String?
+  postalCode      String?
+  profileImageUrl String?
+  language        String?
+  timezone        String?
+  preferences     Json?
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LogEntry {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  level      String   // info|warn|error
+  method     String?
+  path       String?
+  status     Int?
+  userId     String?
+  ip         String?
+  userAgent  String?
+  message    String?
+  meta       Json?
+}
