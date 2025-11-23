@@ -3,9 +3,7 @@ const { authRequired } = require('./middleware/auth');
 
 const Auth = require('./controllers/auth.controller');
 const User = require('./controllers/user.controller');
-const Sub = require('./controllers/subscription.controller');
-const Org = require('./controllers/organization.controller');
-const Info = require('./controllers/userInfo.controller');
+const Sub = require('./controllers/subscription.controller');const Info = require('./controllers/userInfo.controller');
 
 const r = Router();
 
@@ -30,12 +28,6 @@ r.get('/subscriptions/:id', authRequired, Sub.getSubscription);
 r.patch('/subscriptions/:id', authRequired, Sub.updateSubscription);
 r.delete('/subscriptions/:id', authRequired, Sub.deleteSubscription);
 
-// Protected: Organizations
-r.post('/organizations', authRequired, Org.createOrganization);
-r.get('/organizations', authRequired, Org.getOrganizations);
-r.get('/organizations/:orgId', authRequired, Org.getOrganization);
-r.patch('/organizations/:orgId', authRequired, Org.updateOrganization);
-r.delete('/organizations/:orgId', authRequired, Org.deleteOrganization);
 
 // Protected: User Information
 r.put('/users/:userId/info', authRequired, Info.upsertUserInformation);

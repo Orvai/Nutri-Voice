@@ -16,10 +16,6 @@ const createSubscription = async (payload) => {
     const user = await prisma.user.findUnique({where: {id: parsed.userId}});
     if (!user) throw new AppError(404, 'User not found');
 
-    if (parsed.orgId != null) {
-        const org = await prisma.organization.findUnique({where: {id: parsed.orgId}});
-        if (!org) throw new AppError(404, 'Organization not found');
-    }
 
     const startDate = parsed.startDate ?? new Date();
 
@@ -44,7 +40,6 @@ const createSubscription = async (payload) => {
         data: {
             userId: parsed.userId,
             type: parsed.type,
-            orgId: parsed.orgId ?? null,
             userType: parsed.userType,
             startDate,
             endDate,
@@ -57,18 +52,6 @@ const updateSubscription = async (id, payload) => {
     const parsed = updateSubscriptionDto.parse(payload);
     const existing = await prisma.subscription.findUnique({where: {id}});
     if (!existing) throw new AppError(404, 'Subscription not found');
-
-    const nextType = parsed.type ?? existing.type;
-    const nextOrgId = parsed.orgId === undefined ? existing.orgId : parsed.orgId;
-
-    if (nextType === 'organization' && !nextOrgId) {
-        throw new AppError(400, 'Organization subscriptions require an orgId');
-    }
-
-    if (parsed.orgId != null) {
-        const org = await prisma.organization.findUnique({where: {id: parsed.orgId}});
-        if (!org) throw new AppError(404, 'Organization not found');
-    }
 
     const nextStartDate = parsed.startDate !== undefined
         ? normalizeDate(parsed.startDate) ?? existing.startDate
@@ -86,7 +69,6 @@ const updateSubscription = async (id, payload) => {
     if (parsed.startDate !== undefined) data.startDate = nextStartDate;
     if (parsed.endDate !== undefined) data.endDate = nextEndDate;
     if (parsed.status !== undefined) data.status = parsed.status;
-    if (parsed.orgId !== undefined) data.orgId = parsed.orgId;
     if (parsed.userType !== undefined) data.userType = parsed.userType;
 
     if (Object.keys(data).length === 0) return existing;

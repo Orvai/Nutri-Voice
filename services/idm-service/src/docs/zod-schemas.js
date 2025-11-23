@@ -20,11 +20,6 @@ const {
         userResponseDto
 } = require('../dto/user.dto');
 const {
-        createOrgDto,
-        updateOrgDto,
-        organizationResponseDto
-} = require('../dto/organization.dto');
-const {
         createSubscriptionDto,
         updateSubscriptionDto,
         subscriptionResponseDto
@@ -67,9 +62,6 @@ const RevokeTokenInput          = toJsonSchema(revokeTokenInput,          'revok
 const CreateUserInput         = toJsonSchema(createUserDto,         'CreateUserInput');
 const UpdateUserInput         = toJsonSchema(updateUserDto,         'UpdateUserInput');
 
-const CreateOrganizationInput = toJsonSchema(createOrgDto, 'CreateOrganizationInput');
-const UpdateOrganizationInput = toJsonSchema(updateOrgDto, 'UpdateOrganizationInput');
-
 const CreateSubscriptionInput = toJsonSchema(createSubscriptionDto, 'CreateSubscriptionInput');
 const UpdateSubscriptionInput = toJsonSchema(updateSubscriptionDto, 'UpdateSubscriptionInput');
 
@@ -87,11 +79,10 @@ const LogoutRequestDto           = toJsonSchema(logoutRequestDto,     'LogoutReq
 // ---- response DTOs ----
 const User          = toJsonSchema(userResponseDto,          'User');
 const Credential    = toJsonSchema(credentialResponseDto,    'Credential');
-const Organization  = toJsonSchema(organizationResponseDto,  'Organization');
 const Subscription  = toJsonSchema(subscriptionResponseDto,  'Subscription');
 const MFADevice     = toJsonSchema(mfaDeviceDto,             'MFADevice');
 const Session       = toJsonSchema(sessionDto,               'Session');
-const UserInfo       = toJsonSchema(UserInfoResponseDto,               'Session');
+const UserInfo       = toJsonSchema(UserInfoResponseDto,               'UserInfo');
 const RegisterSuccessResponseDto       = toJsonSchema(registerSuccessResponseDto,               'registerResponseDto');
 
 
@@ -104,8 +95,6 @@ module.exports = {
     VerifyMFAInput,
     CreateUserInput,
     UpdateUserInput,
-    CreateOrganizationInput,
-    UpdateOrganizationInput,
     CreateSubscriptionInput,
     UpdateSubscriptionInput,
     UserInfoInput,
@@ -117,7 +106,6 @@ module.exports = {
     // response
     User,
     Credential,
-    Organization,
     Subscription,
     MFADevice,
     Session,

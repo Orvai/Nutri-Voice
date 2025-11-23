@@ -110,7 +110,7 @@ async function revokeAllRefreshTokensForUser(userId) {
     if (jtIs.length) {
         const delKeys = jtIs.map((jti) => k.rt(jti));
         await redis.del(...delKeys).catch(() => {});
-    }
+    }rd
     await redis.del(setKey).catch(() => {});
 }
 

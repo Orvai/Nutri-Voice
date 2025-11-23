@@ -1,6 +1,10 @@
 const { z } = require('zod');
 
 
+
+const userStatusEnum = z.enum(['active', 'deleted', 'locked']);
+const userRoleEnum = z.enum(['trainer', 'trainee', 'admin']);
+
 // RESPONSE: full user returned by the API
 const userResponseDto = z.object({
     id: z.string(), // use .uuid() if you enforce UUIDs
@@ -10,19 +14,19 @@ const userResponseDto = z.object({
     phone: z.string().optional(),
     // if you have userStatusEnum, prefer: status: userStatusEnum
     status: z.string(),
-    organizationId: z.string().optional(),
+    role: userRoleEnum,
     createdAt: z.string().datetime(), // Zod v4-friendly for JSON Schema
     updatedAt: z.string().datetime(),
 });
 
 
-const userStatusEnum = z.enum(['active', 'deleted', 'locked']);
 
 const createUserDto = z.object({
     email: z.string().trim().email(),
     phone: z.string().trim().min(4),
     firstName: z.string().trim().min(1),
-    lastName: z.string().trim().min(1)
+    lastName: z.string().trim().min(1),
+    role: userRoleEnum.optional()
 });
 
 const updateUserDto = z.object({
@@ -30,6 +34,7 @@ const updateUserDto = z.object({
     phone: z.string().trim().optional(),
     firstName: z.string().trim().optional(),
     lastName: z.string().trim().optional(),
+    role: userRoleEnum.optional(),
 }).superRefine((data, ctx) => {
     if (!Object.values(data).some((value) => value !== undefined)) {
         ctx.addIssue({
@@ -41,3 +46,5 @@ const updateUserDto = z.object({
 });
 
 module.exports = { userStatusEnum, createUserDto, updateUserDto,userResponseDto };
+module.exports = { userStatusEnum, userRoleEnum, createUserDto, updateUserDto, userResponseDto };
+

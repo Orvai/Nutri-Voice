@@ -16,6 +16,7 @@ const registerRequestDto = z
         firstName: z.string().trim().min(1),
         lastName: z.string().trim().min(1),
         password: z.string().trim().min(8), // or whatever base length you want
+        role: z.enum(['trainer','trainee','admin']).optional().default('trainee')
     })
     .superRefine((data, ctx) => {
         const [username] = data.email.split("@");

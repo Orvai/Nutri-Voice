@@ -12,11 +12,9 @@ const UserInfoResponseDto = z.object({
   gender: z.string().nullish(),
   address: z.string().nullish(),
   city: z.string().nullish(),
-  country: z.string().nullish(),
-  postalCode: z.string().nullish(),
   profileImageUrl: z.string().url().nullish(),
-  language: z.string().nullish(),
-  timezone: z.string().nullish(),
+  height: z.number().int().nullish(),
+  age: z.number().int().nullish(),
 
   // --- Metadata Fields ---
   createdAt: z.string().datetime(),
@@ -28,11 +26,10 @@ const upsertUserInfoDto = z.object({
   gender: z.string().trim().optional(),
   address: z.string().trim().optional(),
   city: z.string().trim().optional(),
-  country: z.string().trim().optional(),
-  postalCode: z.string().trim().optional(),
   profileImageUrl: z.string().trim().url().optional(),
-  language: z.string().trim().optional(),
-  timezone: z.string().trim().optional(),
+  height: z.coerce.number().int().positive().optional(),
+  age: z.coerce.number().int().positive().optional(),
+  
 });
 
 module.exports = { upsertUserInfoDto, UserInfoResponseDto };

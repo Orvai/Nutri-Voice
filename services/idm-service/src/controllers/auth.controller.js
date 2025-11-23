@@ -29,7 +29,6 @@ const { AppError } = require('../common/errors');
  */
 const registerUser = async (req, res, next) => {
   try {
-    await A.registerUser(req.body);
     const result = await A.registerUser(req.body);
     res.status(201).json({
       message: 'Successfully registered', id: result.id,});

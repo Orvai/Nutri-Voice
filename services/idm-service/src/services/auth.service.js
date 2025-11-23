@@ -41,6 +41,7 @@ async function registerUser(payload) {
         phone: data.phone,
         firstName: data.firstName,
         lastName: data.lastName,
+        role: data.role,
     });
 
     await createCredential(user.id, 'password', {password: data.password});
@@ -93,14 +94,14 @@ const verifyMFA = async (userId, code, deviceId) => {
 };
 
 // ---------------- TOKENS ----------------
-const signAccess = (sessionId, userId) =>
-    jwt.sign({sid: sessionId, sub: userId, typ: 'access'}, JWT_SECRET, {expiresIn: `${ACCESS_TTL_MIN}m`});
+const signAccess = (sessionId, userId, role) =>
+    jwt.sign({sid: sessionId, sub: userId, role, typ: 'access'}, JWT_SECRET, {expiresIn: `${ACCESS_TTL_MIN}m`});
 
-const signRefresh = (sessionId, userId) =>
-    jwt.sign({sid: sessionId, sub: userId, typ: 'refresh'}, JWT_SECRET, {expiresIn: `${REFRESH_TTL_DAYS}d`});
+const signRefresh = (sessionId, userId, role) =>
+    jwt.sign({sid: sessionId, sub: userId, role, typ: 'refresh'}, JWT_SECRET, {expiresIn: `${REFRESH_TTL_DAYS}d`});
 
 // ---------------- SESSION ----------------
-const createSession = async (userId, ip, userAgent) => {
+const createSession = async (userId, role, ip, userAgent) => {
     const session = await prisma.session.create({
         data: {
             userId,
@@ -110,8 +111,9 @@ const createSession = async (userId, ip, userAgent) => {
         }
     });
 
-    const accessToken = signAccess(session.id, userId);
-    const refreshToken = signRefresh(session.id, userId);
+    const accessToken = signAccess(session.id, userId, role);
+    const refreshToken = signRefresh(session.id, userId, role);
+
 
     await saveAccessToken({token: accessToken, jti: session.id, userId, exp: 300});
     await saveRefreshToken({token: refreshToken, jti: session.id, userId, exp: 300});
@@ -150,8 +152,11 @@ const refreshToken = async (oldRefreshToken) => {
     if (!session || session.status !== 'active' || isAfter(new Date(), new Date(session.expiresAt)))
         throw new AppError(401, 'Session expired');
 
-    const accessToken = signAccess(session.id, session.userId);
-    const newRefreshToken = signRefresh(session.id, session.userId);
+    const user = await prisma.user.findUnique({ where: { id: session.userId }, select: { role: true } });
+    if (!user) throw new AppError(401, 'User not found');
+
+    const accessToken = signAccess(session.id, session.userId, user.role);
+    const newRefreshToken = signRefresh(session.id, session.userId, user.role);
 
     await saveAccessToken({token: accessToken, jti: session.id, userId: session.userId, exp: 300});
     await saveRefreshToken({token: newRefreshToken, jti: session.id, userId: session.userId, exp: 300});
@@ -183,7 +188,7 @@ const login = async (payload) => {
 
     await U.recordLogin(user.id, true);
 
-    const {session, tokens} = await createSession(user.id, data.ip, data.userAgent);
+    const {session, tokens} = await createSession(user.id, user.role, data.ip, data.userAgent);
     if (!tokens?.accessToken || !tokens?.refreshToken)
         throw new AppError(500, 'Failed to generate authentication tokens');
 
@@ -193,7 +198,8 @@ const login = async (payload) => {
             email: user.email,
             firstName: user.firstName || null,
             lastName: user.lastName || null,
-            status: 'active'
+            status: 'active',
+            role: user.role
         },
         sessionId: session.id,
         tokens

@@ -1,0 +1,145 @@
+// Prisma schema for menu-service
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum DayType {
+  TRAINING   // יום אימון
+  REST       // יום מנוחה / יום רגיל
+}
+
+enum MealSlot {
+  MEAL1
+  MEAL2
+  MEAL3
+  CARB_LOAD
+}
+
+enum MealTemplateKind {
+  MEAT_MEAL      // תבנית ארוחה בשרית
+  DAIRY_MEAL     // תבנית ארוחה חלבית
+  FREE_CALORIES  // קלוריות חופשיות / בנק חטיפים
+  CARB_LOAD      // תבנית העמסת פחמימות
+}
+
+enum MealItemRole {
+  PROTEIN
+  CARB
+  FREE
+  HEALTH
+  MENTAL_HEALTH
+}
+
+// ==================== Food master data ====================
+
+model FoodItem {
+  id               String             @id @default(cuid())
+  name             String
+  description      String?
+  caloriesPer100g  Float?
+  proteinPer100g   Float?
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  mealTemplateItem MealTemplateItem[]
+}
+
+// ==================== Meal templates (building blocks) ====================
+
+model MealTemplate {
+  id        String             @id @default(cuid())
+  name      String
+  kind      MealTemplateKind   // בשרי / חלבי / חופשי / העמסה
+  coachId   String             // userId של המאמן מה-IDM
+
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  items     MealTemplateItem[]
+  meals     DailyMenuMeal[]
+}
+
+model MealTemplateItem {
+  id              String       @id @default(cuid())
+  foodItemId      String
+  mealTemplateId  String
+  role            MealItemRole      // PROTEIN / CARB / FREE / HEALTH / MENTAL_HEALTH
+  defaultGrams    Float?
+  defaultCalories Float?
+  notes           String?
+
+  createdAt       DateTime      @default(now())
+
+  foodItem        FoodItem      @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
+  mealTemplate    MealTemplate  @relation(fields: [mealTemplateId], references: [id], onDelete: Cascade)
+
+  @@index([mealTemplateId])
+  @@index([foodItemId])
+}
+
+// ==================== Daily menu templates ====================
+
+model DailyMenuTemplate {
+  id        String           @id @default(cuid())
+  name      String           // “יום אימון 1”, “יום רגיל 2” וכו'
+  dayType   DayType
+  coachId   String           // userId של המאמן
+
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  meals       DailyMenuMeal[]
+  clientMenus ClientMenu[]
+}
+
+model DailyMenuMeal {
+  id                   String             @id @default(cuid())
+  slot                 MealSlot
+  maxCalories          Float?
+  mealTemplateId       String?
+  dailyMenuTemplateId  String
+  notes                String?
+
+  createdAt            DateTime           @default(now())
+
+  dailyMenuTemplate    DailyMenuTemplate  @relation(fields: [dailyMenuTemplateId], references: [id], onDelete: Cascade)
+  mealTemplate         MealTemplate?      @relation(fields: [mealTemplateId], references: [id])
+
+  @@index([dailyMenuTemplateId])
+  @@index([mealTemplateId])
+}
+
+// ==================== Client assigned menus ====================
+
+model ClientMenu {
+  id                  String            @id @default(cuid())
+  name                String            // שם התפריט ללקוח (“יום אימון”, “יום רגיל 1”)
+  clientId            String            // userId של הלקוח (מה-IDM)
+  coachId             String            // מי בנה לו את התפריט
+  dailyMenuTemplateId String?           // מאיזה DailyMenuTemplate זה התחיל (לא חובה)
+
+  // כאן אנחנו שומרים צילום מצב אחרי התאמה אישית ללקוח:
+  structureJson       Json?             // snapshot של תפריט הלקוח אחרי עריכה
+
+  startDate           DateTime?
+  endDate             DateTime?
+  notes               String?
+  isActive            Boolean           @default(true)
+
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  dailyTemplate       DailyMenuTemplate? @relation(fields: [dailyMenuTemplateId], references: [id])
+
+  @@index([clientId, isActive])
+  @@index([coachId])
+}

@@ -42,7 +42,7 @@ const authRequired = async (req, res, next) => {
       throw new AppError(401, 'Token revoked');
     }
 
-    req.auth = { sessionId: payload.sid, accessToken: token, userId: payload.sub };
+    req.auth = { sessionId: payload.sid, accessToken: token, userId: payload.sub, role: payload.role };
     next();
   } catch (e) {
     next(e instanceof AppError ? e : new AppError(401, 'Invalid token'));

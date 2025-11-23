@@ -6,7 +6,7 @@ const subscriptionResponseDto = z.object({
     userId: z.string().uuid(),
     orgId: z.string().uuid().nullable(),
     userType: z.enum(['internal', 'customer']),
-    type: z.enum(['free', 'pro', 'organization']),
+    type: z.enum(['free', 'pro']),
     status: z.enum(['active', 'deleted', 'locked']),
     startDate: z.string().datetime(),
     endDate: z.string().datetime().nullable(),
@@ -17,19 +17,11 @@ const subscriptionResponseDto = z.object({
 
 const createSubscriptionDto = z.object({
     userId: z.string().uuid(),
-    type: z.enum(['free','pro','organization']),
-    orgId: z.union([z.string().uuid(), z.null()]).optional(),
+    type: z.enum(['free','pro']),
     userType: z.enum(['internal','customer']),
     startDate: z.coerce.date().optional(),
     endDate: z.union([z.coerce.date(), z.null()]).optional()
 }).superRefine((data, ctx) => {
-    if (data.type === 'organization' && !data.orgId) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['orgId'],
-            message: 'orgId is required when type is organization'
-        });
-    }
     const start = data.startDate;
     const end = data.endDate ?? undefined;
     if (start && end && end < start) {
@@ -42,10 +34,9 @@ const createSubscriptionDto = z.object({
 });
 
 const updateSubscriptionDto = z.object({
-    type: z.enum(['free','pro','organization']).optional(),
+    type: z.enum(['free','pro']).optional(),
     startDate: z.coerce.date().optional(),
     endDate: z.union([z.coerce.date(), z.null()]).optional(),
-    orgId: z.union([z.string().uuid(), z.null()]).optional(),
     userType: z.enum(['internal','customer']).optional(),
     status: z.enum(['active','deleted','locked']).optional()
 }).superRefine((data, ctx) => {
