@@ -1,87 +1,102 @@
-// src/docs/zod-schemas.js
-// Converts Zod DTOs → JSON Schema for Swagger using zod-to-json-schema
-
-const { z } = require("zod");
-const { zodToJsonSchema } = require("zod-to-json-schema");
-
-// ====== DTO Imports ======
+const { z } = require('zod');
 const {
   FoodItemCreateRequestDto,
   FoodItemUpdateRequestDto,
   FoodItemResponseDto,
-} = require("../dto/food.dto");
-
+} = require('../dto/food.dto');
 const {
   MealTemplateCreateRequestDto,
   MealTemplateUpdateRequestDto,
   MealTemplateResponseDto,
-} = require("../dto/mealTemplate.dto");
-
+} = require('../dto/mealTemplate.dto');
 const {
   DailyMenuTemplateCreateRequestDto,
   DailyMenuTemplateUpdateRequestDto,
   DailyMenuTemplateResponseDto,
-} = require("../dto/dailyMenu.dto");
-
+} = require('../dto/dailyMenu.dto');
 const {
   ClientMenuCreateRequestDto,
   ClientMenuUpdateRequestDto,
   ClientMenuResponseDto,
-} = require("../dto/clientMenu.dto");
+} = require('../dto/clientMenu.dto');
 
-
-// ====== Helper: Convert Zod → JSON Schema ======
 function toJsonSchema(dto, name) {
-  return zodToJsonSchema(dto, {
-    name,
-    target: "openApi3",
+  const schema = z.toJSONSchema(dto, {
+    unrepresentable: 'any',
+    override: (ctx) => {
+      const def = ctx.zodSchema?._zod?.def;
+      if (def && def.type === 'date') {
+        ctx.jsonSchema.type = 'string';
+        ctx.jsonSchema.format = 'date-time';
+      }
+    },
   });
+  return { title: name, ...schema };
 }
 
+const FoodItemCreateRequestSchema = toJsonSchema(
+  FoodItemCreateRequestDto,
+  'FoodItemCreateRequestDto',
+);
+const FoodItemUpdateRequestSchema = toJsonSchema(
+  FoodItemUpdateRequestDto,
+  'FoodItemUpdateRequestDto',
+);
+const FoodItemResponseSchema = toJsonSchema(
+  FoodItemResponseDto,
+  'FoodItemResponseDto',
+);
 
-// ====== Food Schemas ======
-const FoodItemCreateInput = toJsonSchema(FoodItemCreateRequestDto, "FoodItemCreateRequestDto");
-const FoodItemUpdateInput = toJsonSchema(FoodItemUpdateRequestDto, "FoodItemUpdateRequestDto");
-const FoodItem = toJsonSchema(FoodItemResponseDto, "FoodItemResponseDto");
+const MealTemplateCreateRequestSchema = toJsonSchema(
+  MealTemplateCreateRequestDto,
+  'MealTemplateCreateRequestDto',
+);
+const MealTemplateUpdateRequestSchema = toJsonSchema(
+  MealTemplateUpdateRequestDto,
+  'MealTemplateUpdateRequestDto',
+);
+const MealTemplateResponseSchema = toJsonSchema(
+  MealTemplateResponseDto,
+  'MealTemplateResponseDto',
+);
 
+const DailyMenuTemplateCreateRequestSchema = toJsonSchema(
+  DailyMenuTemplateCreateRequestDto,
+  'DailyMenuTemplateCreateRequestDto',
+);
+const DailyMenuTemplateUpdateRequestSchema = toJsonSchema(
+  DailyMenuTemplateUpdateRequestDto,
+  'DailyMenuTemplateUpdateRequestDto',
+);
+const DailyMenuTemplateResponseSchema = toJsonSchema(
+  DailyMenuTemplateResponseDto,
+  'DailyMenuTemplateResponseDto',
+);
 
-// ====== Meal Template Schemas ======
-const MealTemplateCreateInput = toJsonSchema(MealTemplateCreateRequestDto, "MealTemplateCreateRequestDto");
-const MealTemplateUpdateInput = toJsonSchema(MealTemplateUpdateRequestDto, "MealTemplateUpdateRequestDto");
-const MealTemplate = toJsonSchema(MealTemplateResponseDto, "MealTemplateResponseDto");
+const ClientMenuCreateRequestSchema = toJsonSchema(
+  ClientMenuCreateRequestDto,
+  'ClientMenuCreateRequestDto',
+);
+const ClientMenuUpdateRequestSchema = toJsonSchema(
+  ClientMenuUpdateRequestDto,
+  'ClientMenuUpdateRequestDto',
+);
+const ClientMenuResponseSchema = toJsonSchema(
+  ClientMenuResponseDto,
+  'ClientMenuResponseDto',
+);
 
-
-// ====== Daily Menu Template Schemas ======
-const DailyMenuTemplateCreateInput = toJsonSchema(DailyMenuTemplateCreateRequestDto, "DailyMenuTemplateCreateRequestDto");
-const DailyMenuTemplateUpdateInput = toJsonSchema(DailyMenuTemplateUpdateRequestDto, "DailyMenuTemplateUpdateRequestDto");
-const DailyMenuTemplate = toJsonSchema(DailyMenuTemplateResponseDto, "DailyMenuTemplateResponseDto");
-
-
-// ====== Client Menu Schemas ======
-const ClientMenuCreateInput = toJsonSchema(ClientMenuCreateRequestDto, "ClientMenuCreateRequestDto");
-const ClientMenuUpdateInput = toJsonSchema(ClientMenuUpdateRequestDto, "ClientMenuUpdateRequestDto");
-const ClientMenu = toJsonSchema(ClientMenuResponseDto, "ClientMenuResponseDto");
-
-
-// ====== Export all schemas ======
 module.exports = {
-  // Food
-  FoodItemCreateRequestDto: FoodItemCreateInput,
-  FoodItemUpdateRequestDto: FoodItemUpdateInput,
-  FoodItemResponseDto: FoodItem,
-
-  // Meal Templates
-  MealTemplateCreateRequestDto: MealTemplateCreateInput,
-  MealTemplateUpdateRequestDto: MealTemplateUpdateInput,
-  MealTemplateResponseDto: MealTemplate,
-
-  // Daily Menu Templates
-  DailyMenuTemplateCreateRequestDto: DailyMenuTemplateCreateInput,
-  DailyMenuTemplateUpdateRequestDto: DailyMenuTemplateUpdateInput,
-  DailyMenuTemplateResponseDto: DailyMenuTemplate,
-
-  // Client Menus
-  ClientMenuCreateRequestDto: ClientMenuCreateInput,
-  ClientMenuUpdateRequestDto: ClientMenuUpdateInput,
-  ClientMenuResponseDto: ClientMenu,
+  FoodItemCreateRequestDto: FoodItemCreateRequestSchema,
+  FoodItemUpdateRequestDto: FoodItemUpdateRequestSchema,
+  FoodItemResponseDto: FoodItemResponseSchema,
+  MealTemplateCreateRequestDto: MealTemplateCreateRequestSchema,
+  MealTemplateUpdateRequestDto: MealTemplateUpdateRequestSchema,
+  MealTemplateResponseDto: MealTemplateResponseSchema,
+  DailyMenuTemplateCreateRequestDto: DailyMenuTemplateCreateRequestSchema,
+  DailyMenuTemplateUpdateRequestDto: DailyMenuTemplateUpdateRequestSchema,
+  DailyMenuTemplateResponseDto: DailyMenuTemplateResponseSchema,
+  ClientMenuCreateRequestDto: ClientMenuCreateRequestSchema,
+  ClientMenuUpdateRequestDto: ClientMenuUpdateRequestSchema,
+  ClientMenuResponseDto: ClientMenuResponseSchema,
 };
