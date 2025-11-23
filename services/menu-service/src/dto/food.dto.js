@@ -4,6 +4,7 @@ const { z } = require("zod");
 const FoodItemCreateRequestDto = z.object({
   name: z.string().min(2),
   description: z.string().optional(),
+  category: z.string(),
   caloriesPer100g: z.number().optional(),
   proteinPer100g: z.number().optional(),
 });
@@ -11,6 +12,7 @@ const FoodItemCreateRequestDto = z.object({
 const FoodItemUpdateRequestDto = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
+  category: z.string().optional(),
   caloriesPer100g: z.number().optional(),
   proteinPer100g: z.number().optional(),
 });
@@ -19,6 +21,7 @@ const FoodItemResponseDto = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().nullable(),
+  category: z.string().nullable(),
   caloriesPer100g: z.number().nullable(),
   proteinPer100g: z.number().nullable(),
   createdAt: z.date(),

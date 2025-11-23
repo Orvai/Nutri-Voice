@@ -37,27 +37,34 @@ const getFoodItem = async (id) => {
 
   return existing;
 };
-
-const upsertFoodItem = async (id, payload) => {
+const updateFoodItem = async (id, payload) => {
   const data = FoodItemUpdateRequestDto.parse(payload);
 
-  const existing = await prisma.foodItem.findUnique({ where: { id } });
+  await getFoodItem(id);
 
-  if (existing) {
-    return prisma.foodItem.update({
-      where: { id },
-      data,
-    });
-  }
-
-  return prisma.foodItem.create({
-    data: { id, ...data },
+  return prisma.foodItem.update({
+    where: { id },
+    data,
   });
 };
 
 const deleteFoodItem = async (id) => {
+  await getFoodItem(id);
+
   return prisma.foodItem.delete({
     where: { id },
+  });
+};
+
+const listByCategory = async (category) => {
+  return prisma.foodItem.findMany({ where: { category } });
+};
+
+const searchByName = async (name) => {
+  return prisma.foodItem.findMany({
+    where: {
+      name: { contains: name, mode: "insensitive" },
+    },
   });
 };
 
@@ -65,6 +72,8 @@ module.exports = {
   createFoodItem,
   listFoodItems,
   getFoodItem,
-  upsertFoodItem,
+  updateFoodItem,
   deleteFoodItem,
+  listByCategory,
+  searchByName,
 };

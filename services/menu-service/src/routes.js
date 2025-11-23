@@ -15,8 +15,9 @@ const r = Router();
 /* Food Items */
 r.post("/menu/food", authRequired, requireCoach, Food.createFoodItem);
 r.get("/menu/food", Food.listFoodItems);
-r.get("/menu/food/:id", Food.getFoodItem);
-r.put("/menu/food/:id", authRequired, requireCoach, Food.upsertFoodItem);
+r.get("/menu/food/by-category", Food.listByCategory);
+r.get("/menu/food/search", Food.searchByName);
+r.put("/menu/food/:id", authRequired, requireCoach, Food.updateFoodItem);
 r.delete("/menu/food/:id", authRequired, requireCoach, Food.deleteFoodItem);
 
 /* Meal Templates */
