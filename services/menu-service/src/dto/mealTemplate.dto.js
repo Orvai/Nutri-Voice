@@ -20,14 +20,13 @@ const MealTemplateItemInputDto = z.object({
   foodItemId: z.string().min(1),
   role: MealItemRoleEnum,
   defaultGrams: z.number().optional(),
-  defaultCalories: z.number().optional(),
   notes: z.string().optional(),
 });
 
 const MealTemplateCreateRequestDto = z.object({
   name: z.string().min(2),
   kind: MealTemplateKindEnum,
-  items: z.array(MealTemplateItemInputDto).min(1),
+  items: z.array(MealTemplateItemInputDto).optional(),
 });
 
 const MealTemplateUpdateRequestDto = z.object({

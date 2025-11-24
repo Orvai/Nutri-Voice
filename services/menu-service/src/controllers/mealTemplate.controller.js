@@ -5,6 +5,8 @@ const {
   getMealTemplate,
   upsertMealTemplate,
   deleteMealTemplate,
+  addItemToTemplate: addItemToTemplateService,
+  removeItemFromTemplate: removeItemFromTemplateService,
 } = require("../services/mealTemplate.service");
 
 /**
@@ -38,7 +40,8 @@ const {
 */
 const createMealTemplateController = async (req, res, next) => {
   try {
-      const result = await createMealTemplate(req.body, req.auth.userId);    res.status(201).json({
+    const result = await createMealTemplate(req.body, req.auth.userId);
+    res.status(201).json({
       message: "Meal template created successfully",
       data: result,
     });
@@ -210,11 +213,108 @@ const deleteMealTemplateController = async (req, res, next) => {
     next(e);
   }
 };
+/**
+ * @openapi
+ * /api/menu/templates/{id}/items:
+ *   post:
+ *     tags:
+ *       - Meal Templates
+ *     summary: Add an item to a meal template
+ *     description: Adds a new item to an existing meal template and returns the updated template.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/MealTemplateItemInputDto'
+ *     responses:
+ *       201:
+ *         description: Meal template item added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/MealTemplateResponseDto'
+ */
+const addItemToTemplateController = async (req, res, next) => {
+  try {
+    const result = await addItemToTemplateService(req.params.id, req.body);
+    res.status(201).json({
+      message: "Meal template item added successfully",
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+/**
+ * @openapi
+ * /api/menu/templates/{templateId}/items/{itemId}:
+ *   delete:
+ *     tags:
+ *       - Meal Templates
+ *     summary: Remove an item from a meal template
+ *     description: Removes a specific item from a meal template and returns the updated template.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: templateId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Meal template item removed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/MealTemplateResponseDto'
+ */
+const removeItemFromTemplateController = async (req, res, next) => {
+  try {
+    const result = await removeItemFromTemplateService(
+      req.params.templateId,
+      req.params.itemId,
+    );
+    res.json({
+      message: "Meal template item removed successfully",
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
 
 module.exports = {
-createMealTemplate: createMealTemplateController,
-listMealTemplates: listMealTemplatesController,
-getMealTemplate: getMealTemplateController,
-upsertMealTemplate: upsertMealTemplateController,
-deleteMealTemplate: deleteMealTemplateController,
+  createMealTemplate: createMealTemplateController,
+  listMealTemplates: listMealTemplatesController,
+  getMealTemplate: getMealTemplateController,
+  upsertMealTemplate: upsertMealTemplateController,
+  deleteMealTemplate: deleteMealTemplateController,
+  addItem: addItemToTemplateController,
+  removeItem: removeItemFromTemplateController,
 };

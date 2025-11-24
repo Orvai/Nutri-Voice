@@ -26,6 +26,8 @@ r.get("/menu/templates", authRequired, MealTemplates.listMealTemplates);
 r.get("/menu/templates/:id", authRequired, MealTemplates.getMealTemplate);
 r.put("/menu/templates/:id", authRequired, requireCoach, MealTemplates.upsertMealTemplate);
 r.delete("/menu/templates/:id", authRequired, requireCoach, MealTemplates.deleteMealTemplate);
+r.post("/menu/templates/:id/items",authRequired,requireCoach,MealTemplates.addItem,);
+r.delete("/menu/templates/:templateId/items/:itemId",authRequired,requireCoach,MealTemplates.removeItem,);
 
 /* Daily Menu Templates */
 r.post("/menu/daily-templates", authRequired, requireCoach, DailyTemplates.createDailyMenuTemplate);

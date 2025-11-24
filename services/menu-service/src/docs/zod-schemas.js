@@ -7,6 +7,7 @@ const {
 const {
   MealTemplateCreateRequestDto,
   MealTemplateUpdateRequestDto,
+  MealTemplateItemInputDto,
   MealTemplateResponseDto,
 } = require('../dto/mealTemplate.dto');
 const {
@@ -55,6 +56,10 @@ const MealTemplateUpdateRequestSchema = toJsonSchema(
   MealTemplateUpdateRequestDto,
   'MealTemplateUpdateRequestDto',
 );
+const MealTemplateItemInputSchema = toJsonSchema(
+  MealTemplateItemInputDto,
+  'MealTemplateItemInputDto',
+);
 const MealTemplateResponseSchema = toJsonSchema(
   MealTemplateResponseDto,
   'MealTemplateResponseDto',
@@ -92,6 +97,7 @@ module.exports = {
   FoodItemResponseDto: FoodItemResponseSchema,
   MealTemplateCreateRequestDto: MealTemplateCreateRequestSchema,
   MealTemplateUpdateRequestDto: MealTemplateUpdateRequestSchema,
+  MealTemplateItemInputDto: MealTemplateItemInputSchema,
   MealTemplateResponseDto: MealTemplateResponseSchema,
   DailyMenuTemplateCreateRequestDto: DailyMenuTemplateCreateRequestSchema,
   DailyMenuTemplateUpdateRequestDto: DailyMenuTemplateUpdateRequestSchema,

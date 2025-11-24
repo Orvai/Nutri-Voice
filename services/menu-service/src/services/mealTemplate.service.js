@@ -3,40 +3,58 @@ const prisma = require("../db/prisma");
 const {
   MealTemplateCreateRequestDto,
   MealTemplateUpdateRequestDto,
+  MealTemplateItemInputDto,
 } = require("../dto/mealTemplate.dto");
 
-const validateFoodItemsExist = async (items) => {
+const computeDefaultCalories = (foodItem, grams) => {
+  if (grams === undefined || grams === null) {
+    return null;
+  }
+
+  return (foodItem.caloriesPer100g / 100) * grams;
+};
+
+const prepareItems = async (items) => {
+  if (!items || items.length === 0) {
+    return [];
+  }
+
+  const preparedItems = [];
+
   for (const item of items) {
-    const exists = await prisma.foodItem.findUnique({
+    const foodItem = await prisma.foodItem.findUnique({
       where: { id: item.foodItemId },
     });
-    if (!exists) {
+
+    if (!foodItem) {
       const error = new Error(`FoodItem not found: ${item.foodItemId}`);
       error.status = 400;
       throw error;
     }
+
+    preparedItems.push({
+      foodItemId: item.foodItemId,
+      role: item.role,
+      defaultGrams: item.defaultGrams,
+      defaultCalories: computeDefaultCalories(foodItem, item.defaultGrams),
+      notes: item.notes,
+    });
   }
+
+  return preparedItems;
 };
 
 const createMealTemplate = async (payload, coachId) => {
   const data = MealTemplateCreateRequestDto.parse(payload);
 
-  await validateFoodItemsExist(data.items);
+  const items = await prepareItems(data.items);
 
   return prisma.mealTemplate.create({
     data: {
       name: data.name,
       kind: data.kind,
       coachId,
-      items: {
-        create: data.items.map((i) => ({
-          foodItemId: i.foodItemId,
-          role: i.role,
-          defaultGrams: i.defaultGrams,
-          defaultCalories: i.defaultCalories,
-          notes: i.notes,
-        })),
-      },
+      items: items.length ? { create: items } : undefined,
     },
     include: { items: true },
   });
@@ -71,9 +89,7 @@ const getMealTemplate = async (id) => {
 const upsertMealTemplate = async (id, payload) => {
   const data = MealTemplateUpdateRequestDto.parse(payload);
 
-  if (data.items) {
-    await validateFoodItemsExist(data.items);
-  }
+  const items = data.items ? await prepareItems(data.items) : undefined;
 
   const existing = await prisma.mealTemplate.findUnique({ where: { id } });
 
@@ -90,15 +106,11 @@ const upsertMealTemplate = async (id, payload) => {
         name: data.name,
         kind: data.kind,
         items: data.items
-          ? {
-              create: data.items.map((i) => ({
-                foodItemId: i.foodItemId,
-                role: i.role,
-                defaultGrams: i.defaultGrams,
-                defaultCalories: i.defaultCalories,
-                notes: i.notes,
-              })),
-            }
+          ? items.length
+            ? {
+                create: items,
+              }
+            : undefined
           : undefined,
       },
       include: { items: true },
@@ -110,20 +122,55 @@ const upsertMealTemplate = async (id, payload) => {
       id,
       name: data.name,
       kind: data.kind,
-      items: data.items
+      items: items?.length
         ? {
-            create: data.items.map((i) => ({
-              foodItemId: i.foodItemId,
-              role: i.role,
-              defaultGrams: i.defaultGrams,
-              defaultCalories: i.defaultCalories,
-              notes: i.notes,
-            })),
+            create: items,
           }
         : undefined,
     },
     include: { items: true },
   });
+};
+
+const addItemToTemplate = async (templateId, payload) => {
+  const data = MealTemplateItemInputDto.parse(payload);
+
+  const template = await prisma.mealTemplate.findUnique({
+    where: { id: templateId },
+  });
+
+  if (!template) {
+    const error = new Error("Meal template not found");
+    error.status = 404;
+    throw error;
+  }
+
+  const [item] = await prepareItems([data]);
+
+  await prisma.mealTemplateItem.create({
+    data: {
+      ...item,
+      mealTemplateId: templateId,
+    },
+  });
+
+  return getMealTemplate(templateId);
+};
+
+const removeItemFromTemplate = async (templateId, itemId) => {
+  const existing = await prisma.mealTemplateItem.findFirst({
+    where: { id: itemId, mealTemplateId: templateId },
+  });
+
+  if (!existing) {
+    const error = new Error("Meal template item not found");
+    error.status = 404;
+    throw error;
+  }
+
+  await prisma.mealTemplateItem.delete({ where: { id: itemId } });
+
+  return getMealTemplate(templateId);
 };
 
 const deleteMealTemplate = async (id) => {
@@ -138,4 +185,7 @@ module.exports = {
   getMealTemplate,
   upsertMealTemplate,
   deleteMealTemplate,
-};
+  addItemToTemplate,
+  removeItemFromTemplate,
+  computeDefaultCalories,
+}; 
