@@ -12,8 +12,8 @@ datasource db {
 // ==================== ENUMS ====================
 
 enum DayType {
-  TRAINING   // יום אימון
-  REST       // יום מנוחה / יום רגיל
+  TRAINING
+  REST
 }
 
 enum MealSlot {
@@ -24,10 +24,10 @@ enum MealSlot {
 }
 
 enum MealTemplateKind {
-  MEAT_MEAL      // תבנית ארוחה בשרית
-  DAIRY_MEAL     // תבנית ארוחה חלבית
-  FREE_CALORIES  // קלוריות חופשיות / בנק חטיפים
-  CARB_LOAD      // תבנית העמסת פחמימות
+  MEAT_MEAL
+  DAIRY_MEAL
+  FREE_CALORIES
+  CARB_LOAD
 }
 
 enum MealItemRole {
@@ -41,106 +41,113 @@ enum MealItemRole {
 // ==================== Food master data ====================
 
 model FoodItem {
-  id               String             @id @default(cuid())
-  name             String
-  description      String?
-  category         String?
-  caloriesPer100g  Float?
-  proteinPer100g   Float?
+  id              String  @id @default(cuid())
+  name            String
+  description     String?
+  category        String?
+  caloriesPer100g Float?
+  proteinPer100g  Float?
 
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  mealTemplateItem MealTemplateItem[]
+  mealTemplateItem    MealTemplateItem[]
+  clientMenuMealItems ClientMenuMealItem[]
 }
 
 // ==================== Meal templates (building blocks) ====================
 
 model MealTemplate {
-  id        String             @id @default(cuid())
-  name      String
-  kind      MealTemplateKind   // בשרי / חלבי / חופשי / העמסה
-  coachId   String             // userId של המאמן מה-IDM
+  id      String           @id @default(cuid())
+  name    String
+  kind    MealTemplateKind
+  coachId String
 
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  totalCalories Float @default(0) // FIXED
 
-  items     MealTemplateItem[]
-  meals     DailyMenuMeal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items           MealTemplateItem[]
+  clientMenuMeals ClientMenuMeal[]
 }
 
 model MealTemplateItem {
   id              String       @id @default(cuid())
   foodItemId      String
   mealTemplateId  String
-  role            MealItemRole      // PROTEIN / CARB / FREE / HEALTH / MENTAL_HEALTH
-  defaultGrams    Float?
+  role            MealItemRole
+  defaultGrams    Float        @default(100) // FIXED DEFAULT
   defaultCalories Float?
   notes           String?
 
-  createdAt       DateTime      @default(now())
+  createdAt DateTime @default(now())
 
-  foodItem        FoodItem      @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
-  mealTemplate    MealTemplate  @relation(fields: [mealTemplateId], references: [id], onDelete: Cascade)
+  foodItem     FoodItem     @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
+  mealTemplate MealTemplate @relation(fields: [mealTemplateId], references: [id], onDelete: Cascade)
 
   @@index([mealTemplateId])
   @@index([foodItemId])
 }
 
-// ==================== Daily menu templates ====================
-
-model DailyMenuTemplate {
-  id        String           @id @default(cuid())
-  name      String           // “יום אימון 1”, “יום רגיל 2” וכו'
-  dayType   DayType
-  coachId   String           // userId של המאמן
-
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-
-  meals       DailyMenuMeal[]
-  clientMenus ClientMenu[]
-}
-
-model DailyMenuMeal {
-  id                   String             @id @default(cuid())
-  slot                 MealSlot
-  maxCalories          Float?
-  mealTemplateId       String?
-  dailyMenuTemplateId  String
-  notes                String?
-
-  createdAt            DateTime           @default(now())
-
-  dailyMenuTemplate    DailyMenuTemplate  @relation(fields: [dailyMenuTemplateId], references: [id], onDelete: Cascade)
-  mealTemplate         MealTemplate?      @relation(fields: [mealTemplateId], references: [id])
-
-  @@index([dailyMenuTemplateId])
-  @@index([mealTemplateId])
-}
-
 // ==================== Client assigned menus ====================
 
 model ClientMenu {
-  id                  String            @id @default(cuid())
-  name                String            // שם התפריט ללקוח (“יום אימון”, “יום רגיל 1”)
-  clientId            String            // userId של הלקוח (מה-IDM)
-  coachId             String            // מי בנה לו את התפריט
-  dailyMenuTemplateId String?           // מאיזה DailyMenuTemplate זה התחיל (לא חובה)
+  id            String    @id @default(cuid())
+  clientId      String
+  coachId       String
+  name          String
+  type          DayType
+  totalCalories Float     @default(0) // FIXED
+  notes         String?
+  isActive      Boolean   @default(true)
+  startDate     DateTime?
+  endDate       DateTime?
 
-  // כאן אנחנו שומרים צילום מצב אחרי התאמה אישית ללקוח:
-  structureJson       Json?             // snapshot של תפריט הלקוח אחרי עריכה
+  meals ClientMenuMeal[]
 
-  startDate           DateTime?
-  endDate             DateTime?
-  notes               String?
-  isActive            Boolean           @default(true)
-
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
-
-  dailyTemplate       DailyMenuTemplate? @relation(fields: [dailyMenuTemplateId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([clientId, isActive])
   @@index([coachId])
+}
+
+model ClientMenuMeal {
+  id                 String  @id @default(cuid())
+  clientMenuId       String
+  originalTemplateId String?
+
+  name          String
+  totalCalories Float  @default(0) // FIXED
+
+  clientMenu       ClientMenu    @relation(fields: [clientMenuId], references: [id], onDelete: Cascade)
+  originalTemplate MealTemplate? @relation(fields: [originalTemplateId], references: [id])
+
+  items ClientMenuMealItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientMenuId])
+  @@index([originalTemplateId])
+}
+
+model ClientMenuMealItem {
+  id               String @id @default(cuid())
+  clientMenuMealId String
+  foodItemId       String
+
+  quantity Float // grams
+  calories Float // computed
+  notes    String?
+
+  clientMenuMeal ClientMenuMeal @relation(fields: [clientMenuMealId], references: [id], onDelete: Cascade)
+  foodItem       FoodItem       @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientMenuMealId])
+  @@index([foodItemId])
 }

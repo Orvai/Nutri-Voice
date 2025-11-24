@@ -1,10 +1,6 @@
 // src/services/mealTemplate.service.js
 const prisma = require("../db/prisma");
-const {
-  MealTemplateCreateRequestDto,
-  MealTemplateUpdateRequestDto,
-  MealTemplateItemInputDto,
-} = require("../dto/mealTemplate.dto");
+const {MealTemplateCreateRequestDto,MealTemplateUpdateRequestDto,} = require("../dto/mealTemplate.dto");
 
 const computeDefaultCalories = (foodItem, grams) => {
   if (grams === undefined || grams === null) {
@@ -89,88 +85,79 @@ const getMealTemplate = async (id) => {
 const upsertMealTemplate = async (id, payload) => {
   const data = MealTemplateUpdateRequestDto.parse(payload);
 
-  const items = data.items ? await prepareItems(data.items) : undefined;
-
-  const existing = await prisma.mealTemplate.findUnique({ where: { id } });
-
-  if (existing) {
-    if (data.items) {
-      await prisma.mealTemplateItem.deleteMany({
-        where: { mealTemplateId: id },
-      });
-    }
-
-    return prisma.mealTemplate.update({
-      where: { id },
-      data: {
-        name: data.name,
-        kind: data.kind,
-        items: data.items
-          ? items.length
-            ? {
-                create: items,
-              }
-            : undefined
-          : undefined,
-      },
-      include: { items: true },
-    });
-  }
-
-  return prisma.mealTemplate.create({
-    data: {
-      id,
-      name: data.name,
-      kind: data.kind,
-      items: items?.length
-        ? {
-            create: items,
-          }
-        : undefined,
-    },
-    include: { items: true },
-  });
-};
-
-const addItemToTemplate = async (templateId, payload) => {
-  const data = MealTemplateItemInputDto.parse(payload);
-
-  const template = await prisma.mealTemplate.findUnique({
-    where: { id: templateId },
+  // שליפת התבנית הקיימת
+  const existing = await prisma.mealTemplate.findUnique({
+    where: { id },
   });
 
-  if (!template) {
+  if (!existing) {
     const error = new Error("Meal template not found");
     error.status = 404;
     throw error;
   }
 
-  const [item] = await prepareItems([data]);
-
-  await prisma.mealTemplateItem.create({
+  // --------------------------
+  // UPDATE TEMPLATE ITSELF
+  // --------------------------
+  await prisma.mealTemplate.update({
+    where: { id },
     data: {
-      ...item,
-      mealTemplateId: templateId,
+      name: data.name ?? existing.name,
+      kind: data.kind ?? existing.kind,
+      totalCalories: data.totalCalories ?? existing.totalCalories,
     },
   });
 
-  return getMealTemplate(templateId);
-};
+  // --------------------------
+  // 1. DELETE ITEMS
+  // --------------------------
+  if (data.itemsToDelete && data.itemsToDelete.length > 0) {
+    const idsToDelete = data.itemsToDelete.map((i) => i.id);
 
-const removeItemFromTemplate = async (templateId, itemId) => {
-  const existing = await prisma.mealTemplateItem.findFirst({
-    where: { id: itemId, mealTemplateId: templateId },
-  });
-
-  if (!existing) {
-    const error = new Error("Meal template item not found");
-    error.status = 404;
-    throw error;
+    await prisma.mealTemplateItem.deleteMany({
+      where: {
+        id: { in: idsToDelete },
+        mealTemplateId: id,
+      },
+    });
   }
 
-  await prisma.mealTemplateItem.delete({ where: { id: itemId } });
+  // --------------------------
+  // 2. UPDATE ITEMS
+  // --------------------------
+  if (data.itemsToUpdate && data.itemsToUpdate.length > 0) {
+    for (const item of data.itemsToUpdate) {
+      await prisma.mealTemplateItem.update({
+        where: { id: item.id },
+        data: {
+          foodItemId: item.foodItemId ?? undefined,
+          role: item.role ?? undefined,
+          defaultGrams: item.defaultGrams ?? undefined,
+          defaultCalories: item.defaultCalories ?? undefined,
+          notes: item.notes ?? undefined,
+        },
+      });
+    }
+  }
 
-  return getMealTemplate(templateId);
+  // --------------------------
+  // 3. ADD ITEMS
+  // --------------------------
+  if (data.itemsToAdd && data.itemsToAdd.length > 0) {
+    const itemsToCreate = await prepareItems(data.itemsToAdd);
+
+    await prisma.mealTemplateItem.createMany({
+      data: itemsToCreate.map((item) => ({
+        ...item,
+        mealTemplateId: id,
+      })),
+    });
+  }
+
+  // --------------------------
+  // RETURN UPDATED TEMPLATE
+  // --------------------------
+  return getMealTemplate(id);
 };
 
 const deleteMealTemplate = async (id) => {
@@ -185,7 +172,5 @@ module.exports = {
   getMealTemplate,
   upsertMealTemplate,
   deleteMealTemplate,
-  addItemToTemplate,
-  removeItemFromTemplate,
   computeDefaultCalories,
 }; 

@@ -7,7 +7,6 @@ const requireClientOrCoachOwner = require("./middleware/requireClientOrCoachOwne
 
 const Food = require("./controllers/food.controller");
 const MealTemplates = require("./controllers/mealTemplate.controller");
-const DailyTemplates = require("./controllers/dailyMenu.controller");
 const ClientMenus = require("./controllers/clientMenu.controller");
 
 const r = Router();
@@ -26,15 +25,6 @@ r.get("/menu/templates", authRequired, MealTemplates.listMealTemplates);
 r.get("/menu/templates/:id", authRequired, MealTemplates.getMealTemplate);
 r.put("/menu/templates/:id", authRequired, requireCoach, MealTemplates.upsertMealTemplate);
 r.delete("/menu/templates/:id", authRequired, requireCoach, MealTemplates.deleteMealTemplate);
-r.post("/menu/templates/:id/items",authRequired,requireCoach,MealTemplates.addItem,);
-r.delete("/menu/templates/:templateId/items/:itemId",authRequired,requireCoach,MealTemplates.removeItem,);
-
-/* Daily Menu Templates */
-r.post("/menu/daily-templates", authRequired, requireCoach, DailyTemplates.createDailyMenuTemplate);
-r.get("/menu/daily-templates", authRequired, DailyTemplates.listDailyMenuTemplates);
-r.get("/menu/daily-templates/:id", authRequired, DailyTemplates.getDailyMenuTemplate);
-r.put("/menu/daily-templates/:id", authRequired, requireCoach, DailyTemplates.upsertDailyMenuTemplate);
-r.delete("/menu/daily-templates/:id", authRequired, requireCoach, DailyTemplates.deleteDailyMenuTemplate);
 
 /* Client Menus */
 r.post("/menu/client-menus", authRequired, requireCoach, ClientMenus.createClientMenu);

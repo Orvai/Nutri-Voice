@@ -1,12 +1,12 @@
 // src/controllers/clientMenu.controller.js
 const {
-    createClientMenu,
-    listClientMenus,
-    getClientMenu,
-    updateClientMenu,
-    deleteClientMenu,
-  } = require("../services/clientMenu.service");
-  
+  createClientMenu,
+  listClientMenus,
+  getClientMenu,
+  updateClientMenu,
+  deleteClientMenu,
+} = require("../services/clientMenu.service");
+
 /**
  * @openapi
  * /api/menu/client-menus:
@@ -14,7 +14,7 @@ const {
  *     tags:
  *       - Client Menu
  *     summary: Create a client menu
- *     description: Creates a personalized menu for a client, optionally based on a daily template snapshot.
+ *     description: Creates a personalized menu for a client. Meals can be added later via the update endpoint.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -36,17 +36,18 @@ const {
  *                 data:
  *                   $ref: '#/components/schemas/ClientMenuResponseDto'
  */
-  const createClientMenuController = async (req, res, next) => {
-    try {
-      const result = await createClientMenu(req.body, req.auth.userId);      res.status(201).json({
-        message: "Client menu created successfully",
-        data: result,
-      });
-    } catch (e) {
-      next(e);
-    }
-  };
-  
+const createClientMenuController = async (req, res, next) => {
+  try {
+    const result = await createClientMenu(req.body, req.auth.userId);
+    res.status(201).json({
+      message: "Client menu created successfully",
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 /**
  * @openapi
  * /api/menu/client-menus:
@@ -87,17 +88,17 @@ const {
  *                   items:
  *                     $ref: '#/components/schemas/ClientMenuResponseDto'
  */
-  const listClientMenusController = async (req, res, next) => {
-    try {
-      const result = await listClientMenus(req.query);
-      res.json({
-        data: result,
-      });
-    } catch (e) {
-      next(e);
-    }
-  };
-  
+const listClientMenusController = async (req, res, next) => {
+  try {
+    const result = await listClientMenus(req.query);
+    res.json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 /**
  * @openapi
  * /api/menu/client-menus/{id}:
@@ -105,7 +106,7 @@ const {
  *     tags:
  *       - Client Menu
  *     summary: Get a client menu
- *     description: Retrieves a specific client menu by its ID.
+ *     description: Retrieves a specific client menu by its ID, including its meals and items.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -128,25 +129,30 @@ const {
  *       404:
  *         description: Not found
  */
-  const getClientMenuController = async (req, res, next) => {
-    try {
-      const result = await getClientMenu(req.params.id);
-      res.json({
-        data: result,
-      });
-    } catch (e) {
-      next(e);
-    }
-  };
-  
+const getClientMenuController = async (req, res, next) => {
+  try {
+    const result = await getClientMenu(req.params.id);
+    res.json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 /**
  * @openapi
  * /api/menu/client-menus/{id}:
  *   put:
  *     tags:
  *       - Client Menu
- *     summary: Update a client menu
- *     description: Updates fields of an existing client menu, such as structureJson, dates, notes, or activation state.
+ *     summary: Update a client menu (metadata and meals)
+ *     description: >
+ *       Updates a client menu, including:
+ *       - basic fields (name, type, dates, notes, isActive)
+ *       - adding meals from meal templates (mealsToAdd)
+ *       - updating existing meals and their items (mealsToUpdate)
+ *       - deleting meals (mealsToDelete).
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -175,18 +181,18 @@ const {
  *                 data:
  *                   $ref: '#/components/schemas/ClientMenuResponseDto'
  */
-  const updateClientMenuController = async (req, res, next) => {
-    try {
-      const result = await updateClientMenu(req.params.id, req.body);
-      res.json({
-        message: "Client menu updated successfully",
-        data: result,
-      });
-    } catch (e) {
-      next(e);
-    }
-  };
-  
+const updateClientMenuController = async (req, res, next) => {
+  try {
+    const result = await updateClientMenu(req.params.id, req.body);
+    res.json({
+      message: "Client menu updated successfully",
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 /**
  * @openapi
  * /api/menu/client-menus/{id}:
@@ -215,17 +221,17 @@ const {
  *                 message:
  *                   type: string
  */
-  const deleteClientMenuController = async (req, res, next) => {
-    try {
-      await deleteClientMenu(req.params.id);
-      res.json({
-        message: "Client menu deactivated successfully",
-      });
-    } catch (e) {
-      next(e);
-    }
-  };
-  
+const deleteClientMenuController = async (req, res, next) => {
+  try {
+    await deleteClientMenu(req.params.id);
+    res.json({
+      message: "Client menu deactivated successfully",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
   createClientMenu: createClientMenuController,
   listClientMenus: listClientMenusController,
@@ -233,4 +239,3 @@ module.exports = {
   updateClientMenu: updateClientMenuController,
   deleteClientMenu: deleteClientMenuController,
 };
-  
