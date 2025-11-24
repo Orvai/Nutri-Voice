@@ -97,7 +97,7 @@ const signAccess = (sessionId, userId, role) =>
     jwt.sign({sid: sessionId, sub: userId, role, typ: 'access'}, JWT_SECRET, {expiresIn: `${ACCESS_TTL_MIN}m`});
 
 const signRefresh = (sessionId, userId, role) =>
-    jwt.sign({sid: sessionId, sub: userId, role, typ: 'refresh'}, JWT_SECRET, {expiresIn: `${REFRESH_TTL_DAYS}d`});
+    ({sid: sessionId, sub: userId, role, typ: 'refresh'}, JWT_SECRET, {expiresIn: `${REFRESH_TTL_DAYS}d`});
 
 // ---------------- SESSION ----------------
 const createSession = async (userId, role, ip, userAgent) => {
