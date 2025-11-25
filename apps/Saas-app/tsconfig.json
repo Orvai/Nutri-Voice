@@ -1,0 +1,36 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "jsx": "react-native",
+    "baseUrl": "./",
+    "paths": {
+      "@/app/*": [
+        "app/*"
+      ],
+      "@/components/*": [
+        "app/components/*"
+      ],
+      "@/styles/*": [
+        "app/styles/*"
+      ],
+      "@/utils/*": [
+        "app/utils/*"
+      ],
+      "@/hooks/*": [
+        "app/hooks/*"
+      ],
+      "@/lib/*": [
+        "src/lib/*"
+      ],
+      "@/services/*": [
+        "src/services/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
+}

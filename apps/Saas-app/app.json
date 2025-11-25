@@ -1,0 +1,17 @@
+{
+    "expo": {
+      "name": "Coach Dashboard",
+      "slug": "saas-app",
+      "scheme": "saas-app",
+      "version": "1.0.0",
+      "orientation": "portrait",
+      "web": {
+        "bundler": "metro"
+      },
+      "experiments": {
+        "typedRoutes": true
+      },
+      "extra": {
+      }
+    }
+  }

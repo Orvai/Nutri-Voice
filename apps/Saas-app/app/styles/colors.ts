@@ -1,0 +1,17 @@
+export const colors = {
+    neutral50: '#F9FAFB',
+    neutral100: '#F3F4F6',
+    neutral200: '#E5E7EB',
+    neutral300: '#D1D5DB',
+    neutral400: '#9CA3AF',
+    neutral500: '#6B7280',
+    neutral600: '#4B5563',
+    neutral700: '#374151',
+    neutral800: '#111827',
+    primary: '#2563EB',
+    success: '#16A34A',
+    warning: '#F59E0B',
+    danger: '#DC2626',
+    white: '#FFFFFF',
+    black: '#000000',
+  };
