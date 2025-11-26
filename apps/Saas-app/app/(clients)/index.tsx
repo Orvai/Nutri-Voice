@@ -1,5 +1,5 @@
-import Text from '../../src/components/ui/Text';
+import ClientsScreen from './ClientsScreen';
 
-export default function ClientsScreen() {
-  return <Text>בקרוב…</Text>;
+export default function Page() {
+  return <ClientsScreen />;
 }
