@@ -8,16 +8,16 @@
         "app/*"
       ],
       "@/components/*": [
-        "app/components/*"
+        "src/components/*"
       ],
       "@/styles/*": [
-        "app/styles/*"
+        "src/styles/*"
       ],
       "@/utils/*": [
         "app/utils/*"
       ],
       "@/hooks/*": [
-        "app/hooks/*"
+        "src/hooks/*"
       ],
       "@/lib/*": [
         "src/lib/*"

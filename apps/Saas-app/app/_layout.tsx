@@ -6,14 +6,14 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
-import { useSidebar } from './hooks/useSidebar';
-import { useScrollDirection } from './hooks/useScrollDirection';
-import { colors } from './styles/colors';
-import { theme } from './styles/theme';
-import Button from './components/ui/Button';
-import Text from './components/ui/Text';
-import Divider from './components/ui/Divider';
-import Spacer from './components/ui/Spacer';
+import { useSidebar } from '../src/hooks/useSidebar';
+import { useScrollDirection } from '../src/hooks/useScrollDirection';
+import { colors } from '../src/styles/colors';
+import { theme } from '../src/styles/theme';
+import Button from '../src/components/ui/Button';
+import Text from '../src/components/ui/Text';
+import Divider from '../src/components/ui/Divider';
+import Spacer from '../src/components/ui/Spacer';
 
 const sidebarItems = [
   { label: 'דף הבית', href: '/(home)/home' },
@@ -78,7 +78,8 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
   const width = collapsed ? 72 : 260;
 
   return (
-    <View style={[styles.sidebar, { width }]}>
+    // תיקון: ניתן להסיר .filter(Boolean) מכאן, רכיב View תומך במערכי סגנונות
+    <View style={[styles.sidebar, width ? { width } : {}]}> 
       <View style={styles.sidebarHeader}>
         <Text variant="title" weight="bold">לוח המאמן</Text>
         <Spacer size={theme.spacing.xs} />
@@ -98,10 +99,12 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
               asChild
             >
               <Pressable
-                style={[
+                // **תיקון קריטי:** שימוש ב-StyleSheet.flatten במקום מערך ו-.filter(Boolean)
+                // זה פותר את שגיאת ה-TypeError ב-react-native-web
+                style={StyleSheet.flatten([ 
                   styles.navItem,
-                  active ? styles.navItemActive : null
-                ]}
+                  active && styles.navItemActive
+                ])}
               >
                 <Text weight={active ? 'bold' : 'medium'} color={colors.neutral800}>
                   {collapsed ? item.label.slice(0, 2) : item.label}
