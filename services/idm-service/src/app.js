@@ -11,7 +11,12 @@ const app = express();
 
 app.use(
     cors({
-        origin: 'http://localhost:8081',          // Expo Web origin
+        origin: [
+            "http://localhost:8081",     // Expo Web
+            "http://localhost:4000",
+            "http://localhost:19006",    // Expo Web alt
+            "http://localhost:3000",     // React Web 
+          ],
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
@@ -24,7 +29,7 @@ app.use(attachCookies);
 app.use(dbLogger); // Aviya
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/health', (_req, res) => res.json({ ok: true }));
-app.use('/api', routes);
+app.use('/', routes);
 // eslint-disable-next-line no-unused-vars
 app.use(errorHandler);
 

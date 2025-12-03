@@ -106,6 +106,23 @@ const ClientMenuResponseDto = z.object({
   meals: z.array(ClientMenuMealResponseDto),
 });
 
+const ClientMenuCreateFromTemplateDto = z.object({
+  clientId: z.string(),
+  coachId: z.string(),
+  templateMenuId: z.string(),
+  name: z.string().optional(), 
+
+  
+  selectedOptions: z
+    .array(
+      z.object({
+        templateMealId: z.string(),
+        optionId: z.string(),
+      })
+    )
+    .optional(),
+});
+
 module.exports = {
   DayTypeEnum,
   ClientMenuMealItemCreateDto,
@@ -119,4 +136,5 @@ module.exports = {
   ClientMenuMealItemResponseDto,
   ClientMenuMealResponseDto,
   ClientMenuResponseDto,
+  ClientMenuCreateFromTemplateDto, // ← חדש
 };

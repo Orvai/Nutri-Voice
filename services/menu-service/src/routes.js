@@ -1,36 +1,61 @@
-// src/routes.js
+// routes.js
 const { Router } = require("express");
+const verifyInternalToken = require("./middleware/verifyInternalToken");
 
-const { authRequired } = require("./middleware/auth");
-const requireCoach = require("./middleware/requireCoach");
-const requireClientOrCoachOwner = require("./middleware/requireClientOrCoachOwner");
-
+/* Controllers */
 const Food = require("./controllers/food.controller");
 const MealTemplates = require("./controllers/mealTemplate.controller");
+const TemplateMenus = require("./controllers/templateMenu.controller");
 const ClientMenus = require("./controllers/clientMenu.controller");
 
-const r = Router();
+const router = Router();
 
-/* Food Items */
-r.post("/menu/food", authRequired, requireCoach, Food.createFoodItem);
-r.get("/menu/food", Food.listFoodItems);
-r.get("/menu/food/by-category", Food.listByCategory);
-r.get("/menu/food/search", Food.searchByName);
-r.put("/menu/food/:id", authRequired, requireCoach, Food.updateFoodItem);
-r.delete("/menu/food/:id", authRequired, requireCoach, Food.deleteFoodItem);
+/* ===========================
+   FOOD ROUTES
+   =========================== */
 
-/* Meal Templates */
-r.post("/menu/templates", authRequired, requireCoach, MealTemplates.createMealTemplate);
-r.get("/menu/templates", authRequired, MealTemplates.listMealTemplates);
-r.get("/menu/templates/:id", authRequired, MealTemplates.getMealTemplate);
-r.put("/menu/templates/:id", authRequired, requireCoach, MealTemplates.upsertMealTemplate);
-r.delete("/menu/templates/:id", authRequired, requireCoach, MealTemplates.deleteMealTemplate);
+router.post("/internal/menu/food", verifyInternalToken, Food.createFoodItem);
+router.get("/internal/menu/food", verifyInternalToken, Food.listFoodItems);
+router.get("/internal/menu/food/search", verifyInternalToken, Food.searchByName);
+router.get("/internal/menu/food/by-category", verifyInternalToken, Food.listByCategory);
+router.put("/internal/menu/food/:id", verifyInternalToken, Food.updateFoodItem);
+router.delete("/internal/menu/food/:id", verifyInternalToken, Food.deleteFoodItem);
 
-/* Client Menus */
-r.post("/menu/client-menus", authRequired, requireCoach, ClientMenus.createClientMenu);
-r.get("/menu/client-menus", authRequired, requireClientOrCoachOwner, ClientMenus.listClientMenus);
-r.get("/menu/client-menus/:id", authRequired, requireClientOrCoachOwner, ClientMenus.getClientMenu);
-r.put("/menu/client-menus/:id", authRequired, requireCoach, ClientMenus.updateClientMenu);
-r.delete("/menu/client-menus/:id", authRequired, requireCoach, ClientMenus.deleteClientMenu);
+/* ===========================
+   MEAL TEMPLATE ROUTES
+   =========================== */
 
-module.exports = r;
+router.post("/internal/menu/templates", verifyInternalToken, MealTemplates.createMealTemplate);
+router.get("/internal/menu/templates", verifyInternalToken, MealTemplates.listMealTemplates);
+router.get("/internal/menu/templates/:id", verifyInternalToken, MealTemplates.getMealTemplate);
+router.put("/internal/menu/templates/:id", verifyInternalToken, MealTemplates.upsertMealTemplate);
+router.delete("/internal/menu/templates/:id", verifyInternalToken, MealTemplates.deleteMealTemplate);
+
+/* ===========================
+   TEMPLATE MENU ROUTES
+   =========================== */
+
+router.post("/internal/menu/template-menus", verifyInternalToken, TemplateMenus.createTemplateMenu);
+router.get("/internal/menu/template-menus", verifyInternalToken, TemplateMenus.listTemplateMenus);
+router.get("/internal/menu/template-menus/:id", verifyInternalToken, TemplateMenus.getTemplateMenu);
+router.put("/internal/menu/template-menus/:id", verifyInternalToken, TemplateMenus.updateTemplateMenu);
+router.delete("/internal/menu/template-menus/:id", verifyInternalToken, TemplateMenus.deleteTemplateMenu);
+
+/* ===========================
+   CLIENT MENU ROUTES
+   =========================== */
+
+router.post("/internal/menu/client-menus", verifyInternalToken, ClientMenus.createClientMenu);
+router.get("/internal/menu/client-menus", verifyInternalToken, ClientMenus.listClientMenus);
+router.get("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.getClientMenu);
+router.put("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.updateClientMenu);
+router.delete("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.deleteClientMenu);
+
+/* יצירת תפריט לקוח מתבנית */
+router.post(
+  "/internal/menu/client-menus/from-template",
+  verifyInternalToken,
+  ClientMenus.createClientMenuFromTemplate
+);
+
+module.exports = router;

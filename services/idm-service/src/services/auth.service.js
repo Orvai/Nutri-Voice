@@ -9,12 +9,7 @@ const {registerMFADeviceDto, verifyMFADto} = require('../dto/mfa.dto');
 const {AppError} = require('../common/errors');
 const {loginContextDto, logoutRequestDto, registerRequestDto} = require('../dto/auth.dto');
 
-const {
-    saveAccessToken,
-    saveRefreshToken,
-    revokeAccessToken,
-    revokeRefreshTokenForSession
-} = require("../common/auth.cache");
+const {saveAccessToken,saveRefreshToken,revokeAccessToken,revokeRefreshTokenForSession} = require("../common/auth.cache");
 const {validateToken} = require('../middleware/auth');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';

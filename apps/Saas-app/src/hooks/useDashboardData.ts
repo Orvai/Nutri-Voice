@@ -1,33 +1,84 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from "react";
 
 export function useDashboardData() {
-  return useMemo(
-    () => ({
-      dailyKpis: [
-        { title: 'אחוז דיווחים היום', value: 87, change: 4.2, unit: '%' },
-        { title: 'עמידה ביעד קלוריות', value: 92, change: -1.3, unit: '%' },
-        { title: 'מספר לקוחות פעילים', value: 26, change: 2.1, unit: 'לקוחות' },
-      ],
-      messages: [
-        { id: '1', sender: 'נועה לוי', preview: 'איך אני מעדכנת את ארוחת הערב?', time: '2024-04-12T08:20:00Z' },
-        { id: '2', sender: 'איתי כהן', preview: 'סיימתי את האימון של היום', time: '2024-04-12T07:05:00Z' },
-      ],
-      missingReports: [
-        { id: '1', name: 'דנה רוזן', daysMissed: 2 },
-        { id: '2', name: 'יואב שמש', daysMissed: 1 },
-        { id: '3', name: 'ענבר שלו', daysMissed: 3 },
-      ],
-      deviations: [
-        { id: '1', meal: 'ארוחת בוקר', delta: 120 },
-        { id: '2', meal: 'ארוחת צהריים', delta: -80 },
-        { id: '3', meal: 'ארוחת ערב', delta: 40 },
-      ],
-      weeklyRisk: {
-        hydration: 0.68,
-        sleep: 0.74,
-        recovery: 0.55,
+  const [data, setData] = useState({
+    dailyKpis: {
+      dailyReports: 87,
+      calorieTarget: 74,
+      workoutCompletion: 81,
+      atRisk: 12,
+    },
+
+    attentionMessages: [
+      {
+        name: "דוד כהן",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg",
+        time: "לפני 15 דק׳",
+        message: "לא מרגיש טוב, רוצה לשנות תוכנית",
+        severity: "red" as const, // ← תואם לקומפוננטה
       },
-    }),
-    [],
-  );
+      {
+        name: "שרה לוי",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg",
+        time: "לפני 42 דק׳",
+        message: "שאלה לגבי תחליף לחלב",
+        severity: "yellow" as const,
+      },
+    ],
+
+    nutritionDeviations: [
+      {
+        name: "דוד כהן",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg",
+        meal: "ארוחת ערב",
+        calories: +450,
+        color: "red" as const,
+      },
+      {
+        name: "שרה לוי",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg",
+        meal: "ארוחת צהריים",
+        calories: -120,
+        color: "green" as const,
+      },
+    ],
+
+    missingReports: [
+      {
+        name: "אליה רוזן",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg",
+        days: 3,
+        risk: "high" as const, // ← חייב להיות הערכים האלו בלבד
+      },
+      {
+        name: "רחל גולדברג",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg",
+        days: 1,
+        risk: "medium" as const,
+      },
+    ],
+
+    atRiskClients: [
+      {
+        name: "דוד כהן",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg",
+        lastReportDays: 3,
+        calorieStatus: -35,
+        lastWorkout: "כוח - לפני 5 ימים",
+      },
+      {
+        name: "מיכאל אברהם",
+        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg",
+        lastReportDays: 2,
+        calorieStatus: +5,
+        lastWorkout: "כוח - לפני שבוע",
+      },
+    ],
+  });
+
+  useEffect(() => {
+    // בעתיד יוחלף ב-fetch אמיתי
+  }, []);
+
+  return data;
 }

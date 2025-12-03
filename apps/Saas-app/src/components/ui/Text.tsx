@@ -1,58 +1,36 @@
-import { Text as RNText, TextProps as RNTextProps, StyleSheet } from 'react-native';
-import { colors } from '../../styles/colors';
-import { theme } from '../../styles/theme';
+import { Text as RNText, TextProps } from 'react-native';
 
-interface TextProps extends RNTextProps {
-  variant?: 'title' | 'subtitle' | 'body' | 'caption';
-  weight?: 'regular' | 'medium' | 'bold';
+interface Props extends TextProps {
+  weight?: 'light' | 'regular' | 'medium' | 'bold';
+  size?: number;
   color?: string;
 }
 
 export default function Text({
-  children,
-  variant = 'body',
   weight = 'regular',
-  color = colors.neutral800,
+  size = 16,
+  color = '#111827',
   style,
   ...rest
-}: TextProps) {
+}: Props) {
   return (
-    <RNText style={[styles.base, styles[variant], styles[weight], { color }, style]} {...rest}>
-      {children}
-    </RNText>
+    <RNText
+      style={[
+        {
+          fontSize: size,
+          color,
+          fontFamily:
+            weight === 'light'
+              ? 'Heebo-Light'
+              : weight === 'medium'
+              ? 'Heebo-Medium'
+              : weight === 'bold'
+              ? 'Heebo-Bold'
+              : 'Heebo-Regular',
+        },
+        style,
+      ]}
+      {...rest}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    writingDirection: 'rtl',
-  },
-  title: {
-    fontSize: 20,
-    lineHeight: 28,
-  },
-  subtitle: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  body: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  caption: {
-    fontSize: 12,
-    lineHeight: 16,
-  },
-  regular: {
-    fontFamily: theme.fonts.regular,
-    fontWeight: '400',
-  },
-  medium: {
-    fontFamily: theme.fonts.medium,
-    fontWeight: '600',
-  },
-  bold: {
-    fontFamily: theme.fonts.bold,
-    fontWeight: '700',
-  },
-});

@@ -1,159 +1,60 @@
 const S = require('../services/user.service');
 
 /**
- * Create a new user.
- *
- * @openapi
- * /api/users:
- *   post:
- *     tags:
- *       - Users
- *     summary: Create a new user (admin)
- *     description: Creates a user directly without performing registration. Requires authentication.
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CreateUserInput'
- *     responses:
- *       201:
- *         description: User created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Validation error
- *       409:
- *         description: User already exists
+ * INTERNAL ONLY
+ * POST /internal/users
  */
 const createUser = async (req, res, next) => {
   try {
-    const created = await S.createUser(req.body);
-    res.status(201).json(created);
+    const data = await S.createUser(req.body);
+    res.status(201).json(data);
   } catch (e) {
     next(e);
   }
 };
 
 /**
- * Update an existing user.
- *
- * @openapi
- * /api/users/{userId}:
- *   patch:
- *     tags:
- *       - Users
- *     summary: Update a user
- *     description: Updates user attributes by ID. Requires authentication.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UpdateUserInput'
- *     responses:
- *       200:
- *         description: Updated user
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Validation error
- *       404:
- *         description: User not found
+ * INTERNAL ONLY
+ * PATCH /internal/users/:userId
  */
 const updateUser = async (req, res, next) => {
   try {
-    res.json(await S.updateUser(req.params.userId, req.body));
+    const data = await S.updateUser(req.params.userId, req.body);
+    res.json(data);
   } catch (e) {
     next(e);
   }
 };
 
 /**
- * Get a user by ID.
- *
- * @openapi
- * /api/users/{userId}:
- *   get:
- *     tags:
- *       - Users
- *     summary: Retrieve a user
- *     description: Retrieves details of a specific user. Requires authentication.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User details
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       404:
- *         description: User not found
+ * INTERNAL ONLY
+ * GET /internal/users/:userId
  */
 const getUser = async (req, res, next) => {
   try {
-    res.json(await S.getUser(req.params.userId));
+    const data = await S.getUser(req.params.userId);
+    res.json(data);
   } catch (e) {
     next(e);
   }
 };
 
 /**
- * List all users.
- *
- * @openapi
- * /api/users:
- *   get:
- *     tags:
- *       - Users
- *     summary: List users
- *     description: Returns all users in the system. Requires authentication.
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Array of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
+ * INTERNAL ONLY
+ * GET /internal/users
  */
 const listUsers = async (req, res, next) => {
   try {
-    res.json(await S.getAllUsers());
+    const data = await S.getAllUsers();
+    res.json(data);
   } catch (e) {
     next(e);
   }
 };
-
 
 module.exports = {
   createUser,
   updateUser,
   getUser,
-  listUsers
-
+  listUsers,
 };

@@ -1,37 +1,39 @@
 const { Router } = require('express');
-const { authRequired } = require('./middleware/auth');
+const verifyInternalToken = require('./middleware/verifyInternalToken');
 
 const Auth = require('./controllers/auth.controller');
 const User = require('./controllers/user.controller');
-const Sub = require('./controllers/subscription.controller');const Info = require('./controllers/userInfo.controller');
+const Sub = require('./controllers/subscription.controller');
+const Info = require('./controllers/userInfo.controller');
 
 const r = Router();
 
-// Public Auth
-r.post('/auth/register', Auth.registerUser);
-r.post('/auth/login', Auth.login);
-r.post('/auth/logout', authRequired, Auth.logout);
-r.post('/auth/token/refresh', Auth.refresh);
-r.post('/auth/mfa/register', authRequired, Auth.registerMFADevice);
-r.post('/auth/mfa/verify', authRequired, Auth.verifyMFA);
+// ===== AUTH INTERNAL =====
+r.post('/internal/auth/register', verifyInternalToken, Auth.registerUser);
+r.post('/internal/auth/login', verifyInternalToken, Auth.login);
+r.post('/internal/auth/logout', verifyInternalToken, Auth.logout);
+r.post('/internal/auth/token/refresh', verifyInternalToken, Auth.refresh);
 
-// Protected: Users
-r.post('/users', authRequired, User.createUser);
-r.get('/users', authRequired, User.listUsers);
-r.get('/users/:userId', authRequired, User.getUser);
-r.patch('/users/:userId', authRequired, User.updateUser);
+// MFA (optional)
+r.post('/internal/auth/mfa/register', verifyInternalToken, Auth.registerMFADevice);
+r.post('/internal/auth/mfa/verify', verifyInternalToken, Auth.verifyMFA);
 
-// Protected: Subscriptions
-r.post('/subscriptions', authRequired, Sub.createSubscription);
-r.get('/subscriptions', authRequired, Sub.listSubscriptions);
-r.get('/subscriptions/:id', authRequired, Sub.getSubscription);
-r.patch('/subscriptions/:id', authRequired, Sub.updateSubscription);
-r.delete('/subscriptions/:id', authRequired, Sub.deleteSubscription);
+// ===== USERS INTERNAL =====
+r.post('/internal/users', verifyInternalToken, User.createUser);
+r.get('/internal/users', verifyInternalToken, User.listUsers);
+r.get('/internal/users/:userId', verifyInternalToken, User.getUser);
+r.patch('/internal/users/:userId', verifyInternalToken, User.updateUser);
 
+// ===== USER INFO INTERNAL =====
+r.put('/internal/users/:userId/info', verifyInternalToken, Info.upsertUserInformation);
+r.get('/internal/users/:userId/info', verifyInternalToken, Info.getUserInformation);
+r.delete('/internal/users/:userId/info', verifyInternalToken, Info.deleteUserInformation);
 
-// Protected: User Information
-r.put('/users/:userId/info', authRequired, Info.upsertUserInformation);
-r.get('/users/:userId/info', authRequired, Info.getUserInformation);
-r.delete('/users/:userId/info', authRequired, Info.deleteUserInformation);
+// ===== SUBSCRIPTIONS INTERNAL =====
+r.post('/internal/subscriptions', verifyInternalToken, Sub.createSubscription);
+r.get('/internal/subscriptions', verifyInternalToken, Sub.listSubscriptions);
+r.get('/internal/subscriptions/:id', verifyInternalToken, Sub.getSubscription);
+r.patch('/internal/subscriptions/:id', verifyInternalToken, Sub.updateSubscription);
+r.delete('/internal/subscriptions/:id', verifyInternalToken, Sub.deleteSubscription);
 
 module.exports = r;

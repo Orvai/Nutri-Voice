@@ -1,80 +1,70 @@
-import React from 'react';
-import { View, Pressable } from 'react-native';
-import Card from '../../components/ui/Card';
-import Text from '../../components/ui/Text';
-import Avatar from '../../components/ui/Avatar';
-import Chip from '../../components/ui/Chip';
-import Spacer from '../../components/ui/Spacer';
-import { colors } from '../../styles/colors';
-import Button from '../../components/ui/Button';
+import { View, Text, Image, Pressable } from "react-native";
+import { router } from "expo-router";
 
-export default function ClientCard({
-  fullName,
-  phone,
-  activityScore,
-  dietDeviationKcal,
-  weeklyWeightChangeKg,
-  isFlagged,
-  onPress,
-  onToggleFlag,
-}: any) {
-
-  const activityTone =
-    activityScore >= 70 ? 'success' :
-    activityScore >= 40 ? 'warning' :
-    'danger';
-
-  const deviationTone =
-    dietDeviationKcal <= 200 ? 'success' :
-    dietDeviationKcal <= 500 ? 'warning' :
-    'danger';
-
-  const weightTrend =
-    weeklyWeightChangeKg > 0 ? '⬆️' :
-    weeklyWeightChangeKg < 0 ? '⬇️' :
-    '➖';
+export default function ClientCard({ client }) {
+  const goToProfile = () => {
+    router.push({
+      pathname: "/(dashboard)/clients/[id]",
+      params: { id: client.id },
+    });
+  };
 
   return (
-    <Pressable onPress={onPress}>
-      <Card
-        style={{
-          borderColor: isFlagged ? colors.danger : colors.neutral200,
-          borderWidth: isFlagged ? 2 : 1,
+    <Pressable
+      onPress={goToProfile}
+      style={({ hovered, pressed }) => ({
+        backgroundColor: "#ffffff",
+        borderRadius: 16,
+        padding: 18,
+        marginBottom: 14,
+        flexDirection: "row-reverse",
+        alignItems: "center",
+        gap: 16,
+        borderWidth: 1,
+        borderColor: hovered ? "#d1d5db" : "#e5e7eb",
+        opacity: pressed ? 0.8 : 1,
+        shadowColor: "#000",
+        shadowRadius: hovered ? 8 : 4,
+        shadowOpacity: hovered ? 0.12 : 0.06,
+        elevation: hovered ? 3 : 1,
+      })}
+    >
+      <Image
+        source={{
+          uri:
+            client.avatar ||
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg",
         }}
-      >
+        style={{ width: 62, height: 62, borderRadius: 50 }}
+      />
 
-        {/* ----- TOP ROW (Avatar + Info + Flag) ----- */}
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Avatar name={fullName} size={50} />
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: "700",
+            color: "#111827",
+            textAlign: "right",
+          }}
+        >
+          {client.name}
+        </Text>
 
-          <Spacer size={12} />
+        <Text
+          style={{
+            fontSize: 13,
+            color: "#6b7280",
+            marginTop: 4,
+            textAlign: "right",
+          }}
+        >
+          {client.phone}
+        </Text>
+      </View>
 
-          <View style={{ flex: 1 }}>
-            <Text weight="bold" variant="title">{fullName}</Text>
-            <Text variant="caption" color={colors.neutral600}>
-              {phone}
-            </Text>
-          </View>
-
-          <Pressable onPress={onToggleFlag}>
-            <Chip
-              label={isFlagged ? "🚩" : "⚪"}
-              tone={isFlagged ? "danger" : "default"}
-              style={{ paddingHorizontal: 12 }}
-            />
-          </Pressable>
-        </View>
-
-        <Spacer size={14} />
-
-        {/* ----- STATUS ROW ----- */}
-        <View style={{ flexDirection: "row", gap: 10, flexWrap: "wrap" }}>
-          <Chip tone={activityTone} label={`פעילות ${activityScore}`} />
-          <Chip tone={deviationTone} label={`חריגה ${dietDeviationKcal}`} />
-          <Chip label={`${weightTrend} ${Math.abs(weeklyWeightChangeKg)}kg`} />
-        </View>
-
-      </Card>
+      <Text style={{ fontSize: 13, fontWeight: "600", color: "#2563eb" }}>
+        צפה
+      </Text>
     </Pressable>
   );
 }

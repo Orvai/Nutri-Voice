@@ -20,5 +20,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     backgroundColor: colors.white,
+    textAlign: 'right',
   },
 });

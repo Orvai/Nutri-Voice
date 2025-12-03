@@ -3,6 +3,7 @@ const prisma = require("../db/prisma");
 const {
   ClientMenuCreateRequestDto,
   ClientMenuUpdateRequestDto,
+  ClientMenuCreateFromTemplateDto,
 } = require("../dto/clientMenu.dto");
 
 const computeCalories = (foodItem, quantity) => {
@@ -311,10 +312,178 @@ const deleteClientMenu = async (id) => {
   });
 };
 
+const createClientMenuFromTemplate = async (payload) => {
+  const data = ClientMenuCreateFromTemplateDto.parse(payload);
+
+  return prisma.$transaction(async (tx) => {
+    // 1. משיגים את התבנית המלאה
+    const template = await tx.templateMenu.findUnique({
+      where: { id: data.templateMenuId },
+      include: {
+        meals: {
+          include: {
+            options: {
+              include: {
+                mealTemplate: {
+                  include: {
+                    items: { include: { foodItem: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+        vitamins: true,
+      },
+    });
+
+    if (!template) {
+      const e = new Error("Template menu not found");
+      e.status = 404;
+      throw e;
+    }
+
+    // 2. יצירת ClientMenu בסיסי
+    const clientMenu = await tx.clientMenu.create({
+      data: {
+        name: data.name ?? template.name,
+        clientId: data.clientId,
+        coachId: data.coachId,
+        type: template.dayType,
+        notes: template.notes ?? null,
+        originalTemplateMenuId: template.id,
+      },
+    });
+
+    // מפה נבנה:
+    // - ClientMenuMeal
+    // - ClientMenuMealOption
+    // - ClientMenuMealItem (רק עבור האופציה הנבחרת בכל ארוחה)
+    for (const meal of template.meals) {
+      // בחירת אופציה עבור הארוחה
+      let chosenOption = null;
+
+      // אם המשתמש העביר selectedOptions – נכבד אותם
+      if (data.selectedOptions && data.selectedOptions.length > 0) {
+        const manual = data.selectedOptions.find(
+          (s) => s.templateMealId === meal.id
+        );
+        if (manual) {
+          chosenOption = meal.options.find((o) => o.id === manual.optionId);
+        }
+      }
+
+      // אחרת – נשתמש ב-selectedOptionId מהתבנית, ואם אין – הראשונה
+      if (!chosenOption) {
+        if (meal.selectedOptionId) {
+          chosenOption = meal.options.find(
+            (o) => o.id === meal.selectedOptionId
+          );
+        }
+        if (!chosenOption && meal.options.length > 0) {
+          chosenOption = meal.options[0];
+        }
+      }
+
+      if (!chosenOption) {
+        // אין אופציות לארוחה הזאת – נדלג
+        continue;
+      }
+
+      // 3. יצירת ארוחה ללקוח
+      const createdMeal = await tx.clientMenuMeal.create({
+        data: {
+          clientMenuId: clientMenu.id,
+          originalTemplateId: chosenOption.mealTemplateId,
+          name: meal.name,
+          totalCalories: 0,
+          selectedOptionId: undefined, // נשבץ אחרי שניצור אופציות
+        },
+      });
+
+      // 4. יצירת האופציות של הארוחה אצל הלקוח
+      const createdOptions = [];
+      for (const opt of meal.options) {
+        const createdOpt = await tx.clientMenuMealOption.create({
+          data: {
+            clientMenuMealId: createdMeal.id,
+            mealTemplateId: opt.mealTemplateId,
+            name: opt.name ?? null,
+            orderIndex: opt.orderIndex ?? 0,
+          },
+        });
+        createdOptions.push(createdOpt);
+      }
+
+      // 5. עדכון selectedOptionId לפי האופציה שנבחרה
+      const selectedClientOption = createdOptions.find(
+        (o) => o.mealTemplateId === chosenOption.mealTemplateId
+      );
+
+      await tx.clientMenuMeal.update({
+        where: { id: createdMeal.id },
+        data: {
+          selectedOptionId: selectedClientOption ? selectedClientOption.id : null,
+        },
+      });
+
+      // 6. יצירת items עבור האופציה הנבחרת בלבד
+      let totalCalories = 0;
+
+      for (const tItem of chosenOption.mealTemplate.items) {
+        const quantity = tItem.defaultGrams ?? 100;
+        const calories = computeCalories(tItem.foodItem, quantity);
+        totalCalories += calories;
+
+        await tx.clientMenuMealItem.create({
+          data: {
+            clientMenuMealId: createdMeal.id,
+            foodItemId: tItem.foodItemId,
+            quantity,
+            calories,
+            notes: tItem.notes ?? null,
+          },
+        });
+      }
+
+      // 7. עדכון totalCalories לארוחה
+      await tx.clientMenuMeal.update({
+        where: { id: createdMeal.id },
+        data: { totalCalories },
+      });
+    }
+
+    // 8. ויטמינים – פשוט נוסיף ל-notes כטקסט בינתיים
+    if (template.vitamins.length > 0) {
+      const vitaminsText = template.vitamins
+        .map(
+          (v) =>
+            `${v.name}${v.description ? ` - ${v.description}` : ""}`
+        )
+        .join("\n");
+
+      await tx.clientMenu.update({
+        where: { id: clientMenu.id },
+        data: {
+          notes:
+            (clientMenu.notes ?? "") +
+            (clientMenu.notes ? "\n\n" : "") +
+            "ויטמינים:\n" +
+            vitaminsText,
+        },
+      });
+    }
+
+    // 9. חישוב קלוריות כלליות לתפריט
+    return recomputeMenuCalories(tx, clientMenu.id);
+  });
+};
+
 module.exports = {
   createClientMenu,
   listClientMenus,
   getClientMenu,
   updateClientMenu,
   deleteClientMenu,
+  createClientMenuFromTemplate, // ← חדש
 };
