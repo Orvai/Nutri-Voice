@@ -10,12 +10,10 @@ const BASE = process.env.MENU_SERVICE_URL;
 // FOOD
 // =====================
 
-// רשימת מאכלים – מותר גם למאמן וגם למתאמן
 r.get("/food", authRequired, forward(BASE, "/internal/menu/food"));
 r.get("/food/search", authRequired, forward(BASE, "/internal/menu/food/search"));
 r.get("/food/by-category", authRequired, forward(BASE, "/internal/menu/food/by-category"));
 
-// יצירה/עדכון/מחיקה – רק מאמן
 r.post("/food", authRequired, requireCoach, forward(BASE, "/internal/menu/food"));
 r.put("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/food/:id"));
 r.delete("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/food/:id"));
@@ -24,11 +22,9 @@ r.delete("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/
 // MEAL TEMPLATES
 // =====================
 
-// צפייה – מאמן בלבד (או שתרצה גם ללקוח? כרגע שמתי מאמן)
 r.get("/templates", authRequired, requireCoach, forward(BASE, "/internal/menu/templates"));
 r.get("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
 
-// יצירה/עדכון/מחיקה – מאמן בלבד
 r.post("/templates", authRequired, requireCoach, forward(BASE, "/internal/menu/templates"));
 r.put("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
 r.delete("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
@@ -48,7 +44,6 @@ r.delete("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/inte
 // CLIENT MENUS
 // =====================
 
-// פה אפשר לשקול לאפשר גם למתאמן וגם למאמן - אז בעתיד תשתמש ב-requireCoachOrClient
 r.get("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"));
 r.get("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
 

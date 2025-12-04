@@ -74,7 +74,7 @@ function getColorByRole(role: string): string {
 }
 
 function mapVitamins(dto: TemplateMenuDto["vitamins"]): UIVitamin[] {
-  return dto.map((v) => ({
+    return (dto ?? []).map((v) => ({ 
     id: v.id,
     vitaminId: v.vitaminId,
     name: v.name,
@@ -85,7 +85,7 @@ function mapVitamins(dto: TemplateMenuDto["vitamins"]): UIVitamin[] {
 function mapFoods(
   items: TemplateMenuDto["meals"][number]["options"][number]["mealTemplate"]["items"]
 ): UIFoodItem[] {
-  return items.map((item) => {
+  return (items ?? []).map((item) => {
     let calories: number | null = item.defaultCalories;
 
     if (calories == null && item.foodItem.caloriesPer100g != null) {
@@ -108,10 +108,10 @@ function mapFoods(
 }
 
 function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
-  return dto.map((meal) => {
+  return (dto ?? []).map((meal) => {
     const selectedId = meal.selectedOptionId;
 
-    const options: UIMealOption[] = meal.options
+    const options: UIMealOption[] = (meal.options ?? [])
       .slice()
       .sort((a, b) => a.orderIndex - b.orderIndex)
       .map((opt) => {
@@ -148,6 +148,9 @@ function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
 export function mapTemplateMenuToNutritionPlan(
   templateMenu: TemplateMenuDto
 ): UINutritionPlan {
+  if (!templateMenu) {
+    throw new Error("Cannot map undefined templateMenu"); 
+  }
   return {
     id: templateMenu.id,
     name: templateMenu.name,

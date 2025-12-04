@@ -27,6 +27,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+
+app.use("/api", authRoutes);
+
+
 // ----------------------
 // 3) Auth middleware
 // ----------------------
@@ -35,7 +39,6 @@ app.use(verifyJwt);
 // ----------------------
 // 4) Routes
 // ----------------------
-app.use("/api", authRoutes);
 app.use("/api", menuRoutes);
 app.use("/api", workoutRoutes);
 app.use("/api/clients", clientRoutes);

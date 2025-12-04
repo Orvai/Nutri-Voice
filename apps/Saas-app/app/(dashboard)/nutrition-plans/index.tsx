@@ -1,32 +1,42 @@
-import { ScrollView, View, ActivityIndicator, Text, Pressable } from "react-native";
+import {
+  ScrollView,
+  View,
+  ActivityIndicator,
+  Text,
+  Pressable,
+} from "react-native";
 import { useEffect, useState } from "react";
 
 import NutritionTabs from "../../../src/components/nutrition/NutritionTabs";
 import NutritionDayCard from "../../../src/components/nutrition/NutritionDayCard";
 
-import { useTemplateMenus } from "../../../src/hooks/nutrition/useTemplateMenus";
+import {
+  useTemplateMenus,
+  useTemplateMenu,
+} from "../../../src/hooks/nutrition/useTemplateMenus";
 import { mapTemplateMenuToNutritionPlan } from "../../../src/utils/mapTemplateMenuToNutritionPlan";
-import { UINutritionPlan } from "../../../src/types/nutrition-ui";
 
 export default function NutritionPlansScreen() {
   const {
-    data,
-    isLoading,
+    data: menus,
+    isLoading: loadingMenus,
     error,
-  } = useTemplateMenus(); // UseQueryResult<TemplateMenu[], Error>
+  } = useTemplateMenus();
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
-  const menus = data ?? [];
-  const uiPlans: UINutritionPlan[] = menus.map(mapTemplateMenuToNutritionPlan);
-
   useEffect(() => {
-    if (uiPlans.length > 0 && !activeTab) {
-      setActiveTab(uiPlans[0].id);
+    if (menus && menus.length > 0 && !activeTab) {
+      setActiveTab(menus[0].id);
     }
-  }, [uiPlans, activeTab]);
+  }, [menus]);
 
-  if (isLoading) {
+  const {
+    data: fullMenu,
+    isLoading: loadingMenu,
+  } = useTemplateMenu(activeTab);
+
+  if (loadingMenus || loadingMenu || !fullMenu) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />
@@ -42,7 +52,7 @@ export default function NutritionPlansScreen() {
     );
   }
 
-  if (!uiPlans.length) {
+  if (!menus || menus.length === 0) {
     return (
       <View style={{ padding: 20 }}>
         <Text>No nutrition templates available</Text>
@@ -50,10 +60,9 @@ export default function NutritionPlansScreen() {
     );
   }
 
-  const activeId = activeTab ?? uiPlans[0].id;
-  const activePlan = uiPlans.find((p) => p.id === activeId) ?? uiPlans[0];
+  const plan = mapTemplateMenuToNutritionPlan(fullMenu);
 
-  const tabs = uiPlans.map((p) => ({
+  const tabs = menus.map((p) => ({
     id: p.id,
     label: p.dayType === "TRAINING" ? "יום אימון" : "יום מנוחה",
   }));
@@ -71,12 +80,10 @@ export default function NutritionPlansScreen() {
           marginBottom: 16,
         }}
       >
-        <NutritionTabs tabs={tabs} active={activeId} onChange={setActiveTab} />
+        <NutritionTabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
 
         <Pressable
-          onPress={() => {
-            console.log("TODO: open create-template flow");
-          }}
+          onPress={() => console.log("TODO: open create-template flow")}
           style={{
             backgroundColor: "#22c55e",
             paddingHorizontal: 14,
@@ -90,7 +97,7 @@ export default function NutritionPlansScreen() {
         </Pressable>
       </View>
 
-      <NutritionDayCard plan={activePlan} />
+      <NutritionDayCard plan={plan} />
     </ScrollView>
   );
 }

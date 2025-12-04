@@ -8,9 +8,10 @@ export function useTemplateMenus() {
   });
 }
 
-export function useTemplateMenu(id: string) {
+export function useTemplateMenu(id?: string | null) {
   return useQuery({
     queryKey: ["templateMenu", id],
-    queryFn: () => fetchTemplateMenu(id)
+    enabled: !!id, 
+    queryFn: () => fetchTemplateMenu(id as string),
   });
 }

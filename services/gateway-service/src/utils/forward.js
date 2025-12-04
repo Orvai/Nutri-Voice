@@ -8,15 +8,15 @@ export function forward(baseURL, targetPath) {
         return res.status(500).json({ message: "Gateway misconfiguration" });
       }
 
-      // Build target URL (including params support like /users/:id)
-      let path = targetPath;
-      if (targetPath.includes(":")) {
+      // Resolve URL params (e.g., /users/:id)
+      let resolvedPath = targetPath;
+      if (resolvedPath.includes(":")) {
         for (const [key, value] of Object.entries(req.params)) {
-          path = path.replace(`:${key}`, value);
+          resolvedPath = resolvedPath.replace(`:${key}`, value);
         }
       }
 
-      const url = `${baseURL}${path}`;
+      const url = `${baseURL}${resolvedPath}`;
       const method = req.method.toLowerCase();
 
       const headers = {
@@ -40,24 +40,40 @@ export function forward(baseURL, targetPath) {
 
       const response = await axios(config);
 
-      // Pass cookies back to client
+      // Forward cookies (auth)
       const cookies = response.headers["set-cookie"];
       if (cookies) {
         res.setHeader("set-cookie", cookies);
       }
 
-      // ⭐ AUTH MUST NOT BE NORMALIZED
-      if (
-        req.path.startsWith("/auth/login") ||
-        req.path.startsWith("/auth/logout") ||
-        req.path.startsWith("/auth/refresh")
-      ) {
+      // ⭐ AUTH routes MUST return RAW (do NOT normalize)
+      const isAuthRoute =
+        targetPath === "/internal/auth/login" ||
+        targetPath === "/internal/auth/logout" ||
+        targetPath === "/internal/auth/token/refresh";
+
+      if (isAuthRoute) {
         return res.status(response.status).json(response.data);
       }
 
-      // ⭐ All other services normalized
+      // ⭐ Normalize ALL other services
+      // response.data can be:
+      // - an array
+      // - an object containing { data: [] }
+      // - or other nested forms
+      let payload = response.data;
+      let normalized = [];
+
+      if (Array.isArray(payload)) {
+        normalized = payload;
+      } else if (Array.isArray(payload?.data)) {
+        normalized = payload.data;
+      } else if (Array.isArray(payload?.items)) {
+        normalized = payload.items;
+      }
+
       return res.status(response.status).json({
-        data: response.data,
+        data: normalized,
       });
 
     } catch (err) {
