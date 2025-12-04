@@ -1,6 +1,10 @@
 import { View, Text, TextInput } from "react-native";
 
-export default function NutritionNotes({ notes }) {
+type Props = {
+  notes: string | null;
+};
+
+export default function NutritionNotes({ notes }: Props) {
   return (
     <View
       style={{
@@ -18,7 +22,7 @@ export default function NutritionNotes({ notes }) {
       <TextInput
         multiline
         placeholder="הוסף הערות..."
-        defaultValue={notes}
+        defaultValue={notes ?? ""}
         style={{
           backgroundColor: "white",
           borderRadius: 8,

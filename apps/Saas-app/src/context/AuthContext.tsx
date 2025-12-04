@@ -1,30 +1,33 @@
 import { createContext, useContext, useState } from "react";
-
-type User = {
-  id: string;
-  email: string;
-  role: "coach" | "client";
-  firstName: string;
-  lastName: string;
-  phone?: string | null;
-  imageUrl?: string | null;
-} | null;
+import { UserProfile } from "../types/auth";
 
 type AuthContextType = {
-  user: User;
-  setUser: (u: User) => void;
+  user: UserProfile | null;
+  token: string | null;
+  setUser: (u: UserProfile | null) => void;
+  setToken: (t: string | null) => void;
+  logout: () => void;
 };
 
-const AuthContext = createContext<AuthContextType>({
+export const AuthContext = createContext<AuthContextType>({
   user: null,
+  token: null,
   setUser: () => {},
+  setToken: () => {},
+  logout: () => {},
 });
 
 export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState<User>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  function logout() {
+    setUser(null);
+    setToken(null);
+  }
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, token, setUser, setToken, logout }}>
       {children}
     </AuthContext.Provider>
   );

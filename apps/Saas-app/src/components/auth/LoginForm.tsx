@@ -9,10 +9,19 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  async function handleSubmit() {
+    if (!email || !password) return;
+
+    const user = await login(email, password);
+
+    if (user) {
+      console.log("Logged in as:", user.firstName);
+    }
+  }
+
   return (
     <View style={{ width: "100%", maxWidth: 380 }}>
-      
-      {/* אימייל */}
+
       <Text style={{ fontWeight: "600", textAlign: "right" }}>אימייל</Text>
       <View style={{ position: "relative", marginBottom: 16 }}>
         <Ionicons
@@ -25,6 +34,8 @@ export default function LoginForm() {
           value={email}
           onChangeText={setEmail}
           placeholder="name@company.com"
+          autoCapitalize="none"
+          keyboardType="email-address"
           style={{
             paddingVertical: 14,
             paddingRight: 40,
@@ -37,7 +48,6 @@ export default function LoginForm() {
         />
       </View>
 
-      {/* סיסמה */}
       <Text style={{ fontWeight: "600", textAlign: "right" }}>סיסמה</Text>
       <View style={{ position: "relative", marginBottom: 6 }}>
         <Ionicons
@@ -69,18 +79,15 @@ export default function LoginForm() {
         </Text>
       ) : null}
 
-      {/* שכחת סיסמה */}
       <Pressable style={{ marginBottom: 16 }}>
-        <Text style={{ color: "#2563eb", textAlign: "left" }}>
-          שכחת סיסמה?
-        </Text>
+        <Text style={{ color: "#2563eb", textAlign: "left" }}>שכחת סיסמה?</Text>
       </Pressable>
 
-      {/* כפתור */}
       <Pressable
-        onPress={() => login(email, password)}
+        onPress={handleSubmit}
+        disabled={loading}
         style={{
-          backgroundColor: "#2563eb",
+          backgroundColor: loading ? "#93c5fd" : "#2563eb",
           paddingVertical: 16,
           borderRadius: 12,
           alignItems: "center",

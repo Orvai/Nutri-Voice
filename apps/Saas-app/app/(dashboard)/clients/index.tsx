@@ -7,18 +7,18 @@ import ClientsList from "../../../src/components/clients/ClientsList";
 import { useClients } from "../../../src/hooks/useClients";
 
 export default function ClientsScreen() {
-  const { clients, loading, error } = useClients();
+  const { data, isLoading, error } = useClients();
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
-    return clients.filter((c) => {
+    return (data ?? []).filter((c) => {
       return (
         !query ||
         c.name.includes(query) ||
         c.phone.includes(query)
       );
     });
-  }, [clients, query]);
+  }, [data, query]);
 
   return (
     <ScrollView
@@ -38,11 +38,13 @@ export default function ClientsScreen() {
       <ClientsSearchBar query={query} onChange={setQuery} />
 
       {/* Loading / Error */}
-      {loading && <Text style={{ marginTop: 20 }}>טוען נתונים...</Text>}
-      {error && <Text style={{ marginTop: 20, color: "red" }}>{error}</Text>}
+      {isLoading && <Text style={{ marginTop: 20 }}>טוען נתונים...</Text>}
+      {error && (
+        <Text style={{ marginTop: 20, color: "red" }}>{error.message}</Text>
+      )}
 
       {/* List */}
-      {!loading && !error && <ClientsList clients={filtered} />}
+      {!isLoading && !error && <ClientsList clients={filtered} />}
     </ScrollView>
   );
 }

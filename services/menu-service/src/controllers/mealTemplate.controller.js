@@ -2,7 +2,7 @@ const {
   createMealTemplate,
   listMealTemplates,
   getMealTemplate,
-  upsertMealTemplate,
+  updateMealTemplate,
   deleteMealTemplate,
 } = require("../services/mealTemplate.service");
 
@@ -56,7 +56,7 @@ const getMealTemplateController = async (req, res, next) => {
  */
 const upsertMealTemplateController = async (req, res, next) => {
   try {
-    const result = await upsertMealTemplate(req.params.id, req.body);
+    const result = await updateMealTemplate(req.params.id, req.body);
     res.json({
       message: "Meal template updated successfully",
       data: result,

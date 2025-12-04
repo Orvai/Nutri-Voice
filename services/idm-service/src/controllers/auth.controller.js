@@ -24,14 +24,25 @@ const login = async (req, res, next) => {
       email: req.body.email,
       password: req.body.password,
       ip: req.ip,
-      userAgent: req.headers['user-agent']
+      userAgent: req.headers["user-agent"],
+    });
+
+    // === קריטי: להוסיף כאן ===
+    res.cookie("access_token", result.tokens.accessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,   // local only
+      path: "/",       
+      domain: "localhost",
     });
 
     res.status(200).json(result);
-  } catch (e) {
-    next(e);
+
+  } catch (err) {
+    next(err);
   }
 };
+
 
 /**
  * INTERNAL ONLY

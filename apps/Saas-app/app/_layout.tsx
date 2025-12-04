@@ -3,7 +3,11 @@ import { I18nManager } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { AuthProvider } from "../src/context/AuthContext"; 
+import { AuthProvider } from "../src/context/AuthContext";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   useEffect(() => {
@@ -14,26 +18,25 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <AuthProvider> {/* 👈 עטפנו את כל האפליקציה בהקשר של auth */}
-      <SafeAreaProvider>
-        <StatusBar style="dark" />
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
 
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: "#f9fafb" },
-          }}
-        >
-          {/* מסך לוגין */}
-          <Stack.Screen name="login/index" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: "#f9fafb" },
+            }}
+          >
+            <Stack.Screen name="login/index" />
 
-          {/* קבוצת הדשבורד */}
-          <Stack.Screen name="(dashboard)" />
+            <Stack.Screen name="(dashboard)" />
 
-          {/* index הרגיל */}
-          <Stack.Screen name="index" />
-        </Stack>
-      </SafeAreaProvider>
-    </AuthProvider>
+            <Stack.Screen name="index" />
+          </Stack>
+        </SafeAreaProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

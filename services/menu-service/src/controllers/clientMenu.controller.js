@@ -5,7 +5,7 @@ const {
   updateClientMenu,
   deleteClientMenu,
   createClientMenuFromTemplate,
-} = require("../services/clientMenu.service");
+} = require("../services/clientMenu/clientMenu.service");
 
 /**
  * INTERNAL ONLY

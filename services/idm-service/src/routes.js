@@ -14,6 +14,7 @@ r.post('/internal/auth/login', verifyInternalToken, Auth.login);
 r.post('/internal/auth/logout', verifyInternalToken, Auth.logout);
 r.post('/internal/auth/token/refresh', verifyInternalToken, Auth.refresh);
 
+
 // MFA (optional)
 r.post('/internal/auth/mfa/register', verifyInternalToken, Auth.registerMFADevice);
 r.post('/internal/auth/mfa/verify', verifyInternalToken, Auth.verifyMFA);

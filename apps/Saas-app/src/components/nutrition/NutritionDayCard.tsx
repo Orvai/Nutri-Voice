@@ -2,9 +2,16 @@ import { View, Text, TextInput } from "react-native";
 import NutritionNotes from "./NutritionNotes";
 import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
+import { UINutritionPlan } from "../../types/nutrition-ui";
 
-export default function NutritionDayCard({ plan }) {
+type Props = {
+  plan: UINutritionPlan;
+};
+
+export default function NutritionDayCard({ plan }: Props) {
   if (!plan) return null;
+
+  const isTraining = plan.dayType === "TRAINING";
 
   return (
     <View
@@ -16,7 +23,6 @@ export default function NutritionDayCard({ plan }) {
         borderColor: "#e5e7eb",
       }}
     >
-      {/* כותרת */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -29,7 +35,7 @@ export default function NutritionDayCard({ plan }) {
         }}
       >
         <Text style={{ fontSize: 20, fontWeight: "700" }}>
-          {plan.dayType === "training" ? "תפריט יום אימון" : "תפריט יום ללא אימון"}
+          {isTraining ? "תפריט יום אימון" : "תפריט יום ללא אימון"}
         </Text>
 
         <View style={{ flexDirection: "row-reverse", alignItems: "center", gap: 8 }}>
@@ -50,13 +56,10 @@ export default function NutritionDayCard({ plan }) {
         </View>
       </View>
 
-      {/* הערות כלליות */}
       <NutritionNotes notes={plan.notes} />
 
-      {/* תוספים */}
-      <NutritionSupplements supplements={plan.supplements} />
+      <NutritionSupplements vitamins={plan.vitamins} />
 
-      {/* הארוחות */}
       {plan.meals.map((meal) => (
         <MealBlock key={meal.id} meal={meal} />
       ))}

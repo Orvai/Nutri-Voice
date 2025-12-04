@@ -1,22 +1,30 @@
-// src/dto/food.dto.js
 const { z } = require("zod");
 
+//
+// CREATE
+//
 const FoodItemCreateRequestDto = z.object({
-  name: z.string().min(2),
-  description: z.string().optional(),
-  category: z.string(),
-  caloriesPer100g: z.number().optional(),
-  proteinPer100g: z.number().optional(),
+  name: z.string().min(1),
+  description: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  caloriesPer100g: z.number().nullable().optional(),
+  proteinPer100g: z.number().nullable().optional(),
 });
 
+//
+// UPDATE
+//
 const FoodItemUpdateRequestDto = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  category: z.string().optional(),
-  caloriesPer100g: z.number().optional(),
-  proteinPer100g: z.number().optional(),
+  name: z.string().min(1).optional(),
+  description: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  caloriesPer100g: z.number().nullable().optional(),
+  proteinPer100g: z.number().nullable().optional(),
 });
 
+//
+// RESPONSE
+//
 const FoodItemResponseDto = z.object({
   id: z.string(),
   name: z.string(),
@@ -24,8 +32,6 @@ const FoodItemResponseDto = z.object({
   category: z.string().nullable(),
   caloriesPer100g: z.number().nullable(),
   proteinPer100g: z.number().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
 });
 
 module.exports = {

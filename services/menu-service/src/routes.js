@@ -7,6 +7,7 @@ const Food = require("./controllers/food.controller");
 const MealTemplates = require("./controllers/mealTemplate.controller");
 const TemplateMenus = require("./controllers/templateMenu.controller");
 const ClientMenus = require("./controllers/clientMenu.controller");
+const VitaminController = require("./controllers/vitamin.controller.js");
 
 const router = Router();
 
@@ -20,6 +21,13 @@ router.get("/internal/menu/food/search", verifyInternalToken, Food.searchByName)
 router.get("/internal/menu/food/by-category", verifyInternalToken, Food.listByCategory);
 router.put("/internal/menu/food/:id", verifyInternalToken, Food.updateFoodItem);
 router.delete("/internal/menu/food/:id", verifyInternalToken, Food.deleteFoodItem);
+
+/* ===========================
+   VITAMIN ROUTES
+   =========================== */
+
+router.get("/internal/menu/vitamins", verifyInternalToken, VitaminController.list);
+router.post("/internal/menu/vitamins", verifyInternalToken, VitaminController.create);
 
 /* ===========================
    MEAL TEMPLATE ROUTES
@@ -51,7 +59,6 @@ router.get("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.g
 router.put("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.updateClientMenu);
 router.delete("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.deleteClientMenu);
 
-/* יצירת תפריט לקוח מתבנית */
 router.post(
   "/internal/menu/client-menus/from-template",
   verifyInternalToken,

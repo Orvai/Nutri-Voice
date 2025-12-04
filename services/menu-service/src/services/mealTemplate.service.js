@@ -1,229 +1,174 @@
 const prisma = require("../db/prisma");
 const {
-  TemplateMenuCreateDto,
-  TemplateMenuUpdateDto,
-} = require("../dto/templateMenu.dto");
+  MealTemplateCreateDto,
+  MealTemplateUpsertDto, // update DTO
+} = require("../dto/mealTemplate.dto");
 
-// ------------ Create Template Menu ------------
-const createTemplateMenu = async (payload) => {
-  const data = TemplateMenuCreateDto.parse(payload);
+// =========================================================
+// CREATE Meal Template
+// =========================================================
+const createMealTemplate = async (payload) => {
+  const data = MealTemplateCreateDto.parse(payload);
 
-  return prisma.templateMenu.create({
+  const created = await prisma.mealTemplate.create({
     data: {
       coachId: data.coachId,
       name: data.name,
-      dayType: data.dayType,
-      notes: data.notes ?? null,
+      kind: data.kind,
+      totalCalories: data.totalCalories ?? 0,
 
-      meals: data.meals
+      items: data.items
         ? {
-            create: data.meals.map((meal) => ({
-              name: meal.name,
-              selectedOptionId: meal.selectedOptionId ?? null,
-              options: {
-                create: meal.options.map((opt) => ({
-                  mealTemplateId: opt.mealTemplateId,
-                  name: opt.name ?? null,
-                  orderIndex: opt.orderIndex ?? 0,
-                })),
-              },
-            })),
-          }
-        : undefined,
-
-      vitamins: data.vitamins
-        ? {
-            create: data.vitamins.map((v) => ({
-              name: v.name,
-              description: v.description ?? null,
+            create: data.items.map((item) => ({
+              foodItemId: item.foodItemId,
+              role: item.role,
+              defaultGrams: item.defaultGrams ?? 100,
+              defaultCalories: item.defaultCalories ?? null,
+              notes: item.notes ?? null,
             })),
           }
         : undefined,
     },
 
     include: {
-      meals: { include: { options: true } },
-      vitamins: true,
+      items: { include: { foodItem: true } },
+      templateMealOptions: true,
+      clientMealOptions: true,
     },
   });
+
+  return created;
 };
 
-// ------------ List ------------
-const listTemplateMenus = async (query) => {
-  return prisma.templateMenu.findMany({
+// =========================================================
+// LIST Meal Templates
+// =========================================================
+const listMealTemplates = async (query) => {
+  return prisma.mealTemplate.findMany({
     where: {
       ...(query.coachId && { coachId: query.coachId }),
     },
     include: {
-      meals: { include: { options: true } },
-      vitamins: true,
+      items: {
+        include: { foodItem: true },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
 };
 
-// ------------ Get by ID ------------
-const getTemplateMenu = async (id) => {
-  const menu = await prisma.templateMenu.findUnique({
+// =========================================================
+// GET Meal Template by ID
+// =========================================================
+const getMealTemplate = async (id) => {
+  const template = await prisma.mealTemplate.findUnique({
     where: { id },
     include: {
-      meals: { include: { options: true } },
-      vitamins: true,
+      items: { include: { foodItem: true } },
+
+      templateMealOptions: {
+        include: {
+          meal: true,
+        },
+      },
+      clientMealOptions: true,
     },
   });
-  if (!menu) {
-    const e = new Error("Template menu not found");
+
+  if (!template) {
+    const e = new Error("Meal template not found");
     e.status = 404;
     throw e;
   }
-  return menu;
+
+  return template;
 };
 
-// ------------ Update Template Menu ------------
-const updateTemplateMenu = async (id, payload) => {
-  const data = TemplateMenuUpdateDto.parse(payload);
+// =========================================================
+// UPDATE Meal Template (Upsert style)
+// =========================================================
+const updateMealTemplate = async (id, payload) => {
+  const data = MealTemplateUpsertDto.parse(payload);
 
   return prisma.$transaction(async (tx) => {
-    const existing = await tx.templateMenu.findUnique({ where: { id } });
+    const existing = await tx.mealTemplate.findUnique({
+      where: { id },
+    });
+
     if (!existing) {
-      const e = new Error("Template menu not found");
+      const e = new Error("Meal template not found");
       e.status = 404;
       throw e;
     }
 
-    // --- update basic fields ---
-    await tx.templateMenu.update({
+    // --- Update basic fields ---
+    await tx.mealTemplate.update({
       where: { id },
       data: {
         name: data.name ?? existing.name,
-        dayType: data.dayType ?? existing.dayType,
-        notes: data.notes ?? existing.notes,
+        kind: data.kind ?? existing.kind,
+        totalCalories: data.totalCalories ?? existing.totalCalories,
       },
     });
 
-    // ========== Meals ==========
-    if (data.mealsToDelete?.length) {
-      const ids = data.mealsToDelete.map((m) => m.id);
-      await tx.templateMenuMeal.deleteMany({
-        where: { id: { in: ids }, templateMenuId: id },
+    // ========== DELETE items ==========
+    if (data.itemsToDelete?.length) {
+      await tx.mealTemplateItem.deleteMany({
+        where: {
+          id: { in: data.itemsToDelete.map((i) => i.id) },
+          mealTemplateId: id,
+        },
       });
     }
 
-    if (data.mealsToUpdate?.length) {
-      for (const meal of data.mealsToUpdate) {
-        // update meal basic fields
-        await tx.templateMenuMeal.update({
-          where: { id: meal.id },
+    // ========== UPDATE items ==========
+    if (data.itemsToUpdate?.length) {
+      for (const item of data.itemsToUpdate) {
+        await tx.mealTemplateItem.update({
+          where: { id: item.id },
           data: {
-            name: meal.name ?? undefined,
-            selectedOptionId: meal.selectedOptionId ?? undefined,
-          },
-        });
-
-        // options delete
-        if (meal.optionsToDelete?.length) {
-          const optIds = meal.optionsToDelete.map((o) => o.id);
-          await tx.templateMenuMealOption.deleteMany({
-            where: { id: { in: optIds }, mealId: meal.id },
-          });
-        }
-
-        // options update
-        if (meal.optionsToUpdate?.length) {
-          for (const opt of meal.optionsToUpdate) {
-            await tx.templateMenuMealOption.update({
-              where: { id: opt.id },
-              data: {
-                mealTemplateId: opt.mealTemplateId ?? undefined,
-                name: opt.name ?? undefined,
-                orderIndex: opt.orderIndex ?? undefined,
-              },
-            });
-          }
-        }
-
-        // options add
-        if (meal.optionsToAdd?.length) {
-          await tx.templateMenuMealOption.createMany({
-            data: meal.optionsToAdd.map((opt) => ({
-              mealId: meal.id,
-              mealTemplateId: opt.mealTemplateId,
-              name: opt.name ?? null,
-              orderIndex: opt.orderIndex ?? 0,
-            })),
-          });
-        }
-      }
-    }
-
-    if (data.mealsToAdd?.length) {
-      for (const meal of data.mealsToAdd) {
-        const createdMeal = await tx.templateMenuMeal.create({
-          data: {
-            templateMenuId: id,
-            name: meal.name,
-            selectedOptionId: meal.selectedOptionId ?? null,
-          },
-        });
-
-        if (meal.options?.length) {
-          await tx.templateMenuMealOption.createMany({
-            data: meal.options.map((opt) => ({
-              mealId: createdMeal.id,
-              mealTemplateId: opt.mealTemplateId,
-              name: opt.name ?? null,
-              orderIndex: opt.orderIndex ?? 0,
-            })),
-          });
-        }
-      }
-    }
-
-    // ========== Vitamins ==========
-    if (data.vitaminsToDelete?.length) {
-      const ids = data.vitaminsToDelete.map((v) => v.id);
-      await tx.templateMenuVitamin.deleteMany({
-        where: { id: { in: ids }, templateMenuId: id },
-      });
-    }
-
-    if (data.vitaminsToUpdate?.length) {
-      for (const v of data.vitaminsToUpdate) {
-        await tx.templateMenuVitamin.update({
-          where: { id: v.id },
-          data: {
-            name: v.name ?? undefined,
-            description: v.description ?? undefined,
+            foodItemId: item.foodItemId ?? undefined,
+            role: item.role ?? undefined,
+            defaultGrams: item.defaultGrams ?? undefined,
+            defaultCalories: item.defaultCalories ?? undefined,
+            notes: item.notes ?? undefined,
           },
         });
       }
     }
 
-    if (data.vitaminsToAdd?.length) {
-      await tx.templateMenuVitamin.createMany({
-        data: data.vitaminsToAdd.map((v) => ({
-          templateMenuId: id,
-          name: v.name,
-          description: v.description ?? null,
+    // ========== ADD items ==========
+    if (data.itemsToAdd?.length) {
+      await tx.mealTemplateItem.createMany({
+        data: data.itemsToAdd.map((item) => ({
+          mealTemplateId: id,
+          foodItemId: item.foodItemId,
+          role: item.role,
+          defaultGrams: item.defaultGrams ?? 100,
+          defaultCalories: item.defaultCalories ?? null,
+          notes: item.notes ?? null,
         })),
       });
     }
 
-    return getTemplateMenu(id);
+    // Return updated template
+    return getMealTemplate(id);
   });
 };
 
-// ------------ Delete ------------
-const deleteTemplateMenu = async (id) => {
-  return prisma.templateMenu.delete({
+// =========================================================
+// DELETE Template
+// =========================================================
+const deleteMealTemplate = async (id) => {
+  return prisma.mealTemplate.delete({
     where: { id },
   });
 };
 
 module.exports = {
-  createTemplateMenu,
-  listTemplateMenus,
-  getTemplateMenu,
-  updateTemplateMenu,
-  deleteTemplateMenu,
+  createMealTemplate,
+  listMealTemplates,
+  getMealTemplate,
+  updateMealTemplate,
+  deleteMealTemplate,
 };

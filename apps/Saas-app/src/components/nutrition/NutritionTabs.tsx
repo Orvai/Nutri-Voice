@@ -15,28 +15,34 @@ type Props = {
 export default function NutritionTabs({ tabs, active, onChange }: Props) {
   return (
     <View style={{ flexDirection: "row-reverse", gap: 8, marginBottom: 16 }}>
-      {tabs.map((tab) => (
-        <Pressable
-          key={tab.id}
-          onPress={() => onChange(tab.id)}
-          style={{
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-            backgroundColor: active === tab.id ? "#e0f2fe" : "transparent",
-            borderBottomWidth: active === tab.id ? 2 : 1,
-            borderBottomColor: active === tab.id ? "#0284c7" : "#e5e7eb",
-          }}
-        >
-          <Text
+      {tabs.map((tab) => {
+        const isActive = active === tab.id;
+
+        return (
+          <Pressable
+            key={tab.id}
+            onPress={() => onChange(tab.id)}
             style={{
-              fontWeight: active === tab.id ? "700" : "500",
-              color: active === tab.id ? "#0284c7" : "#6b7280",
+              paddingVertical: 10,
+              paddingHorizontal: 20,
+              backgroundColor: isActive ? "#e0f2fe" : "transparent",
+              borderBottomWidth: isActive ? 3 : 1,
+              borderBottomColor: isActive ? "#0284c7" : "#e5e7eb",
+              borderTopLeftRadius: 6,
+              borderTopRightRadius: 6,
             }}
           >
-            {tab.label}
-          </Text>
-        </Pressable>
-      ))}
+            <Text
+              style={{
+                fontWeight: isActive ? "700" : "500",
+                color: isActive ? "#0284c7" : "#6b7280",
+              }}
+            >
+              {tab.label}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }

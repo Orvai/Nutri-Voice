@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { Link, usePathname, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
-import { api } from "../../api/api"; 
+import { api } from "../../api/api.ts";
 
 const menuItems = [
   { label: "דשבורד",        icon: "grid-outline",        href: "/(dashboard)/dashboard" },
@@ -22,28 +22,42 @@ export default function Sidebar() {
 
   async function handleLogout() {
     try {
-      await api.post("/api/auth/logout");
-
+      await api.post("/api/auth/logout", null, {
+        headers: {
+          Authorization: `Bearer ${globalThis.ACCESS_TOKEN}`,
+        },
+      });
     } catch (err: any) {
       console.log("LOGOUT ERROR:", err?.response?.data || err);
     } finally {
       globalThis.ACCESS_TOKEN = undefined;
       setUser(null);
-
       router.replace("/login");
     }
   }
 
   return (
     <View
-    style={{ width: 240, backgroundColor: "#ffffff", borderLeftWidth: 1, borderLeftColor: "#e5e7eb", paddingTop: 40, }}
+      style={{
+        width: 240,
+        backgroundColor: "#ffffff",
+        borderLeftWidth: 1,
+        borderLeftColor: "#e5e7eb",
+        paddingTop: 40,
+      }}
     >
       {/* חלק עליון – לוגו + תפריט */}
       <View>
         <Text
-          style={{ textAlign: "right", fontSize: 22, fontWeight: "700", paddingHorizontal: 20, marginBottom: 30, }}
+          style={{
+            textAlign: "right",
+            fontSize: 22,
+            fontWeight: "700",
+            paddingHorizontal: 20,
+            marginBottom: 30,
+          }}
         >
-          Nutri-Voiceד
+          Nutri-Voice
         </Text>
 
         <View style={{ gap: 8 }}>
@@ -94,6 +108,7 @@ export default function Sidebar() {
           paddingHorizontal: 20,
           borderTopWidth: 1,
           borderTopColor: "#e5e7eb",
+          marginTop: "auto",
         }}
       >
         <Ionicons

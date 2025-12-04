@@ -1,52 +1,48 @@
-// gateway/src/app.js
 import express from "express";
-import cookieParser from "cookie-parser";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.routes.js";
-import clientsRoutes from "./routes/clients.routes.js";
 import menuRoutes from "./routes/menu.routes.js";
-
-import  {verifyJwt} from "./middleware/verifyJwt.js";
-import {attachUser} from "./middleware/attachUser.js";
-
-import { registerSwagger } from "./swagger/swagger.js";
+import workoutRoutes from "./routes/workout.routes.js";
+import clientRoutes from "./routes/clients.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
-import { logger } from "./middleware/logger.js";
+import { verifyJwt } from "./middleware/verifyJwt.js";
 
 const app = express();
 
-/* ------------------------------
-   CORS (Expo Web Compatible)
------------------------------- */
-app.use(cors({
-  origin: true,
-  credentials: true,
-}));
+// ----------------------
+// 1) CORS 
+// ----------------------
+app.use(
+  cors({
+    origin: "http://localhost:8081",
+    credentials: true,
+  })
+);
 
+// ----------------------
+// 2) JSON + Cookies
+// ----------------------
 app.use(express.json());
 app.use(cookieParser());
 
-// JWT → req.userId
+// ----------------------
+// 3) Auth middleware
+// ----------------------
 app.use(verifyJwt);
 
-// Attach full user object → req.user
-app.use(attachUser);
-
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.url}`);
-  next();
-});
-
-// Swagger
-registerSwagger(app);
-
-// Routes
+// ----------------------
+// 4) Routes
+// ----------------------
 app.use("/api", authRoutes);
-app.use("/api/clients", clientsRoutes);
-app.use("/api/menu", menuRoutes);
+app.use("/api", menuRoutes);
+app.use("/api", workoutRoutes);
+app.use("/api/clients", clientRoutes);
 
-// Global Error Handler
+// ----------------------
+// 5) Error Handler
+// ----------------------
 app.use(errorHandler);
 
 export default app;

@@ -1,86 +1,95 @@
 const { z } = require("zod");
 
-const MealItemRoleEnum = z.enum([
-  "PROTEIN",
-  "CARB",
-  "FREE",
-  "HEALTH",
-  "MENTAL_HEALTH",
-]);
-
-const MealTemplateKindEnum = z.enum([
-  "MEAT_MEAL",
-  "DAIRY_MEAL",
-  "FREE_CALORIES",
-  "CARB_LOAD",
-]);
-
-const MealTemplateItemInputDto = z.object({
-  foodItemId: z.string(),
-  role: MealItemRoleEnum,
-  defaultGrams: z.number().optional(),
-  defaultCalories: z.number().optional(),
-  notes: z.string().optional(),
-});
-
-const MealTemplateItemUpdateDto = z.object({
-  id: z.string(),
-  foodItemId: z.string().optional(),
-  role: MealItemRoleEnum.optional(),
-  defaultGrams: z.number().optional(),
-  defaultCalories: z.number().optional(),
-  notes: z.string().optional(),
-});
-
-const MealTemplateItemDeleteDto = z.object({
-  id: z.string(),
-});
-
-const MealTemplateCreateRequestDto = z.object({
-  name: z.string().min(2),
-  kind: MealTemplateKindEnum,
-  totalCalories: z.number().positive(),
-  items: z.array(MealTemplateItemInputDto).optional(),
-});
-
-const MealTemplateUpdateRequestDto = z.object({
-  name: z.string().optional(),
-  kind: MealTemplateKindEnum.optional(),
+//
+// CREATE
+//
+const MealTemplateCreateDto = z.object({
+  coachId: z.string(),
+  name: z.string().min(1),
+  kind: z.string(), // enum validated by Prisma
   totalCalories: z.number().optional(),
 
-  itemsToAdd: z.array(MealTemplateItemInputDto).optional(),
-  itemsToUpdate: z.array(MealTemplateItemUpdateDto).optional(),
-  itemsToDelete: z.array(MealTemplateItemDeleteDto).optional(),
+  items: z
+    .array(
+      z.object({
+        foodItemId: z.string(),
+        role: z.string(), // enum
+        defaultGrams: z.number().optional(),
+        defaultCalories: z.number().nullable().optional(),
+        notes: z.string().nullable().optional(),
+      })
+    )
+    .optional(),
 });
 
+//
+// UPDATE
+//
+const MealTemplateUpsertDto = z.object({
+  name: z.string().optional(),
+  kind: z.string().optional(),
+  totalCalories: z.number().optional(),
 
-const MealTemplateItemResponseDto = z.object({
-  id: z.string(),
-  foodItemId: z.string(),
-  role: MealItemRoleEnum,
-  defaultGrams: z.number().nullable(),
-  defaultCalories: z.number().nullable(),
-  notes: z.string().nullable().optional(),
+  itemsToAdd: z
+    .array(
+      z.object({
+        foodItemId: z.string(),
+        role: z.string(),
+        defaultGrams: z.number().optional(),
+        defaultCalories: z.number().nullable().optional(),
+        notes: z.string().nullable().optional(),
+      })
+    )
+    .optional(),
+
+  itemsToUpdate: z
+    .array(
+      z.object({
+        id: z.string(),
+        foodItemId: z.string().optional(),
+        role: z.string().optional(),
+        defaultGrams: z.number().optional(),
+        defaultCalories: z.number().nullable().optional(),
+        notes: z.string().nullable().optional(),
+      })
+    )
+    .optional(),
+
+  itemsToDelete: z
+    .array(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .optional(),
 });
 
+//
+// RESPONSE
+//
 const MealTemplateResponseDto = z.object({
   id: z.string(),
   name: z.string(),
-  kind: MealTemplateKindEnum,
+  kind: z.string(),
   totalCalories: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  items: z.array(MealTemplateItemResponseDto),
+  items: z.array(
+    z.object({
+      id: z.string(),
+      role: z.string(),
+      defaultGrams: z.number(),
+      defaultCalories: z.number().nullable(),
+      notes: z.string().nullable(),
+      foodItem: z.object({
+        id: z.string(),
+        name: z.string(),
+        caloriesPer100g: z.number().nullable(),
+      }),
+    })
+  ),
 });
 
-
 module.exports = {
-  MealItemRoleEnum,
-  MealTemplateKindEnum,
-  MealTemplateItemInputDto,
-  MealTemplateItemUpdateDto,
-  MealTemplateItemDeleteDto,
-  MealTemplateCreateRequestDto,
-  MealTemplateUpdateRequestDto,
-  MealTemplateResponseDto
+  MealTemplateCreateDto,
+  MealTemplateUpsertDto,
+  MealTemplateResponseDto,
 };

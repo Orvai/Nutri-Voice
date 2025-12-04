@@ -1,7 +1,12 @@
 import { View, Text, Pressable, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { UIVitamin } from "../../types/nutrition-ui";
 
-export default function NutritionSupplements({ supplements }) {
+type Props = {
+  vitamins: UIVitamin[];
+};
+
+export default function NutritionSupplements({ vitamins }: Props) {
   return (
     <View
       style={{
@@ -36,6 +41,9 @@ export default function NutritionSupplements({ supplements }) {
             paddingVertical: 6,
             borderRadius: 8,
           }}
+          onPress={() => {
+            console.log("TODO: open add-vitamin flow");
+          }}
         >
           <Ionicons name="add" size={16} color="#0f766e" />
           <Text style={{ color: "#0f766e", fontSize: 12, fontWeight: "600" }}>
@@ -44,49 +52,37 @@ export default function NutritionSupplements({ supplements }) {
         </Pressable>
       </View>
 
-      {supplements.map((s) => (
+      {vitamins.map((v) => (
         <View
-          key={s.id}
+          key={v.id}
           style={{
-            flexDirection: "row-reverse",
             backgroundColor: "white",
             padding: 10,
             borderRadius: 10,
             borderWidth: 1,
             borderColor: "#99f6e4",
             marginBottom: 10,
-            alignItems: "center",
-            gap: 10,
+            gap: 8,
           }}
         >
-          <View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: "#14b8a6",
-            }}
-          />
-
-          <Text style={{ flex: 1 }}>{s.name}</Text>
+          <Text style={{ fontWeight: "600" }}>{v.name}</Text>
 
           <TextInput
-            value={s.dosage}
+            multiline
+            value={v.description ?? ""}
+            placeholder="Description..."
             style={{
-              width: 70,
               backgroundColor: "#f9fafb",
               borderRadius: 6,
               borderWidth: 1,
               borderColor: "#d1d5db",
-              textAlign: "center",
-              paddingVertical: 4,
+              paddingHorizontal: 8,
+              paddingVertical: 6,
               fontSize: 12,
+              textAlignVertical: "top",
+              minHeight: 40,
             }}
           />
-
-          <Text style={{ fontSize: 12, color: "#6b7280" }}>{s.timing}</Text>
-
-          <Ionicons name="close" size={18} color="#dc2626" />
         </View>
       ))}
     </View>

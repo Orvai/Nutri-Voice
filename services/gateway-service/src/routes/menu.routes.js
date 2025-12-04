@@ -1,60 +1,65 @@
-// src/routes/menu.routes.js
 import { Router } from "express";
+import { forward } from "../utils/forward.js";
 import { authRequired } from "../middleware/authRequired.js";
-
-import { requireCoach, requireClient, requireCoachOrClient } from "../middleware/requireRole.js";
-
-import { FoodController } from "../controllers/menu/food.controller.js";
-import { MealTemplateController } from "../controllers/menu/mealTemplate.controller.js";
-import { TemplateMenuController } from "../controllers/menu/templateMenu.controller.js";
-import { ClientMenuController } from "../controllers/menu/clientMenu.controller.js";
+import { requireCoach } from "../middleware/requireRole.js";
 
 const r = Router();
+const BASE = process.env.MENU_SERVICE_URL;
 
-/* ============================
-   FOOD
-============================ */
+// =====================
+// FOOD
+// =====================
 
-// Only coach can create/edit/delete
-r.post("/food", authRequired, requireCoach, FoodController.create);
-r.put("/food/:id", authRequired, requireCoach, FoodController.update);
-r.delete("/food/:id", authRequired, requireCoach, FoodController.remove);
+// רשימת מאכלים – מותר גם למאמן וגם למתאמן
+r.get("/food", authRequired, forward(BASE, "/internal/menu/food"));
+r.get("/food/search", authRequired, forward(BASE, "/internal/menu/food/search"));
+r.get("/food/by-category", authRequired, forward(BASE, "/internal/menu/food/by-category"));
 
-// Both coach & client can view / search
-r.get("/food", authRequired, requireCoachOrClient, FoodController.list);
-r.get("/food/search", authRequired, requireCoachOrClient, FoodController.search);
-r.get("/food/by-category", authRequired, requireCoachOrClient, FoodController.byCategory);
+// יצירה/עדכון/מחיקה – רק מאמן
+r.post("/food", authRequired, requireCoach, forward(BASE, "/internal/menu/food"));
+r.put("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/food/:id"));
+r.delete("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/food/:id"));
 
-/* ============================
-   MEAL TEMPLATES (coach only)
-============================ */
-r.post("/templates", authRequired, requireCoach, MealTemplateController.create);
-r.get("/templates", authRequired, requireCoach, MealTemplateController.list);
-r.get("/templates/:id", authRequired, requireCoach, MealTemplateController.get);
-r.put("/templates/:id", authRequired, requireCoach, MealTemplateController.update);
-r.delete("/templates/:id", authRequired, requireCoach, MealTemplateController.remove);
+// =====================
+// MEAL TEMPLATES
+// =====================
 
-/* ============================
-   TEMPLATE MENUS (coach only)
-============================ */
-r.post("/template-menus", authRequired, requireCoach, TemplateMenuController.create);
-r.get("/template-menus", authRequired, requireCoach, TemplateMenuController.list);
-r.get("/template-menus/:id", authRequired, requireCoach, TemplateMenuController.get);
-r.put("/template-menus/:id", authRequired, requireCoach, TemplateMenuController.update);
-r.delete("/template-menus/:id", authRequired, requireCoach, TemplateMenuController.remove);
+// צפייה – מאמן בלבד (או שתרצה גם ללקוח? כרגע שמתי מאמן)
+r.get("/templates", authRequired, requireCoach, forward(BASE, "/internal/menu/templates"));
+r.get("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
 
-/* ============================
-   CLIENT MENUS
-============================ */
+// יצירה/עדכון/מחיקה – מאמן בלבד
+r.post("/templates", authRequired, requireCoach, forward(BASE, "/internal/menu/templates"));
+r.put("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
+r.delete("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
 
-// Coach-only actions
-r.post("/client-menus", authRequired, requireCoach, ClientMenuController.create);
-r.post("/client-menus/from-template", authRequired, requireCoach, ClientMenuController.fromTemplate);
-r.put("/client-menus/:id", authRequired, requireCoach, ClientMenuController.update);
-r.delete("/client-menus/:id", authRequired, requireCoach, ClientMenuController.remove);
+// =====================
+// TEMPLATE MENUS (daily plan)
+// =====================
 
-// Coach OR Client can read
-r.get("/client-menus", authRequired, requireCoachOrClient, ClientMenuController.list);
-r.get("/client-menus/:id", authRequired, requireCoachOrClient, ClientMenuController.get);
+r.get("/template-menus", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus"));
+r.get("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus/:id"));
+
+r.post("/template-menus", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus"));
+r.put("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus/:id"));
+r.delete("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus/:id"));
+
+// =====================
+// CLIENT MENUS
+// =====================
+
+// פה אפשר לשקול לאפשר גם למתאמן וגם למאמן - אז בעתיד תשתמש ב-requireCoachOrClient
+r.get("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"));
+r.get("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
+
+r.post("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"));
+r.put("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
+r.delete("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
+
+r.post(
+  "/client-menus/from-template",
+  authRequired,
+  forward(BASE, "/internal/menu/client-menus/from-template")
+);
 
 export default r;

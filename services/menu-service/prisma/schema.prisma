@@ -55,6 +55,17 @@ model FoodItem {
   clientMenuMealItems ClientMenuMealItem[]
 }
 
+model VitaminMaster {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  templateVitamins   TemplateMenuVitamin[] @relation("VitaminTemplateRelation")
+  clientMenuVitamins ClientMenuVitamin[]   @relation("VitaminClientRelation")
+}
+
 // ==================== Meal templates ====================
 
 model MealTemplate {
@@ -146,17 +157,21 @@ model TemplateMenuMealOption {
 }
 
 model TemplateMenuVitamin {
-  id             String  @id @default(cuid())
+  id             String @id @default(cuid())
   templateMenuId String
-  name           String
-  description    String?
 
-  templateMenu TemplateMenu @relation(fields: [templateMenuId], references: [id], onDelete: Cascade)
+  vitaminId   String?
+  name        String
+  description String?
+
+  templateMenu TemplateMenu   @relation(fields: [templateMenuId], references: [id], onDelete: Cascade)
+  vitamin      VitaminMaster? @relation("VitaminTemplateRelation", fields: [vitaminId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([templateMenuId])
+  @@index([vitaminId])
 }
 
 // ==================== CLIENT MENUS ====================
@@ -176,7 +191,8 @@ model ClientMenu {
   originalTemplateMenuId String?
   originalTemplateMenu   TemplateMenu? @relation(fields: [originalTemplateMenuId], references: [id])
 
-  meals ClientMenuMeal[]
+  meals    ClientMenuMeal[]
+  vitamins ClientMenuVitamin[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -242,4 +258,22 @@ model ClientMenuMealItem {
 
   @@index([clientMenuMealId])
   @@index([foodItemId])
+}
+
+model ClientMenuVitamin {
+  id           String  @id @default(cuid())
+  clientMenuId String
+  vitaminId    String?
+
+  name        String
+  description String?
+
+  clientMenu ClientMenu     @relation(fields: [clientMenuId], references: [id], onDelete: Cascade)
+  vitamin    VitaminMaster? @relation("VitaminClientRelation", fields: [vitaminId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientMenuId])
+  @@index([vitaminId])
 }

@@ -1,15 +1,11 @@
-import { View, ScrollView } from "react-native";
-import { useClientNutritionPlans } from "../../../hooks/useClientNutritionPlans";
-import PlansList from "./PlansList";
-import EmptyState from "./EmptyState";
+// src/components/client-profile/nutrition/ClientNutritionPlans.tsx
 
-export default function ClientNutritionPlans({ clientId }) {
-  const { plans, createPlan } = useClientNutritionPlans(clientId);
+import { View, Text } from "react-native";
 
-  if (!plans || plans.length === 0) {
-    return <EmptyState onCreate={createPlan} />;
-  }
-
-  return <PlansList plans={plans} onCreate={createPlan} />;
+export default function ClientNutritionPlans() {
+  return (
+    <View style={{ padding: 20 }}>
+      <Text>תוכניות תזונה ללקוח (ריק כרגע)</Text>
+    </View>
+  );
 }
-

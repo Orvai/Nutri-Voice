@@ -1,30 +1,16 @@
-// gateway/src/routes/auth.routes.js
 import { Router } from "express";
-import * as Auth from "../controllers/auth.controller.js";
-import { getMe } from "../controllers/authProfile.controller.js";
-import { verifyJwt } from "../middleware/verifyJwt.js";
-
-
+import { forward } from "../utils/forward.js";
 
 const r = Router();
+const BASE = process.env.IDM_SERVICE_URL;
 
-/* ------------------------
-        AUTH ROUTES
-------------------------- */
-
-// Login
-r.post("/auth/login", Auth.login);
-
-// Register
-r.post("/auth/register", Auth.register);
-
-// Refresh access token
-r.post("/auth/refresh", Auth.refresh);
-
-// Logout
-r.post("/auth/logout", Auth.logout);
-
-// Get current logged-in user (Profile)
-r.get("/auth/me", verifyJwt, getMe);
-
+r.post("/auth/register", forward(BASE, "/internal/auth/register"));
+r.post("/auth/login", forward(BASE, "/internal/auth/login"));
+r.post("/auth/logout", forward(BASE, "/internal/auth/logout"));
+r.post("/auth/token/refresh", forward(BASE, "/internal/auth/token/refresh"));
+r.get("/users/:userId/info", (req, res, next) => {
+    const { userId } = req.params;
+    const target = `/internal/users/${userId}/info`;
+    return forward(BASE, target)(req, res, next);
+  });
 export default r;

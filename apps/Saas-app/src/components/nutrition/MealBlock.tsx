@@ -1,7 +1,17 @@
+// src/components/nutrition/MealBlock.tsx
 import { View, Text } from "react-native";
 import MealOptionsBlock from "./MealOptionsBlock";
+import { UIMeal } from "../../types/nutrition-ui";
 
-export default function MealBlock({ meal }) {
+type Props = {
+  meal: UIMeal;
+};
+
+export default function MealBlock({ meal }: Props) {
+  const sortedOptions = [...meal.options].sort(
+    (a, b) => a.orderIndex - b.orderIndex
+  );
+
   return (
     <View
       style={{
@@ -13,7 +23,6 @@ export default function MealBlock({ meal }) {
         padding: 16,
       }}
     >
-      {/* כותרת הארוחה */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -23,7 +32,11 @@ export default function MealBlock({ meal }) {
       >
         <View>
           <Text style={{ fontSize: 18, fontWeight: "700" }}>{meal.title}</Text>
-          <Text style={{ fontSize: 13, color: "#6b7280" }}>{meal.timeRange}</Text>
+          {meal.timeRange ? (
+            <Text style={{ fontSize: 13, color: "#6b7280" }}>
+              {meal.timeRange}
+            </Text>
+          ) : null}
         </View>
 
         <View style={{ flexDirection: "row-reverse", gap: 10 }}>
@@ -32,7 +45,6 @@ export default function MealBlock({ meal }) {
         </View>
       </View>
 
-      {/* הערות */}
       <View
         style={{
           backgroundColor: "#fef9c3",
@@ -48,8 +60,7 @@ export default function MealBlock({ meal }) {
         </Text>
       </View>
 
-      {/* כל האופציות */}
-      {meal.options.map((opt) => (
+      {sortedOptions.map((opt) => (
         <MealOptionsBlock key={opt.id} option={opt} />
       ))}
     </View>

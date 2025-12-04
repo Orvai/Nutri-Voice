@@ -1,15 +1,12 @@
 import jwt from "jsonwebtoken";
 
 export function verifyJwt(req, res, next) {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.access_token;
 
-  // No token? → Just skip, allow public routes like /auth/login
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     req.user = null;
     return next();
   }
-
-  const token = authHeader.replace("Bearer ", "").trim();
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
@@ -24,11 +21,9 @@ export function verifyJwt(req, res, next) {
       userId: payload.sub,
       role: payload.role,
     };
-
-    next();
   } catch (err) {
-    // If token is invalid → treat as unauthenticated, not 401.
     req.user = null;
-    next();
   }
+
+  next();
 }

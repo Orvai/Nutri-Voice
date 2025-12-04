@@ -1,6 +1,12 @@
+// src/components/nutrition/MealFoodItem.tsx
 import { View, Text, TextInput } from "react-native";
+import { UIFoodItem } from "../../types/nutrition-ui";
 
-export default function MealFoodItem({ food }) {
+type Props = {
+  food: UIFoodItem;
+};
+
+export default function MealFoodItem({ food }: Props) {
   return (
     <View
       style={{
@@ -23,6 +29,7 @@ export default function MealFoodItem({ food }) {
 
       <TextInput
         defaultValue={food.grams.toString()}
+        keyboardType="numeric"
         style={{
           width: 60,
           borderWidth: 1,
@@ -35,7 +42,9 @@ export default function MealFoodItem({ food }) {
 
       <Text style={{ color: "#6b7280", fontSize: 12 }}>גרם</Text>
 
-      <Text style={{ fontWeight: "600" }}>{food.calories} קק״ל</Text>
+      <Text style={{ fontWeight: "600" }}>
+        {food.calories != null ? `${food.calories} קק״ל` : "-"}
+      </Text>
 
       <Text style={{ color: "#dc2626", fontSize: 18 }}>✖</Text>
     </View>
