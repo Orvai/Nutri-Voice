@@ -144,13 +144,35 @@ const getTemplateMenu = async (id) => {
 const updateTemplateMenu = async (id, payload) => {
   const data = TemplateMenuUpdateDto.parse(payload);
 
-  const updated = await prisma.templateMenu.update({
-    where: { id },
-    data: {
-      name: data.name ?? undefined,
-      dayType: data.dayType ?? undefined,
-      notes: data.notes ?? undefined,
-      totalCalories: data.totalCalories ?? undefined
+  await prisma.$transaction(async (tx) => {
+    await tx.templateMenu.update({
+      where: { id },
+      data: {
+        name: data.name ?? undefined,
+        dayType: data.dayType ?? undefined,
+        notes: data.notes ?? undefined,
+        totalCalories: data.totalCalories ?? undefined,
+      },
+    });
+
+    if (data.vitaminsToDelete?.length) {
+      await tx.templateMenuVitamin.deleteMany({
+        where: {
+          id: { in: data.vitaminsToDelete.map((v) => v.id) },
+          templateMenuId: id,
+        },
+      });
+    }
+
+    if (data.vitaminsToAdd?.length) {
+      await tx.templateMenuVitamin.createMany({
+        data: data.vitaminsToAdd.map((v) => ({
+          templateMenuId: id,
+          vitaminId: v.vitaminId,
+          name: v.name,
+          description: v.description ?? null,
+        })),
+      });
     }
   });
 

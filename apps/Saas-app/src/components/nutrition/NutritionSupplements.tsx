@@ -152,7 +152,7 @@ export default function NutritionSupplements({ vitamins, templateMenuId }: Props
       <VitaminPickerModal
         visible={pickerOpen}
         onClose={() => setPickerOpen(false)}
-        existingIds={vitamins.map((v) => v.vitaminId ?? v.id)}
+        existingIds={vitamins.map((v) => v.id)}
         onSelect={(vit) => {
           updateMenu.mutate(
             {

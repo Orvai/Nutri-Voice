@@ -45,6 +45,23 @@ const TemplateMenuUpdateDto = z.object({
   dayType: z.string().optional(),
   notes: z.string().nullable().optional(),
   totalCalories: z.number().optional(),
+  vitaminsToAdd: z
+  .array(
+    z.object({
+      vitaminId: z.string(),
+      name: z.string(),
+      description: z.string().nullable().optional(),
+    })
+  )
+  .optional(),
+
+vitaminsToDelete: z
+  .array(
+    z.object({
+      id: z.string(),
+    })
+  )
+  .optional(),
 });
 
 //
