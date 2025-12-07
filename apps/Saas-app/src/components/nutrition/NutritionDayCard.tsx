@@ -2,7 +2,7 @@ import { View, Text, TextInput } from "react-native";
 import NutritionNotes from "./NutritionNotes";
 import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
-import { UINutritionPlan } from "../../types/nutrition-ui";
+import { UINutritionPlan } from "../../types/ui/nutrition-ui";
 
 type Props = {
   plan: UINutritionPlan;

@@ -1,7 +1,7 @@
 // src/components/nutrition/MealBlock.tsx
 import { View, Text } from "react-native";
 import MealOptionsBlock from "./MealOptionsBlock";
-import { UIMeal } from "../../types/nutrition-ui";
+import { UIMeal } from "../../types/ui/nutrition-ui";
 
 type Props = {
   meal: UIMeal;

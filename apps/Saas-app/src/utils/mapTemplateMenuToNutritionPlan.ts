@@ -6,7 +6,7 @@ import {
   UIFoodItem,
   UIVitamin,
   UIDayType,
-} from "../types/nutrition-ui";
+} from "../types/ui/nutrition-ui";
 
 type TemplateMenuDto = {
   id: string;
@@ -113,19 +113,17 @@ function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
     const realOptions = meal.options ?? [];
     let optionsToMap = realOptions;
 
-    // ⭐⭐⭐ שינוי חשוב: אם יש רק אופציה אחת — treat כארוחה רגילה ⭐⭐⭐
     if (realOptions.length === 1) {
       const single = realOptions[0];
       optionsToMap = [
         {
           ...single,
-          id: "default",       // שלא יעשה בלגן ב־UI
-          name: meal.name,     // מציג שם ארוחה, לא שם אופציה
+          id: "default",      
+          name: meal.name,     
           orderIndex: 0
         }
       ];
     }
-    // ⭐⭐⭐ סוף השינוי ⭐⭐⭐
 
     const options: UIMealOption[] = optionsToMap
       .slice()

@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { ClientMenu } from "../../types/nutrition-types/clientMenu.types";
+import { ClientMenu } from "../../types/api/nutrition-types/clientMenu.types";
 
 export async function fetchClientMenus(clientId?: string) {
   console.log(">>> fetchClientMenus CALLED", clientId);

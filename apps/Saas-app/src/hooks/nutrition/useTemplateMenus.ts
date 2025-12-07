@@ -11,7 +11,10 @@ export function useTemplateMenus() {
 export function useTemplateMenu(id?: string | null) {
   return useQuery({
     queryKey: ["templateMenu", id],
-    enabled: !!id, 
-    queryFn: () => fetchTemplateMenu(id as string),
+    enabled: !!id,
+    queryFn: () => {
+      console.log("🔄 FETCHING TEMPLATE MENU", id);
+      return fetchTemplateMenu(id as string);
+    },
   });
 }

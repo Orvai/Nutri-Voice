@@ -1,7 +1,7 @@
 import { api } from "../api";
-import { MealTemplate } from "../../types/nutrition-types/mealTemplate.types";
-import { TemplateMenu } from "../../types/nutrition-types/templateMenu.types";
-import { TemplateMenuVitamin } from "../../types/nutrition-types/templateMenu.types";
+import { MealTemplate } from "../../types/api/nutrition-types/mealTemplate.types";
+import { TemplateMenu } from "../../types/api/nutrition-types/templateMenu.types";
+import { TemplateMenuVitamin } from "../../types/api/nutrition-types/templateMenu.types";
 
 
 export async function fetchMealTemplates() {

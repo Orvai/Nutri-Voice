@@ -4,11 +4,18 @@ import { updateTemplateMenu } from "../../api/nutrition-api/menu.api";
 export function useUpdateTemplateMenu(templateMenuId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<any, Error, any>({
     mutationFn: (payload) => updateTemplateMenu(templateMenuId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["templateMenu", templateMenuId] });
-      queryClient.invalidateQueries({ queryKey: ["templateMenus"] });
+      queryClient.invalidateQueries({
+        queryKey: ["templateMenu"],
+        exact: false,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["templateMenus"],
+        exact: false,
+      });
     },
   });
 }

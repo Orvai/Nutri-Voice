@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import MealFoodItem from "./MealFoodItem";
-import { UIMealOption } from "../../types/nutrition-ui";
+import { UIMealOption } from "../../types/ui/nutrition-ui";
 import FoodPickerModal from "./FoodPickerModal";
 import { useUpdateMealTemplate } from "../../hooks/nutrition/useUpdateMealTemplate";
 

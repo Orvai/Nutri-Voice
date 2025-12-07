@@ -3,6 +3,8 @@ import { View, Text, Pressable, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import VitaminPickerModal from "./VitaminPickerModal";
 import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
+import { UIVitamin } from "../../types/ui/nutrition-ui";
+
 
 type Props = {
   vitamins: UIVitamin[];
@@ -97,15 +99,22 @@ export default function NutritionSupplements({ vitamins, templateMenuId }: Props
         onClose={() => setPickerOpen(false)}
         existingIds={vitamins.map((v) => v.vitaminId ?? v.id)}
         onSelect={(vit) => {
-          updateMenu.mutate({
-            vitaminsToAdd: [
-              {
-                vitaminId: vit.id,
-                name: vit.name,
-                description: vit.description ?? null,
+          updateMenu.mutate(
+            {
+              vitaminsToAdd: [
+                {
+                  vitaminId: vit.id,
+                  name: vit.name,
+                  description: vit.description ?? null,
+                },
+              ],
+            },
+            {
+              onSuccess(data) {
+                console.log("UPDATED MENU:", data);
               },
-            ],
-          });
+            }
+          );
           setPickerOpen(false);
         }}
       />

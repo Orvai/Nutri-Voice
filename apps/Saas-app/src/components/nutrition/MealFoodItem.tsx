@@ -1,6 +1,6 @@
 // src/components/nutrition/MealFoodItem.tsx
 import { View, Text, TextInput } from "react-native";
-import { UIFoodItem } from "../../types/nutrition-ui";
+import { UIFoodItem } from "../../types/ui/nutrition-ui";
 
 type Props = {
   food: UIFoodItem;
