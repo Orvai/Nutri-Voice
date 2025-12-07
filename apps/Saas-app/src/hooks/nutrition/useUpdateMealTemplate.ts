@@ -9,7 +9,9 @@ export function useUpdateMealTemplate(id: string) {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mealTemplate", id] });
-      queryClient.invalidateQueries({ queryKey: ["templateMenu"] });
-    },
+      queryClient.invalidateQueries({
+        queryKey: ["templateMenu"],
+        exact: false,
+      });    },
   });
 }

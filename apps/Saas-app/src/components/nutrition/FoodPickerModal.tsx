@@ -1,152 +1,169 @@
-import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import {
+  Modal,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFood } from "../../hooks/nutrition/useFood";
+import { FoodItem } from "../../types/api/nutrition-types/food.types";
+import PickerItemCard from "../shared/PickerItemCard";
+
+type Props = {
+  visible: boolean;
+  onClose: () => void;
+  existingIds: string[];
+  onSelect: (food: FoodItem) => void;
+};
+
+const categories = [
+  "PROTEIN",
+  "CARB",
+  "FREE",
+  "HEALTH",
+  "MENTAL_HEALTH",
+];
 
 export default function FoodPickerModal({
   visible,
   onClose,
   existingIds,
   onSelect,
-}) {
+}: Props) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
 
   const { data: allFood = [], isLoading } = useFood(search);
 
+  const filteredFood = useMemo(() => {
+    const withoutExisting = allFood.filter((f) => !existingIds.includes(f.id));
+    const byCategory = category
+      ? withoutExisting.filter((f) => f.category === category)
+      : withoutExisting;
+
+    return byCategory;
+  }, [allFood, category, existingIds]);
+
   if (!visible) return null;
 
-  // Remove foods already inside option
-  const filtered = allFood.filter((f) => !existingIds.includes(f.id));
-
-  // Apply category filter if selected
-  const categoryFiltered = category
-    ? filtered.filter((f) => f.category === category)
-    : filtered;
-
-  const categories = [
-    "PROTEIN",
-    "CARB",
-    "FREE",
-    "HEALTH",
-    "MENTAL_HEALTH",
-  ];
-
   return (
-    <View
-      style={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-        left: 0,
-        bottom: 0,
-        backgroundColor: "#00000066",
-        padding: 20,
-        justifyContent: "center",
-      }}
-    >
+    <Modal visible={visible} animationType="fade" transparent>
       <View
         style={{
-          backgroundColor: "white",
-          borderRadius: 16,
-          padding: 16,
-          maxHeight: "85%",
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.35)",
+          justifyContent: "center",
+          padding: 20,
         }}
       >
-        {/* Header */}
         <View
           style={{
-            flexDirection: "row-reverse",
-            justifyContent: "space-between",
-            marginBottom: 16,
+            backgroundColor: "white",
+            borderRadius: 18,
+            padding: 16,
+            maxHeight: "85%",
+            gap: 12,
           }}
         >
-          <Text style={{ fontWeight: "700", fontSize: 18 }}>
-            בחירת מוצר מזון
-          </Text>
-
-          <Pressable onPress={onClose}>
-            <Ionicons name="close" size={24} color="#ef4444" />
-          </Pressable>
-        </View>
-
-        {/* Search */}
-        <TextInput
-          placeholder="חיפוש מוצר..."
-          value={search}
-          onChangeText={setSearch}
-          style={{
-            borderWidth: 1,
-            borderColor: "#d1d5db",
-            borderRadius: 8,
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            marginBottom: 12,
-            textAlign: "right",
-          }}
-        />
-
-        {/* Category Filter */}
-        <ScrollView
-          horizontal
-          style={{ marginBottom: 12 }}
-          contentContainerStyle={{ flexDirection: "row-reverse", gap: 8 }}
-        >
-          <Pressable
-            onPress={() => setCategory(null)}
+          <View
             style={{
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: 20,
-              backgroundColor: category === null ? "#22d3ee" : "#f1f5f9",
+              flexDirection: "row-reverse",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <Text>{category === null ? "✓ " : ""}הכל</Text>
-          </Pressable>
+            <Text style={{ fontWeight: "800", fontSize: 18 }}>בחירת מוצר מזון</Text>
+            <Pressable onPress={onClose}>
+              <Ionicons name="close" size={24} color="#ef4444" />
+            </Pressable>
+          </View>
 
-          {categories.map((cat) => (
+          <TextInput
+            placeholder="חיפוש מוצר..."
+            value={search}
+            onChangeText={setSearch}
+            style={{
+              borderWidth: 1,
+              borderColor: "#d1d5db",
+              borderRadius: 12,
+              paddingHorizontal: 12,
+              paddingVertical: 10,
+              textAlign: "right",
+            }}
+          />
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ flexDirection: "row-reverse", gap: 8 }}
+          >
             <Pressable
-              key={cat}
-              onPress={() => setCategory(cat)}
+              onPress={() => setCategory(null)}
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
+                paddingHorizontal: 14,
+                paddingVertical: 8,
                 borderRadius: 20,
-                backgroundColor:
-                  category === cat ? "#22d3ee" : "#f1f5f9",
+                backgroundColor: category === null ? "#0f766e" : "#f1f5f9",
+                borderWidth: 1,
+                borderColor: category === null ? "#0f766e" : "#e5e7eb",
               }}
             >
-              <Text>{category === cat ? "✓ " : ""}{cat}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-
-        {/* Food List */}
-        <ScrollView
-          style={{ borderTopWidth: 1, borderColor: "#e5e7eb", paddingTop: 10 }}
-        >
-          {isLoading && <Text>טוען מוצרים...</Text>}
-
-          {categoryFiltered.map((item) => (
-            <Pressable
-              key={item.id}
-              onPress={() => onSelect(item)}
-              style={{
-                paddingVertical: 10,
-                borderBottomWidth: 1,
-                borderColor: "#f3f4f6",
-              }}
-            >
-              <Text style={{ fontWeight: "700", fontSize: 14 }}>
-                {item.name}
-              </Text>
-              <Text style={{ fontSize: 12, color: "#6b7280" }}>
-                {item.caloriesPer100g || "-"} קק״ל ל־100 גרם
+              <Text style={{ color: category === null ? "white" : "#0f172a" }}>
+                הכל
               </Text>
             </Pressable>
-          ))}
-        </ScrollView>
+
+            {categories.map((cat) => (
+              <Pressable
+                key={cat}
+                onPress={() => setCategory(cat)}
+                style={{
+                  paddingHorizontal: 14,
+                  paddingVertical: 8,
+                  borderRadius: 20,
+                  backgroundColor: category === cat ? "#0f766e" : "#f1f5f9",
+                  borderWidth: 1,
+                  borderColor: category === cat ? "#0f766e" : "#e5e7eb",
+                }}
+              >
+                <Text style={{ color: category === cat ? "white" : "#0f172a" }}>
+                  {cat}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+
+          <ScrollView style={{ flexGrow: 0 }}>
+            {isLoading && (
+              <Text style={{ textAlign: "center", color: "#6b7280", padding: 10 }}>
+                טוען מוצרים...
+              </Text>
+            )}
+
+            {!isLoading && filteredFood.length === 0 && (
+              <Text style={{ textAlign: "center", color: "#6b7280", padding: 10 }}>
+                לא נמצאו מוצרים
+              </Text>
+            )}
+
+            {filteredFood.map((item) => (
+              <PickerItemCard
+                key={item.id}
+                title={item.name}
+                subtitle={
+                  item.caloriesPer100g != null
+                    ? `${item.caloriesPer100g} קק״ל ל־100 גרם`
+                    : "אין מידע קלורי"
+                }
+                onPress={() => onSelect(item)}
+              />
+            ))}
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 }

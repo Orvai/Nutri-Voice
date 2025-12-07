@@ -1,19 +1,27 @@
 // src/components/nutrition/MealFoodItem.tsx
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { UIFoodItem } from "../../types/ui/nutrition-ui";
 
 type Props = {
   food: UIFoodItem;
+  onRemove?: () => void;
+  removing?: boolean;
 };
 
-export default function MealFoodItem({ food }: Props) {
+export default function MealFoodItem({ food, onRemove, removing }: Props) {
   return (
     <View
       style={{
         flexDirection: "row-reverse",
         alignItems: "center",
-        gap: 8,
+        gap: 10,
         marginBottom: 10,
+        backgroundColor: "white",
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#99f6e4",
+        padding: 10,
       }}
     >
       <View
@@ -46,7 +54,29 @@ export default function MealFoodItem({ food }: Props) {
         {food.calories != null ? `${food.calories} קק״ל` : "-"}
       </Text>
 
-      <Text style={{ color: "#dc2626", fontSize: 18 }}>✖</Text>
+      {onRemove && (
+        <Pressable
+          onPress={onRemove}
+          disabled={removing}
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 14,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#fee2e2",
+            borderWidth: 1,
+            borderColor: "#fecaca",
+          }}
+        >
+          <Ionicons
+            name="close"
+            size={16}
+            color="#dc2626"
+            style={{ opacity: removing ? 0.5 : 1 }}
+          />
+        </Pressable>
+      )}
     </View>
   );
 }

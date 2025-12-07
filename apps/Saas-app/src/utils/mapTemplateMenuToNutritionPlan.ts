@@ -74,7 +74,7 @@ function getColorByRole(role: string): string {
 }
 
 function mapVitamins(dto: TemplateMenuDto["vitamins"]): UIVitamin[] {
-    return (dto ?? []).map((v) => ({ 
+  return (dto ?? []).map((v) => ({
     id: v.id,
     vitaminId: v.vitaminId,
     name: v.name,
@@ -118,10 +118,10 @@ function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
       optionsToMap = [
         {
           ...single,
-          id: "default",      
-          name: meal.name,     
+          id: "default",
+          name: meal.name,
           orderIndex: 0
-        }
+        },
       ];
     }
 

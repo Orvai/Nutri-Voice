@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import MealFoodItem from "./MealFoodItem";
 import { UIMealOption } from "../../types/ui/nutrition-ui";
@@ -29,8 +29,32 @@ type Props = {
 
 export default function MealOptionsBlock({ option, hideTitle = false }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
-
+  const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
+  const [removingIds, setRemovingIds] = useState<string[]>([]);
   const updateTemplate = useUpdateMealTemplate(option.mealTemplateId);
+  const visibleFoods = useMemo(
+    () => option.foods.filter((food) => !removedFoodIds.includes(food.id)),
+    [option.foods, removedFoodIds]
+  );
+
+  const handleRemoveFood = (foodId: string) => {
+    setRemovingIds((prev) => [...prev, foodId]);
+
+    updateTemplate.mutate(
+      {
+        itemsToDelete: [{ id: foodId }],
+      },
+      {
+        onSuccess: () => {
+          setRemovedFoodIds((prev) => [...prev, foodId]);
+        },
+        onSettled: () => {
+          setRemovingIds((prev) => prev.filter((id) => id !== foodId));
+        },
+      }
+    );
+  };
+
 
   return (
     <View
@@ -78,8 +102,13 @@ export default function MealOptionsBlock({ option, hideTitle = false }: Props) {
       )}
 
       {/* Food items */}
-      {option.foods.map((food) => (
-        <MealFoodItem key={food.id} food={food} />
+      {visibleFoods.map((food) => (
+        <MealFoodItem
+          key={food.id}
+          food={food}
+          onRemove={() => handleRemoveFood(food.id)}
+          removing={removingIds.includes(food.id)}
+        />
       ))}
 
       {/* Add Food Button */}

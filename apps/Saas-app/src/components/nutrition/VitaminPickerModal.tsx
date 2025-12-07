@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Modal, View, Text, Pressable, TextInput, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import PickerItemCard from "../shared/PickerItemCard";
 import { useVitamins } from "../../hooks/nutrition/useVitamins";
 
 type Props = {
@@ -16,21 +18,24 @@ export default function VitaminPickerModal({
   onSelect,
 }: Props) {
   const [search, setSearch] = useState("");
+  const { data: vitamins = [] } = useVitamins();
 
-  const { data: vitamins } = useVitamins();
+  const filteredVitamins = useMemo(
+    () =>
+      vitamins
+        .filter((v: any) => !existingIds.includes(v.id))
+        .filter((v: any) => v.name.toLowerCase().includes(search.toLowerCase())),
+    [existingIds, search, vitamins]
+  );
 
   if (!visible) return null;
 
-  const filtered = (vitamins || [])
-    .filter((v) => !existingIds.includes(v.id))
-    .filter((v) => v.name.toLowerCase().includes(search.toLowerCase()));
-
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} animationType="fade" transparent>
       <View
         style={{
           flex: 1,
-          backgroundColor: "rgba(0,0,0,0.4)",
+          backgroundColor: "rgba(0,0,0,0.35)",
           justifyContent: "center",
           padding: 20,
         }}
@@ -38,14 +43,24 @@ export default function VitaminPickerModal({
         <View
           style={{
             backgroundColor: "white",
+            borderRadius: 18,
             padding: 16,
-            borderRadius: 12,
-            maxHeight: "70%",
+            maxHeight: "80%",
+            gap: 12,
           }}
         >
-          <Text style={{ fontWeight: "700", fontSize: 16, marginBottom: 12, textAlign: "center" }}>
-            בחר תוסף להוספה
-          </Text>
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "800", fontSize: 18 }}>בחר תוסף להוספה</Text>
+            <Pressable onPress={onClose}>
+              <Ionicons name="close" size={24} color="#ef4444" />
+            </Pressable>
+          </View>
 
           <TextInput
             value={search}
@@ -53,46 +68,30 @@ export default function VitaminPickerModal({
             placeholder="חיפוש תוסף..."
             style={{
               borderWidth: 1,
-              borderColor: "#ddd",
-              borderRadius: 8,
-              padding: 8,
-              marginBottom: 12,
+              borderColor: "#d1d5db",
+              borderRadius: 12,
+              paddingHorizontal: 12,
+              paddingVertical: 10,
+              textAlign: "right",
             }}
           />
 
-          <ScrollView style={{ marginBottom: 12 }}>
-            {filtered.map((v) => (
-              <Pressable
+          <ScrollView style={{ flexGrow: 0 }}>
+            {filteredVitamins.map((v: any) => (
+              <PickerItemCard
                 key={v.id}
+                title={v.name}
+                subtitle={v.description}
                 onPress={() => onSelect(v)}
-                style={{
-                  padding: 10,
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#eee",
-                }}
-              >
-                <Text style={{ fontSize: 14 }}>{v.name}</Text>
-                {v.description && <Text style={{ fontSize: 12, color: "#6b7280" }}>{v.description}</Text>}
-              </Pressable>
+              />
             ))}
 
-            {filtered.length === 0 && (
+            {filteredVitamins.length === 0 && (
               <Text style={{ textAlign: "center", color: "#6b7280", padding: 10 }}>
                 לא נמצאו תוספים
               </Text>
             )}
           </ScrollView>
-
-          <Pressable
-            onPress={onClose}
-            style={{
-              backgroundColor: "#2563eb",
-              paddingVertical: 10,
-              borderRadius: 8,
-            }}
-          >
-            <Text style={{ color: "white", fontWeight: "700", textAlign: "center" }}>סגור</Text>
-          </Pressable>
         </View>
       </View>
     </Modal>

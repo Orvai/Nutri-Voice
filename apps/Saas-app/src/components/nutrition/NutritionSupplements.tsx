@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import VitaminPickerModal from "./VitaminPickerModal";
@@ -13,8 +13,33 @@ type Props = {
 
 export default function NutritionSupplements({ vitamins, templateMenuId }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
+  const [removingIds, setRemovingIds] = useState<string[]>([]);
 
   const updateMenu = useUpdateTemplateMenu(templateMenuId);
+
+  const visibleVitamins = useMemo(
+    () => vitamins.filter((v) => !removedIds.includes(v.id)),
+    [removedIds, vitamins]
+  );
+
+  const handleRemoveVitamin = (vitaminId: string) => {
+    setRemovingIds((prev) => [...prev, vitaminId]);
+
+    updateMenu.mutate(
+      {
+        vitaminsToDelete: [{ id: vitaminId }],
+      },
+      {
+        onSuccess: () => {
+          setRemovedIds((prev) => [...prev, vitaminId]);
+        },
+        onSettled: () => {
+          setRemovingIds((prev) => prev.filter((id) => id !== vitaminId));
+        },
+      }
+    );
+  };
 
   return (
     <View
@@ -60,7 +85,7 @@ export default function NutritionSupplements({ vitamins, templateMenuId }: Props
       </View>
 
       {/* List */}
-      {vitamins.map((v) => (
+      {visibleVitamins.map((v) => (
         <View
           key={v.id}
           style={{
@@ -73,7 +98,37 @@ export default function NutritionSupplements({ vitamins, templateMenuId }: Props
             gap: 8,
           }}
         >
-          <Text style={{ fontWeight: "600" }}>{v.name}</Text>
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={{ fontWeight: "600" }}>{v.name}</Text>
+
+            <Pressable
+              onPress={() => handleRemoveVitamin(v.id)}
+              disabled={removingIds.includes(v.id)}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#fee2e2",
+                borderWidth: 1,
+                borderColor: "#fecaca",
+              }}
+            >
+              <Ionicons
+                name="close"
+                size={16}
+                color="#dc2626"
+                style={{ opacity: removingIds.includes(v.id) ? 0.4 : 1 }}
+              />
+            </Pressable>
+          </View>
 
           <TextInput
             multiline
