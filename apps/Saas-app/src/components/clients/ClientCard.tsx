@@ -1,7 +1,11 @@
 import { View, Text, Image, Pressable } from "react-native";
 import { router } from "expo-router";
+import { useUserInfo } from "../../../src/hooks/useUserInfo";
 
 export default function ClientCard({ client }) {
+  // Load UserInfo (for profileImageUrl)
+  const { data: info } = useUserInfo(client.userId);
+
   const goToProfile = () => {
     router.push({
       pathname: "/(dashboard)/clients/[id]",
@@ -29,15 +33,20 @@ export default function ClientCard({ client }) {
         elevation: hovered ? 3 : 1,
       })}
     >
+      {/* Avatar */}
       <Image
-        source={{
-          uri:
-            client.avatar ||
-            "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg",
-        }}
+        source={
+          info?.profileImageUrl
+            ? { uri: info.profileImageUrl }
+            : {
+                uri:
+                  "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg",
+              }
+        }
         style={{ width: 62, height: 62, borderRadius: 50 }}
       />
 
+      {/* Name + Phone */}
       <View style={{ flex: 1 }}>
         <Text
           style={{

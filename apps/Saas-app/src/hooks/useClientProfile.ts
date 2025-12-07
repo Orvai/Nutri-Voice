@@ -1,18 +1,20 @@
 import { useMemo } from "react";
 import { useClients } from "./useClients";
+import { useUserInfo } from "./useUserInfo";
 
 export function useClientProfile(id: string) {
-  const { clients } = useClients();
+  const { data: clients } = useClients();
 
-  // מוצא את הלקוח מתוך ה-List שכבר נטענו
   const base = useMemo(() => {
-    return clients.find((c) => c.id === id) || null;
+    return (clients ?? []).find((c) => c.id === id) || null;
   }, [clients, id]);
 
-  // אם עוד לא נטען הלקוח — נחזיר null
   if (!base) return { client: null, loading: true };
 
-  // נתוני TODAY — עדיין MOCK
+  const { data: info, isLoading: loadingInfo } = useUserInfo(base.userId);
+
+  if (loadingInfo) return { client: null, loading: true };
+
   const mock = {
     today: {
       calories: {
@@ -73,8 +75,11 @@ export function useClientProfile(id: string) {
     },
   };
 
-  // מיזוג הלקוח האמיתי + נתוני היום
-  const client = { ...base, ...mock };
+  const client = {
+    ...base,
+    userInfo: info ?? null,  
+    ...mock,
+  };
 
   return {
     client,

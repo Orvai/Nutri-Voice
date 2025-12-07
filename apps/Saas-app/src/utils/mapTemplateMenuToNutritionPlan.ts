@@ -24,6 +24,7 @@ type TemplateMenuDto = {
   meals: {
     id: string;
     name: string;
+    notes?: string | null;
     selectedOptionId: string | null;
     options: {
       id: string;
@@ -109,23 +110,8 @@ function mapFoods(
 function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
   return (dto ?? []).map((meal) => {
     const selectedId = meal.selectedOptionId;
-
     const realOptions = meal.options ?? [];
-    let optionsToMap = realOptions;
-
-    if (realOptions.length === 1) {
-      const single = realOptions[0];
-      optionsToMap = [
-        {
-          ...single,
-          id: "default",
-          name: meal.name,
-          orderIndex: 0
-        },
-      ];
-    }
-
-    const options: UIMealOption[] = optionsToMap
+    const options: UIMealOption[] = realOptions
       .slice()
       .sort((a, b) => a.orderIndex - b.orderIndex)
       .map((opt) => {
@@ -148,11 +134,43 @@ function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
         };
       });
 
+      if (realOptions.length === 1) {
+        const singleOption = realOptions[0];
+  
+        if (!singleOption) {
+          return {
+            id: meal.id,
+            title: meal.name,
+            timeRange: null,
+            notes: meal.notes ?? null,
+            options: [],
+            selectedOptionId: null,
+            foods: [],
+          };
+        }
+  
+        // Collect foods from the single mealTemplate
+        const foods = mapFoods(singleOption.mealTemplate.items);
+  
+        return {
+          id: meal.id,
+          title: meal.name,
+          timeRange: null,
+          notes: meal.notes ?? null,
+          // IMPORTANT: no options
+          options: [],
+          selectedOptionId: null,
+          // NEW: foods belong directly to meal
+          foods,
+          mealTemplateId: singleOption.mealTemplate.id,
+        };
+      }
+  
     return {
       id: meal.id,
       title: meal.name,
       timeRange: null,
-      notes: null,
+      notes: meal.notes ?? null,
       options,
       selectedOptionId: selectedId,
     };

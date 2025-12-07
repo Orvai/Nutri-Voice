@@ -1,13 +1,8 @@
-+117
--10
-
-// src/components/nutrition/MealBlock.tsx
 import React, { useMemo, useState } from "react";
 import { View, Text, Pressable } from "react-native";
-import MealOptionsBlock from "./MealOptionsBlock";
 import MealFoodItem from "./MealFoodItem";
 import FoodPickerModal from "./FoodPickerModal";
-import { UIFoodItem, UIMeal } from "../../types/ui/nutrition-ui";
+import { UIFoodItem } from "../../types/ui/nutrition-ui";
 import { useUpdateMealTemplate } from "../../hooks/nutrition/useUpdateMealTemplate";
 
 function categoryToRole(category?: string) {
@@ -27,13 +22,12 @@ function categoryToRole(category?: string) {
   }
 }
 
-function OptionlessMealFoods({
-  foods,
-  mealTemplateId,
-}: {
+type Props = {
   foods: UIFoodItem[];
   mealTemplateId: string;
-}) {
+};
+
+export default function RegularMealBlock({ foods, mealTemplateId }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
@@ -106,77 +100,6 @@ function OptionlessMealFoods({
           setPickerOpen(false);
         }}
       />
-    </View>
-  );
-}
-
-type Props = {
-  meal: UIMeal;
-};
-
-export default function MealBlock({ meal }: Props) {
-  const sortedOptions = [...meal.options].sort(
-    (a, b) => a.orderIndex - b.orderIndex
-  );
-  const hasOptions = sortedOptions.length > 0;
-  return (
-    <View
-      style={{
-        backgroundColor: "#f9fafb",
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 20,
-        padding: 16,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          marginBottom: 12,
-        }}
-      >
-        <View>
-          <Text style={{ fontSize: 18, fontWeight: "700" }}>{meal.title}</Text>
-          {meal.timeRange ? (
-            <Text style={{ fontSize: 13, color: "#6b7280" }}>
-              {meal.timeRange}
-            </Text>
-          ) : null}
-        </View>
-
-        <View style={{ flexDirection: "row-reverse", gap: 10 }}>
-          <Text style={{ color: "#2563eb" }}>📝</Text>
-          <Text style={{ color: "#dc2626" }}>🗑️</Text>
-        </View>
-      </View>
-
-      <View
-        style={{
-          backgroundColor: "#fef9c3",
-          borderColor: "#fde047",
-          borderWidth: 1,
-          padding: 8,
-          borderRadius: 10,
-          marginBottom: 12,
-        }}
-      >
-        <Text style={{ color: "#ca8a04", fontSize: 12 }}>
-          {meal.notes || "הערות לארוחה..."}
-        </Text>
-      </View>
-
-      {hasOptions
-        ? sortedOptions.map((opt) => (
-            <MealOptionsBlock key={opt.id} option={opt} />
-          ))
-        : meal.foods && meal.mealTemplateId && (
-            <OptionlessMealFoods
-              foods={meal.foods}
-              mealTemplateId={meal.mealTemplateId}
-            />
-          )}
     </View>
   );
 }

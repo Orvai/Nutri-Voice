@@ -46,6 +46,9 @@ export interface UIMeal {
   notes: string | null;
   options: UIMealOption[];
   selectedOptionId: string | null;
+  foods?: UIFoodItem[];
+  meals?: undefined;
+  mealTemplateId?: string;
 }
 
 export interface UIMealOption {
