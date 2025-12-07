@@ -34,13 +34,10 @@ export default function AiHelpScreen() {
           contentContainerStyle={{ paddingBottom: 120 }}
           showsVerticalScrollIndicator={false}
         >
-          {/* כרטיס פתיחה */}
           <AiWelcome />
 
-          {/* Quick Actions */}
           <AiQuickActions />
 
-          {/* הודעות */}
           {messages.map((msg) =>
             msg.from === "ai" ? (
               msg.type === "stats" ? (
@@ -54,10 +51,8 @@ export default function AiHelpScreen() {
           )}
         </ScrollView>
 
-        {/* שורת כתיבה */}
         <AiInput onSend={sendMessage} />
 
-        {/* הצעות מוכנות */}
         <AiSuggestedPrompts onChoose={sendMessage} />
       </View>
     </View>

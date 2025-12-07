@@ -10,18 +10,11 @@ import { useEffect, useState } from "react";
 import NutritionTabs from "../../../src/components/nutrition/NutritionTabs";
 import NutritionDayCard from "../../../src/components/nutrition/NutritionDayCard";
 
-import {
-  useTemplateMenus,
-  useTemplateMenu,
-} from "../../../src/hooks/nutrition/useTemplateMenus";
+import {useTemplateMenus,useTemplateMenu,} from "../../../src/hooks/nutrition/useTemplateMenus";
 import { mapTemplateMenuToNutritionPlan } from "../../../src/utils/mapTemplateMenuToNutritionPlan";
 
 export default function NutritionPlansScreen() {
-  const {
-    data: menus,
-    isLoading: loadingMenus,
-    error,
-  } = useTemplateMenus();
+  const {data: menus,isLoading: loadingMenus,error} = useTemplateMenus();
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
@@ -29,8 +22,7 @@ export default function NutritionPlansScreen() {
     if (menus && menus.length > 0 && !activeTab) {
       setActiveTab(menus[0].id);
     }
-  }, [menus]);
-
+  }, [menus,activeTab]);
   const {
     data: fullMenu,
     isLoading: loadingMenu,
@@ -51,7 +43,6 @@ export default function NutritionPlansScreen() {
       </View>
     );
   }
-
   if (!menus || menus.length === 0) {
     return (
       <View style={{ padding: 20 }}>

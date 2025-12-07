@@ -12,27 +12,21 @@ export default function ChatScreen() {
   return (
     <View style={{ flex: 1, flexDirection: "row-reverse", backgroundColor: "#f3f4f6" }}>
 
-      {/* רשימת שיחות */}
       <ChatList
         conversations={conversations}
         activeId={activeConversation?.id}
         onSelect={setActiveConversation}
       />
 
-      {/* אזור מרכזי */}
       <View style={{ flex: 1, flexDirection: "column" }}>
 
-        {/* Header */}
         <ChatHeader conversation={activeConversation} />
 
-        {/* הודעות */}
         <ChatMessages messages={activeConversation?.messages || []} />
 
-        {/* קלט */}
         <ChatInput />
       </View>
 
-      {/* פרטי לקוח */}
       <ClientDetails conversation={activeConversation} />
     </View>
   );

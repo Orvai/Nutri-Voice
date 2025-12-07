@@ -19,7 +19,6 @@ export default function DashboardLayout() {
       <View style={{ flex: 1 }}>
         <Header />
 
-        {/* כל מסכי הדשבורד ייכנסו כאן */}
         <Slot />
       </View>
     </View>

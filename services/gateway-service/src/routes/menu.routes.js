@@ -13,7 +13,6 @@ const BASE = process.env.MENU_SERVICE_URL;
 r.get("/food", authRequired, forward(BASE, "/internal/menu/food"));
 r.get("/food/search", authRequired, forward(BASE, "/internal/menu/food/search"));
 r.get("/food/by-category", authRequired, forward(BASE, "/internal/menu/food/by-category"));
-
 r.post("/food", authRequired, requireCoach, forward(BASE, "/internal/menu/food"));
 r.put("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/food/:id"));
 r.delete("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/food/:id"));
@@ -51,10 +50,15 @@ r.post("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus
 r.put("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
 r.delete("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
 
-r.post(
-  "/client-menus/from-template",
-  authRequired,
-  forward(BASE, "/internal/menu/client-menus/from-template")
-);
+r.post("/client-menus/from-template",authRequired,forward(BASE, "/internal/menu/client-menus/from-template"));
+
+// =====================
+// VITAMINS
+// =====================
+r.get("/vitamins", authRequired, forward(BASE, "/internal/menu/vitamins"));
+r.post("/vitamins", authRequired, requireCoach, forward(BASE, "/internal/menu/vitamins"));
+
+
+
 
 export default r;

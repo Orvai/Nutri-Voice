@@ -11,7 +11,7 @@ export default function MealBlock({ meal }: Props) {
   const sortedOptions = [...meal.options].sort(
     (a, b) => a.orderIndex - b.orderIndex
   );
-
+  const isSingleOption = sortedOptions.length === 1;
   return (
     <View
       style={{
@@ -60,9 +60,13 @@ export default function MealBlock({ meal }: Props) {
         </Text>
       </View>
 
-      {sortedOptions.map((opt) => (
-        <MealOptionsBlock key={opt.id} option={opt} />
-      ))}
+      {isSingleOption ? (
+        <MealOptionsBlock option={sortedOptions[0]} hideTitle />
+      ) : (
+        sortedOptions.map((opt) => (
+          <MealOptionsBlock key={opt.id} option={opt} />
+        ))
+      )}
     </View>
   );
 }

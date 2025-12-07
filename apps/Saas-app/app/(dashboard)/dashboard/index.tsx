@@ -20,19 +20,14 @@ export default function DashboardScreen() {
       }}
       showsVerticalScrollIndicator={false}
     >
-      {/* KPI עליונים */}
       <DailyKpis data={data.dailyKpis} />
 
-      {/* הודעות הדורשות מענה */}
       <AttentionMessages data={data.attentionMessages} />
 
-      {/* חריגות תזונה */}
       <NutritionDeviations data={data.nutritionDeviations} />
 
-      {/* לקוחות שלא דיווחו */}
       <MissingReports data={data.missingReports} />
 
-      {/* לקוחות בסיכון */}
       <AtRiskClients data={data.atRiskClients} />
 
       <Spacer h={30} />

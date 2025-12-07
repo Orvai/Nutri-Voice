@@ -106,12 +106,28 @@ function mapFoods(
     };
   });
 }
-
 function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
   return (dto ?? []).map((meal) => {
     const selectedId = meal.selectedOptionId;
 
-    const options: UIMealOption[] = (meal.options ?? [])
+    const realOptions = meal.options ?? [];
+    let optionsToMap = realOptions;
+
+    // ⭐⭐⭐ שינוי חשוב: אם יש רק אופציה אחת — treat כארוחה רגילה ⭐⭐⭐
+    if (realOptions.length === 1) {
+      const single = realOptions[0];
+      optionsToMap = [
+        {
+          ...single,
+          id: "default",       // שלא יעשה בלגן ב־UI
+          name: meal.name,     // מציג שם ארוחה, לא שם אופציה
+          orderIndex: 0
+        }
+      ];
+    }
+    // ⭐⭐⭐ סוף השינוי ⭐⭐⭐
+
+    const options: UIMealOption[] = optionsToMap
       .slice()
       .sort((a, b) => a.orderIndex - b.orderIndex)
       .map((opt) => {
@@ -144,6 +160,7 @@ function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
     };
   });
 }
+
 
 export function mapTemplateMenuToNutritionPlan(
   templateMenu: TemplateMenuDto

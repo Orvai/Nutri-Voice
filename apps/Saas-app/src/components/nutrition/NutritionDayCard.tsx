@@ -50,7 +50,7 @@ export default function NutritionDayCard({ plan }: Props) {
               paddingVertical: 4,
             }}
             keyboardType="numeric"
-            defaultValue={plan.totalCalories.toString()}
+            defaultValue={(plan.totalCalories ?? "").toString()}
           />
           <Text style={{ fontWeight: "600" }}>קק״ל</Text>
         </View>
@@ -58,7 +58,10 @@ export default function NutritionDayCard({ plan }: Props) {
 
       <NutritionNotes notes={plan.notes} />
 
-      <NutritionSupplements vitamins={plan.vitamins} />
+      <NutritionSupplements
+        vitamins={plan.vitamins}
+        templateMenuId={plan.id}
+        />
 
       {plan.meals.map((meal) => (
         <MealBlock key={meal.id} meal={meal} />

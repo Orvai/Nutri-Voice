@@ -1,12 +1,19 @@
+import React, { useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { UIVitamin } from "../../types/nutrition-ui";
+import VitaminPickerModal from "./VitaminPickerModal";
+import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
 
 type Props = {
   vitamins: UIVitamin[];
+  templateMenuId: string;
 };
 
-export default function NutritionSupplements({ vitamins }: Props) {
+export default function NutritionSupplements({ vitamins, templateMenuId }: Props) {
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const updateMenu = useUpdateTemplateMenu(templateMenuId);
+
   return (
     <View
       style={{
@@ -33,6 +40,7 @@ export default function NutritionSupplements({ vitamins }: Props) {
         </View>
 
         <Pressable
+          onPress={() => setPickerOpen(true)}
           style={{
             flexDirection: "row-reverse",
             gap: 6,
@@ -40,9 +48,6 @@ export default function NutritionSupplements({ vitamins }: Props) {
             paddingHorizontal: 10,
             paddingVertical: 6,
             borderRadius: 8,
-          }}
-          onPress={() => {
-            console.log("TODO: open add-vitamin flow");
           }}
         >
           <Ionicons name="add" size={16} color="#0f766e" />
@@ -52,6 +57,7 @@ export default function NutritionSupplements({ vitamins }: Props) {
         </Pressable>
       </View>
 
+      {/* List */}
       {vitamins.map((v) => (
         <View
           key={v.id}
@@ -85,6 +91,24 @@ export default function NutritionSupplements({ vitamins }: Props) {
           />
         </View>
       ))}
+
+      <VitaminPickerModal
+        visible={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        existingIds={vitamins.map((v) => v.vitaminId ?? v.id)}
+        onSelect={(vit) => {
+          updateMenu.mutate({
+            vitaminsToAdd: [
+              {
+                vitaminId: vit.id,
+                name: vit.name,
+                description: vit.description ?? null,
+              },
+            ],
+          });
+          setPickerOpen(false);
+        }}
+      />
     </View>
   );
 }
