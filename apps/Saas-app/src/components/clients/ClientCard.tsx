@@ -3,7 +3,6 @@ import { router } from "expo-router";
 import { useUserInfo } from "../../../src/hooks/useUserInfo";
 
 export default function ClientCard({ client }) {
-  // Load UserInfo (for profileImageUrl)
   const { data: info } = useUserInfo(client.userId);
 
   const goToProfile = () => {
