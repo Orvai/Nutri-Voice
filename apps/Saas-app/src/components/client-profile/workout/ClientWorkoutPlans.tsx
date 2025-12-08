@@ -1,7 +1,7 @@
 import { ScrollView } from "react-native";
 import WorkoutPlansList from "./WorkoutPlansList";
 import { useClientWorkoutPlans } from "../../../hooks/useClientWorkoutPlans";
-import { useWorkoutTemplates } from "../../../hooks/useWorkoutTemplates";
+import { useWorkoutTemplates } from "../../../hooks/workout/useWorkoutTemplates";
 
 export default function ClientWorkoutPlans({ clientId }) {
   const { plans, createPlanFromTemplate, updatePlan, removePlan } =

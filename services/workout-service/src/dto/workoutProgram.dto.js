@@ -28,6 +28,7 @@ const WorkoutExerciseItemDeleteDto = z.object({
 const WorkoutProgramCreateRequestDto = z.object({
   name: z.string().min(2),
   clientId: z.string(),
+  coachId: z.string(),
   exercises: z.array(WorkoutExerciseItemCreateDto).optional().default([]),
 });
 

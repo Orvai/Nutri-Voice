@@ -1,5 +1,9 @@
-import type { Exercise, WorkoutExercise as ApiWorkoutExercise } from "../api/workout-types/exercise.types";
-import type { WorkoutProgram } from "../api/workout-types/WorkoutProgram.types";
+import type {
+  Exercise,
+  WorkoutExercise as ApiWorkoutExercise,
+} from "../api/workout-types/exercise.types";
+import type { WorkoutProgram } from "../api/workout-types/workoutProgram.types";
+import type { WorkoutTemplate } from "../api/workout-types/workoutTemplate.types";
 
 export interface UIExercise {
   id: string;
@@ -74,3 +78,26 @@ export function mapWorkoutProgramToUI(program: WorkoutProgram): UIWorkoutProgram
     exercises: (program.exercises ?? []).map(mapWorkoutExerciseToUI).sort((a, b) => a.order - b.order),
   };
 }
+
+export function mapWorkoutTemplateToUI(
+  template: WorkoutTemplate
+): UIWorkoutProgram {
+  return {
+    id: template.id,
+    name: template.name ?? "תבנית אימון",
+    goal: template.workoutType ?? null,
+    level: mapTemplateLevel(template.level),
+    durationWeeks: null,
+    sessionsPerWeek: null,
+    notes: template.notes,
+    summary: template.notes ?? undefined,
+    exercises: [],
+  };
+}
+
+function mapTemplateLevel(level: number): UIWorkoutProgram["level"] {
+  if (level <= 1) return "beginner";
+  if (level === 2) return "intermediate";
+  return "advanced";
+}
+

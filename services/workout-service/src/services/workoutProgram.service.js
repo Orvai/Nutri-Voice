@@ -6,21 +6,7 @@ const {
   WorkoutProgramUpdateRequestDto,
 } = require("../dto/workoutProgram.dto");
 
-const ensureProgramAccess = (program, auth) => {
-  if (!program) {
-    throw new AppError(404, "Workout program not found");
-  }
-
-  if (auth.role === "client" && program.clientId !== auth.userId) {
-    throw new AppError(403, "Forbidden");
-  }
-
-  if (auth.role === "trainer" && program.coachId !== auth.userId) {
-    throw new AppError(403, "Forbidden");
-  }
-};
-
-const createProgram = async (data, auth) => {
+const createProgram = async (data) => {
   const parsed = WorkoutProgramCreateRequestDto.parse(data);
 
   return prisma.$transaction(async (tx) => {
@@ -28,7 +14,7 @@ const createProgram = async (data, auth) => {
       data: {
         name: parsed.name,
         clientId: parsed.clientId,
-        coachId: auth.userId,
+        coachId: parsed.coachId,
       },
     });
 
@@ -54,19 +40,15 @@ const createProgram = async (data, auth) => {
   });
 };
 
-const listPrograms = async (filters = {}, auth) => {
+const listPrograms = async (filters = {}) => {
   const where = {};
-
-  if (auth.role === "client") {
-    where.clientId = auth.userId;
-  }
-
-  if (auth.role === "trainer") {
-    where.coachId = auth.userId;
-  }
 
   if (filters.clientId) {
     where.clientId = filters.clientId;
+  }
+
+  if (filters.coachId) {
+    where.coachId = filters.coachId;
   }
 
   return prisma.workoutProgram.findMany({
@@ -76,15 +58,19 @@ const listPrograms = async (filters = {}, auth) => {
   });
 };
 
-const getProgramById = async (id, auth) => {
+const getProgramById = async (id) => {
   const program = await prisma.workoutProgram.findUnique({
     where: { id },
     include: { exercises: { orderBy: { order: "asc" } } },
   });
 
-  ensureProgramAccess(program, auth);
+  if (!program) {
+    throw new AppError(404, "Workout program not found");
+  }
+
   return program;
 };
+
 
 const deleteExercises = async (tx, programId, exercisesToDelete = []) => {
   if (!exercisesToDelete || exercisesToDelete.length === 0) return;
@@ -135,17 +121,13 @@ const addExercises = async (tx, programId, exercisesToAdd = []) => {
     });
   }
 };
-
-const updateProgram = async (id, data, auth) => {
+const updateProgram = async (id, data) => {
   const parsed = WorkoutProgramUpdateRequestDto.parse(data);
 
   return prisma.$transaction(async (tx) => {
     const program = await tx.workoutProgram.findUnique({ where: { id } });
     if (!program) {
       throw new AppError(404, "Workout program not found");
-    }
-    if (program.coachId !== auth.userId) {
-      throw new AppError(403, "Forbidden");
     }
 
     if (parsed.name !== undefined) {
@@ -166,13 +148,10 @@ const updateProgram = async (id, data, auth) => {
   });
 };
 
-const deleteProgram = async (id, auth) => {
+const deleteProgram = async (id) => {
   const program = await prisma.workoutProgram.findUnique({ where: { id } });
   if (!program) {
     throw new AppError(404, "Workout program not found");
-  }
-  if (program.coachId !== auth.userId) {
-    throw new AppError(403, "Forbidden");
   }
 
   await prisma.workoutProgram.delete({ where: { id } });

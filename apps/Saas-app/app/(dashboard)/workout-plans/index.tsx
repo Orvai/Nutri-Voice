@@ -1,7 +1,7 @@
 import { ScrollView, View, Text, Pressable } from "react-native";
 import { useState, useMemo } from "react";
 
-import { useWorkoutTemplates } from "../../../src/hooks/useWorkoutTemplates";
+import { useWorkoutTemplates } from "../../../src/hooks/workout/useWorkoutTemplates";
 import { useExercises as useWorkoutExercises } from "../../../src/hooks/workout/useExercises";
 
 import WorkoutTemplatesList from "../../../src/components/workout/WorkoutTemplatesList";
@@ -33,7 +33,7 @@ export default function WorkoutPlansScreen() {
     const options = new Set<string>(["הכל"]);
     exercises.forEach((ex) => {
       if (ex.primaryMuscle) options.add(ex.primaryMuscle);
-      ex.secondaryMuscles.forEach((muscle) => {
+      (ex.secondaryMuscles ?? []).forEach((muscle) => {
         if (muscle) options.add(muscle);
       });
     });
@@ -42,12 +42,16 @@ export default function WorkoutPlansScreen() {
 
   const filteredExercises = useMemo(() => {
     const lowerQuery = query.toLowerCase();
+
     return exercises.filter((ex) => {
-      const matchQuery = !query || ex.name.toLowerCase().includes(lowerQuery);
+      const name = (ex.name ?? "").toLowerCase();
+
+      const matchQuery = !query || name.includes(lowerQuery);
+
       const matchMuscle =
         selectedMuscle === "הכל" ||
         ex.primaryMuscle === selectedMuscle ||
-        ex.secondaryMuscles.includes(selectedMuscle);
+        (ex.secondaryMuscles ?? []).includes(selectedMuscle);
 
       return matchQuery && matchMuscle;
     });

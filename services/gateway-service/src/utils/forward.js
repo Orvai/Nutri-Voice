@@ -43,6 +43,7 @@ export function forward(baseURL, targetPath) {
       if (method !== "get" && method !== "delete") {
         config.data = req.body;
       }
+      console.log("➡️ FORWARDING", method.toUpperCase(), url, "QUERY:", req.query);
 
       const response = await axios(config);
 
@@ -103,10 +104,9 @@ export function forward(baseURL, targetPath) {
       });
 
     } catch (err) {
-      console.error(
-        "❌ Gateway forward error:",
-        err?.response?.data || err.message
-      );
+      console.error("❌ ERROR on", method.toUpperCase(), url);
+      console.error("   DETAILS:", err?.message, err?.code, err?.response?.status);
+      
 
       if (err.response) {
         return res.status(err.response.status).json({
