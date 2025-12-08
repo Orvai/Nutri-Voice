@@ -1,7 +1,13 @@
 import { View } from "react-native";
+import type { UIExercise } from "../../types/ui/workout-ui";
 import WorkoutExerciseCard from "./WorkoutExerciseCard";
 
-export default function WorkoutExerciseGrid({ exercises, onPress }) {
+type Props = {
+  exercises: UIExercise[];
+  onPress?: (exercise: UIExercise) => void;
+};
+
+export default function WorkoutExerciseGrid({ exercises, onPress }: Props) {
   return (
     <View
       style={{
@@ -11,11 +17,11 @@ export default function WorkoutExerciseGrid({ exercises, onPress }) {
         gap: 14,
       }}
     >
-      {exercises.map((ex) => (
-        <View key={ex.id} style={{ width: "48%" }}>
+      {exercises.map((exercise) => (
+        <View key={exercise.id} style={{ width: "48%" }}>
           <WorkoutExerciseCard
-            item={ex}
-            onPress={() => onPress?.(ex)}  
+            item={exercise}
+            onPress={onPress ? () => onPress(exercise) : undefined}
           />
         </View>
       ))}

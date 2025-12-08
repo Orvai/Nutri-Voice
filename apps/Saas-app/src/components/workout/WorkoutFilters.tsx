@@ -4,6 +4,7 @@ type Props = {
   selectedMuscle: string;
   onChangeMuscle: (value: string) => void;
   totalCount: number;
+  muscleOptions?: string[];
 };
 
 const MUSCLE_OPTIONS = ["הכל", "חזה", "גב", "רגליים", "כתפיים", "יד קדמית", "יד אחורית"];
@@ -12,7 +13,10 @@ export default function WorkoutFilters({
   selectedMuscle,
   onChangeMuscle,
   totalCount,
+  muscleOptions,
 }: Props) {
+  const options = muscleOptions?.length ? muscleOptions : MUSCLE_OPTIONS;
+
   return (
     <View
       style={{
@@ -32,7 +36,7 @@ export default function WorkoutFilters({
           gap: 6,
         }}
       >
-        {MUSCLE_OPTIONS.map((m) => {
+        {options.map((m) => {
           const active = selectedMuscle === m;
           return (
             <Pressable

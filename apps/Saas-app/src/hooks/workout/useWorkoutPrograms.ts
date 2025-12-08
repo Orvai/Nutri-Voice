@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchWorkoutPrograms } from "../../api/workout-api/workoutPrograms.api";
+import { fetchWorkoutPrograms } from "../../api/workout-api/workoutProgram.api";
 import { mapWorkoutProgramToUI } from "../../types/ui/workout-ui";
 
 export function useWorkoutPrograms() {
