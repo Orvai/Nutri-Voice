@@ -54,6 +54,7 @@ model Exercise {
   name            String
   description     String?         // how to perform the exercise
   notes           String?         // general tips / warnings
+  videoUrl        String?
   muscleGroup     MuscleGroup
 
   gender          Gender?         // null = for all

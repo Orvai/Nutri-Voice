@@ -27,6 +27,8 @@ type Props = {
   hideTitle?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
+  onRemove?: () => void;
+  removing?: boolean;
 };
 
 export default function MealOptionsBlock({
@@ -34,6 +36,8 @@ export default function MealOptionsBlock({
   hideTitle = false,
   isSelected,
   onSelect,
+  onRemove,
+  removing = false,
 }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
@@ -74,27 +78,51 @@ export default function MealOptionsBlock({
       marginBottom: 16,
     }}
   >
-    {/* Title */}
-    {!hideTitle && (
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 12,
-        }}
-      >
-        <Text
+       {/* Title */}
+       {!hideTitle && (
+        <View
           style={{
-            fontSize: 14,
-            fontWeight: "700",
-            color: optionSelected ? "#7e22ce" : "#4b5563",
+            flexDirection: "row-reverse",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 12,
           }}
         >
-          {option.title}
-        </Text>
-        </View>
-      )}
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: "700",
+              color: optionSelected ? "#7e22ce" : "#4b5563",
+            }}
+          >
+            {option.title}
+          </Text>
+          {onRemove && (
+            <Pressable
+              onPress={onRemove}
+              disabled={removing}
+              style={{
+                backgroundColor: "#fee2e2",
+                borderColor: "#fecdd3",
+                borderWidth: 1,
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderRadius: 8,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#b91c1c",
+                  fontWeight: "700",
+                  opacity: removing ? 0.5 : 1,
+                }}
+              >
+                מחק אופציה
+              </Text>
+            </Pressable>
+          )}
+          </View>
+        )}
 
       {/* Food items */}
       {visibleFoods.map((food) => (

@@ -3,14 +3,14 @@
 
 // src/components/nutrition/MealBlock.tsx
 import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, Pressable, TextInput } from "react-native";
+import { View, Text, Pressable, TextInput, Modal } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
 import MealOptionsBlock from "./MealOptionsBlock";
 import MealFoodItem from "./MealFoodItem";
 import FoodPickerModal from "./FoodPickerModal";
 import { UIFoodItem, UIMeal } from "../../types/ui/nutrition-ui";
 import { useUpdateMealTemplate } from "../../hooks/nutrition/useUpdateMealTemplate";
 import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
-import MealTemplatePickerModal from "./MealTemplatePickerModal";
 
 function categoryToRole(category?: string) {
   switch (category) {
@@ -118,10 +118,17 @@ type Props = {
 };
 
 export default function MealBlock({ meal, templateMenuId }: Props) {
-    const sortedOptions = [...meal.options].sort(
+  const queryClient = useQueryClient();
+  const sortedOptions = [...meal.options].sort(
     (a, b) => a.orderIndex - b.orderIndex
   );
-  const hasOptions = sortedOptions.length > 0;
+  const [removedOptionIds, setRemovedOptionIds] = useState<string[]>([]);
+  const [removingOptionIds, setRemovingOptionIds] = useState<string[]>([]);
+  const visibleOptions = useMemo(
+    () => sortedOptions.filter((opt) => !removedOptionIds.includes(opt.id)),
+    [removedOptionIds, sortedOptions]
+  );
+  const hasOptions = visibleOptions.length > 0;
   const [removed, setRemoved] = useState(false);
   const [removing, setRemoving] = useState(false);
   const updateMenu = useUpdateTemplateMenu(templateMenuId);
@@ -132,6 +139,7 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
     meal.totalCalories?.toString() ?? ""
   );
   const [optionPickerOpen, setOptionPickerOpen] = useState(false);
+  const [newOptionName, setNewOptionName] = useState("");
 
   useEffect(() => {
     setSelectedOptionId(meal.selectedOptionId);
@@ -152,6 +160,7 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
       }
     );
   };
+
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
     updateMenu.mutate({
@@ -178,27 +187,50 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
     });
   };
 
-  const handleAddOption = (mealTemplateId: string) => {
+  const handleAddOption = () => {
+    const trimmedName = newOptionName.trim();
+    if (!trimmedName) return;
+
     updateMenu.mutate(
       {
         mealOptionsToAdd: [
           {
             mealId: meal.id,
-            mealTemplateId,
+            name: trimmedName,
           },
         ],
       },
       {
-        onSuccess: () => setOptionPickerOpen(false),
+        onSuccess: (data) => {
+          queryClient.setQueryData(["templateMenu", templateMenuId], data);
+          setNewOptionName("");
+          setOptionPickerOpen(false);
+        },
       }
     );
   };
 
-  const renderedOptions = sortedOptions.map((opt) => ({
+  const handleRemoveOption = (optionId: string) => {
+    setRemovingOptionIds((prev) => [...prev, optionId]);
+
+    updateMenu.mutate(
+      { mealOptionsToDelete: [{ id: optionId }] },
+      {
+        onSuccess: (data) => {
+          queryClient.setQueryData(["templateMenu", templateMenuId], data);
+          setRemovedOptionIds((prev) => [...prev, optionId]);
+        },
+        onSettled: () => {
+          setRemovingOptionIds((prev) => prev.filter((id) => id !== optionId));
+        },
+      }
+    );
+  };
+
+  const renderedOptions = visibleOptions.map((opt) => ({
     ...opt,
     isSelected: selectedOptionId ? opt.id === selectedOptionId : opt.isSelected,
   }));
-
 
   if (removed) {
     return null;
@@ -278,43 +310,105 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
 
       {hasOptions
         ? renderedOptions.map((opt) => (
-          <MealOptionsBlock
-            key={opt.id}
-            option={opt}
-            isSelected={opt.isSelected}
-            onSelect={() => handleSelectOption(opt.id)}
-          />
-        ))
-      : meal.foods && meal.mealTemplateId && (
-          <OptionlessMealFoods
-            foods={meal.foods}
-            mealTemplateId={meal.mealTemplateId}
-          />
-        )}
+            <MealOptionsBlock
+              key={opt.id}
+              option={opt}
+              isSelected={opt.isSelected}
+              onSelect={() => handleSelectOption(opt.id)}
+              onRemove={() => handleRemoveOption(opt.id)}
+              removing={removingOptionIds.includes(opt.id)}
+            />
+          ))
+        : meal.foods && meal.mealTemplateId && (
+            <OptionlessMealFoods
+              foods={meal.foods}
+              mealTemplateId={meal.mealTemplateId}
+            />
+          )}
 
-    <Pressable
-      onPress={() => setOptionPickerOpen(true)}
-      style={{
-        backgroundColor: "#eef2ff",
-        borderColor: "#c7d2fe",
-        borderWidth: 1,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        borderRadius: 10,
-        alignItems: "center",
-      }}
-    >
-      <Text style={{ color: "#4338ca", fontWeight: "700" }}>
-        הוסף אופציה
-      </Text>
-    </Pressable>
+      <Pressable
+        onPress={() => setOptionPickerOpen(true)}
+        style={{
+          backgroundColor: "#eef2ff",
+          borderColor: "#c7d2fe",
+          borderWidth: 1,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+          borderRadius: 10,
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "#4338ca", fontWeight: "700" }}>
+          הוסף אופציה
+        </Text>
+      </Pressable>
 
-    <MealTemplatePickerModal
-      visible={optionPickerOpen}
-      onClose={() => setOptionPickerOpen(false)}
-      existingTemplateIds={sortedOptions.map((opt) => opt.mealTemplateId)}
-      onSelect={(template) => handleAddOption(template.id)}
-    />
-  </View>
-);
+      {optionPickerOpen && (
+        <Modal transparent animationType="fade" visible={optionPickerOpen}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.35)",
+              justifyContent: "center",
+              padding: 20,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                borderRadius: 16,
+                padding: 16,
+                gap: 12,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row-reverse",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: "800" }}>
+                  שם האופציה
+                </Text>
+
+                <Pressable onPress={() => setOptionPickerOpen(false)}>
+                  <Text style={{ color: "#ef4444", fontWeight: "700" }}>
+                    סגור
+                  </Text>
+                </Pressable>
+              </View>
+
+              <TextInput
+                placeholder="לדוגמה: אופציה 1"
+                value={newOptionName}
+                onChangeText={setNewOptionName}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#d1d5db",
+                  borderRadius: 10,
+                  paddingHorizontal: 12,
+                  paddingVertical: 10,
+                  textAlign: "right",
+                }}
+              />
+
+              <Pressable
+                onPress={handleAddOption}
+                style={{
+                  backgroundColor: "#22c55e",
+                  paddingVertical: 12,
+                  borderRadius: 10,
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "700", textAlign: "center" }}>
+                  הוסף אופציה
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      )}
+    </View>
+  );
 }

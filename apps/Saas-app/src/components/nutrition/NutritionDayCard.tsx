@@ -1,10 +1,11 @@
 import { View, Text, Pressable, Modal, TextInput } from "react-native";
+import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import NutritionNotes from "./NutritionNotes";
 import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
 import { UINutritionPlan } from "../../types/ui/nutrition-ui";
 import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
-import React, { useState } from "react";
 
 type Props = {
   plan: UINutritionPlan;
@@ -13,10 +14,17 @@ type Props = {
 export default function NutritionDayCard({ plan }: Props) {
   if (!plan) return null;
 
+  const queryClient = useQueryClient();
   const isTraining = plan.dayType === "TRAINING";
   const updateMenu = useUpdateTemplateMenu(plan.id);
   const [addMealOpen, setAddMealOpen] = useState(false);
   const [newMealName, setNewMealName] = useState("");
+
+  const totalCalories = useMemo(
+    () => plan.meals.reduce((sum, meal) => sum + (meal.totalCalories ?? 0), 0),
+    [plan.meals]
+  );
+
 
   const handleAddMeal = () => {
     const trimmedName = newMealName.trim();
@@ -32,7 +40,8 @@ export default function NutritionDayCard({ plan }: Props) {
         ],
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          queryClient.setQueryData(["templateMenu", plan.id], data);
           setNewMealName("");
           setAddMealOpen(false);
         },
@@ -69,26 +78,9 @@ export default function NutritionDayCard({ plan }: Props) {
           style={{
             flexDirection: "row-reverse",
             alignItems: "center",
-            gap: 8,
+            gap: 12,
           }}
         >
-          <Text style={{ fontSize: 14 }}>סה״כ קלוריות:</Text>
-          <Text
-            style={{
-              minWidth: 70,
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              textAlign: "center",
-              borderRadius: 8,
-              paddingVertical: 6,
-              fontWeight: "600",
-            }}
-          >
-            {plan.totalCalories}
-          </Text>
-          <Text style={{ fontWeight: "600" }}>קק״ל</Text>
-        </View>
-        <View style={{ flexDirection: "row-reverse", gap: 8 }}>
           <Pressable
             onPress={() => setAddMealOpen(true)}
             style={{
@@ -104,6 +96,37 @@ export default function NutritionDayCard({ plan }: Props) {
               הוסף ארוחה
             </Text>
           </Pressable>
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              alignItems: "center",
+              gap: 8,
+              backgroundColor: "#f8fafc",
+              borderRadius: 10,
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderWidth: 1,
+              borderColor: "#e2e8f0",
+            }}
+          >
+            <Text style={{ fontSize: 14 }}>סה״כ קלוריות:</Text>
+            <Text
+              style={{
+                minWidth: 70,
+                textAlign: "center",
+                borderRadius: 8,
+                paddingVertical: 4,
+                paddingHorizontal: 6,
+                fontWeight: "600",
+                backgroundColor: "#fff",
+                borderWidth: 1,
+                borderColor: "#d1d5db",
+              }}
+            >
+              {totalCalories}
+            </Text>
+            <Text style={{ fontWeight: "600" }}>קק״ל</Text>
+          </View>
         </View>
       </View>
 
@@ -114,13 +137,13 @@ export default function NutritionDayCard({ plan }: Props) {
         templateMenuId={plan.id}
         />
 
-      {plan.meals.map((meal) => (
-        <MealBlock key={meal.id} meal={meal} templateMenuId={plan.id} />
-      ))}
-     {addMealOpen && (
-        <Modal transparent animationType="fade" visible={addMealOpen}>
-          <View
-            style={{
+          {plan.meals.map((meal) => (
+          <MealBlock key={meal.id} meal={meal} templateMenuId={plan.id} />
+        ))}
+        {addMealOpen && (
+          <Modal transparent animationType="fade" visible={addMealOpen}>
+            <View
+              style={{
               flex: 1,
               backgroundColor: "rgba(0,0,0,0.35)",
               justifyContent: "center",

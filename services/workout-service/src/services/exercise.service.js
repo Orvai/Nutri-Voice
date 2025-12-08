@@ -64,6 +64,7 @@ const updateExercise = async (data, coachId) => {
       name: parsed.name ?? exercise.name,
       description: parsed.description ?? exercise.description,
       notes: parsed.notes ?? exercise.notes,
+      videoUrl: parsed.videoUrl ?? exercise.videoUrl,
       muscleGroup: parsed.muscleGroup ?? exercise.muscleGroup,
       gender: parsed.gender ?? exercise.gender,
       bodyType: parsed.bodyType ?? exercise.bodyType,
