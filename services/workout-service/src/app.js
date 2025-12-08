@@ -33,7 +33,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 // Routes
-app.use('/api', routes);
+app.use(routes);
 
 // Error handler (always last)
 app.use(errorHandler);
