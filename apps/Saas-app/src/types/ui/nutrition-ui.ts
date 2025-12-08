@@ -44,6 +44,7 @@ export interface UIMeal {
   title: string;
   timeRange: string | null;
   notes: string | null;
+  totalCalories: number | null;
   options: UIMealOption[];
   selectedOptionId: string | null;
   foods?: UIFoodItem[];

@@ -17,6 +17,7 @@ export interface TemplateMenuMealOption {
 export interface TemplateMenuMeal {
   id: string;
   name: string;
+  totalCalories?: number | null;
   selectedOptionId: string | null;
   options: TemplateMenuMealOption[];
 }

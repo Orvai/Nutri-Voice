@@ -88,12 +88,6 @@ export default function MealOptionsBlock({ option, hideTitle = false }: Props) {
           </Text>
 
           <View style={{ flexDirection: "row-reverse", alignItems: "center", gap: 8 }}>
-            {option.totalCalories != null && (
-              <Text style={{ fontSize: 12, color: "#6b7280" }}>
-                {option.totalCalories} קק״ל
-              </Text>
-            )}
-
             {option.isSelected && (
               <Text style={{ fontSize: 11, color: "#16a34a" }}>אופציה נבחרת</Text>
             )}

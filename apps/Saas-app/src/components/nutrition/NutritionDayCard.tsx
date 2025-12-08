@@ -1,4 +1,4 @@
-import { View, Text, TextInput } from "react-native";
+import { View, Text } from "react-native";
 import NutritionNotes from "./NutritionNotes";
 import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
@@ -12,6 +12,10 @@ export default function NutritionDayCard({ plan }: Props) {
   if (!plan) return null;
 
   const isTraining = plan.dayType === "TRAINING";
+  const totalCalories = plan.meals.reduce(
+    (sum, meal) => sum + (meal.totalCalories ?? 0),
+    0
+  );
 
   return (
     <View
@@ -40,23 +44,24 @@ export default function NutritionDayCard({ plan }: Props) {
 
         <View style={{ flexDirection: "row-reverse", alignItems: "center", gap: 8 }}>
           <Text style={{ fontSize: 14 }}>סה״כ קלוריות:</Text>
-          <TextInput
+          <Text
             style={{
-              width: 70,
+              minWidth: 70,
               borderWidth: 1,
               borderColor: "#d1d5db",
               textAlign: "center",
               borderRadius: 8,
-              paddingVertical: 4,
+              paddingVertical: 6,
+              fontWeight: "600",
             }}
-            keyboardType="numeric"
-            defaultValue={(plan.totalCalories ?? "").toString()}
-          />
+          >
+            {totalCalories}
+          </Text>
           <Text style={{ fontWeight: "600" }}>קק״ל</Text>
         </View>
       </View>
 
-      <NutritionNotes notes={plan.notes} />
+      <NutritionNotes notes={plan.notes} templateMenuId={plan.id} />
 
       <NutritionSupplements
         vitamins={plan.vitamins}
@@ -64,7 +69,7 @@ export default function NutritionDayCard({ plan }: Props) {
         />
 
       {plan.meals.map((meal) => (
-        <MealBlock key={meal.id} meal={meal} />
+        <MealBlock key={meal.id} meal={meal} templateMenuId={plan.id} />
       ))}
     </View>
   );

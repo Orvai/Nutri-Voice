@@ -9,6 +9,7 @@ import MealFoodItem from "./MealFoodItem";
 import FoodPickerModal from "./FoodPickerModal";
 import { UIFoodItem, UIMeal } from "../../types/ui/nutrition-ui";
 import { useUpdateMealTemplate } from "../../hooks/nutrition/useUpdateMealTemplate";
+import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
 
 function categoryToRole(category?: string) {
   switch (category) {
@@ -112,13 +113,33 @@ function OptionlessMealFoods({
 
 type Props = {
   meal: UIMeal;
+  templateMenuId: string;
 };
 
-export default function MealBlock({ meal }: Props) {
+export default function MealBlock({ meal, templateMenuId }: Props) {  
   const sortedOptions = [...meal.options].sort(
     (a, b) => a.orderIndex - b.orderIndex
   );
   const hasOptions = sortedOptions.length > 0;
+  const [removed, setRemoved] = useState(false);
+  const [removing, setRemoving] = useState(false);
+  const updateMenu = useUpdateTemplateMenu(templateMenuId);
+
+  const handleRemoveMeal = () => {
+    setRemoving(true);
+
+    updateMenu.mutate(
+      { mealsToDelete: [{ id: meal.id }] },
+      {
+        onSuccess: () => setRemoved(true),
+        onSettled: () => setRemoving(false),
+      }
+    );
+  };
+
+  if (removed) {
+    return null;
+  }
   return (
     <View
       style={{
@@ -146,11 +167,38 @@ export default function MealBlock({ meal }: Props) {
           ) : null}
         </View>
 
-        <View style={{ flexDirection: "row-reverse", gap: 10 }}>
-          <Text style={{ color: "#2563eb" }}>📝</Text>
-          <Text style={{ color: "#dc2626" }}>🗑️</Text>
+        <View style={{ flexDirection: "row-reverse", gap: 12, alignItems: "center" }}>
+          {meal.totalCalories != null && (
+            <Text style={{ color: "#6b7280", fontWeight: "600" }}>
+              {meal.totalCalories} קק״ל
+            </Text>
+          )}
+
+          <Pressable
+            onPress={handleRemoveMeal}
+            disabled={removing}
+            style={{
+              backgroundColor: "#fee2e2",
+              borderColor: "#fecdd3",
+              borderWidth: 1,
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 8,
+            }}
+          >
+            <Text
+              style={{
+                color: "#b91c1c",
+                fontWeight: "700",
+                opacity: removing ? 0.5 : 1,
+              }}
+            >
+              הסר ארוחה
+            </Text>
+          </Pressable>
         </View>
       </View>
+
 
       <View
         style={{

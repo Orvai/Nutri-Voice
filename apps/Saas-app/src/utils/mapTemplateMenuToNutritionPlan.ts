@@ -24,6 +24,7 @@ type TemplateMenuDto = {
   meals: {
     id: string;
     name: string;
+    totalCalories?: number | null;
     notes?: string | null;
     selectedOptionId: string | null;
     options: {
@@ -34,6 +35,7 @@ type TemplateMenuDto = {
         id: string;
         name: string;
         kind: string;
+        totalCalories?: number | null;
         items: {
           id: string;
           role: string;
@@ -111,15 +113,15 @@ function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
   return (dto ?? []).map((meal) => {
     const selectedId = meal.selectedOptionId;
     const realOptions = meal.options ?? [];
+    const fallbackOptionCalories =
+      realOptions[0]?.mealTemplate.totalCalories ?? null;
+    const mealTotalCalories =
+      meal.totalCalories != null ? meal.totalCalories : fallbackOptionCalories;
     const options: UIMealOption[] = realOptions
       .slice()
       .sort((a, b) => a.orderIndex - b.orderIndex)
       .map((opt) => {
         const foods = mapFoods(opt.mealTemplate.items);
-        const totalCalories =
-          foods.length && foods.every((f) => f.calories != null)
-            ? foods.reduce((sum, f) => sum + (f.calories || 0), 0)
-            : null;
 
         return {
           id: opt.id,
@@ -130,47 +132,50 @@ function mapMeals(dto: TemplateMenuDto["meals"]): UIMeal[] {
           mealTemplateName: opt.mealTemplate.name,
           mealTemplateKind: opt.mealTemplate.kind,
           foods,
-          totalCalories,
+          totalCalories: null,
         };
       });
 
-      if (realOptions.length === 1) {
-        const singleOption = realOptions[0];
-  
-        if (!singleOption) {
-          return {
-            id: meal.id,
-            title: meal.name,
-            timeRange: null,
-            notes: meal.notes ?? null,
-            options: [],
-            selectedOptionId: null,
-            foods: [],
-          };
-        }
-  
-        // Collect foods from the single mealTemplate
-        const foods = mapFoods(singleOption.mealTemplate.items);
-  
+    if (realOptions.length === 1) {
+      const singleOption = realOptions[0];
+
+      if (!singleOption) {
         return {
           id: meal.id,
           title: meal.name,
           timeRange: null,
           notes: meal.notes ?? null,
-          // IMPORTANT: no options
+          totalCalories: mealTotalCalories,
           options: [],
           selectedOptionId: null,
-          // NEW: foods belong directly to meal
-          foods,
-          mealTemplateId: singleOption.mealTemplate.id,
+          foods: [],
         };
       }
-  
+
+      // Collect foods from the single mealTemplate
+      const foods = mapFoods(singleOption.mealTemplate.items);
+
+      return {
+        id: meal.id,
+        title: meal.name,
+        timeRange: null,
+        notes: meal.notes ?? null,
+        totalCalories: mealTotalCalories,
+        // IMPORTANT: no options
+        options: [],
+        selectedOptionId: null,
+        // NEW: foods belong directly to meal
+        foods,
+        mealTemplateId: singleOption.mealTemplate.id,
+      };
+    }
+
     return {
       id: meal.id,
       title: meal.name,
       timeRange: null,
       notes: meal.notes ?? null,
+      totalCalories: mealTotalCalories,
       options,
       selectedOptionId: selectedId,
     };
@@ -182,16 +187,20 @@ export function mapTemplateMenuToNutritionPlan(
   templateMenu: TemplateMenuDto
 ): UINutritionPlan {
   if (!templateMenu) {
-    throw new Error("Cannot map undefined templateMenu"); 
+    throw new Error("Cannot map undefined templateMenu");
   }
+  const mappedMeals = mapMeals(templateMenu.meals);
   return {
     id: templateMenu.id,
     name: templateMenu.name,
     source: "template",
     dayType: normalizeDayType(templateMenu.dayType),
-    totalCalories: templateMenu.totalCalories,
+    totalCalories: mappedMeals.reduce(
+      (sum, meal) => sum + (meal.totalCalories ?? 0),
+      0
+    ),
     notes: templateMenu.notes,
     vitamins: mapVitamins(templateMenu.vitamins),
-    meals: mapMeals(templateMenu.meals),
+    meals: mappedMeals,
   };
 }

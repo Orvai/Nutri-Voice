@@ -1,10 +1,22 @@
 import { View, Text, TextInput } from "react-native";
-
+import { useEffect, useState } from "react";
+import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
 type Props = {
   notes: string | null;
+  templateMenuId: string;
 };
 
-export default function NutritionNotes({ notes }: Props) {
+export default function NutritionNotes({ notes, templateMenuId }: Props) {
+  const [localNotes, setLocalNotes] = useState(notes ?? "");
+  const updateMenu = useUpdateTemplateMenu(templateMenuId);
+
+  useEffect(() => {
+    setLocalNotes(notes ?? "");
+  }, [notes]);
+
+  const handleBlur = () => {
+    updateMenu.mutate({ notes: localNotes });
+  };
   return (
     <View
       style={{
@@ -22,7 +34,9 @@ export default function NutritionNotes({ notes }: Props) {
       <TextInput
         multiline
         placeholder="הוסף הערות..."
-        defaultValue={notes ?? ""}
+        value={localNotes}
+        onChangeText={setLocalNotes}
+        onBlur={handleBlur}
         style={{
           backgroundColor: "white",
           borderRadius: 8,
