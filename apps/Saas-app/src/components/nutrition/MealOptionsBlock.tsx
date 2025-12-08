@@ -25,9 +25,16 @@ function categoryToRole(category?: string) {
 type Props = {
   option: UIMealOption;
   hideTitle?: boolean;
+  isSelected?: boolean;
+  onSelect?: () => void;
 };
 
-export default function MealOptionsBlock({ option, hideTitle = false }: Props) {
+export default function MealOptionsBlock({
+  option,
+  hideTitle = false,
+  isSelected,
+  onSelect,
+}: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
@@ -54,44 +61,38 @@ export default function MealOptionsBlock({ option, hideTitle = false }: Props) {
       }
     );
   };
-
-
+  const optionSelected = isSelected ?? option.isSelected;
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        borderWidth: 1,
-        borderColor: option.isSelected ? "#4f46e5" : "#c7d2fe",
-        borderRadius: 12,
-        padding: 14,
-        marginBottom: 16,
-      }}
-    >
-      {/* Title */}
-      {!hideTitle && (
-        <View
+    <Pressable
+    onPress={onSelect}
+    style={{
+      backgroundColor: "#fff",
+      borderWidth: 1,
+      borderColor: optionSelected ? "#a855f7" : "#c7d2fe",
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 16,
+    }}
+  >
+    {/* Title */}
+    {!hideTitle && (
+      <View
+        style={{
+          flexDirection: "row-reverse",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 12,
+        }}
+      >
+        <Text
           style={{
-            flexDirection: "row-reverse",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 12,
+            fontSize: 14,
+            fontWeight: "700",
+            color: optionSelected ? "#7e22ce" : "#4b5563",
           }}
         >
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: "700",
-              color: option.isSelected ? "#4f46e5" : "#4b5563",
-            }}
-          >
-            {option.title}
-          </Text>
-
-          <View style={{ flexDirection: "row-reverse", alignItems: "center", gap: 8 }}>
-            {option.isSelected && (
-              <Text style={{ fontSize: 11, color: "#16a34a" }}>אופציה נבחרת</Text>
-            )}
-          </View>
+          {option.title}
+        </Text>
         </View>
       )}
 
@@ -131,6 +132,6 @@ export default function MealOptionsBlock({ option, hideTitle = false }: Props) {
           setPickerOpen(false);
         }}
       />
-    </View>
-  );
+    </Pressable>
+      );
 }

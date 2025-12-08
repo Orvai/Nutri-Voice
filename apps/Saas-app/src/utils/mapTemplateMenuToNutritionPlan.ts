@@ -195,10 +195,9 @@ export function mapTemplateMenuToNutritionPlan(
     name: templateMenu.name,
     source: "template",
     dayType: normalizeDayType(templateMenu.dayType),
-    totalCalories: mappedMeals.reduce(
-      (sum, meal) => sum + (meal.totalCalories ?? 0),
-      0
-    ),
+    totalCalories:
+      templateMenu.totalCalories ??
+      mappedMeals.reduce((sum, meal) => sum + (meal.totalCalories ?? 0), 0),
     notes: templateMenu.notes,
     vitamins: mapVitamins(templateMenu.vitamins),
     meals: mappedMeals,

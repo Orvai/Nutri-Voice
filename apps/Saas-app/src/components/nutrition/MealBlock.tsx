@@ -2,14 +2,15 @@
 -10
 
 // src/components/nutrition/MealBlock.tsx
-import React, { useMemo, useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { View, Text, Pressable, TextInput } from "react-native";
 import MealOptionsBlock from "./MealOptionsBlock";
 import MealFoodItem from "./MealFoodItem";
 import FoodPickerModal from "./FoodPickerModal";
 import { UIFoodItem, UIMeal } from "../../types/ui/nutrition-ui";
 import { useUpdateMealTemplate } from "../../hooks/nutrition/useUpdateMealTemplate";
 import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
+import MealTemplatePickerModal from "./MealTemplatePickerModal";
 
 function categoryToRole(category?: string) {
   switch (category) {
@@ -116,14 +117,29 @@ type Props = {
   templateMenuId: string;
 };
 
-export default function MealBlock({ meal, templateMenuId }: Props) {  
-  const sortedOptions = [...meal.options].sort(
+export default function MealBlock({ meal, templateMenuId }: Props) {
+    const sortedOptions = [...meal.options].sort(
     (a, b) => a.orderIndex - b.orderIndex
   );
   const hasOptions = sortedOptions.length > 0;
   const [removed, setRemoved] = useState(false);
   const [removing, setRemoving] = useState(false);
   const updateMenu = useUpdateTemplateMenu(templateMenuId);
+  const [selectedOptionId, setSelectedOptionId] = useState(
+    meal.selectedOptionId
+  );
+  const [caloriesInput, setCaloriesInput] = useState(
+    meal.totalCalories?.toString() ?? ""
+  );
+  const [optionPickerOpen, setOptionPickerOpen] = useState(false);
+
+  useEffect(() => {
+    setSelectedOptionId(meal.selectedOptionId);
+  }, [meal.selectedOptionId]);
+
+  useEffect(() => {
+    setCaloriesInput(meal.totalCalories?.toString() ?? "");
+  }, [meal.totalCalories]);
 
   const handleRemoveMeal = () => {
     setRemoving(true);
@@ -136,6 +152,53 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
       }
     );
   };
+  const handleSelectOption = (optionId: string) => {
+    setSelectedOptionId(optionId);
+    updateMenu.mutate({
+      mealsToUpdate: [
+        {
+          id: meal.id,
+          selectedOptionId: optionId,
+        },
+      ],
+    });
+  };
+
+  const handleCaloriesBlur = () => {
+    const parsed = parseInt(caloriesInput, 10);
+    const totalCalories = Number.isNaN(parsed) ? null : parsed;
+
+    updateMenu.mutate({
+      mealsToUpdate: [
+        {
+          id: meal.id,
+          totalCalories,
+        },
+      ],
+    });
+  };
+
+  const handleAddOption = (mealTemplateId: string) => {
+    updateMenu.mutate(
+      {
+        mealOptionsToAdd: [
+          {
+            mealId: meal.id,
+            mealTemplateId,
+          },
+        ],
+      },
+      {
+        onSuccess: () => setOptionPickerOpen(false),
+      }
+    );
+  };
+
+  const renderedOptions = sortedOptions.map((opt) => ({
+    ...opt,
+    isSelected: selectedOptionId ? opt.id === selectedOptionId : opt.isSelected,
+  }));
+
 
   if (removed) {
     return null;
@@ -168,11 +231,25 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
         </View>
 
         <View style={{ flexDirection: "row-reverse", gap: 12, alignItems: "center" }}>
-          {meal.totalCalories != null && (
-            <Text style={{ color: "#6b7280", fontWeight: "600" }}>
-              {meal.totalCalories} קק״ל
-            </Text>
-          )}
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "#d1d5db",
+              borderRadius: 10,
+              paddingHorizontal: 8,
+              paddingVertical: 2,
+              minWidth: 90,
+            }}
+          >
+            <TextInput
+              value={caloriesInput}
+              onChangeText={setCaloriesInput}
+              onBlur={handleCaloriesBlur}
+              placeholder="קלוריות"
+              keyboardType="numeric"
+              style={{ textAlign: "center", fontWeight: "600", color: "#111827" }}
+            />
+          </View>
 
           <Pressable
             onPress={handleRemoveMeal}
@@ -199,32 +276,45 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
         </View>
       </View>
 
-
-      <View
-        style={{
-          backgroundColor: "#fef9c3",
-          borderColor: "#fde047",
-          borderWidth: 1,
-          padding: 8,
-          borderRadius: 10,
-          marginBottom: 12,
-        }}
-      >
-        <Text style={{ color: "#ca8a04", fontSize: 12 }}>
-          {meal.notes || "הערות לארוחה..."}
-        </Text>
-      </View>
-
       {hasOptions
-        ? sortedOptions.map((opt) => (
-            <MealOptionsBlock key={opt.id} option={opt} />
-          ))
-        : meal.foods && meal.mealTemplateId && (
-            <OptionlessMealFoods
-              foods={meal.foods}
-              mealTemplateId={meal.mealTemplateId}
-            />
-          )}
-    </View>
-  );
+        ? renderedOptions.map((opt) => (
+          <MealOptionsBlock
+            key={opt.id}
+            option={opt}
+            isSelected={opt.isSelected}
+            onSelect={() => handleSelectOption(opt.id)}
+          />
+        ))
+      : meal.foods && meal.mealTemplateId && (
+          <OptionlessMealFoods
+            foods={meal.foods}
+            mealTemplateId={meal.mealTemplateId}
+          />
+        )}
+
+    <Pressable
+      onPress={() => setOptionPickerOpen(true)}
+      style={{
+        backgroundColor: "#eef2ff",
+        borderColor: "#c7d2fe",
+        borderWidth: 1,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        borderRadius: 10,
+        alignItems: "center",
+      }}
+    >
+      <Text style={{ color: "#4338ca", fontWeight: "700" }}>
+        הוסף אופציה
+      </Text>
+    </Pressable>
+
+    <MealTemplatePickerModal
+      visible={optionPickerOpen}
+      onClose={() => setOptionPickerOpen(false)}
+      existingTemplateIds={sortedOptions.map((opt) => opt.mealTemplateId)}
+      onSelect={(template) => handleAddOption(template.id)}
+    />
+  </View>
+);
 }
