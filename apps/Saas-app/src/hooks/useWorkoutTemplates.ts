@@ -1,37 +1,22 @@
-import { useEffect, useState } from "react";
-import { WorkoutTemplate } from "../types/workout";
+import { useWorkoutPrograms } from "./workout/useWorkoutPrograms";
+import type { UIWorkoutProgram } from "../types/ui/workout-ui";
 
-export function useWorkoutTemplates() {
-  const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
+type UseWorkoutTemplatesResult = {
+  templates: UIWorkoutProgram[];
+  isLoading: boolean;
+  isError: boolean;
+  refetch: () => Promise<unknown>;
+  isFetching: boolean;
+};
 
-  useEffect(() => {
-    setTemplates([
-      {
-        id: "tempA",
-        label: "A",
-        name: "תבנית A",
-        description: "Upper Body Focus",
-        color: "#4f46e5",
-        muscles: ["חזה", "גב", "כתפיים"],
-      },
-      {
-        id: "tempB",
-        label: "B",
-        name: "תבנית B",
-        description: "Lower Body Focus",
-        color: "#ea580c",
-        muscles: ["רגליים", "יד קדמית", "יד אחורית"],
-      },
-      {
-        id: "tempFB",
-        label: "FB",
-        name: "תבנית FBW",
-        description: "Full Body",
-        color: "#0d9488",
-        muscles: ["Full Body", "Core"],
-      },
-    ]);
-  }, []);
+export function useWorkoutTemplates(): UseWorkoutTemplatesResult {
+  const query = useWorkoutPrograms();
 
-  return { templates };
+  return {
+    templates: query.data ?? [],
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    refetch: () => query.refetch(),
+  };
 }

@@ -1,8 +1,27 @@
 import { View, Text, Pressable } from "react-native";
+import type { UIWorkoutProgram } from "../../types/ui/workout-ui";
 
-export default function WorkoutTemplateCard({ item }) {
+const palette = ["#4f46e5", "#0ea5e9", "#16a34a", "#f97316", "#06b6d4"];
+
+type Props = {
+  program: UIWorkoutProgram;
+  onSelect?: (program: UIWorkoutProgram) => void;
+};
+
+export default function WorkoutTemplateCard({ program, onSelect }: Props) {
+  const badge = program.name?.slice(0, 2) || "W";
+  const accent = palette[Math.abs(hashString(program.id)) % palette.length];
+  const muscleTags = Array.from(
+    new Set(
+      (program.exercises || [])
+        .map((ex) => ex.exercise.primaryMuscle)
+        .filter(Boolean)
+    )
+  ).slice(0, 6);
+
   return (
-    <View
+    <Pressable
+      onPress={() => onSelect?.(program)}
       style={{
         backgroundColor: "#fff",
         borderRadius: 14,
@@ -12,38 +31,55 @@ export default function WorkoutTemplateCard({ item }) {
         marginBottom: 14,
       }}
     >
-      <View style={{ flexDirection: "row-reverse", alignItems: "center" }}>
+      <View
+        style={{ flexDirection: "row-reverse", alignItems: "center" }}
+      >
         <View
           style={{
-            width: 40,
-            height: 40,
-            backgroundColor: item.color + "20",
+            width: 42,
+            height: 42,
+            backgroundColor: `${accent}20`,
             justifyContent: "center",
             alignItems: "center",
-            borderRadius: 8,
+            borderRadius: 10,
             marginLeft: 12,
           }}
         >
           <Text
             style={{
-              fontSize: 18,
-              color: item.color,
-              fontWeight: "700",
+              fontSize: 16,
+              color: accent,
+              fontWeight: "800",
             }}
           >
-            {item.label}
+            {badge}
           </Text>
         </View>
 
-        <View>
-          <Text style={{ fontSize: 16, fontWeight: "700" }}>{item.name}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 16, fontWeight: "800" }}>{program.name}</Text>
           <Text style={{ fontSize: 12, color: "#6b7280" }}>
-            {item.description}
+            {program.goal || "תוכנית אימון"}
           </Text>
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              alignItems: "center",
+              gap: 8,
+              marginTop: 8,
+            }}
+          >
+            <Chip label={translateLevel(program.level)} />
+            {program.sessionsPerWeek ? (
+              <Chip label={`${program.sessionsPerWeek} אימונים/שבוע`} />
+            ) : null}
+            {program.durationWeeks ? (
+              <Chip label={`${program.durationWeeks} שבועות`} />
+            ) : null}
+          </View>
         </View>
       </View>
 
-      {/* Tags */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -52,22 +88,51 @@ export default function WorkoutTemplateCard({ item }) {
           marginTop: 12,
         }}
       >
-        {item.muscles.map((m, i) => (
-          <Text
-            key={i}
-            style={{
-              fontSize: 12,
-              backgroundColor: "#f3f4f6",
-              paddingVertical: 4,
-              paddingHorizontal: 8,
-              borderRadius: 6,
-              color: "#374151",
-            }}
-          >
-            {m}
-          </Text>
-        ))}
+        {muscleTags.length === 0 ? (
+          <Chip label="ללא שיוך שריר" />
+        ) : (
+          muscleTags.map((muscle) => <Chip key={muscle} label={muscle} />)
+        )}
       </View>
-    </View>
+    </Pressable>
   );
+}
+
+function Chip({ label }: { label: string }) {
+  return (
+    <Text
+      style={{
+        fontSize: 12,
+        backgroundColor: "#f3f4f6",
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        borderRadius: 8,
+        color: "#374151",
+      }}
+    >
+      {label}
+    </Text>
+  );
+}
+
+function translateLevel(level: UIWorkoutProgram["level"]) {
+  switch (level) {
+    case "beginner":
+      return "מתחיל";
+    case "intermediate":
+      return "ביניים";
+    case "advanced":
+      return "מתקדם";
+    default:
+      return "";
+  }
+}
+
+function hashString(value: string) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash;
 }

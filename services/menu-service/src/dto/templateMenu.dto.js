@@ -45,6 +45,53 @@ const TemplateMenuUpdateDto = z.object({
   dayType: z.string().optional(),
   notes: z.string().nullable().optional(),
   totalCalories: z.number().optional(),
+  mealsToAdd: z
+    .array(
+      z.object({
+        name: z.string(),
+        totalCalories: z.number().nullable().optional(),
+        orderIndex: z.number().optional(),
+      })
+    )
+    .optional(),
+
+  mealsToUpdate: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string().optional(),
+        selectedOptionId: z.string().nullable().optional(),
+        totalCalories: z.number().nullable().optional(),
+      })
+    )
+    .optional(),
+
+  mealsToDelete: z
+    .array(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .optional(),
+
+  mealOptionsToAdd: z
+    .array(
+      z.object({
+        mealId: z.string(),
+        mealTemplateId: z.string().optional(),
+        name: z.string().nullable().optional(),
+        orderIndex: z.number().optional(),
+      })
+    )
+    .optional(),
+
+  mealOptionsToDelete: z
+    .array(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .optional(),
   vitaminsToAdd: z
   .array(
     z.object({
@@ -79,6 +126,7 @@ const TemplateMenuResponseDto = z.object({
     z.object({
       id: z.string(),
       name: z.string(),
+      totalCalories: z.number().nullable().optional(),
       selectedOptionId: z.string().nullable(),
       options: z.array(
         z.object({
@@ -89,6 +137,7 @@ const TemplateMenuResponseDto = z.object({
             id: z.string(),
             name: z.string(),
             kind: z.string(),
+            totalCalories: z.number().nullable().optional(),
             items: z.array(
               z.object({
                 id: z.string(),

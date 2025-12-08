@@ -6,6 +6,9 @@ import WorkoutTemplatesList from "../../workout/WorkoutTemplatesList";
 export default function WorkoutPlansList({
   plans,
   templates,
+  templatesLoading,
+  templatesError,
+  onReloadTemplates,
   onCreateFromTemplate,
   onUpdate,
   onDelete,
@@ -64,11 +67,19 @@ export default function WorkoutPlansList({
           </Pressable>
 
           <WorkoutTemplatesList
-            templates={templates}
-            onCreateNew={() => {}}
-          />
+          templates={templates}
+          isLoading={!!templatesLoading}
+          isError={!!templatesError}
+          onRetry={onReloadTemplates}
+          onCreateNew={() => {}}
+          onSelectTemplate={(template) => {
+            onCreateFromTemplate(template);
+            setShowModal(false);
+          }}
+        />
 
-          {templates.map((template) => (
+        {!templatesLoading && !templatesError && templates.length > 0 ? (
+          templates.map((template) => (
             <Pressable
               key={template.id}
               onPress={() => {
@@ -83,12 +94,13 @@ export default function WorkoutPlansList({
               }}
             >
               <Text style={{ textAlign: "center", color: "#0284c7" }}>
-                בחר {template.name ?? template.workoutType}
+                בחר {template.name}
               </Text>
             </Pressable>
-          ))}
-        </View>
-      </Modal>
-    </View>
-  );
+          ))
+        ) : null}
+      </View>
+    </Modal>
+  </View>
+);
 }

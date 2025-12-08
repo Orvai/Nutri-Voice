@@ -143,6 +143,16 @@ const getTemplateMenu = async (id) => {
 // =========================================================
 const updateTemplateMenu = async (id, payload) => {
   const data = TemplateMenuUpdateDto.parse(payload);
+  const existing = await prisma.templateMenu.findUnique({
+    where: { id },
+    select: { coachId: true },
+  });
+
+  if (!existing) {
+    const e = new Error("Template menu not found");
+    e.status = 404;
+    throw e;
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.templateMenu.update({
@@ -174,6 +184,112 @@ const updateTemplateMenu = async (id, payload) => {
         })),
       });
     }
+    if (data.mealsToDelete?.length) {
+      await tx.templateMenuMeal.deleteMany({
+        where: {
+          id: { in: data.mealsToDelete.map((m) => m.id) },
+          templateMenuId: id,
+        },
+      });
+    }
+
+    if (data.mealsToAdd?.length) {
+      for (const meal of data.mealsToAdd) {
+        const createdMeal = await tx.templateMenuMeal.create({
+          data: {
+            templateMenuId: id,
+            name: meal.name,
+            totalCalories: meal.totalCalories ?? null,
+            selectedOptionId: null,
+          },
+        });
+
+        const mealTemplate = await tx.mealTemplate.create({
+          data: {
+            coachId: existing.coachId,
+            name: meal.name,
+            kind: "FREE_CALORIES",
+            totalCalories: meal.totalCalories ?? 0,
+          },
+        });
+
+        const option = await tx.templateMenuMealOption.create({
+          data: {
+            mealId: createdMeal.id,
+            mealTemplateId: mealTemplate.id,
+            name: meal.name,
+            orderIndex: meal.orderIndex ?? 0,
+          },
+        });
+
+        await tx.templateMenuMeal.update({
+          where: { id: createdMeal.id },
+          data: { selectedOptionId: option.id },
+        });
+      }
+    }
+
+    if (data.mealsToUpdate?.length) {
+      for (const meal of data.mealsToUpdate) {
+        await tx.templateMenuMeal.update({
+          where: { id: meal.id },
+          data: {
+            name: meal.name ?? undefined,
+            totalCalories: meal.totalCalories ?? undefined,
+            selectedOptionId: meal.selectedOptionId ?? undefined,
+          },
+        });
+      }
+    }
+
+    if (data.mealOptionsToDelete?.length) {
+      await tx.templateMenuMealOption.deleteMany({
+        where: { id: { in: data.mealOptionsToDelete.map((opt) => opt.id) } },
+      });
+    }
+
+    if (data.mealOptionsToAdd?.length) {
+      for (const option of data.mealOptionsToAdd) {
+        let mealTemplateId = option.mealTemplateId;
+
+        if (!mealTemplateId) {
+          const newTemplate = await tx.mealTemplate.create({
+            data: {
+              coachId: existing.coachId,
+              name: option.name ?? "אופציה חדשה",
+              kind: "FREE_CALORIES",
+              totalCalories: 0,
+            },
+          });
+
+          mealTemplateId = newTemplate.id;
+        }
+
+        await tx.templateMenuMealOption.create({
+          data: {
+            mealId: option.mealId,
+            mealTemplateId,
+            name: option.name ?? null,
+            orderIndex: option.orderIndex ?? 0,
+          },
+        });
+      }
+    }
+
+    const meals = await tx.templateMenuMeal.findMany({
+      where: { templateMenuId: id },
+      select: { totalCalories: true },
+    });
+
+    const totalCalories = meals.reduce(
+      (sum, meal) => sum + (meal.totalCalories ?? 0),
+      0
+    );
+
+    await tx.templateMenu.update({
+      where: { id },
+      data: { totalCalories },
+    });
   });
 
   // Always return fresh full menu (with nested structures)
