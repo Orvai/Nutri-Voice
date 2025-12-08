@@ -40,7 +40,7 @@ app.use(verifyJwt);
 // 4) Routes
 // ----------------------
 app.use("/api", menuRoutes);
-app.use("/api", workoutRoutes);
+app.use("/api/workout", workoutRoutes);
 app.use("/api/clients", clientRoutes);
 
 // ----------------------
