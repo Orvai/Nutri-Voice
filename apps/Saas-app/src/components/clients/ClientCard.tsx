@@ -1,8 +1,13 @@
 import { View, Text, Image, Pressable } from "react-native";
 import { router } from "expo-router";
 import { useUserInfo } from "../../../src/hooks/useUserInfo";
+import { Client } from "../../types/client";
 
-export default function ClientCard({ client }) {
+type ClientCardProps = {
+  client: Client;
+};
+
+export default function ClientCard({ client }: ClientCardProps) {
   const { data: info } = useUserInfo(client.userId);
 
   const goToProfile = () => {

@@ -244,214 +244,64 @@ async function seedTemplateMenus(foodMap) {
             },
           ],
         },
+
+        // ========= FIX: איחוד כל מוצרי החלבון לאופציה אחת =========
         {
           name: "ארוחה 1 - חלבון",
           options: [
             {
-              name: "חזה עוף",
+              name: "בחירת חלבון חופשית",
               kind: MealTemplateKind.MEAT_MEAL,
               items: [
-                {
-                  food: foodMap.get("חזה עוף"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                  notes: "חזה עוף ~200 גרם",
-                },
-              ],
-            },
-            {
-              name: "פרגיות",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("פרגיות"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "כבד עוף",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("כבד עוף"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "פסטרמה עוף",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("פסטרמה עוף"),
-                  grams: 150,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "סלמון אפוי",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("סלמון אפוי"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "לברק אפוי",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("לברק אפוי"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "דג טונה",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("דג טונה"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                },
+                { food: foodMap.get("חזה עוף"), grams: 200, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("פרגיות"), grams: 200, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("כבד עוף"), grams: 200, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("פסטרמה עוף"), grams: 150, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("סלמון אפוי"), grams: 200, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("לברק אפוי"), grams: 200, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("דג טונה"), grams: 200, role: MealItemRole.PROTEIN },
               ],
             },
           ],
         },
+
+        // ========= FIX: איחוד מוצרי פחמימה =========
         {
           name: "ארוחה 1 - פחמימה",
           options: [
             {
-              name: "פיתה",
+              name: "בחירת פחמימה חופשית",
               kind: MealTemplateKind.MEAT_MEAL,
               items: [
-                {
-                  food: foodMap.get("פיתה לבנה"),
-                  grams: 100,
-                  role: MealItemRole.CARB,
-                },
-              ],
-            },
-            {
-              name: "אורז",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("אורז לבן מבושל"),
-                  grams: 160,
-                  role: MealItemRole.CARB,
-                },
-              ],
-            },
-            {
-              name: "תפוח אדמה",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("תפוח אדמה מבושל"),
-                  grams: 200,
-                  role: MealItemRole.CARB,
-                },
-              ],
-            },
-            {
-              name: "פסטה / קוסקוס",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("פסטה מבושלת"),
-                  grams: 160,
-                  role: MealItemRole.CARB,
-                },
-              ],
-            },
-            {
-              name: "לחם / טורטיה",
-              kind: MealTemplateKind.MEAT_MEAL,
-              items: [
-                {
-                  food: foodMap.get("לחם פרוס"),
-                  grams: 80,
-                  role: MealItemRole.CARB,
-                  notes: "2 פרוסות",
-                },
+                { food: foodMap.get("פיתה לבנה"), grams: 100, role: MealItemRole.CARB },
+                { food: foodMap.get("אורז לבן מבושל"), grams: 160, role: MealItemRole.CARB },
+                { food: foodMap.get("תפוח אדמה מבושל"), grams: 200, role: MealItemRole.CARB },
+                { food: foodMap.get("פסטה מבושלת"), grams: 160, role: MealItemRole.CARB },
+                { food: foodMap.get("לחם פרוס"), grams: 80, role: MealItemRole.CARB, notes: "2 פרוסות" },
               ],
             },
           ],
         },
+
+        // ========= FIX: איחוד מוצרי חלבון לארוחה השנייה =========
         {
           name: "ארוחה 2 - חלבון",
           options: [
             {
-              name: "מעדן פרו",
+              name: "בחירת חלבון חלבית",
               kind: MealTemplateKind.DAIRY_MEAL,
               items: [
-                {
-                  food: foodMap.get("מעדן פרו"),
-                  grams: 150,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "קוטג / גבינה לבנה",
-              kind: MealTemplateKind.DAIRY_MEAL,
-              items: [
-                {
-                  food: foodMap.get("קוטג 1%"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "ביצים",
-              kind: MealTemplateKind.DAIRY_MEAL,
-              items: [
-                {
-                  food: foodMap.get("ביצים"),
-                  grams: 200,
-                  role: MealItemRole.PROTEIN,
-                  notes: "~3 ביצים",
-                },
-              ],
-            },
-            {
-              name: "טונה בשמן",
-              kind: MealTemplateKind.DAIRY_MEAL,
-              items: [
-                {
-                  food: foodMap.get("טונה בשמן"),
-                  grams: 100,
-                  role: MealItemRole.PROTEIN,
-                },
-              ],
-            },
-            {
-              name: "משקה / חטיף חלבון",
-              kind: MealTemplateKind.DAIRY_MEAL,
-              items: [
-                {
-                  food: foodMap.get("משקה חלבון 0%"),
-                  grams: 300,
-                  role: MealItemRole.PROTEIN,
-                },
+                { food: foodMap.get("מעדן פרו"), grams: 150, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("קוטג 1%"), grams: 200, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("ביצים"), grams: 200, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("טונה בשמן"), grams: 100, role: MealItemRole.PROTEIN },
+                { food: foodMap.get("משקה חלבון 0%"), grams: 300, role: MealItemRole.PROTEIN },
               ],
             },
           ],
         },
       ],
     },
-
     // ========== תפריט יום אימון ==========
     {
       name: "תפריט יום אימון",
