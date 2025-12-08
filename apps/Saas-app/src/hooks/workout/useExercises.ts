@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchExercises } from "../../api/workout-api/exercises.api";
-import { mapExerciseToUI } from "../../types/ui/workout-ui";
+import { mapExerciseToUI, type UIExercise } from "../../types/ui/workout-ui";
 
 export function useExercises() {
-  return useQuery({
+  return useQuery<UIExercise[]>({
     queryKey: ["workoutExercises"],
     queryFn: async () => {
       const exercises = await fetchExercises();
