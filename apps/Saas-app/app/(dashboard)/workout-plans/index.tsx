@@ -32,10 +32,7 @@ export default function WorkoutPlansScreen() {
   const muscleOptions = useMemo(() => {
     const options = new Set<string>(["הכל"]);
     exercises.forEach((ex) => {
-      if (ex.primaryMuscle) options.add(ex.primaryMuscle);
-      (ex.secondaryMuscles ?? []).forEach((muscle) => {
-        if (muscle) options.add(muscle);
-      });
+    if (ex.muscleGroup) options.add(ex.muscleGroup);
     });
     return Array.from(options);
   }, [exercises]);
@@ -49,9 +46,7 @@ export default function WorkoutPlansScreen() {
       const matchQuery = !query || name.includes(lowerQuery);
 
       const matchMuscle =
-        selectedMuscle === "הכל" ||
-        ex.primaryMuscle === selectedMuscle ||
-        (ex.secondaryMuscles ?? []).includes(selectedMuscle);
+      selectedMuscle === "הכל" || ex.muscleGroup === selectedMuscle;
 
       return matchQuery && matchMuscle;
     });

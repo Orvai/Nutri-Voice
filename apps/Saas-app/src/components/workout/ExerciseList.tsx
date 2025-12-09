@@ -28,10 +28,12 @@ export default function ExerciseList({ exercises, selectedIds = [], onSelect }: 
           >
             <View style={{ flexDirection: "row-reverse", justifyContent: "space-between" }}>
               <Text style={{ fontWeight: "700", fontSize: 16 }}>{item.name}</Text>
-              <Text style={{ color: "#6b7280" }}>{item.primaryMuscle}</Text>
+              <Text style={{ color: "#6b7280" }}>
+                {item.muscleGroup || "ללא שריר"}
+              </Text>
             </View>
             <View style={{ flexDirection: "row-reverse", gap: 6, flexWrap: "wrap", marginTop: 6 }}>
-              {item.secondaryMuscles.map((muscle) => (
+              {(item.secondaryMuscles ?? []).map((muscle) => (
                 <Tag key={muscle} label={muscle} />
               ))}
               {item.equipment ? <Tag label={item.equipment} /> : null}

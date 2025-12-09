@@ -1,23 +1,17 @@
 import { View, Text, Pressable } from "react-native";
-import type { UIWorkoutProgram } from "../../types/ui/workout-ui";
+import { mapTemplateLevel, type UIWorkoutTemplate } from "../../types/ui/workout-ui";
 
 const palette = ["#4f46e5", "#0ea5e9", "#16a34a", "#f97316", "#06b6d4"];
 
 type Props = {
-  program: UIWorkoutProgram;
-  onSelect?: (program: UIWorkoutProgram) => void;
+  program: UIWorkoutTemplate;
+  onSelect?: (program: UIWorkoutTemplate) => void;
 };
 
 export default function WorkoutTemplateCard({ program, onSelect }: Props) {
   const badge = program.name?.slice(0, 2) || "W";
   const accent = palette[Math.abs(hashString(program.id)) % palette.length];
-  const muscleTags = Array.from(
-    new Set(
-      (program.exercises || [])
-        .map((ex) => ex.exercise.primaryMuscle)
-        .filter(Boolean)
-    )
-  ).slice(0, 6);
+  const muscleTags = Array.from(new Set(program.muscleGroups ?? [])).slice(0, 6);
 
   return (
     <Pressable
@@ -59,7 +53,7 @@ export default function WorkoutTemplateCard({ program, onSelect }: Props) {
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 16, fontWeight: "800" }}>{program.name}</Text>
           <Text style={{ fontSize: 12, color: "#6b7280" }}>
-            {program.goal || "תוכנית אימון"}
+            {program.workoutType || "תוכנית אימון"}
           </Text>
           <View
             style={{
@@ -69,13 +63,9 @@ export default function WorkoutTemplateCard({ program, onSelect }: Props) {
               marginTop: 8,
             }}
           >
-            <Chip label={translateLevel(program.level)} />
-            {program.sessionsPerWeek ? (
-              <Chip label={`${program.sessionsPerWeek} אימונים/שבוע`} />
-            ) : null}
-            {program.durationWeeks ? (
-              <Chip label={`${program.durationWeeks} שבועות`} />
-            ) : null}
+            <Chip label={translateLevel(mapTemplateLevel(program.level))} />
+            {program.bodyType ? <Chip label={program.bodyType} /> : null}
+            {program.gender ? <Chip label={program.gender} /> : null}
           </View>
         </View>
       </View>

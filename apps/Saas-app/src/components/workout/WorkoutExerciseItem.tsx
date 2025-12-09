@@ -21,7 +21,9 @@ export default function WorkoutExerciseItem({ item }: Props) {
         <Text style={{ fontWeight: "700", fontSize: 16 }}>
           {item.order}. {item.exercise.name}
         </Text>
-        <Text style={{ color: "#6b7280" }}>{item.exercise.primaryMuscle}</Text>
+        <Text style={{ color: "#6b7280" }}>
+          {item.exercise.muscleGroup || "ללא שריר"}
+        </Text>
       </View>
 
       <View

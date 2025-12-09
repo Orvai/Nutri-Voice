@@ -1,11 +1,11 @@
 import { View, Text, Pressable } from "react-native";
-import type { UIWorkoutProgram } from "../../types/ui/workout-ui";
+import type { UIWorkoutTemplate } from "../../types/ui/workout-ui";
 import WorkoutTemplateCard from "./WorkoutTemplateCard";
 
 type Props = {
-  templates: UIWorkoutProgram[];
+  templates: UIWorkoutTemplate[];
   onCreateNew?: () => void;
-  onSelectTemplate?: (template: UIWorkoutProgram) => void;
+  onSelectTemplate?: (template: UIWorkoutTemplate) => void;
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;

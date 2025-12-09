@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchWorkoutTemplates } from "../../api/workout-api/workoutTemplate.api";
-import type { UIWorkoutProgram } from "../../types/ui/workout-ui";
-import { mapWorkoutTemplateToUI } from "../../types/ui/workout-ui";
+import { mapWorkoutTemplateToUI, type UIWorkoutTemplate } from "../../types/ui/workout-ui";
 
 type UseWorkoutTemplatesResult = {
-  templates: UIWorkoutProgram[];
+  templates: UIWorkoutTemplate[];
   isLoading: boolean;
   isError: boolean;
   refetch: () => Promise<unknown>;
@@ -12,11 +11,17 @@ type UseWorkoutTemplatesResult = {
 };
 
 export function useWorkoutTemplates(): UseWorkoutTemplatesResult {
-  const query = useQuery({
+  const query = useQuery<UIWorkoutTemplate[]>({
     queryKey: ["workoutTemplates"],
     queryFn: async () => {
       const templates = await fetchWorkoutTemplates();
-      return templates.map(mapWorkoutTemplateToUI);
+      const parsedTemplates = Array.isArray((templates as any)?.data)
+        ? (templates as any).data
+        : templates ?? [];
+
+      return parsedTemplates
+        .filter(Boolean)
+        .map(mapWorkoutTemplateToUI);
     },
   });
 

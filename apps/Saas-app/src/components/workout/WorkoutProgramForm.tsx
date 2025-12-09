@@ -191,7 +191,9 @@ export default function WorkoutProgramForm({
               <Text style={{ fontWeight: "700" }}>
                 {index + 1}. {exercise.name}
               </Text>
-              <Text style={{ color: "#6b7280" }}>{exercise.primaryMuscle}</Text>
+              <Text style={{ color: "#6b7280" }}>
+                {exercise.muscleGroup || "ללא שריר"}
+              </Text>
             </View>
           ))
         )}

@@ -25,7 +25,7 @@ export default function WorkoutExerciseCard({ item, onPress }: Props) {
           <View style={{ flex: 1 }}>
             <Text style={{ fontWeight: "800", fontSize: 16 }}>{item.name}</Text>
             <Text style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>
-              {item.primaryMuscle || "ללא שריר ראשי"}
+            {item.muscleGroup || "ללא שריר ראשי"}
             </Text>
           </View>
           <Chip label={translateDifficulty(item.difficulty)} tone="blue" />
@@ -38,8 +38,8 @@ export default function WorkoutExerciseCard({ item, onPress }: Props) {
             gap: 6,
           }}
         >
-          {item.secondaryMuscles.length
-            ? item.secondaryMuscles.map((muscle) => (
+          {(item.secondaryMuscles ?? []).length
+            ? (item.secondaryMuscles ?? []).map((muscle) => (
                 <Chip key={muscle} label={muscle} />
               ))
             : null}

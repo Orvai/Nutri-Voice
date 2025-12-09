@@ -31,11 +31,11 @@ export function useClientWorkoutPlans(clientId: string) {
     const newPlan = {
       id: "prog_" + Math.random().toString(36).slice(2),
       name: template.name,
-      muscleGroups: template.exercises?.map((ex) => ex.exercise.primaryMuscle) ?? [],
+      muscleGroups: template.muscleGroups ?? [],
       exercises:
         template.exercises?.map((ex) => ({
           id: ex.id,
-          muscleGroup: ex.exercise.primaryMuscle,
+          muscleGroup: ex.exercise.muscleGroup,
           name: ex.exercise.name,
           sets: ex.sets,
           reps: ex.reps ?? "",

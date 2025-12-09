@@ -8,8 +8,9 @@ import type { WorkoutTemplate } from "../api/workout-types/workoutTemplate.types
 export interface UIExercise {
   id: string;
   name: string;
-  primaryMuscle: string;
+  muscleGroup: string | null;
   secondaryMuscles: string[];
+  workoutTypes: string[];
   equipment: string | null;
   difficulty: Exercise["difficulty"];
   instructions: string | null;
@@ -39,15 +40,27 @@ export interface UIWorkoutProgram {
   summary?: string;
 }
 
+export interface UIWorkoutTemplate {
+  id: string;
+  gender: WorkoutTemplate["gender"];
+  level: WorkoutTemplate["level"];
+  bodyType: WorkoutTemplate["bodyType"];
+  workoutType: WorkoutTemplate["workoutType"];
+  muscleGroups: WorkoutTemplate["muscleGroups"];
+  name?: string | null;
+  notes?: string | null;
+}
+
 export function mapExerciseToUI(exercise: Exercise): UIExercise {
   return {
     id: exercise.id,
     name: exercise.name,
-    primaryMuscle: exercise.primaryMuscle,
-    secondaryMuscles: exercise.secondaryMuscles,
-    equipment: exercise.equipment,
+    muscleGroup: exercise.muscleGroup ?? null,
+    secondaryMuscles: exercise.secondaryMuscles ?? [],
+    workoutTypes: exercise.workoutTypes ?? [],
+    equipment: exercise.equipment ?? null,
     difficulty: exercise.difficulty,
-    instructions: exercise.instructions,
+    instructions: exercise.instructions ?? null,
     videoUrl: exercise.videoUrl ?? null,
   };
 }
@@ -57,10 +70,10 @@ export function mapWorkoutExerciseToUI(workoutExercise: ApiWorkoutExercise): UIW
     id: workoutExercise.id,
     order: workoutExercise.order,
     sets: workoutExercise.sets,
-    reps: workoutExercise.reps,
-    durationSeconds: workoutExercise.durationSeconds,
-    restSeconds: workoutExercise.restSeconds,
-    notes: workoutExercise.notes,
+    reps: workoutExercise.reps ?? null,
+    durationSeconds: workoutExercise.durationSeconds ?? null,
+    restSeconds: workoutExercise.restSeconds ?? null,
+    notes: workoutExercise.notes ?? null,
     exercise: mapExerciseToUI(workoutExercise.exercise),
   };
 }
@@ -68,12 +81,12 @@ export function mapWorkoutExerciseToUI(workoutExercise: ApiWorkoutExercise): UIW
 export function mapWorkoutProgramToUI(program: WorkoutProgram): UIWorkoutProgram {
   return {
     id: program.id,
-    name: program.name,
-    goal: program.goal,
+    name: program.name ?? "",
+    goal: program.goal ?? null,
     level: program.level,
-    durationWeeks: program.durationWeeks,
-    sessionsPerWeek: program.sessionsPerWeek,
-    notes: program.notes,
+    durationWeeks: program.durationWeeks ?? null,
+    sessionsPerWeek: program.sessionsPerWeek ?? null,
+    notes: program.notes ?? null,
     summary: program.goal ?? undefined,
     exercises: (program.exercises ?? []).map(mapWorkoutExerciseToUI).sort((a, b) => a.order - b.order),
   };
@@ -81,23 +94,21 @@ export function mapWorkoutProgramToUI(program: WorkoutProgram): UIWorkoutProgram
 
 export function mapWorkoutTemplateToUI(
   template: WorkoutTemplate
-): UIWorkoutProgram {
+): UIWorkoutTemplate {
   return {
     id: template.id,
+    gender: template.gender,
+    level: template.level,
+    bodyType: template.bodyType ?? null,
+    workoutType: template.workoutType,
+    muscleGroups: template.muscleGroups ?? [],
     name: template.name ?? "תבנית אימון",
-    goal: template.workoutType ?? null,
-    level: mapTemplateLevel(template.level),
-    durationWeeks: null,
-    sessionsPerWeek: null,
-    notes: template.notes,
-    summary: template.notes ?? undefined,
-    exercises: [],
+    notes: template.notes ?? null,
   };
 }
 
-function mapTemplateLevel(level: number): UIWorkoutProgram["level"] {
+export function mapTemplateLevel(level: number): UIWorkoutProgram["level"] {
   if (level <= 1) return "beginner";
   if (level === 2) return "intermediate";
   return "advanced";
 }
-
