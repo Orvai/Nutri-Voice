@@ -6,6 +6,8 @@ const {
   deleteMeals,
   updateMeals,
   addMealsFromTemplates,
+  addMealOptions,
+  deleteMealOptions,
 } = require("./helpers/meals");
 
 const {
@@ -125,17 +127,51 @@ const updateClientMenu = async (id, payload) => {
       },
     });
 
-    // 2. Meals CRUD
+    // 2. Map top-level item actions to the relevant meal (for generic UI payloads)
+    let mealsToUpdate = data.mealsToUpdate ?? [];
+
+    if (
+      (data.itemsToAdd?.length || data.itemsToUpdate?.length || data.itemsToDelete?.length) &&
+      (data.mealId || data.mealTemplateId)
+    ) {
+      const targetMeal = await tx.clientMenuMeal.findFirst({
+        where: {
+          clientMenuId: id,
+          ...(data.mealId ? { id: data.mealId } : {}),
+          ...(data.mealTemplateId ? { originalTemplateId: data.mealTemplateId } : {}),
+        },
+      });
+
+      if (!targetMeal) {
+        throw Object.assign(new Error("Target meal not found for update"), { status: 400 });
+      }
+
+      mealsToUpdate = [
+        ...mealsToUpdate,
+        {
+          id: targetMeal.id,
+          itemsToAdd: data.itemsToAdd,
+          itemsToUpdate: data.itemsToUpdate,
+          itemsToDelete: data.itemsToDelete,
+        },
+      ];
+    }
+
+    // 3. Meals CRUD
     await deleteMeals(tx, id, data.mealsToDelete);
-    await updateMeals(tx, id, data.mealsToUpdate);
+    await updateMeals(tx, id, mealsToUpdate);
     await addMealsFromTemplates(tx, id, data.mealsToAdd);
 
-    // 3. Vitamins CRUD
+    // 3b. Meal options CRUD
+    await deleteMealOptions(tx, id, data.mealOptionsToDelete);
+    await addMealOptions(tx, id, data.mealOptionsToAdd);
+
+    // 4. Vitamins CRUD
     await deleteClientMenuVitamins(tx, id, data.vitaminsToDelete);
     await updateClientMenuVitamins(tx, id, data.vitaminsToUpdate);
     await addClientMenuVitamins(tx, id, data.vitaminsToAdd);
 
-    // 4. Recompute calories
+    // 5. Recompute calories
     await recomputeMenuCalories(tx, id);
   });
 

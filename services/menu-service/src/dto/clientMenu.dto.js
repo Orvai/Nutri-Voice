@@ -41,6 +41,8 @@ const ClientMenuUpdateRequestDto = z.object({
   isActive: z.boolean().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
+  mealId: z.string().optional(),
+  mealTemplateId: z.string().optional(),
 
   mealsToAdd: z.array(z.object({
     templateId: z.string(),
@@ -50,15 +52,19 @@ const ClientMenuUpdateRequestDto = z.object({
   mealsToUpdate: z.array(z.object({
     id: z.string(),
     name: z.string().optional(),
+    selectedOptionId: z.string().nullable().optional(),
+    totalCalories: z.number().nullable().optional(),
     itemsToAdd: z.array(z.object({
       foodItemId: z.string(),
-      quantity: z.number(),
+      quantity: z.number().optional(),
+      defaultGrams: z.number().optional(),
       notes: z.string().nullable().optional(),
     })).optional(),
     itemsToUpdate: z.array(z.object({
       id: z.string(),
       foodItemId: z.string().optional(),
       quantity: z.number().optional(),
+      defaultGrams: z.number().optional(),
       notes: z.string().nullable().optional(),
     })).optional(),
     itemsToDelete: z.array(z.object({
@@ -67,6 +73,43 @@ const ClientMenuUpdateRequestDto = z.object({
   })).optional(),
 
   mealsToDelete: z.array(z.object({
+    id: z.string(),
+  })).optional(),
+
+  mealOptionsToAdd: z.array(z.object({
+    mealId: z.string(),
+    mealTemplateId: z.string().optional(),
+    name: z.string().nullable().optional(),
+    orderIndex: z.number().optional(),
+  })).optional(),
+
+  mealOptionsToDelete: z.array(z.object({
+    id: z.string(),
+  })).optional(),
+
+  itemsToAdd: z.array(z.object({
+    mealId: z.string().optional(),
+    mealTemplateId: z.string().optional(),
+    foodItemId: z.string(),
+    quantity: z.number().optional(),
+    defaultGrams: z.number().optional(),
+    role: z.string().optional(),
+    notes: z.string().nullable().optional(),
+  })).optional(),
+
+  itemsToUpdate: z.array(z.object({
+    mealId: z.string().optional(),
+    mealTemplateId: z.string().optional(),
+    id: z.string(),
+    foodItemId: z.string().optional(),
+    quantity: z.number().optional(),
+    defaultGrams: z.number().optional(),
+    notes: z.string().nullable().optional(),
+  })).optional(),
+
+  itemsToDelete: z.array(z.object({
+    mealId: z.string().optional(),
+    mealTemplateId: z.string().optional(),
     id: z.string(),
   })).optional(),
 

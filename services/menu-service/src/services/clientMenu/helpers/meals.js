@@ -42,6 +42,34 @@ const fetchMealOrThrow = async (tx, id, menuId) => {
   return meal;
 };
 
+const addMealOptions = async (tx, menuId, optionsToAdd = []) => {
+  if (!optionsToAdd?.length) return;
+
+  for (const option of optionsToAdd) {
+    const meal = await fetchMealOrThrow(tx, option.mealId, menuId);
+
+    await tx.clientMenuMealOption.create({
+      data: {
+        clientMenuMealId: meal.id,
+        mealTemplateId: option.mealTemplateId ?? null,
+        name: option.name ?? null,
+        orderIndex: option.orderIndex ?? 0,
+      },
+    });
+  }
+};
+
+const deleteMealOptions = async (tx, menuId, optionsToDelete = []) => {
+  if (!optionsToDelete?.length) return;
+
+  await tx.clientMenuMealOption.deleteMany({
+    where: {
+      id: { in: optionsToDelete.map((opt) => opt.id) },
+      clientMenuMeal: { clientMenuId: menuId },
+    },
+  });
+};
+
 // COPY template meal → ClientMenuMeal + items
 const copyTemplateMeal = async (tx, menuId, chosenOption, mealName) => {
   let totalCalories = 0;
@@ -95,6 +123,20 @@ const updateMeals = async (tx, menuId, mealsToUpdate = []) => {
       await tx.clientMenuMeal.update({
         where: { id: existing.id },
         data: { name: meal.name },
+      });
+    }
+
+    if (meal.selectedOptionId !== undefined) {
+      await tx.clientMenuMeal.update({
+        where: { id: existing.id },
+        data: { selectedOptionId: meal.selectedOptionId },
+      });
+    }
+
+    if (meal.totalCalories !== undefined) {
+      await tx.clientMenuMeal.update({
+        where: { id: existing.id },
+        data: { totalCalories: meal.totalCalories },
       });
     }
 
@@ -170,4 +212,6 @@ module.exports = {
   deleteMeals,
   updateMeals,
   addMealsFromTemplates,
+  addMealOptions,
+  deleteMealOptions,
 };
