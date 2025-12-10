@@ -8,6 +8,7 @@ export interface WorkoutProgram {
   createdAt: string;
   updatedAt: string;
   exercises: WorkoutExercise[];
+  level?: number | null;
   templateMuscleGroups?: string[];
 }
 

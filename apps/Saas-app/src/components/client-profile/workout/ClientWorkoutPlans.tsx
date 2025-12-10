@@ -16,6 +16,7 @@ import { useAuth } from "../../../context/AuthContext";
 import type {
   UIWorkoutExercise,
   UIWorkoutTemplate,
+  UIWorkoutProgram,
 } from "../../../types/ui/workout-ui";
 
 function groupExercises(
