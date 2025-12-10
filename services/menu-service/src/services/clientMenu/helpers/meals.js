@@ -1,4 +1,5 @@
 // src/services/clientMenu/helpers/meals.js
+
 const { computeCalories } = require("./items");
 
 const withStatus = (error, status = 400) => Object.assign(error, { status });
@@ -44,6 +45,7 @@ const fetchMealOrThrow = async (tx, id, menuId) => {
 // COPY template meal → ClientMenuMeal + items
 const copyTemplateMeal = async (tx, menuId, chosenOption, mealName) => {
   let totalCalories = 0;
+
   validateOptionTemplate(chosenOption, mealName);
 
   const itemsData = chosenOption.mealTemplate.items.map((tItem) => {
@@ -79,7 +81,7 @@ const deleteMeals = async (tx, menuId, mealsToDelete = []) => {
   });
 };
 
-// UPDATE meals (just name + items)
+// UPDATE meals
 const updateMeals = async (tx, menuId, mealsToUpdate = []) => {
   if (!mealsToUpdate?.length) return;
 
@@ -114,32 +116,20 @@ const addMealsFromTemplates = async (tx, menuId, templateMeals, selectedOptions 
         throw withStatus(new Error(`Template meal ${meal.id} has no options`));
       }
 
-      // pick option
       let chosen = null;
 
-      // 1. selected by user
       const manual = selectedOptions.find((s) => s.templateMealId === meal.id);
       if (manual) chosen = meal.options.find((o) => o.id === manual.optionId);
 
-      // 2. selected by template
       if (!chosen && meal.selectedOptionId)
         chosen = meal.options.find((o) => o.id === meal.selectedOptionId);
 
-      // 3. fallback first
       if (!chosen) chosen = meal.options[0];
-      if (!chosen) {
-        throw withStatus(
-          new Error(`No option could be selected for template meal ${meal.id}`)
-        );
-      }
 
-      // validate all options before writing
       meal.options.forEach((opt) => validateOptionTemplate(opt, meal.name));
 
-      // create Meal
       const createdMeal = await copyTemplateMeal(tx, menuId, chosen, meal.name);
 
-      // create ClientMenuMealOptions
       const createdOptions = await Promise.all(
         meal.options.map((opt) =>
           tx.clientMenuMealOption.create({
@@ -153,7 +143,6 @@ const addMealsFromTemplates = async (tx, menuId, templateMeals, selectedOptions 
         )
       );
 
-      // set selectedOptionId
       const match = createdOptions.find(
         (o) => o.mealTemplateId === chosen.mealTemplateId
       );

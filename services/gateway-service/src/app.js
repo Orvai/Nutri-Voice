@@ -25,6 +25,7 @@ app.use(
 // 2) JSON + Cookies
 // ----------------------
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 

@@ -219,11 +219,27 @@ const deleteClientMenu = async (id) => {
 // CREATE FROM TEMPLATE
 // =========================================================
 const createClientMenuFromTemplate = async (payload) => {
-  const data = ClientMenuCreateFromTemplateDto.parse(payload);
+  console.log("====== 🟦 Incoming payload for createClientMenuFromTemplate ======");
+  console.log(JSON.stringify(payload, null, 2));
+
+  let data;
+
+  try {
+    data = ClientMenuCreateFromTemplateDto.parse(payload);
+  } catch (zodErr) {
+    console.error("❌ ZOD VALIDATION ERROR");
+    console.error(zodErr);
+    // מחזיר שגיאה אמיתית, לא 500
+    throw Object.assign(new Error("Invalid payload for client menu creation"), {
+      status: 400,
+      details: zodErr.errors,
+    });
+  }
 
   try {
     const menu = await prisma.$transaction(async (tx) => {
-      // 1. Load template
+      console.log("====== 🟧 Loading templateMenu from DB ======");
+
       const template = await tx.templateMenu.findUnique({
         where: { id: data.templateMenuId },
         include: {
@@ -232,25 +248,28 @@ const createClientMenuFromTemplate = async (payload) => {
               options: {
                 include: {
                   mealTemplate: {
-                    include: {
-                      items: { include: { foodItem: true } },
-                    },
-                  },
-                },
-              },
-            },
+                    include: { items: { include: { foodItem: true } } }
+                  }
+                }
+              }
+            }
           },
           vitamins: true,
         },
       });
 
+      console.log("🔎 templateMenu loaded:");
+      console.log(JSON.stringify(template, null, 2));
+
       if (!template) {
         throw Object.assign(new Error("Template menu not found"), { status: 404 });
       }
 
+      console.log("====== 🟥 Validating template structure... ======");
       validateTemplateForClientMenu(template, data.selectedOptions);
+      console.log("✅ Template validation passed!");
 
-      // 2. Create clientMenu
+      console.log("====== 🟩 Creating ClientMenu ======");
       const clientMenu = await tx.clientMenu.create({
         data: {
           name: data.name ?? template.name,
@@ -264,25 +283,35 @@ const createClientMenuFromTemplate = async (payload) => {
 
       const menuId = clientMenu.id;
 
-
-      // 3. Create meals + options + items
+      console.log("====== 🟪 Creating meals from template... ======");
       await addMealsFromTemplates(tx, menuId, template.meals, data.selectedOptions);
 
-      // 4. Copy vitamins
+      console.log("====== 🟪 Copying vitamins... ======");
       await addClientMenuVitamins(tx, menuId, template.vitamins);
 
-      // 5. Recompute total calories
+      console.log("====== 🟪 Recomputing calories... ======");
       await recomputeMenuCalories(tx, menuId);
+
+      console.log("====== ✅ ClientMenu created successfully ======");
 
       return clientMenu;
     });
 
-       return getClientMenu(menu.id);
-  } catch (error) {
-    if (error?.status) {
-      throw error;
-    }
+    console.log("====== 🔵 Returning getClientMenu ======");
+    return await getClientMenu(menu.id);
 
+  } catch (error) {
+    console.error("🔥🔥🔥 INTERNAL ERROR in createClientMenuFromTemplate 🔥🔥🔥");
+    console.error("message:", error.message);
+    console.error("status:", error.status);
+    console.error("code:", error.code);
+    console.error("meta:", error.meta);
+    console.error("stack:", error.stack);
+
+    // כיבוד status שהוגדר
+    if (error?.status) throw error;
+
+    // שגיאת Prisma
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       const status = error.code === "P2025" ? 404 : 400;
       throw Object.assign(new Error("Failed to create client menu from template"), {

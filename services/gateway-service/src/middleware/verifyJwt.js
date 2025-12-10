@@ -19,6 +19,7 @@ export function verifyJwt(req, res, next) {
     req.user = {
       sessionId: payload.sid,
       userId: payload.sub,
+      id: payload.sub,
       role: payload.role,
     };
   } catch (err) {

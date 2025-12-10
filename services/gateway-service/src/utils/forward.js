@@ -52,8 +52,8 @@ export function forward(baseURL, targetPath, options = {}) {
         config.maxBodyLength = Infinity;
         config.maxContentLength = Infinity;
       } else if (method !== "get" && method !== "delete") {
-          config.data = req.body;
-      }
+        config.data = { ...req.body };
+            }
       console.log("➡️ FORWARDING", method.toUpperCase(), url, "QUERY:", req.query);
 
       const response = await axios(config);

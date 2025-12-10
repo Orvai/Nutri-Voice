@@ -51,6 +51,8 @@ r.put("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-me
 r.delete("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
 
 r.post("/client-menus/from-template", authRequired, (req, res, next) => {
+  console.log("➡️ ROUTE BODY:", req.body); // ← תוסיף את זה כאן
+
     const { clientId, templateMenuId } = req.body ?? {};
   
     if (!clientId) {
@@ -61,7 +63,11 @@ r.post("/client-menus/from-template", authRequired, (req, res, next) => {
       return res.status(400).json({ message: "templateMenuId is required" });
     }
   
-    req.body.coachId = req.user.id;
+    // Keep ALL original body fields
+    req.body = {
+      ...req.body,
+      coachId: req.user.id,
+    };
   
     return forward(BASE, "/internal/menu/client-menus/from-template")(req, res, next);
   });

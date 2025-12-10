@@ -1,9 +1,12 @@
 // src/components/client-profile/nutrition/ClientNutritionPlans.tsx
+
 import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import NutritionTabs from "../../nutrition/NutritionTabs";
 import NutritionDayCard from "../../nutrition/NutritionDayCard";
 import { useClientMenu, useClientMenus } from "../../../hooks/nutrition/useClientMenus";
+import { useTemplateMenus } from "../../../hooks/nutrition/useTemplateMenus";
+import { useCreateClientMenuFromTemplate } from "../../../hooks/nutrition/useClientMenus";
 import { mapClientMenuToNutritionPlan } from "../../../utils/mapClientMenuToNutritionPlan";
 
 type Props = {
@@ -11,20 +14,50 @@ type Props = {
 };
 
 export default function ClientNutritionPlans({ clientId }: Props) {
+  // Load existing client menus
   const {
     data: menus = [],
     isLoading: loadingMenus,
     error,
     refetch,
   } = useClientMenus(clientId);
+
+  // Load coach template menus
+  const {
+    data: templates = [],
+    isLoading: loadingTemplates,
+  } = useTemplateMenus();
+
+  const createMenu = useCreateClientMenuFromTemplate(clientId);
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
+  // Auto-create client menus from all templates (e.g., HIGH + LOW)
   useEffect(() => {
-    if (menus && menus.length > 0 && !activeTab) {
+    if (!loadingMenus && !loadingTemplates) {
+      if (menus.length === 0 && templates.length > 0) {
+        // Create client menus for each template
+        templates.forEach((tmpl) => {
+          createMenu.mutate({
+            templateMenuId: tmpl.id,
+            name: tmpl.name,
+            selectedOptions: [],
+          });
+        });
+
+        // Re-fetch client menus after creation
+        refetch();
+      }
+    }
+  }, [menus, templates, loadingMenus, loadingTemplates]);
+
+  // Select first tab automatically
+  useEffect(() => {
+    if (menus.length > 0 && !activeTab) {
       setActiveTab(menus[0].id);
     }
   }, [menus, activeTab]);
 
+  // Load full menu
   const {
     data: fullMenu,
     isLoading: loadingMenu,
@@ -35,7 +68,8 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     return mapClientMenuToNutritionPlan(fullMenu);
   }, [fullMenu]);
 
-  if (loadingMenus || loadingMenu || !plan) {
+  // Loading states
+  if (loadingMenus || loadingTemplates || loadingMenu || !plan) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
         <ActivityIndicator size="large" />
@@ -43,6 +77,7 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <View style={{ padding: 20 }}>
@@ -51,14 +86,7 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     );
   }
 
-  if (!menus || menus.length === 0) {
-    return (
-      <View style={{ padding: 20 }}>
-        <Text>לא נמצאו תפריטי תזונה ללקוח</Text>
-      </View>
-    );
-  }
-
+  // Tabs labels
   const tabs = menus.map((p) => ({
     id: p.id,
     label: p.type === "TRAINING" ? "יום אימון" : "יום מנוחה",

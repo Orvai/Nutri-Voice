@@ -39,22 +39,23 @@ export function useUpdateClientMenu(menuId: string) {
     },
   });
 }
-
 export function useCreateClientMenuFromTemplate(clientId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ templateMenuId, name, selectedOptions }: {
+    mutationFn: async ({ templateMenuId, name, selectedOptions }: {
       templateMenuId: string;
       name?: string;
       selectedOptions?: Array<{ templateMealId: string; optionId: string }>;
-    }) =>
-      createClientMenuFromTemplate({
+    }) => {
+      return await createClientMenuFromTemplate({
         clientId,
         templateMenuId,
         name,
         selectedOptions,
-      }),    onSuccess: (data) => {
+      });
+    },
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["clientMenus"] });
 
       if (data?.id) {
