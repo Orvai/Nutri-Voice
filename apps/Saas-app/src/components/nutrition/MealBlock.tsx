@@ -1,6 +1,3 @@
-+117
--10
-
 // src/components/nutrition/MealBlock.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, Pressable, TextInput, Modal } from "react-native";
@@ -8,9 +5,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import MealOptionsBlock from "./MealOptionsBlock";
 import MealFoodItem from "./MealFoodItem";
 import FoodPickerModal from "./FoodPickerModal";
-import { UIFoodItem, UIMeal } from "../../types/ui/nutrition-ui";
-import { useUpdateMealTemplate } from "../../hooks/nutrition/useUpdateMealTemplate";
-import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
+import { UIFoodItem, UIMeal, UINutritionSource } from "../../types/ui/nutrition-ui";
+import {
+  getMenuQueryKey,
+  useNutritionMealTemplateMutation,
+  useNutritionMenuMutation,
+} from "../../hooks/nutrition/useNutritionMenuMutation";
 
 function categoryToRole(category?: string) {
   switch (category) {
@@ -32,14 +32,22 @@ function categoryToRole(category?: string) {
 function OptionlessMealFoods({
   foods,
   mealTemplateId,
+  menuId,
+  menuSource,
 }: {
   foods: UIFoodItem[];
   mealTemplateId: string;
+  menuId: string;
+  menuSource: UINutritionSource;
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
-  const updateTemplate = useUpdateMealTemplate(mealTemplateId);
+  const updateTemplate = useNutritionMealTemplateMutation(
+    mealTemplateId,
+    menuId,
+    menuSource
+  );
 
   const visibleFoods = useMemo(
     () => foods.filter((food) => !removedFoodIds.includes(food.id)),
@@ -52,6 +60,7 @@ function OptionlessMealFoods({
     updateTemplate.mutate(
       {
         itemsToDelete: [{ id: foodId }],
+        mealTemplateId,
       },
       {
         onSuccess: () => {
@@ -103,6 +112,7 @@ function OptionlessMealFoods({
                 defaultGrams: 100,
               },
             ],
+            mealTemplateId,
           });
 
           setPickerOpen(false);
@@ -114,10 +124,11 @@ function OptionlessMealFoods({
 
 type Props = {
   meal: UIMeal;
-  templateMenuId: string;
+  menuId: string;
+  menuSource: UINutritionSource;
 };
 
-export default function MealBlock({ meal, templateMenuId }: Props) {
+export default function MealBlock({ meal, menuId, menuSource }: Props) {
   const queryClient = useQueryClient();
   const sortedOptions = [...meal.options].sort(
     (a, b) => a.orderIndex - b.orderIndex
@@ -131,8 +142,8 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
   const hasOptions = visibleOptions.length > 0;
   const [removed, setRemoved] = useState(false);
   const [removing, setRemoving] = useState(false);
-  const updateMenu = useUpdateTemplateMenu(templateMenuId);
-  const [selectedOptionId, setSelectedOptionId] = useState(
+  const updateMenu = useNutritionMenuMutation(menuId, menuSource);
+    const [selectedOptionId, setSelectedOptionId] = useState(
     meal.selectedOptionId
   );
   const [caloriesInput, setCaloriesInput] = useState(
@@ -140,6 +151,7 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
   );
   const [optionPickerOpen, setOptionPickerOpen] = useState(false);
   const [newOptionName, setNewOptionName] = useState("");
+  const menuQueryKey = getMenuQueryKey(menuSource, menuId);
 
   useEffect(() => {
     setSelectedOptionId(meal.selectedOptionId);
@@ -199,30 +211,30 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
             name: trimmedName,
           },
         ],
-      },
-      {
-        onSuccess: (data) => {
-          queryClient.setQueryData(["templateMenu", templateMenuId], data);
-          setNewOptionName("");
-          setOptionPickerOpen(false);
         },
-      }
+        {
+          onSuccess: (data) => {
+            queryClient.setQueryData(menuQueryKey, data);
+            setNewOptionName("");
+            setOptionPickerOpen(false);
+          },
+        }
     );
   };
 
   const handleRemoveOption = (optionId: string) => {
     setRemovingOptionIds((prev) => [...prev, optionId]);
 
-    updateMenu.mutate(
-      { mealOptionsToDelete: [{ id: optionId }] },
-      {
-        onSuccess: (data) => {
-          queryClient.setQueryData(["templateMenu", templateMenuId], data);
-          setRemovedOptionIds((prev) => [...prev, optionId]);
-        },
-        onSettled: () => {
-          setRemovingOptionIds((prev) => prev.filter((id) => id !== optionId));
-        },
+      updateMenu.mutate(
+        { mealOptionsToDelete: [{ id: optionId }] },
+        {
+          onSuccess: (data) => {
+            queryClient.setQueryData(menuQueryKey, data);
+            setRemovedOptionIds((prev) => [...prev, optionId]);
+          },
+          onSettled: () => {
+            setRemovingOptionIds((prev) => prev.filter((id) => id !== optionId));
+          },
       }
     );
   };
@@ -317,12 +329,16 @@ export default function MealBlock({ meal, templateMenuId }: Props) {
               onSelect={() => handleSelectOption(opt.id)}
               onRemove={() => handleRemoveOption(opt.id)}
               removing={removingOptionIds.includes(opt.id)}
+              menuId={menuId}
+              menuSource={menuSource}
             />
           ))
         : meal.foods && meal.mealTemplateId && (
             <OptionlessMealFoods
               foods={meal.foods}
               mealTemplateId={meal.mealTemplateId}
+              menuId={menuId}
+              menuSource={menuSource}
             />
           )}
 

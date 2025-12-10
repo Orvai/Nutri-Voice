@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import type { UIExercise } from "../../types/ui/workout-ui";
 import { Tag } from "./common/Tag";
@@ -19,6 +19,7 @@ export default function ExerciseList({
   isLoading = false,
 }: Props) {
   const [videoExercise, setVideoExercise] = useState<UIExercise | null>(null);
+  const [videoOverrides, setVideoOverrides] = useState<Record<string, string>>({});
   const skeletons = useMemo(() => Array.from({ length: 4 }), []);
 
   if (isLoading) {
@@ -38,6 +39,7 @@ export default function ExerciseList({
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ gap: 10 }}
         renderItem={({ item }) => {
+          const effectiveVideoUrl = videoOverrides[item.id] ?? item.videoUrl ?? null;
           const isSelected = selectedIds.includes(item.id);
           return (
             <Pressable
@@ -50,8 +52,13 @@ export default function ExerciseList({
               <View style={styles.headerRow}>
                 <Text style={styles.title}>{item.name}</Text>
                 <View style={styles.headerActions}>
-                  {item.videoUrl ? (
-                    <Pressable onPress={() => setVideoExercise(item)} style={styles.videoIcon}>
+                  {effectiveVideoUrl ? (
+                    <Pressable
+                      onPress={() =>
+                        setVideoExercise({ ...item, videoUrl: effectiveVideoUrl })
+                      }
+                      style={styles.videoIcon}
+                    >
                       <Text style={styles.videoIconText}>🎬</Text>
                     </Pressable>
                   ) : null}
@@ -83,7 +90,11 @@ export default function ExerciseList({
           visible={!!videoExercise}
           onClose={() => setVideoExercise(null)}
           onUpdated={(url) =>
-            setVideoExercise((prev) => (prev ? { ...prev, videoUrl: url } : prev))
+            setVideoExercise((prev) => {
+              if (!prev) return prev;
+              setVideoOverrides((overrides) => ({ ...overrides, [prev.id]: url }));
+              return { ...prev, videoUrl: url };
+            })
           }
         />
       ) : null}

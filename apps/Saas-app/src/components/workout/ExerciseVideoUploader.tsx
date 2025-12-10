@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import {
   Alert,
   Platform,
@@ -19,6 +19,7 @@ export default function ExerciseVideoUploader({ exerciseId, onUploaded }: Props)
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
 
   const handlePick = () => {
     if (Platform.OS === "web") {
@@ -33,6 +34,17 @@ export default function ExerciseVideoUploader({ exerciseId, onUploaded }: Props)
     const selected = event.target.files?.[0];
     if (!selected) return;
     setFileName(selected.name);
+
+    // Create a local preview for instant feedback on web
+    if (Platform.OS === "web") {
+      const objectUrl = URL.createObjectURL(selected);
+      setPreviewUrl((prev) => {
+        if (prev && prev.startsWith("blob:")) {
+          URL.revokeObjectURL(prev);
+        }
+        return objectUrl;
+      });
+    }
   };
 
   const handleUpload = async () => {
@@ -45,6 +57,7 @@ export default function ExerciseVideoUploader({ exerciseId, onUploaded }: Props)
       if (inputRef.current) {
         inputRef.current.value = "";
       }
+      setPreviewUrl(url);
       onUploaded?.(url);
     } catch (error) {
       Alert.alert("שגיאה", "לא הצלחנו להעלות את הוידאו.");
@@ -52,6 +65,14 @@ export default function ExerciseVideoUploader({ exerciseId, onUploaded }: Props)
       setUploading(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   return (
     <View style={styles.container}>
@@ -81,6 +102,19 @@ export default function ExerciseVideoUploader({ exerciseId, onUploaded }: Props)
           onChange={handleFileChange}
         />
       ) : null}
+
+      {previewUrl ? (
+        <View style={styles.previewWrapper}>
+          {Platform.OS === "web" ? (
+            <video
+              src={previewUrl}
+              controls
+              style={{ width: "100%", borderRadius: 12 }}
+              playsInline
+            />
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -89,6 +123,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row-reverse",
     alignItems: "center",
+    flexWrap: "wrap",
     gap: 8,
     marginTop: 8,
   },
@@ -113,5 +148,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     textAlign: "center",
+  },
+  previewWrapper: {
+    marginTop: 12,
+    width: "100%",
   },
 });

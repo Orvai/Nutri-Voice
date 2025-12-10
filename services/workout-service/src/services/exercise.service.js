@@ -44,8 +44,8 @@ const getExerciseById = async (id) => {
 };
 
 const assertExerciseOwnership = (exercise, coachId) => {
-  if (exercise.createdByCoachId && exercise.createdByCoachId !== coachId) {
-    throw new AppError(403, "Forbidden");
+  if (coachId &&exercise.createdByCoachId &&exercise.createdByCoachId !== coachId) {
+      throw new AppError(403, "Forbidden");
   }
 };
 

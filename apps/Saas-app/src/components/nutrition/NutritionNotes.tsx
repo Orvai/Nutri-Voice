@@ -1,14 +1,16 @@
 import { View, Text, TextInput } from "react-native";
 import { useEffect, useState } from "react";
-import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
+import { useNutritionMenuMutation } from "../../hooks/nutrition/useNutritionMenuMutation";
+import { UINutritionSource } from "../../types/ui/nutrition-ui";
 type Props = {
   notes: string | null;
-  templateMenuId: string;
+  menuId: string;
+  source: UINutritionSource;
 };
 
-export default function NutritionNotes({ notes, templateMenuId }: Props) {
+export default function NutritionNotes({ notes, menuId, source }: Props) {
   const [localNotes, setLocalNotes] = useState(notes ?? "");
-  const updateMenu = useUpdateTemplateMenu(templateMenuId);
+  const updateMenu = useNutritionMenuMutation(menuId, source);
 
   useEffect(() => {
     setLocalNotes(notes ?? "");

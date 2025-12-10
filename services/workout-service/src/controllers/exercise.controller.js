@@ -93,7 +93,10 @@ const uploadExerciseVideoController = async (req, res, next) => {
       throw new AppError(400, "Video file is required");
     }
 
-    const videoUrl = `/uploads/videos/${req.file.filename}`;
+    const videoPath = `/uploads/videos/${req.file.filename}`;
+    const protocol = req.get("x-forwarded-proto") || req.protocol;
+    const host = req.get("x-forwarded-host") || req.get("host");
+    const videoUrl = `${protocol}://${host}${videoPath}`;
     await saveExerciseVideo({
       id: req.params.id,
       videoUrl,

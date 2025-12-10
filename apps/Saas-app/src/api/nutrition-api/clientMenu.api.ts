@@ -22,3 +22,16 @@ export async function fetchClientMenu(id: string) {
 
   return res.data?.data ?? null;
 }
+
+export async function updateClientMenu(id: string, payload: any) {
+  const res = await api.put<{ data?: ClientMenu }>(`/client-menus/${id}` ,payload);
+  return res.data?.data ?? null;
+}
+
+export async function createClientMenuFromTemplate(clientId: string) {
+  const res = await api.post<{ data?: ClientMenu }>(`/client-menus/from-template`, {
+    clientId,
+  });
+
+  return res.data?.data ?? null;
+}

@@ -18,7 +18,7 @@ app.use(
     cors({
         origin: 'http://localhost:8081', // Expo Web origin
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'x-internal-token'],
         credentials: true,
     })
 );

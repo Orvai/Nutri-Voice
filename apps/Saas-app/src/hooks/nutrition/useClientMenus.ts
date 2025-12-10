@@ -1,5 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchClientMenus, fetchClientMenu } from "../../api/nutrition-api/clientMenu.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createClientMenuFromTemplate,
+  fetchClientMenus,
+  fetchClientMenu,
+  updateClientMenu,
+} from "../../api/nutrition-api/clientMenu.api";
 
 export function useClientMenus(clientId?: string) {
   return useQuery({
@@ -8,9 +13,44 @@ export function useClientMenus(clientId?: string) {
   });
 }
 
-export function useClientMenu(id: string) {
+export function useClientMenu(id?: string | null) {
   return useQuery({
     queryKey: ["clientMenu", id],
-    queryFn: () => fetchClientMenu(id)
+    enabled: !!id,
+    queryFn: () => fetchClientMenu(id as string)
+  });
+}
+
+export function useUpdateClientMenu(menuId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<any, Error, any>({
+    mutationFn: (payload) => updateClientMenu(menuId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["clientMenu"],
+        exact: false,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["clientMenus"],
+        exact: false,
+      });
+    },
+  });
+}
+
+export function useCreateClientMenuFromTemplate(clientId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => createClientMenuFromTemplate(clientId),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["clientMenus"] });
+
+      if (data?.id) {
+        queryClient.setQueryData(["clientMenu", data.id], data);
+      }
+    },
   });
 }

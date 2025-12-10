@@ -53,12 +53,12 @@ type TemplateMenuDto = {
   }[];
 };
 
-function normalizeDayType(dayType: string): UIDayType {
-  return dayType === "TRAINING" ? "TRAINING" : "REST";
+export function normalizeDayType(dayType: string): UIDayType {
+    return dayType === "TRAINING" ? "TRAINING" : "REST";
 }
 
-function getColorByRole(role: string): string {
-  switch (role) {
+export function getColorByRole(role: string): string {
+    switch (role) {
     case "PROTEIN":
       return "#22c55e";
     case "CARB":

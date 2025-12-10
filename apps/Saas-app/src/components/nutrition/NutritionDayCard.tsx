@@ -5,7 +5,10 @@ import NutritionNotes from "./NutritionNotes";
 import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
 import { UINutritionPlan } from "../../types/ui/nutrition-ui";
-import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
+import {
+  getMenuQueryKey,
+  useNutritionMenuMutation,
+} from "../../hooks/nutrition/useNutritionMenuMutation";
 
 type Props = {
   plan: UINutritionPlan;
@@ -16,7 +19,8 @@ export default function NutritionDayCard({ plan }: Props) {
 
   const queryClient = useQueryClient();
   const isTraining = plan.dayType === "TRAINING";
-  const updateMenu = useUpdateTemplateMenu(plan.id);
+  const menuQueryKey = getMenuQueryKey(plan.source, plan.id);
+  const updateMenu = useNutritionMenuMutation(plan.id, plan.source);
   const [addMealOpen, setAddMealOpen] = useState(false);
   const [newMealName, setNewMealName] = useState("");
 
@@ -24,7 +28,6 @@ export default function NutritionDayCard({ plan }: Props) {
     () => plan.meals.reduce((sum, meal) => sum + (meal.totalCalories ?? 0), 0),
     [plan.meals]
   );
-
 
   const handleAddMeal = () => {
     const trimmedName = newMealName.trim();
@@ -41,7 +44,7 @@ export default function NutritionDayCard({ plan }: Props) {
       },
       {
         onSuccess: (data) => {
-          queryClient.setQueryData(["templateMenu", plan.id], data);
+          queryClient.setQueryData(menuQueryKey, data);
           setNewMealName("");
           setAddMealOpen(false);
         },
@@ -130,20 +133,28 @@ export default function NutritionDayCard({ plan }: Props) {
         </View>
       </View>
 
-      <NutritionNotes notes={plan.notes} templateMenuId={plan.id} />
+      <NutritionNotes notes={plan.notes} menuId={plan.id} source={plan.source} />
 
       <NutritionSupplements
         vitamins={plan.vitamins}
-        templateMenuId={plan.id}
-        />
+        menuId={plan.id}
+        source={plan.source}
+      />
 
-          {plan.meals.map((meal) => (
-          <MealBlock key={meal.id} meal={meal} templateMenuId={plan.id} />
-        ))}
+      {plan.meals.map((meal) => (
+        <MealBlock
+          key={meal.id}
+          meal={meal}
+          menuId={plan.id}
+          menuSource={plan.source}
+        />
+      ))}
+
         {addMealOpen && (
-          <Modal transparent animationType="fade" visible={addMealOpen}>
-            <View
-              style={{
+        <Modal transparent animationType="fade" visible={addMealOpen}>
+          <View
+            style={{
+
               flex: 1,
               backgroundColor: "rgba(0,0,0,0.35)",
               justifyContent: "center",

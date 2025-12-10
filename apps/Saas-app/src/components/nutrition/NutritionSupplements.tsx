@@ -2,21 +2,22 @@ import React, { useMemo, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import VitaminPickerModal from "./VitaminPickerModal";
-import { useUpdateTemplateMenu } from "../../hooks/nutrition/useUpdateTemplateMenu";
-import { UIVitamin } from "../../types/ui/nutrition-ui";
+import { useNutritionMenuMutation } from "../../hooks/nutrition/useNutritionMenuMutation";
+import { UINutritionSource, UIVitamin } from "../../types/ui/nutrition-ui";
 
 
 type Props = {
   vitamins: UIVitamin[];
-  templateMenuId: string;
+  menuId: string;
+  source: UINutritionSource;
 };
 
-export default function NutritionSupplements({ vitamins, templateMenuId }: Props) {
+export default function NutritionSupplements({ vitamins, menuId, source }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedIds, setRemovedIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
 
-  const updateMenu = useUpdateTemplateMenu(templateMenuId);
+  const updateMenu = useNutritionMenuMutation(menuId, source);
 
   const visibleVitamins = useMemo(
     () => vitamins.filter((v) => !removedIds.includes(v.id)),

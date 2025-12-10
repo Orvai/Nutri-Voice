@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { Video } from "expo-av";
+import { Video, ResizeMode } from "expo-av";
 import type { UIExercise } from "../../types/ui/workout-ui";
 import ExerciseVideoUploader from "./ExerciseVideoUploader";
 import { theme } from "../../theme";
@@ -19,6 +19,7 @@ export default function ExerciseVideoPlayer({
   onUpdated,
 }: Props) {
   const [videoUrl, setVideoUrl] = useState(exercise.videoUrl ?? "");
+  const videoRef = useRef<Video>(null);
 
   useEffect(() => {
     setVideoUrl(exercise.videoUrl ?? "");
@@ -27,6 +28,19 @@ export default function ExerciseVideoPlayer({
   const handleUploaded = (url: string) => {
     setVideoUrl(url);
     onUpdated?.(url);
+  };
+
+  const handleFullscreen = async () => {
+    if (videoRef.current?.presentFullscreenPlayer) {
+      await videoRef.current.presentFullscreenPlayer();
+      return;
+    }
+
+    // Web fallback
+    const nativeRef: any = videoRef.current as any;
+    if (nativeRef?.requestFullscreen) {
+      nativeRef.requestFullscreen();
+    }
   };
 
   return (
@@ -42,17 +56,24 @@ export default function ExerciseVideoPlayer({
 
           {videoUrl ? (
             <Video
+              ref={videoRef}
               source={{ uri: videoUrl }}
               style={styles.video}
               useNativeControls
-              resizeMode="contain"
-              shouldPlay
             />
           ) : (
             <View style={styles.placeholder}>
               <Text style={styles.placeholderText}>אין וידאו זמין</Text>
             </View>
           )}
+
+          {videoUrl ? (
+            <View style={styles.actionsRow}>
+              <Pressable onPress={handleFullscreen} style={styles.fullscreenButton}>
+                <Text style={styles.fullscreenText}>מסך מלא</Text>
+              </Pressable>
+            </View>
+          ) : null}
 
           <ExerciseVideoUploader
             exerciseId={exercise.id}
@@ -99,6 +120,22 @@ const styles = StyleSheet.create({
     height: 220,
     borderRadius: 12,
     backgroundColor: "#000",
+  },
+  actionsRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "flex-start",
+    marginTop: 6,
+  },
+  fullscreenButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#0ea5e9",
+    borderRadius: 10,
+    alignSelf: "flex-start",
+  },
+  fullscreenText: {
+    color: "#fff",
+    fontWeight: "700",
   },
   placeholder: {
     width: "100%",

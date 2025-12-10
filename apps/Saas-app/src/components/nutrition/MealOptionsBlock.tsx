@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import MealFoodItem from "./MealFoodItem";
-import { UIMealOption } from "../../types/ui/nutrition-ui";
+import { UIMealOption, UINutritionSource } from "../../types/ui/nutrition-ui";
 import FoodPickerModal from "./FoodPickerModal";
-import { useUpdateMealTemplate } from "../../hooks/nutrition/useUpdateMealTemplate";
+import {
+  useNutritionMealTemplateMutation,
+} from "../../hooks/nutrition/useNutritionMenuMutation";
 
 function categoryToRole(category?: string) {
   switch (category) {
@@ -29,6 +31,8 @@ type Props = {
   onSelect?: () => void;
   onRemove?: () => void;
   removing?: boolean;
+  menuId: string;
+  menuSource: UINutritionSource;
 };
 
 export default function MealOptionsBlock({
@@ -38,11 +42,17 @@ export default function MealOptionsBlock({
   onSelect,
   onRemove,
   removing = false,
+  menuId,
+  menuSource,
 }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
-  const updateTemplate = useUpdateMealTemplate(option.mealTemplateId);
+  const updateTemplate = useNutritionMealTemplateMutation(
+    option.mealTemplateId,
+    menuId,
+    menuSource
+  );
   const visibleFoods = useMemo(
     () => option.foods.filter((food) => !removedFoodIds.includes(food.id)),
     [option.foods, removedFoodIds]
@@ -54,6 +64,7 @@ export default function MealOptionsBlock({
     updateTemplate.mutate(
       {
         itemsToDelete: [{ id: foodId }],
+        mealTemplateId: option.mealTemplateId,
       },
       {
         onSuccess: () => {
@@ -155,6 +166,7 @@ export default function MealOptionsBlock({
                 defaultGrams: 100,
               },
             ],
+            mealTemplateId: option.mealTemplateId,
           });
 
           setPickerOpen(false);
