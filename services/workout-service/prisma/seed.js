@@ -157,12 +157,14 @@ async function main() {
 
   // Create EXERCISES
   for (const ex of EXERCISES) {
+    const videoUrl = ex.videoUrl ?? ex.video?.url ?? randomVideo();
+    const { video, ...rest } = ex;
     await prisma.exercise.create({
       data: {
-        ...ex,
+        ...rest,
         description: "Automatically seeded exercise",
         notes: "Seed data",
-        videoUrl: randomVideo(),
+        videoUrl,
         createdByCoachId: COACH_ID,
       },
     });

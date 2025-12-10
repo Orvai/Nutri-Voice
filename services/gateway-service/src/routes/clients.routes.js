@@ -5,7 +5,6 @@ import { forward } from "../utils/forward.js";
 
 const r = Router();
 
-const CLIENT_SERVICE_URL = process.env.IDM_SERVICE_URL;
 const IDM_SERVICE_URL = process.env.IDM_SERVICE_URL;
 
 const withInternalHeaders = (req) => ({
@@ -14,88 +13,62 @@ const withInternalHeaders = (req) => ({
   ...(req.headers.cookie && { cookie: req.headers.cookie }),
 });
 
-const buildClientName = (client, idmUser) => {
-  if (client?.name) return client.name;
-  const nameParts = [idmUser?.firstName, idmUser?.lastName].filter(Boolean);
+const buildClientName = (user) => {
+  const nameParts = [user?.firstName, user?.lastName].filter(Boolean);
   if (nameParts.length) return nameParts.join(" ");
-  return client?.id || idmUser?.id || "";
+  return user?.email || user?.phone || user?.id || "";
 };
 
 // GET /api/clients → aggregated client + IDM profile info
 r.get("/", authRequired, async (req, res, next) => {
   try {
-    if (!CLIENT_SERVICE_URL || !IDM_SERVICE_URL) {
-      console.error("❌ Missing CLIENT_SERVICE_URL or IDM_SERVICE_URL");
-      return res.status(500).json({ message: "Gateway misconfiguration" });
-    }
+    if (!IDM_SERVICE_URL) return res.status(500).json({ message: "Gateway misconfiguration" });
 
     const headers = withInternalHeaders(req);
 
-    const clientsResponse = await axios.get(
-      `${CLIENT_SERVICE_URL}/internal/clients`,
-      {
-        headers,
-        params: req.query,
-        withCredentials: true,
-      }
-    );
+    const usersResponse = await axios.get(`${IDM_SERVICE_URL}/internal/users`, {
+      headers,
+      params: req.query,
+      withCredentials: true,
+    });
 
-    const rawClients = Array.isArray(clientsResponse.data?.data)
-      ? clientsResponse.data.data
-      : Array.isArray(clientsResponse.data)
-        ? clientsResponse.data
+    const rawUsers = Array.isArray(usersResponse.data?.data)
+      ? usersResponse.data.data
+      : Array.isArray(usersResponse.data)
+        ? usersResponse.data
         : [];
 
     const enrichedClients = await Promise.all(
-      rawClients.map(async (client) => {
-        const userId = client.userId || client.id;
+      rawUsers.map(async (user) => {
+        const infoRes = await axios
+          .get(`${IDM_SERVICE_URL}/internal/users/${user.id}/info`, {
+            headers,
+            withCredentials: true,
+          })
+          .catch(() => null);
 
-        if (!userId) return { ...client, profileImageUrl: null };
-
-        const [userRes, infoRes] = await Promise.all([
-          axios
-            .get(`${IDM_SERVICE_URL}/internal/users/${userId}`, {
-              headers,
-              withCredentials: true,
-            })
-            .catch(() => null),
-          axios
-            .get(`${IDM_SERVICE_URL}/internal/users/${userId}/info`, {
-              headers,
-              withCredentials: true,
-            })
-            .catch(() => null),
-        ]);
-
-        const idmUser = userRes?.data || {};
         const userInfo = infoRes?.data || {};
+        const preferences = userInfo.preferences || {};
+
+        const goals = userInfo.goals ?? preferences.goals ?? null;
+        const activityLevel = userInfo.activityLevel ?? preferences.activityLevel ?? null;
+        const weight = userInfo.weight ?? preferences.weight ?? null;
 
         return {
-          ...client,
-          userId,
-          name: buildClientName(client, idmUser),
-          phone: client.phone || idmUser.phone || "",
+          id: user.id,
+          name: buildClientName(user),
+          phone: user.phone || "",
+          email: user.email || "",
           profileImageUrl: userInfo.profileImageUrl || null,
           gender: userInfo.gender ?? null,
           age: userInfo.age ?? null,
           height: userInfo.height ?? null,
-          weight: userInfo.weight ?? null,
-          goals: userInfo.goals ?? client.goals ?? null,
-          activityLevel: userInfo.activityLevel ?? client.activityLevel ?? null,
-          creationDate:
-            client.creationDate ||
-            client.createdAt ||
-            userInfo.createdAt ||
-            idmUser.createdAt ||
-            null,
-          city: userInfo.city ?? client.city ?? null,
-          address: userInfo.address ?? client.address ?? null,
-          activeWorkoutProgram: client.activeWorkoutProgram ?? null,
-          activeMenu: client.activeMenu ?? null,
-          progressSummaries: client.progressSummaries ?? null,
-          healthMetrics: client.healthMetrics ?? null,
-          idmUser,
-          userInfo,
+          weight: weight ?? null,
+          goals: goals ?? null,
+          activityLevel: activityLevel ?? null,
+          creationDate: userInfo.createdAt || user.createdAt || null,
+          city: userInfo.city ?? null,
+          address: userInfo.address ?? null,
         };
       })
     );

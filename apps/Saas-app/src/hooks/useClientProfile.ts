@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useClients } from "./useClients";
-import { useUserInfo } from "./useUserInfo";
 
 export function useClientProfile(id: string) {
   const { data: clients } = useClients();
