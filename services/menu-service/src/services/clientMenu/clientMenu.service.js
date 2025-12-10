@@ -1,5 +1,6 @@
 // src/services/clientMenu/clientMenu.service.js
 const prisma = require("../../db/prisma");
+const { Prisma } = require("@prisma/client");
 
 const {
   deleteMeals,
@@ -28,6 +29,49 @@ const {
   ClientMenuUpdateRequestDto,
   ClientMenuCreateFromTemplateDto,
 } = require("../../dto/clientMenu.dto");
+
+const withStatus = (error, status) => Object.assign(error, { status });
+
+const validateTemplateForClientMenu = (template, selectedOptions = []) => {
+  // Ensure every meal has options and the selected option belongs to that meal
+  const mealsById = new Map(template.meals.map((meal) => [meal.id, meal]));
+
+  for (const selection of selectedOptions) {
+    const meal = mealsById.get(selection.templateMealId);
+    if (!meal) {
+      throw withStatus(
+        new Error(`Selected meal ${selection.templateMealId} is not part of the template`),
+        400
+      );
+    }
+
+    const option = meal.options.find((opt) => opt.id === selection.optionId);
+    if (!option) {
+      throw withStatus(
+        new Error(`Selected option ${selection.optionId} does not belong to meal ${meal.id}`),
+        400
+      );
+    }
+  }
+
+  // Guard against malformed template data (missing options / missing mealTemplate relation)
+  for (const meal of template.meals) {
+    if (!meal.options?.length) {
+      throw withStatus(
+        new Error(`Template meal ${meal.id} has no options defined`),
+        400
+      );
+    }
+
+    const missingTemplate = meal.options.find((opt) => !opt.mealTemplate);
+    if (missingTemplate) {
+      throw withStatus(
+        new Error(`Template option ${missingTemplate.id} is missing its linked meal template`),
+        400
+      );
+    }
+  }
+};
 
 // =========================================================
 // CREATE empty ClientMenu
@@ -177,60 +221,79 @@ const deleteClientMenu = async (id) => {
 const createClientMenuFromTemplate = async (payload) => {
   const data = ClientMenuCreateFromTemplateDto.parse(payload);
 
-  // לוגיקה הכבדה כעת רק ב־helpers/meals & helpers/vitamins
-  const menu = await prisma.$transaction(async (tx) => {
-    // 1. Load template
-    const template = await tx.templateMenu.findUnique({
-      where: { id: data.templateMenuId },
-      include: {
-        meals: {
-          include: {
-            options: {
-              include: {
-                mealTemplate: {
-                  include: {
-                    items: { include: { foodItem: true } },
+  try {
+    const menu = await prisma.$transaction(async (tx) => {
+      // 1. Load template
+      const template = await tx.templateMenu.findUnique({
+        where: { id: data.templateMenuId },
+        include: {
+          meals: {
+            include: {
+              options: {
+                include: {
+                  mealTemplate: {
+                    include: {
+                      items: { include: { foodItem: true } },
+                    },
                   },
                 },
               },
             },
           },
+          vitamins: true,
         },
-        vitamins: true,
-      },
+      });
+
+      if (!template) {
+        throw Object.assign(new Error("Template menu not found"), { status: 404 });
+      }
+
+      validateTemplateForClientMenu(template, data.selectedOptions);
+
+      // 2. Create clientMenu
+      const clientMenu = await tx.clientMenu.create({
+        data: {
+          name: data.name ?? template.name,
+          clientId: data.clientId,
+          coachId: data.coachId,
+          type: template.dayType,
+          notes: template.notes ?? null,
+          originalTemplateMenuId: template.id,
+        },
+      });
+
+      const menuId = clientMenu.id;
+
+
+      // 3. Create meals + options + items
+      await addMealsFromTemplates(tx, menuId, template.meals, data.selectedOptions);
+
+      // 4. Copy vitamins
+      await addClientMenuVitamins(tx, menuId, template.vitamins);
+
+      // 5. Recompute total calories
+      await recomputeMenuCalories(tx, menuId);
+
+      return clientMenu;
     });
 
-    if (!template) {
-      throw Object.assign(new Error("Template menu not found"), { status: 404 });
+       return getClientMenu(menu.id);
+  } catch (error) {
+    if (error?.status) {
+      throw error;
     }
 
-    // 2. Create clientMenu
-    const clientMenu = await tx.clientMenu.create({
-      data: {
-        name: data.name ?? template.name,
-        clientId: data.clientId,
-        coachId: data.coachId,
-        type: template.dayType,
-        notes: template.notes ?? null,
-        originalTemplateMenuId: template.id,
-      },
-    });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const status = error.code === "P2025" ? 404 : 400;
+      throw Object.assign(new Error("Failed to create client menu from template"), {
+        status,
+        code: error.code,
+        details: error.meta,
+      });
+    }
 
-    const menuId = clientMenu.id;
-
-    // 3. Create meals + options + items
-    await addMealsFromTemplates(tx, menuId, template.meals, data.selectedOptions);
-
-    // 4. Copy vitamins
-    await addClientMenuVitamins(tx, menuId, template.vitamins);
-
-    // 5. Recompute total calories
-    await recomputeMenuCalories(tx, menuId);
-
-    return clientMenu;
-  });
-
-  return getClientMenu(menu.id);
+    throw error;
+  }
 };
 
 module.exports = {

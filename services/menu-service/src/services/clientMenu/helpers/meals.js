@@ -1,6 +1,39 @@
 // src/services/clientMenu/helpers/meals.js
 const { computeCalories } = require("./items");
 
+const withStatus = (error, status = 400) => Object.assign(error, { status });
+
+const validateOptionTemplate = (option, mealName) => {
+  if (!option.mealTemplateId) {
+    throw withStatus(
+      new Error(`Template option ${option.id} for meal ${mealName} is missing mealTemplateId`)
+    );
+  }
+
+  if (!option.mealTemplate) {
+    throw withStatus(
+      new Error(`Template option ${option.id} for meal ${mealName} is missing mealTemplate details`)
+    );
+  }
+
+  if (!option.mealTemplate.items?.length) {
+    throw withStatus(
+      new Error(`Meal template ${option.mealTemplateId} for meal ${mealName} has no items`)
+    );
+  }
+
+  const missingItem = option.mealTemplate.items.find(
+    (item) => !item.foodItemId || !item.foodItem
+  );
+  if (missingItem) {
+    throw withStatus(
+      new Error(
+        `Meal template ${option.mealTemplateId} for meal ${mealName} has an item without a linked food item`
+      )
+    );
+  }
+};
+
 const fetchMealOrThrow = async (tx, id, menuId) => {
   const meal = await tx.clientMenuMeal.findUnique({ where: { id } });
   if (!meal || meal.clientMenuId !== menuId)
@@ -11,6 +44,7 @@ const fetchMealOrThrow = async (tx, id, menuId) => {
 // COPY template meal → ClientMenuMeal + items
 const copyTemplateMeal = async (tx, menuId, chosenOption, mealName) => {
   let totalCalories = 0;
+  validateOptionTemplate(chosenOption, mealName);
 
   const itemsData = chosenOption.mealTemplate.items.map((tItem) => {
     const qty = tItem.defaultGrams ?? 100;
@@ -72,55 +106,75 @@ const updateMeals = async (tx, menuId, mealsToUpdate = []) => {
 
 // ADD meals from templates
 const addMealsFromTemplates = async (tx, menuId, templateMeals, selectedOptions = []) => {
-  const createdMeals = [];
+  try {
+    const createdMeals = [];
 
-  for (const meal of templateMeals) {
-    // pick option
-    let chosen = null;
+    for (const meal of templateMeals) {
+      if (!meal.options?.length) {
+        throw withStatus(new Error(`Template meal ${meal.id} has no options`));
+      }
 
-    // 1. selected by user
-    const manual = selectedOptions.find((s) => s.templateMealId === meal.id);
-    if (manual) chosen = meal.options.find((o) => o.id === manual.optionId);
+      // pick option
+      let chosen = null;
 
-    // 2. selected by template
-    if (!chosen && meal.selectedOptionId)
-      chosen = meal.options.find((o) => o.id === meal.selectedOptionId);
+      // 1. selected by user
+      const manual = selectedOptions.find((s) => s.templateMealId === meal.id);
+      if (manual) chosen = meal.options.find((o) => o.id === manual.optionId);
 
-    // 3. fallback first
-    if (!chosen) chosen = meal.options[0];
-    if (!chosen) continue;
+      // 2. selected by template
+      if (!chosen && meal.selectedOptionId)
+        chosen = meal.options.find((o) => o.id === meal.selectedOptionId);
 
-    // create Meal
-    const createdMeal = await copyTemplateMeal(tx, menuId, chosen, meal.name);
+      // 3. fallback first
+      if (!chosen) chosen = meal.options[0];
+      if (!chosen) {
+        throw withStatus(
+          new Error(`No option could be selected for template meal ${meal.id}`)
+        );
+      }
 
-    // create ClientMenuMealOptions
-    const createdOptions = await Promise.all(
-      meal.options.map((opt) =>
-        tx.clientMenuMealOption.create({
-          data: {
-            clientMenuMealId: createdMeal.id,
-            mealTemplateId: opt.mealTemplateId,
-            name: opt.name ?? null,
-            orderIndex: opt.orderIndex ?? 0,
-          },
-        })
-      )
+      // validate all options before writing
+      meal.options.forEach((opt) => validateOptionTemplate(opt, meal.name));
+
+      // create Meal
+      const createdMeal = await copyTemplateMeal(tx, menuId, chosen, meal.name);
+
+      // create ClientMenuMealOptions
+      const createdOptions = await Promise.all(
+        meal.options.map((opt) =>
+          tx.clientMenuMealOption.create({
+            data: {
+              clientMenuMealId: createdMeal.id,
+              mealTemplateId: opt.mealTemplateId,
+              name: opt.name ?? null,
+              orderIndex: opt.orderIndex ?? 0,
+            },
+          })
+        )
+      );
+
+      // set selectedOptionId
+      const match = createdOptions.find(
+        (o) => o.mealTemplateId === chosen.mealTemplateId
+      );
+
+      await tx.clientMenuMeal.update({
+        where: { id: createdMeal.id },
+        data: { selectedOptionId: match ? match.id : null },
+      });
+
+      createdMeals.push(createdMeal);
+    }
+
+    return createdMeals;
+  } catch (error) {
+    if (error.status) throw error;
+
+    throw withStatus(
+      new Error(`Failed while adding meals from templates: ${error.message}`),
+      400
     );
-
-    // set selectedOptionId
-    const match = createdOptions.find(
-      (o) => o.mealTemplateId === chosen.mealTemplateId
-    );
-
-    await tx.clientMenuMeal.update({
-      where: { id: createdMeal.id },
-      data: { selectedOptionId: match ? match.id : null },
-    });
-
-    createdMeals.push(createdMeal);
   }
-
-  return createdMeals;
 };
 
 module.exports = {
