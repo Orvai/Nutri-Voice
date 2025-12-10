@@ -3,32 +3,44 @@ import { WorkoutExercise } from "./exercise.types";
 export interface WorkoutProgram {
   id: string;
   name: string;
-  goal: string | null;
-  level: "beginner" | "intermediate" | "advanced";
-  durationWeeks: number | null;
-  sessionsPerWeek: number | null;
-  notes: string | null;
+  clientId: string;
+  coachId: string;
   createdAt: string;
   updatedAt: string;
   exercises: WorkoutExercise[];
+  templateMuscleGroups?: string[];
+}
+
+export interface WorkoutExerciseCreatePayload {
+  exerciseId: string;
+  sets: number;
+  reps: string;
+  weight?: number | null;
+  rest?: number | null;
+  order: number;
+  notes?: string | null;
+}
+
+export interface WorkoutExerciseUpdatePayload
+  extends Partial<WorkoutExerciseCreatePayload> {
+  id: string;
+}
+
+export interface WorkoutExerciseDeletePayload {
+  id: string;
 }
 
 export interface CreateWorkoutProgramPayload {
   name: string;
-  goal?: string | null;
-  level?: "beginner" | "intermediate" | "advanced";
-  durationWeeks?: number | null;
-  sessionsPerWeek?: number | null;
-  notes?: string | null;
-  exercises?: Array<{
-    exerciseId: string;
-    sets: number;
-    reps?: number | null;
-    durationSeconds?: number | null;
-    restSeconds?: number | null;
-    notes?: string | null;
-    order?: number;
-  }>;
+  clientId: string;
+  coachId: string;
+  templateId?: string;
+  exercises?: WorkoutExerciseCreatePayload[];
 }
 
-export interface UpdateWorkoutProgramPayload extends Partial<CreateWorkoutProgramPayload> {}
+export interface UpdateWorkoutProgramPayload {
+  name?: string;
+  exercisesToAdd?: WorkoutExerciseCreatePayload[];
+  exercisesToUpdate?: WorkoutExerciseUpdatePayload[];
+  exercisesToDelete?: WorkoutExerciseDeletePayload[];
+}

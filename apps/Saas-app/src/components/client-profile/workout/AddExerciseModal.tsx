@@ -1,18 +1,24 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Modal, View, Text, Pressable, ScrollView } from "react-native";
 import WorkoutSearchBar from "../../workout/WorkoutSearchBar";
 import WorkoutFilters from "../../workout/WorkoutFilters";
 import WorkoutExerciseGrid from "../../workout/WorkoutExerciseGrid";
 
-const MUSCLE_MAP = {
+const MUSCLE_MAP: Record<string, string> = {
   חזה: "CHEST",
   גב: "BACK",
   רגליים: "LEGS",
   כתפיים: "SHOULDERS",
   "יד קדמית": "BICEPS",
   "יד אחורית": "TRICEPS",
+  ישבן: "GLUTES",
+  בטן: "ABS",
   הכל: "ALL",
 };
+
+const MUSCLE_LABELS: Record<string, string> = Object.fromEntries(
+  Object.entries(MUSCLE_MAP).map(([label, value]) => [value, label])
+);
 
 export default function AddExerciseModal({
   visible,
@@ -23,16 +29,27 @@ export default function AddExerciseModal({
 }) {
   const [query, setQuery] = useState("");
   const [selectedMuscle, setSelectedMuscle] = useState(
-    // ממירים EN → HE כדי להתחיל מהקבוצה הרלוונטית
-    Object.keys(MUSCLE_MAP).find((k) => MUSCLE_MAP[k] === muscleGroup) || "הכל"
+    muscleGroup ? MUSCLE_LABELS[muscleGroup] ?? muscleGroup : "הכל"
   );
+
+  useEffect(() => {
+    setSelectedMuscle(
+      muscleGroup ? MUSCLE_LABELS[muscleGroup] ?? muscleGroup : "הכל"
+    );
+  }, [muscleGroup]);
 
   // סינון לפי שריר
   const filteredByMuscle = useMemo(() => {
+    if (muscleGroup) {
+      return exercises.filter((ex) => ex.muscleGroup === muscleGroup);
+    }
+
     if (selectedMuscle === "הכל") return exercises;
     const translated = MUSCLE_MAP[selectedMuscle];
-    return exercises.filter((ex) => ex.muscleGroup === translated);
-  }, [exercises, selectedMuscle]);
+    return translated
+      ? exercises.filter((ex) => ex.muscleGroup === translated)
+      : exercises;
+  }, [exercises, muscleGroup, selectedMuscle]);
 
   // סינון לפי טקסט
   const finalFiltered = useMemo(() => {
@@ -70,6 +87,11 @@ export default function AddExerciseModal({
         {/* פילטרים */}
         <WorkoutFilters
           selectedMuscle={selectedMuscle}
+          muscleOptions={
+            muscleGroup
+              ? [MUSCLE_LABELS[muscleGroup] ?? muscleGroup]
+              : undefined
+          }
           onChangeMuscle={setSelectedMuscle}
           totalCount={finalFiltered.length}
         />

@@ -1,14 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteWorkoutProgram } from "../../api/workout-api/workoutPrograms.api";
+import { deleteClientWorkoutProgram } from "../../api/workout-api/workoutProgram.api";
 
-export function useDeleteWorkoutProgram() {
+export function useDeleteWorkoutProgram(clientId?: string | null) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => deleteWorkoutProgram(id),
+    mutationFn: async (id: string) =>
+      deleteClientWorkoutProgram(clientId as string, id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ["workoutPrograms"] });
-      queryClient.removeQueries({ queryKey: ["workoutProgram", id] });
+      queryClient.invalidateQueries({
+        queryKey: ["clientWorkoutPrograms", clientId],
+      });
+      queryClient.removeQueries({
+        queryKey: ["clientWorkoutProgram", clientId, id],
+      });
     },
   });
 }

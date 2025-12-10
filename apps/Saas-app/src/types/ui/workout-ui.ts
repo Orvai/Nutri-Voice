@@ -21,9 +21,9 @@ export interface UIWorkoutExercise {
   id: string;
   order: number;
   sets: number;
-  reps: number | null;
-  durationSeconds: number | null;
-  restSeconds: number | null;
+  reps: string;
+  weight: number | null;
+  rest: number | null;
   notes: string | null;
   exercise: UIExercise;
 }
@@ -32,12 +32,13 @@ export interface UIWorkoutProgram {
   id: string;
   name: string;
   goal: string | null;
-  level: WorkoutProgram["level"];
-  durationWeeks: number | null;
-  sessionsPerWeek: number | null;
+  level: WorkoutProgram["level"] | "beginner" | "intermediate" | "advanced";
+  durationWeeks?: number | null;
+  sessionsPerWeek?: number | null;
   notes: string | null;
   exercises: UIWorkoutExercise[];
   summary?: string;
+  templateMuscleGroups?: WorkoutTemplate["muscleGroups"];
 }
 
 export interface UIWorkoutTemplate {
@@ -70,9 +71,9 @@ export function mapWorkoutExerciseToUI(workoutExercise: ApiWorkoutExercise): UIW
     id: workoutExercise.id,
     order: workoutExercise.order,
     sets: workoutExercise.sets,
-    reps: workoutExercise.reps ?? null,
-    durationSeconds: workoutExercise.durationSeconds ?? null,
-    restSeconds: workoutExercise.restSeconds ?? null,
+    reps: workoutExercise.reps ?? "",
+    weight: workoutExercise.weight ?? null,
+    rest: (workoutExercise as any).rest ?? null,
     notes: workoutExercise.notes ?? null,
     exercise: mapExerciseToUI(workoutExercise.exercise),
   };
@@ -82,13 +83,16 @@ export function mapWorkoutProgramToUI(program: WorkoutProgram): UIWorkoutProgram
   return {
     id: program.id,
     name: program.name ?? "",
-    goal: program.goal ?? null,
-    level: program.level,
-    durationWeeks: program.durationWeeks ?? null,
-    sessionsPerWeek: program.sessionsPerWeek ?? null,
-    notes: program.notes ?? null,
-    summary: program.goal ?? undefined,
-    exercises: (program.exercises ?? []).map(mapWorkoutExerciseToUI).sort((a, b) => a.order - b.order),
+    goal: (program as any).goal ?? null,
+    level: (program as any).level ?? "beginner",
+    durationWeeks: (program as any).durationWeeks ?? null,
+    sessionsPerWeek: (program as any).sessionsPerWeek ?? null,
+    notes: (program as any).notes ?? null,
+    summary: (program as any).goal ?? undefined,
+    templateMuscleGroups: (program as any).templateMuscleGroups,
+    exercises: (program.exercises ?? [])
+      .map(mapWorkoutExerciseToUI)
+      .sort((a, b) => a.order - b.order),
   };
 }
 

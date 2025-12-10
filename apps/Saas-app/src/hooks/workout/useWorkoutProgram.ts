@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchWorkoutProgram } from "../../api/workout-api/workoutProgram.api";
+import { fetchClientWorkoutPrograms } from "../../api/workout-api/workoutProgram.api";
 import { mapWorkoutProgramToUI } from "../../types/ui/workout-ui";
 
-export function useWorkoutProgram(id?: string | null) {
+export function useWorkoutPrograms(clientId?: string) {
   return useQuery({
-    queryKey: ["workoutProgram", id],
-    enabled: Boolean(id),
+    queryKey: ["clientWorkoutPrograms", clientId],
+    enabled: !!clientId,
     queryFn: async () => {
-      const program = await fetchWorkoutProgram(id as string);
-      return mapWorkoutProgramToUI(program);
+      const programs = await fetchClientWorkoutPrograms(clientId as string);
+      return programs.map(mapWorkoutProgramToUI);
     },
   });
 }

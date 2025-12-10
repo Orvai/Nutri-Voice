@@ -5,32 +5,52 @@ import type {
   UpdateWorkoutProgramPayload,
 } from "../../types/api/workout-types/workoutProgram.types";
 
-export async function fetchWorkoutPrograms() {
-  const res = await api.get<{ data: WorkoutProgram[] }>("/workout/programs");
-  return res.data.data;
+export async function fetchClientWorkoutPrograms(clientId: string) {
+  const res = await api.get<{ data: WorkoutProgram[] }>(
+    `/clients/${clientId}/workout-programs`
+  );
+  return res.data?.data ?? [];
 }
 
-export async function fetchWorkoutProgram(id: string) {
-  const res = await api.get<{ data: WorkoutProgram }>(`/workout/programs/${id}`);
-  return res.data.data;
+export async function fetchClientWorkoutProgram(
+  clientId: string,
+  programId: string
+) {
+  const res = await api.get<{ data: WorkoutProgram }>(
+    `/clients/${clientId}/workout-programs/${programId}`
+  );
+  return res.data?.data;
 }
 
-export async function createWorkoutProgram(payload: CreateWorkoutProgramPayload) {
-  const res = await api.post<{ data: WorkoutProgram }>("/workout/programs", payload);
-  return res.data.data;
+export async function createClientWorkoutProgram(
+  clientId: string,
+  payload: CreateWorkoutProgramPayload
+) {
+  const res = await api.post<{ data: WorkoutProgram }>(
+    `/clients/${clientId}/workout-programs`,
+    payload
+  );
+  return res.data?.data;
 }
 
-export async function updateWorkoutProgram(
-  id: string,
+export async function updateClientWorkoutProgram(
+  clientId: string,
+  programId: string,
   payload: UpdateWorkoutProgramPayload
 ) {
-  const res = await api.put<{ data: WorkoutProgram }>(`/workout/programs/${id}` , payload);
-  return res.data.data;
+  const res = await api.put<{ data: WorkoutProgram }>(
+    `/clients/${clientId}/workout-programs/${programId}`,
+    payload
+  );
+  return res.data?.data;
 }
 
-export async function deleteWorkoutProgram(id: string) {
-  const res = await api.delete<{ data: { success: boolean } }>(
-    `/workout/programs/${id}`
+export async function deleteClientWorkoutProgram(
+  clientId: string,
+  programId: string
+) {
+  const res = await api.delete<{ data: { success: boolean } | null }>(
+    `/clients/${clientId}/workout-programs/${programId}`
   );
-  return res.data.data;
+  return res.data?.data;
 }

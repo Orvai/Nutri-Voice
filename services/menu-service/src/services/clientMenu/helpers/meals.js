@@ -152,6 +152,7 @@ const updateMeals = async (tx, menuId, mealsToUpdate = []) => {
 const addMealsFromTemplates = async (tx, menuId, templateMeals, selectedOptions = []) => {
   try {
     const createdMeals = [];
+    if (!templateMeals?.length) return [];
 
     for (const meal of templateMeals) {
       if (!meal.options?.length) {

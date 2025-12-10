@@ -14,9 +14,9 @@ export interface WorkoutExercise {
   id: string;
   order: number;
   sets: number;
-  reps: number | null;
-  durationSeconds: number | null;
-  restSeconds: number | null;
+  reps: string;
+  weight: number | null;
+  rest: number | null;
   notes: string | null;
   exercise: Exercise;
 }
