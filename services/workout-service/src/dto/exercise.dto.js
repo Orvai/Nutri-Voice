@@ -9,6 +9,7 @@ const ExerciseCreateDto = z.object({
   name: z.string().min(2),
   description: z.string().optional(),
   notes: z.string().optional(),
+  videoUrl: z.string().url().optional(),
   muscleGroup: MuscleGroupEnum,
   gender: GenderEnum.optional(),
   bodyType: BodyTypeEnum.optional(),

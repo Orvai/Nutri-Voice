@@ -4,6 +4,7 @@ const verifyInternalToken = require("./middleware/verifyInternalToken");
 const Exercises = require("./controllers/exercise.controller");
 const Templates = require("./controllers/workoutTemplate.controller");
 const Programs = require("./controllers/workoutProgram.controller");
+const { videoUpload } = require("./middleware/videoUpload");
 
 const r = Router();
 
@@ -13,6 +14,7 @@ r.get("/internal/workout/exercises", verifyInternalToken, Exercises.listExercise
 r.get("/internal/workout/exercises/:id", verifyInternalToken, Exercises.getExercise);
 r.put("/internal/workout/exercises/:id", verifyInternalToken, Exercises.updateExercise);
 r.delete("/internal/workout/exercises/:id", verifyInternalToken, Exercises.deleteExercise);
+r.post("/internal/workout/exercises/:id/video",verifyInternalToken,videoUpload.single("file"),Exercises.uploadExerciseVideo);
 
 /* Workout Templates */
 r.get("/internal/workout/templates", verifyInternalToken, Templates.listTemplates);

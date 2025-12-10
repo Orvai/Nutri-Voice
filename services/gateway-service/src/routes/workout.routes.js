@@ -11,6 +11,11 @@ r.post("/exercises", authRequired, forward(BASE, "/internal/workout/exercises"))
 r.get("/exercises/:id", authRequired, forward(BASE, "/internal/workout/exercises/:id"));
 r.put("/exercises/:id", authRequired, forward(BASE, "/internal/workout/exercises/:id"));
 r.delete("/exercises/:id", authRequired, forward(BASE, "/internal/workout/exercises/:id"));
+r.post("/exercises/:id/video",authRequired,forward(BASE, "/internal/workout/exercises/:id/video"));
+
+// STATIC ASSETS
+r.use("/uploads", forward(BASE, null, { preservePath: true }));
+
 
 // TEMPLATES
 r.get("/templates", authRequired, forward(BASE, "/internal/workout/templates"));
@@ -24,3 +29,4 @@ r.put("/programs/:id", authRequired, forward(BASE, "/internal/workout/programs/:
 r.delete("/programs/:id", authRequired, forward(BASE, "/internal/workout/programs/:id"));
 
 export default r;
+

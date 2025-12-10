@@ -1,66 +1,103 @@
-import { View, Text } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import type { UIWorkoutExercise } from "../../types/ui/workout-ui";
+import { Tag } from "./common/Tag";
+import ExerciseVideoPlayer from "./ExerciseVideoPlayer";
+import { theme } from "../../theme";
 
 type Props = {
   item: UIWorkoutExercise;
 };
 
 export default function WorkoutExerciseItem({ item }: Props) {
+  const [showVideo, setShowVideo] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(item.exercise.videoUrl ?? null);
+
+  useEffect(() => {
+    setVideoUrl(item.exercise.videoUrl ?? null);
+  }, [item.exercise.videoUrl]);
+
   return (
-    <View
-      style={{
-        backgroundColor: "#f8fafc",
-        borderRadius: 12,
-        padding: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 8,
-      }}
-    >
-      <View style={{ flexDirection: "row-reverse", justifyContent: "space-between" }}>
-        <Text style={{ fontWeight: "700", fontSize: 16 }}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>
           {item.order}. {item.exercise.name}
         </Text>
-        <Text style={{ color: "#6b7280" }}>
+        <Text style={styles.subtitle}>
           {item.exercise.muscleGroup || "ללא שריר"}
         </Text>
       </View>
 
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          gap: 8,
-          flexWrap: "wrap",
-          marginTop: 6,
-        }}
-      >
-        <Badge label={`${item.sets} סטים`} />
-        {item.reps ? <Badge label={`${item.reps} חזרות`} /> : null}
-        {item.durationSeconds ? <Badge label={`${item.durationSeconds} שניות`} /> : null}
-        {item.restSeconds ? <Badge label={`מנוחה ${item.restSeconds}s`} /> : null}
-        {item.exercise.equipment ? <Badge label={item.exercise.equipment} /> : null}
+      <View style={styles.tagsRow}>
+        <Tag label={`${item.sets} סטים`} tone="info" />
+        {item.reps ? <Tag label={`${item.reps} חזרות`} tone="success" /> : null}
+        {item.durationSeconds ? (
+          <Tag label={`${item.durationSeconds} שניות`} tone="warning" />
+        ) : null}
+        {item.restSeconds ? <Tag label={`מנוחה ${item.restSeconds}s`} /> : null}
+        {item.exercise.equipment ? <Tag label={item.exercise.equipment} /> : null}
+        {videoUrl ? (
+          <Pressable onPress={() => setShowVideo(true)} style={styles.videoButton}>
+            <Text style={styles.videoButtonText}>▶ וידאו</Text>
+          </Pressable>
+        ) : null}
       </View>
 
-      {item.notes ? (
-        <Text style={{ color: "#4b5563", marginTop: 6 }}>{item.notes}</Text>
-      ) : null}
+      {item.notes ? <Text style={styles.notes}>{item.notes}</Text> : null}
+
+      <ExerciseVideoPlayer
+        exercise={{ ...item.exercise, videoUrl }}
+        visible={showVideo}
+        onClose={() => setShowVideo(false)}
+        onUpdated={(url) => setVideoUrl(url)}
+      />
     </View>
   );
 }
 
-function Badge({ label }: { label: string }) {
-  return (
-    <View
-      style={{
-        backgroundColor: "#e0f2fe",
-        borderRadius: 8,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderWidth: 1,
-        borderColor: "#bae6fd",
-      }}
-    >
-      <Text style={{ fontSize: 12, color: "#0f172a" }}>{label}</Text>
-    </View>
-  );
-}
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#f8fafc",
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: theme.card.border,
+    marginBottom: 8,
+  },
+  header: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+  },
+  title: {
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign: "right",
+    color: theme.text.title,
+  },
+  subtitle: {
+    color: theme.text.subtitle,
+    textAlign: "right",
+  },
+  tagsRow: {
+    flexDirection: "row-reverse",
+    gap: 8,
+    flexWrap: "wrap",
+    marginTop: 6,
+  },
+  notes: {
+    color: "#4b5563",
+    marginTop: 6,
+    textAlign: "right",
+  },
+  videoButton: {
+    backgroundColor: "#0ea5e9",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+  videoButtonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 12,
+  },
+});

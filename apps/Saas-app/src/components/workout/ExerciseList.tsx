@@ -1,68 +1,93 @@
-import { FlatList, Pressable, Text, View } from "react-native";
+import { useMemo, useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import type { UIExercise } from "../../types/ui/workout-ui";
+import { Tag } from "./common/Tag";
+import ExerciseVideoPlayer from "./ExerciseVideoPlayer";
+import { theme } from "../../theme";
 
 interface Props {
   exercises: UIExercise[];
   selectedIds?: string[];
   onSelect?: (exercise: UIExercise) => void;
+  isLoading?: boolean;
 }
 
-export default function ExerciseList({ exercises, selectedIds = [], onSelect }: Props) {
-  return (
-    <FlatList
-      data={exercises}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={{ gap: 10 }}
-      renderItem={({ item }) => {
-        const isSelected = selectedIds.includes(item.id);
-        return (
-          <Pressable
-            onPress={() => onSelect?.(item)}
-            style={{
-              padding: 12,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: isSelected ? "#22c55e" : "#e5e7eb",
-              backgroundColor: isSelected ? "#dcfce7" : "#fff",
-            }}
-          >
-            <View style={{ flexDirection: "row-reverse", justifyContent: "space-between" }}>
-              <Text style={{ fontWeight: "700", fontSize: 16 }}>{item.name}</Text>
-              <Text style={{ color: "#6b7280" }}>
-                {item.muscleGroup || "ללא שריר"}
-              </Text>
-            </View>
-            <View style={{ flexDirection: "row-reverse", gap: 6, flexWrap: "wrap", marginTop: 6 }}>
-              {(item.secondaryMuscles ?? []).map((muscle) => (
-                <Tag key={muscle} label={muscle} />
-              ))}
-              {item.equipment ? <Tag label={item.equipment} /> : null}
-              <Tag label={translateDifficulty(item.difficulty)} />
-            </View>
-            {item.instructions ? (
-              <Text style={{ marginTop: 6, color: "#4b5563" }} numberOfLines={2}>
-                {item.instructions}
-              </Text>
-            ) : null}
-          </Pressable>
-        );
-      }}
-    />
-  );
-}
+export default function ExerciseList({
+  exercises,
+  selectedIds = [],
+  onSelect,
+  isLoading = false,
+}: Props) {
+  const [videoExercise, setVideoExercise] = useState<UIExercise | null>(null);
+  const skeletons = useMemo(() => Array.from({ length: 4 }), []);
 
-function Tag({ label }: { label: string }) {
+  if (isLoading) {
+    return (
+      <View style={styles.skeletonContainer}>
+        {skeletons.map((_, index) => (
+          <View key={index} style={styles.skeleton} />
+        ))}
+      </View>
+    );
+  }
+
   return (
-    <View
-      style={{
-        backgroundColor: "#f3f4f6",
-        borderRadius: 8,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-      }}
-    >
-      <Text style={{ fontSize: 12, color: "#111827" }}>{label}</Text>
-    </View>
+    <>
+      <FlatList
+        data={exercises}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ gap: 10 }}
+        renderItem={({ item }) => {
+          const isSelected = selectedIds.includes(item.id);
+          return (
+            <Pressable
+              onPress={() => onSelect?.(item)}
+              style={[
+                styles.card,
+                isSelected && { borderColor: "#22c55e", backgroundColor: "#dcfce7" },
+              ]}
+            >
+              <View style={styles.headerRow}>
+                <Text style={styles.title}>{item.name}</Text>
+                <View style={styles.headerActions}>
+                  {item.videoUrl ? (
+                    <Pressable onPress={() => setVideoExercise(item)} style={styles.videoIcon}>
+                      <Text style={styles.videoIconText}>🎬</Text>
+                    </Pressable>
+                  ) : null}
+                  <Text style={styles.subtitle}>
+                    {item.muscleGroup || "ללא שריר"}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.tagsRow}>
+                {(item.secondaryMuscles ?? []).map((muscle) => (
+                  <Tag key={muscle} label={muscle} />
+                ))}
+                {item.equipment ? <Tag label={item.equipment} /> : null}
+                <Tag label={translateDifficulty(item.difficulty)} tone="info" />
+              </View>
+              {item.instructions ? (
+                <Text style={styles.instructions} numberOfLines={2}>
+                  {item.instructions}
+                </Text>
+              ) : null}
+            </Pressable>
+          );
+        }}
+      />
+
+      {videoExercise ? (
+        <ExerciseVideoPlayer
+          exercise={videoExercise}
+          visible={!!videoExercise}
+          onClose={() => setVideoExercise(null)}
+          onUpdated={(url) =>
+            setVideoExercise((prev) => (prev ? { ...prev, videoUrl: url } : prev))
+          }
+        />
+      ) : null}
+    </>
   );
 }
 
@@ -78,3 +103,64 @@ function translateDifficulty(value: UIExercise["difficulty"]) {
       return value;
   }
 }
+
+const styles = StyleSheet.create({
+  card: {
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.card.border,
+    backgroundColor: theme.card.bg,
+  },
+  headerRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerActions: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 8,
+  },
+  title: {
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign: "right",
+    color: theme.text.title,
+    flex: 1,
+  },
+  subtitle: {
+    color: theme.text.subtitle,
+    textAlign: "right",
+  },
+  tagsRow: {
+    flexDirection: "row-reverse",
+    gap: 6,
+    flexWrap: "wrap",
+    marginTop: 6,
+  },
+  instructions: {
+    marginTop: 6,
+    color: "#4b5563",
+    textAlign: "right",
+  },
+  videoIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    backgroundColor: "#e0f2fe",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  videoIconText: {
+    fontSize: 16,
+  },
+  skeletonContainer: {
+    gap: 10,
+  },
+  skeleton: {
+    height: 70,
+    borderRadius: 12,
+    backgroundColor: "#e5e7eb",
+  },
+});

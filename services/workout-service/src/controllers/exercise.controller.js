@@ -4,6 +4,7 @@ const {
   getExerciseById,
   updateExercise,
   deleteExercise,
+  saveExerciseVideo,
 } = require("../services/exercise.service");
 
 const {
@@ -11,6 +12,7 @@ const {
   ExerciseUpdateDto,
   ExerciseFilterDto,
 } = require("../dto/exercise.dto");
+const { AppError } = require("../common/errors");
 
 /**
  * INTERNAL ONLY
@@ -80,10 +82,35 @@ const deleteExerciseController = async (req, res, next) => {
   }
 };
 
+
+/**
+ * INTERNAL ONLY
+ * POST /internal/workout/exercises/:id/video
+ */
+const uploadExerciseVideoController = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw new AppError(400, "Video file is required");
+    }
+
+    const videoUrl = `/uploads/videos/${req.file.filename}`;
+    await saveExerciseVideo({
+      id: req.params.id,
+      videoUrl,
+    });
+
+    res.status(200).json({ message: "Video uploaded", videoUrl });
+  } catch (e) {
+    next(e);
+  }
+};
+
+
 module.exports = {
   createExercise: createExerciseController,
   listExercises: listExercisesController,
   getExercise: getExerciseController,
   updateExercise: updateExerciseController,
   deleteExercise: deleteExerciseController,
+  uploadExerciseVideo: uploadExerciseVideoController,
 };

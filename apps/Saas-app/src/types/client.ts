@@ -1,7 +1,24 @@
-export type Client = {
+export type ClientExtended = {
   id: string;
   userId: string;
   name: string;
   phone: string;
+  profileImageUrl: string | null;
+  gender: string | null;
+  age: number | null;
+  height: number | null;
+  weight: number | null;
+  goals?: string | null;
+  activityLevel?: string | null;
+  creationDate?: string | null;
+  address?: string | null;
+  city?: string | null;
+  email?: string | null;
+  status?: string | null;
+  activeWorkoutProgram?: unknown;
+  activeMenu?: unknown;
+  progressSummaries?: unknown;
+  healthMetrics?: unknown;
+  idmUser?: unknown;
+  userInfo?: unknown;
 };
-

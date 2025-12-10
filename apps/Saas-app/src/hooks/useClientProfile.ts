@@ -11,9 +11,6 @@ export function useClientProfile(id: string) {
 
   if (!base) return { client: null, loading: true };
 
-  const { data: info, isLoading: loadingInfo } = useUserInfo(base.userId);
-
-  if (loadingInfo) return { client: null, loading: true };
 
   const mock = {
     today: {
@@ -77,7 +74,6 @@ export function useClientProfile(id: string) {
 
   const client = {
     ...base,
-    userInfo: info ?? null,  
     ...mock,
   };
 

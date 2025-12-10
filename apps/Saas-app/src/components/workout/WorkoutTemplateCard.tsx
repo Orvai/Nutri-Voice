@@ -1,5 +1,12 @@
-import { View, Text, Pressable } from "react-native";
-import { mapTemplateLevel, type UIWorkoutTemplate } from "../../types/ui/workout-ui";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import {
+  mapTemplateLevel,
+  type UIWorkoutProgram,
+  type UIWorkoutTemplate,
+} from "../../types/ui/workout-ui";
+import { Chip } from "./common/Chip";
+import { AvatarBadge } from "./common/AvatarBadge";
+import { theme } from "../../theme";
 
 const palette = ["#4f46e5", "#0ea5e9", "#16a34a", "#f97316", "#06b6d4"];
 
@@ -14,94 +21,39 @@ export default function WorkoutTemplateCard({ program, onSelect }: Props) {
   const muscleTags = Array.from(new Set(program.muscleGroups ?? [])).slice(0, 6);
 
   return (
-    <Pressable
-      onPress={() => onSelect?.(program)}
-      style={{
-        backgroundColor: "#fff",
-        borderRadius: 14,
-        padding: 16,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 14,
-      }}
-    >
-      <View
-        style={{ flexDirection: "row-reverse", alignItems: "center" }}
-      >
-        <View
-          style={{
-            width: 42,
-            height: 42,
-            backgroundColor: `${accent}20`,
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 10,
-            marginLeft: 12,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              color: accent,
-              fontWeight: "800",
-            }}
-          >
-            {badge}
-          </Text>
+    <Pressable onPress={() => onSelect?.(program)} style={styles.card}>
+      <View style={[styles.accent, { backgroundColor: accent }]} />
+      <View style={styles.cardContent}>
+        <View style={styles.header}>
+          <AvatarBadge label={badge} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.title}>{program.name}</Text>
+            <Text style={styles.subtitle}>{program.workoutType || "תוכנית אימון"}</Text>
+          </View>
+          <View style={styles.iconStack}>
+            <Text style={styles.iconText}>⚧ {program.gender}</Text>
+            {program.bodyType ? <Text style={styles.iconText}>🏋️‍♂️ {program.bodyType}</Text> : null}
+            <Text style={styles.iconText}>
+              ⭐ {translateLevel(mapTemplateLevel(program.level))}
+            </Text>
+          </View>
         </View>
 
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 16, fontWeight: "800" }}>{program.name}</Text>
-          <Text style={{ fontSize: 12, color: "#6b7280" }}>
-            {program.workoutType || "תוכנית אימון"}
-          </Text>
-          <View
-            style={{
-              flexDirection: "row-reverse",
-              alignItems: "center",
-              gap: 8,
-              marginTop: 8,
-            }}
-          >
-            <Chip label={translateLevel(mapTemplateLevel(program.level))} />
-            {program.bodyType ? <Chip label={program.bodyType} /> : null}
-            {program.gender ? <Chip label={program.gender} /> : null}
+        <View style={styles.thumbnailRow}>
+          <View style={styles.thumbnail}>
+            <Text style={styles.thumbnailNumber}>{muscleTags.length || 0}</Text>
+            <Text style={styles.thumbnailLabel}>תרגילים</Text>
+          </View>
+          <View style={styles.tagsRow}>
+            {muscleTags.length === 0 ? (
+              <Chip label="ללא שיוך שריר" />
+            ) : (
+              muscleTags.map((muscle) => <Chip key={muscle} label={muscle} />)
+            )}
           </View>
         </View>
       </View>
-
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          flexWrap: "wrap",
-          gap: 6,
-          marginTop: 12,
-        }}
-      >
-        {muscleTags.length === 0 ? (
-          <Chip label="ללא שיוך שריר" />
-        ) : (
-          muscleTags.map((muscle) => <Chip key={muscle} label={muscle} />)
-        )}
-      </View>
     </Pressable>
-  );
-}
-
-function Chip({ label }: { label: string }) {
-  return (
-    <Text
-      style={{
-        fontSize: 12,
-        backgroundColor: "#f3f4f6",
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderRadius: 8,
-        color: "#374151",
-      }}
-    >
-      {label}
-    </Text>
   );
 }
 
@@ -126,3 +78,78 @@ function hashString(value: string) {
   }
   return hash;
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: theme.card.bg,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: theme.card.border,
+    overflow: "hidden",
+    flexDirection: "row",
+    ...theme.shadow.base,
+  },
+  accent: {
+    width: 6,
+  },
+  cardContent: {
+    padding: 14,
+    flex: 1,
+    gap: 10,
+  },
+  header: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "800",
+    textAlign: "right",
+    color: theme.text.title,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: theme.text.subtitle,
+    textAlign: "right",
+  },
+  iconStack: {
+    alignItems: "flex-end",
+    gap: 4,
+  },
+  iconText: {
+    fontSize: 12,
+    color: theme.text.subtitle,
+    textAlign: "right",
+  },
+  thumbnailRow: {
+    flexDirection: "row-reverse",
+    gap: 10,
+    alignItems: "center",
+  },
+  thumbnail: {
+    width: 72,
+    height: 72,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: theme.card.border,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+  thumbnailNumber: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: theme.text.title,
+  },
+  thumbnailLabel: {
+    fontSize: 12,
+    color: theme.text.subtitle,
+  },
+  tagsRow: {
+    flex: 1,
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+});

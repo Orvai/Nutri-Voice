@@ -1,21 +1,26 @@
 import { View, Text, Image, Pressable } from "react-native";
 import { router } from "expo-router";
-import { useUserInfo } from "../../../src/hooks/useUserInfo";
-import { Client } from "../../types/client";
+import { ClientExtended } from "../../types/client";
 
 type ClientCardProps = {
-  client: Client;
+  client: ClientExtended;
 };
 
 export default function ClientCard({ client }: ClientCardProps) {
-  const { data: info } = useUserInfo(client.userId);
-
   const goToProfile = () => {
     router.push({
       pathname: "/(dashboard)/clients/[id]",
       params: { id: client.id },
     });
   };
+
+  const avatarSource =
+    client.profileImageUrl
+      ? { uri: client.profileImageUrl }
+      : {
+          uri:
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg",
+        };
 
   return (
     <Pressable
@@ -38,17 +43,7 @@ export default function ClientCard({ client }: ClientCardProps) {
       })}
     >
       {/* Avatar */}
-      <Image
-        source={
-          info?.profileImageUrl
-            ? { uri: info.profileImageUrl }
-            : {
-                uri:
-                  "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg",
-              }
-        }
-        style={{ width: 62, height: 62, borderRadius: 50 }}
-      />
+      <Image source={avatarSource} style={{ width: 62, height: 62, borderRadius: 50 }} />
 
       {/* Name + Phone */}
       <View style={{ flex: 1 }}>
@@ -60,7 +55,7 @@ export default function ClientCard({ client }: ClientCardProps) {
             textAlign: "right",
           }}
         >
-          {client.name}
+          {client.name || "לא צוין"}
         </Text>
 
         <Text
@@ -71,7 +66,7 @@ export default function ClientCard({ client }: ClientCardProps) {
             textAlign: "right",
           }}
         >
-          {client.phone}
+          {client.phone || "לא צוין"}
         </Text>
       </View>
 

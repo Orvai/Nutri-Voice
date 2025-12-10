@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import type { UIExercise } from "../../types/ui/workout-ui";
 import WorkoutExerciseCard from "./WorkoutExerciseCard";
 
@@ -9,16 +9,9 @@ type Props = {
 
 export default function WorkoutExerciseGrid({ exercises, onPress }: Props) {
   return (
-    <View
-      style={{
-        flexDirection: "row-reverse",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        gap: 14,
-      }}
-    >
+    <View style={styles.grid}>
       {exercises.map((exercise) => (
-        <View key={exercise.id} style={{ width: "48%" }}>
+        <View key={exercise.id} style={styles.item}>
           <WorkoutExerciseCard
             item={exercise}
             onPress={onPress ? () => onPress(exercise) : undefined}
@@ -28,3 +21,15 @@ export default function WorkoutExerciseGrid({ exercises, onPress }: Props) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  grid: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 14,
+  },
+  item: {
+    width: "48%",
+  },
+});

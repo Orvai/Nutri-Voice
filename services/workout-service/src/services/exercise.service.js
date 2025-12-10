@@ -85,6 +85,19 @@ const deleteExercise = async (id, coachId) => {
 
   await prisma.exercise.delete({ where: { id } });
 };
+const saveExerciseVideo = async ({ id, videoUrl, coachId }) => {
+  const exercise = await prisma.exercise.findUnique({ where: { id } });
+  if (!exercise) {
+    throw new AppError(404, "Exercise not found");
+  }
+
+  assertExerciseOwnership(exercise, coachId);
+
+  return prisma.exercise.update({
+    where: { id },
+    data: { videoUrl },
+  });
+};
 
 module.exports = {
   createExercise,
@@ -92,4 +105,5 @@ module.exports = {
   getExerciseById,
   updateExercise,
   deleteExercise,
+  saveExerciseVideo,
 };

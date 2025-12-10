@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export function forward(baseURL, targetPath) {
+export function forward(baseURL, targetPath, options = {}) {
+  const { preservePath = false } = options;
   return async (req, res, next) => {
     try {
       if (!baseURL) {
@@ -9,8 +10,8 @@ export function forward(baseURL, targetPath) {
       }
 
       // Resolve URL params (e.g. /users/:id → /users/123)
-      let resolvedPath = targetPath;
-      if (resolvedPath.includes(":")) {
+      let resolvedPath = preservePath ? req.path : targetPath;
+      if (resolvedPath && resolvedPath.includes(":")) {
         for (const [key, value] of Object.entries(req.params)) {
           resolvedPath = resolvedPath.replace(`:${key}`, value);
         }
@@ -40,8 +41,18 @@ export function forward(baseURL, targetPath) {
         withCredentials: true,
       };
 
-      if (method !== "get" && method !== "delete") {
-        config.data = req.body;
+      const isMultipart = req.is("multipart/form-data");
+
+      if (isMultipart) {
+        config.data = req;
+        config.headers = {
+          ...headers,
+          "content-type": req.headers["content-type"],
+        };
+        config.maxBodyLength = Infinity;
+        config.maxContentLength = Infinity;
+      } else if (method !== "get" && method !== "delete") {
+          config.data = req.body;
       }
       console.log("➡️ FORWARDING", method.toUpperCase(), url, "QUERY:", req.query);
 

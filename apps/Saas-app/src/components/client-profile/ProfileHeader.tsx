@@ -1,43 +1,45 @@
 import { View, Text, Image, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Client } from "../../types/client";
-import { UserInfo } from "../../types/api/user-types/userInfo.types";
+import { ClientExtended } from "../../types/client";
 
 type ProfileHeaderProps = {
-  client: Client & { userInfo?: UserInfo | null };
+  client: ClientExtended;
 };
 
 export default function ProfileHeader({ client }: ProfileHeaderProps) {
-  const info = client.userInfo;
-
   const avatarSource =
-    info?.profileImageUrl
-      ? { uri: info.profileImageUrl }
+    client.profileImageUrl
+      ? { uri: client.profileImageUrl }
       : {
           uri: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg",
         };
 
   const genderLabel =
-    info?.gender === "male"
+    client.gender === "male"
       ? "זכר"
-      : info?.gender === "female"
+      : client.gender === "female"
         ? "נקבה"
         : null;
 
   const ageGenderText = [
-    info?.age != null ? `גיל ${info.age}` : null,
+    client.age != null ? `גיל ${client.age}` : null,
     genderLabel,
   ]
     .filter(Boolean)
     .join(" • ");
 
   const locationText = [
-    info?.city ?? null,
-    info?.height != null ? `${info.height} ס״מ` : null,
+    client.city ?? null,
+    client.height != null ? `${client.height} ס״מ` : null,
   ]
     .filter(Boolean)
     .join(" • ");
+
+  const displayName = client.name || "לא צוין";
+  const displayPhone = client.phone || "לא צוין";
+  const displayAgeGender = ageGenderText || "לא צוין";
+  const displayLocation = locationText || "לא צוין";
 
   return (
     <View
@@ -61,20 +63,16 @@ export default function ProfileHeader({ client }: ProfileHeaderProps) {
 
         <View style={{ alignItems: "flex-end" }}>
           <Text style={{ fontSize: 22, fontWeight: "700" }}>
-            {client.name}
+            {displayName}
           </Text>
 
           <Text style={{ color: "#6b7280", fontSize: 14 }}>
-            {client.phone}
+            {displayPhone}
           </Text>
 
-          {ageGenderText ? (
-            <Text style={{ color: "#6b7280", fontSize: 14 }}>{ageGenderText}</Text>
-          ) : null}
+          <Text style={{ color: "#6b7280", fontSize: 14 }}>{displayAgeGender}</Text>
 
-          {locationText ? (
-            <Text style={{ color: "#6b7280", fontSize: 14 }}>{locationText}</Text>
-          ) : null}
+          <Text style={{ color: "#6b7280", fontSize: 14 }}>{displayLocation}</Text>
         </View>
       </View>
 
