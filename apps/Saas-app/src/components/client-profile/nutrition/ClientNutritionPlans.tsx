@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import NutritionTabs from "../../nutrition/NutritionTabs";
 import NutritionDayCard from "../../nutrition/NutritionDayCard";
-import {useClientMenu,useClientMenus,useCreateClientMenuFromTemplate,} from "../../../hooks/nutrition/useClientMenus";
+import { useClientMenu, useClientMenus } from "../../../hooks/nutrition/useClientMenus";
 import { mapClientMenuToNutritionPlan } from "../../../utils/mapClientMenuToNutritionPlan";
 
 type Props = {
@@ -18,32 +18,12 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     refetch,
   } = useClientMenus(clientId);
   const [activeTab, setActiveTab] = useState<string | null>(null);
-  const [creationTriggered, setCreationTriggered] = useState(false);
-
-  const createFromTemplate = useCreateClientMenuFromTemplate(clientId);
 
   useEffect(() => {
     if (menus && menus.length > 0 && !activeTab) {
       setActiveTab(menus[0].id);
     }
   }, [menus, activeTab]);
-
-  useEffect(() => {
-    if (loadingMenus) return;
-    if ((menus?.length ?? 0) > 0) return;
-    if (creationTriggered || createFromTemplate.isPending) return;
-
-    setCreationTriggered(true);
-    createFromTemplate.mutate(undefined, {
-      onSuccess: (data) => {
-        if (data?.id) {
-          setActiveTab(data.id);
-        }
-        refetch();
-      },
-      onSettled: () => setCreationTriggered(false),
-    });
-  }, [createFromTemplate, creationTriggered, loadingMenus, menus, refetch]);
 
   const {
     data: fullMenu,

@@ -1,6 +1,14 @@
 import { api } from "../api";
 import { ClientMenu } from "../../types/api/nutrition-types/clientMenu.types";
 
+type CreateClientMenuFromTemplatePayload = {
+  clientId: string;
+  templateMenuId: string;
+  name?: string;
+  selectedOptions?: Array<{ templateMealId: string; optionId: string }>;
+};
+
+
 export async function fetchClientMenus(clientId?: string) {
   console.log(">>> fetchClientMenus CALLED", clientId);
 
@@ -28,10 +36,10 @@ export async function updateClientMenu(id: string, payload: any) {
   return res.data?.data ?? null;
 }
 
-export async function createClientMenuFromTemplate(clientId: string) {
-  const res = await api.post<{ data?: ClientMenu }>(`/client-menus/from-template`, {
-    clientId,
-  });
+export async function createClientMenuFromTemplate(
+  payload: CreateClientMenuFromTemplatePayload,
+) {
+  const res = await api.post<{ data?: ClientMenu }>(`/client-menus/from-template`, payload);
 
   return res.data?.data ?? null;
 }

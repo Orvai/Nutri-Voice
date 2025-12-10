@@ -44,8 +44,17 @@ export function useCreateClientMenuFromTemplate(clientId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => createClientMenuFromTemplate(clientId),
-    onSuccess: (data) => {
+    mutationFn: ({ templateMenuId, name, selectedOptions }: {
+      templateMenuId: string;
+      name?: string;
+      selectedOptions?: Array<{ templateMealId: string; optionId: string }>;
+    }) =>
+      createClientMenuFromTemplate({
+        clientId,
+        templateMenuId,
+        name,
+        selectedOptions,
+      }),    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["clientMenus"] });
 
       if (data?.id) {

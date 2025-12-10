@@ -50,8 +50,21 @@ r.post("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus
 r.put("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
 r.delete("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
 
-r.post("/client-menus/from-template",authRequired,forward(BASE, "/internal/menu/client-menus/from-template"));
-
+r.post("/client-menus/from-template", authRequired, (req, res, next) => {
+    const { clientId, templateMenuId } = req.body ?? {};
+  
+    if (!clientId) {
+      return res.status(400).json({ message: "clientId is required" });
+    }
+  
+    if (!templateMenuId) {
+      return res.status(400).json({ message: "templateMenuId is required" });
+    }
+  
+    req.body.coachId = req.user.id;
+  
+    return forward(BASE, "/internal/menu/client-menus/from-template")(req, res, next);
+  });
 // =====================
 // VITAMINS
 // =====================
