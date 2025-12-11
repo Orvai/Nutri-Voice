@@ -1,10 +1,14 @@
 import { Router } from "express";
-import { forward } from "../utils/forward.js";
+import { attachUser } from "../middleware/attachUser.js";
 import { authRequired } from "../middleware/authRequired.js";
+import { requireOwnership } from "../middleware/requireOwnership.js";
 import { requireCoach } from "../middleware/requireRole.js";
+import { forward } from "../utils/forward.js";
 
 const r = Router();
 const BASE = process.env.MENU_SERVICE_URL;
+
+r.use(attachUser);
 
 // =====================
 // FOOD
@@ -44,40 +48,63 @@ r.delete("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/inte
 // =====================
 
 r.get("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"));
-r.get("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
 
-r.post("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"));
-r.put("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
-r.delete("/client-menus/:id", authRequired, forward(BASE, "/internal/menu/client-menus/:id"));
+// ✔ Client can fetch their own menu
+// ✔ Coach can fetch menu for any client
+r.get(
+  "/client-menus/:id",
+  authRequired,
+  requireOwnership,   // keep
+  forward(BASE, "/internal/menu/client-menus/:id")
+);
 
-r.post("/client-menus/from-template", authRequired, (req, res, next) => {
-  console.log("➡️ ROUTE BODY:", req.body); // ← תוסיף את זה כאן
+// ✔ Only coach can modify or delete.
+// ❌ Ownership not needed (coach manages all his clients)
+r.post(
+  "/client-menus",
+  authRequired,
+  requireCoach,
+  forward(BASE, "/internal/menu/client-menus")
+);
 
+r.put(
+  "/client-menus/:id",
+  authRequired,
+  requireCoach,
+  forward(BASE, "/internal/menu/client-menus/:id")
+);
+
+r.delete(
+  "/client-menus/:id",
+  authRequired,
+  requireCoach,
+  forward(BASE, "/internal/menu/client-menus/:id")
+);
+
+// ✔ Creating from template → no ownership
+r.post(
+  "/client-menus/from-template",
+  authRequired,
+  requireCoach,
+  (req, res, next) => {
     const { clientId, templateMenuId } = req.body ?? {};
-  
-    if (!clientId) {
-      return res.status(400).json({ message: "clientId is required" });
-    }
-  
-    if (!templateMenuId) {
-      return res.status(400).json({ message: "templateMenuId is required" });
-    }
-  
-    // Keep ALL original body fields
+
+    if (!clientId) return res.status(400).json({ message: "clientId is required" });
+    if (!templateMenuId) return res.status(400).json({ message: "templateMenuId is required" });
+
     req.body = {
       ...req.body,
       coachId: req.user.id,
     };
-  
+
     return forward(BASE, "/internal/menu/client-menus/from-template")(req, res, next);
-  });
+  }
+);
+
 // =====================
 // VITAMINS
 // =====================
 r.get("/vitamins", authRequired, forward(BASE, "/internal/menu/vitamins"));
 r.post("/vitamins", authRequired, requireCoach, forward(BASE, "/internal/menu/vitamins"));
-
-
-
 
 export default r;
