@@ -13,9 +13,6 @@ import { verifyJwt } from "./middleware/verifyJwt.js";
 
 const app = express();
 
-// ----------------------
-// 1) CORS 
-// ----------------------
 app.use(
   cors({
     origin: "http://localhost:8081",
@@ -23,34 +20,25 @@ app.use(
   })
 );
 
-// ----------------------
-// 2) JSON + Cookies
-// ----------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ----------------------
-// 3) Auth middleware
-// ----------------------
 app.use(verifyJwt);
 
-// ----------------------
-// 4) Swagger Docs (NEW)
-// ----------------------
+// Swagger UI
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// ----------------------
-// 5) Routes
-// ----------------------
+// 🔥 Swagger JSON (needed for openapi-typescript)
+app.get("/api/docs-json", (req, res) => res.json(swaggerSpec));
+
+// Routes
 app.use("/api", menuRoutes);
 app.use("/api/workout", workoutRoutes);
 app.use("/api", idmGatewayRoutes);
 app.use("/api/tracking", trackingRoutes);
 
-// ----------------------
-// 6) Error Handler
-// ----------------------
+// Error handler
 app.use(errorHandler);
 
 export default app;

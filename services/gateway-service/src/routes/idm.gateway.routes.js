@@ -1,3 +1,11 @@
+/**
+ * @openapi
+ * tags:
+ *   - name: Auth
+ *   - name: Clients
+ *   - name: Users
+ */
+
 import { Router } from "express";
 import { forward } from "../utils/forward.js";
 import { authRequired } from "../middleware/authRequired.js";
@@ -7,40 +15,153 @@ import { requireCoach } from "../middleware/requireRole.js";
 const r = Router();
 const BASE = process.env.IDM_SERVICE_URL;
 
-// Always attach user (if JWT exists)
 r.use(attachUser);
 
-// ==============================
-// AUTH ROUTES (public + internal flows)
-// ==============================
+/* ======================================================
+   AUTH ROUTES
+====================================================== */
 
+/**
+ * @openapi
+ * /api/auth/login:
+ *   post:
+ *     tags: [Auth]
+ *     summary: User login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/LoginRequestDto"
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/LoginResponseDto"
+ */
 r.post("/auth/login", forward(BASE, "/internal/auth/login"));
+
+/**
+ * @openapi
+ * /api/auth/register:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Register new account
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/RegisterRequestDto"
+ *     responses:
+ *       201:
+ *         description: Account created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RegisterResponseDto"
+ */
 r.post("/auth/register", forward(BASE, "/internal/auth/register"));
+
+/**
+ * @openapi
+ * /api/auth/token/refresh:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Refresh expired access token
+ *     responses:
+ *       200:
+ *         description: New session tokens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RefreshTokenResponseDto"
+ */
 r.post("/auth/token/refresh", forward(BASE, "/internal/auth/token/refresh"));
 
+/**
+ * @openapi
+ * /api/auth/logout:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Logout current session
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully logged out
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/LogoutResponseDto"
+ */
 r.post("/auth/logout", authRequired, forward(BASE, "/internal/auth/logout"));
 
-// MFA (valid only when logged in)
+/**
+ * @openapi
+ * /api/auth/mfa/register:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Register MFA device
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: MFA device registered
+ */
 r.post("/auth/mfa/register", authRequired, forward(BASE, "/internal/auth/mfa/register"));
+
+/**
+ * @openapi
+ * /api/auth/mfa/verify:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Verify MFA code
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/MfaVerifyRequestDto"
+ *     responses:
+ *       200:
+ *         description: MFA verified & session created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/MfaVerifyResponseDto"
+ */
 r.post("/auth/mfa/verify", authRequired, forward(BASE, "/internal/auth/mfa/verify"));
 
 
-// ==============================
-// CLIENT AGGREGATION (THE REAL UI ENDPOINTS)
-// ==============================
-// These MUST remain as they are — Saas-app relies on them.
 
-// GET /api/clients → list enriched client profiles for the coach
+/* ======================================================
+   CLIENT LIST AGGREGATION
+====================================================== */
+
+/**
+ * @openapi
+ * /api/clients:
+ *   get:
+ *     tags: [Clients]
+ *     summary: Get list of enriched client profiles for coach
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of clients
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ClientsListResponseDto"
+ */
 r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
   try {
-    const headers = {
-      "x-internal-token": process.env.INTERNAL_TOKEN,
-      ...(req.headers.cookie && { cookie: req.headers.cookie }),
-    };
-
-    // Fetch users from IDM
     const usersResponse = await forward(BASE, "/internal/users")(req, res, () => {});
-    // forward returns the response inside res.json — so we re-fetch manually:
     const rawUsers = usersResponse?.data ?? [];
 
     const enriched = await Promise.all(
@@ -50,7 +171,6 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
           `/internal/users/${user.id}/info`
         )(req, res, () => {});
         const info = infoRes?.data ?? {};
-
         const preferences = info.preferences ?? {};
 
         return {
@@ -78,46 +198,93 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
   }
 });
 
-
-// GET /api/clients/:id → raw user info aggregation
+/**
+ * @openapi
+ * /api/clients/{id}:
+ *   get:
+ *     tags: [Clients]
+ *     summary: Get raw client info from IDM
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Client data retrieved
+ */
 r.get("/clients/:id", authRequired, forward(BASE, "/internal/users/:id"));
 
-// ==============================
-// USER INFO (UI uses these!)
-// ==============================
-
-r.get(
-  "/users/:id/info",
-  authRequired,
-  forward(BASE, "/internal/users/:id/info")
-);
-
-r.put(
-  "/users/:id/info",
-  authRequired,
-  forward(BASE, "/internal/users/:id/info")
-);
-
-r.delete(
-  "/users/:id/info",
-  authRequired,
-  forward(BASE, "/internal/users/:id/info")
-);
 
 
-// ==============================
-// OPTIONAL ADMIN FUNCTIONS (Coach only)
-// Keep ONLY if needed
-// ==============================
+/* ======================================================
+   USER INFO (forwarded)
+====================================================== */
 
-r.get("/users", authRequired, requireCoach, forward(BASE, "/internal/users"));
-r.patch("/users/:id", authRequired, requireCoach, forward(BASE, "/internal/users/:id"));
+/**
+ * @openapi
+ * /api/users/{id}/info:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get full user info
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: User info retrieved
+ */
+r.get("/users/:id/info", authRequired, forward(BASE, "/internal/users/:id/info"));
 
-// Subscriptions (unused by UI — keep if needed)
-r.get("/subscriptions", authRequired, requireCoach, forward(BASE, "/internal/subscriptions"));
-r.get("/subscriptions/:id", authRequired, requireCoach, forward(BASE, "/internal/subscriptions/:id"));
-r.post("/subscriptions", authRequired, requireCoach, forward(BASE, "/internal/subscriptions"));
-r.patch("/subscriptions/:id", authRequired, requireCoach, forward(BASE, "/internal/subscriptions/:id"));
-r.delete("/subscriptions/:id", authRequired, requireCoach, forward(BASE, "/internal/subscriptions/:id"));
+/**
+ * @openapi
+ * /api/users/{id}/info:
+ *   put:
+ *     tags: [Users]
+ *     summary: Update user info
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/UpsertUserInfoRequestDto"
+ *     responses:
+ *       200:
+ *         description: User info updated
+ */
+r.put("/users/:id/info", authRequired, forward(BASE, "/internal/users/:id/info"));
+
+/**
+ * @openapi
+ * /api/users/{id}/info:
+ *   delete:
+ *     tags: [Users]
+ *     summary: Delete user info record
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: User info deleted
+ */
+r.delete("/users/:id/info", authRequired, forward(BASE, "/internal/users/:id/info"));
 
 export default r;
