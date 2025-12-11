@@ -11,8 +11,27 @@ const {
 } = require("../dto/workoutProgram.dto");
 
 /**
- * INTERNAL ONLY
- * POST /internal/workout/programs
+ * @openapi
+ * /internal/workout/programs:
+ *   post:
+ *     tags:
+ *       - Workout - Programs
+ *     summary: Create a workout program (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Workout_WorkoutProgramCreateRequestDto'
+ *     responses:
+ *       201:
+ *         description: Workout program created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Workout_WorkoutProgramResponseDto'
  */
 const createProgramController = async (req, res, next) => {
   try {
@@ -25,8 +44,23 @@ const createProgramController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/workout/programs
+ * @openapi
+ * /internal/workout/programs:
+ *   get:
+ *     tags:
+ *       - Workout - Programs
+ *     summary: List workout programs (internal)
+ *     security:
+ *       - internalToken: []
+ *     responses:
+ *       200:
+ *         description: Workout programs list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Workout_WorkoutProgramResponseDto'
  */
 const listProgramsController = async (req, res, next) => {
   try {
@@ -38,8 +72,27 @@ const listProgramsController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/workout/programs/:id
+ * @openapi
+ * /internal/workout/programs/{id}:
+ *   get:
+ *     tags:
+ *       - Workout - Programs
+ *     summary: Get a workout program by ID (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Workout program details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Workout_WorkoutProgramResponseDto'
  */
 const getProgramController = async (req, res, next) => {
   try {
@@ -51,8 +104,33 @@ const getProgramController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * PUT /internal/workout/programs/:id
+ * @openapi
+ * /internal/workout/programs/{id}:
+ *   put:
+ *     tags:
+ *       - Workout - Programs
+ *     summary: Update a workout program (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Workout_WorkoutProgramUpdateRequestDto'
+ *     responses:
+ *       200:
+ *         description: Updated workout program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Workout_WorkoutProgramResponseDto'
  */
 const updateProgramController = async (req, res, next) => {
   try {
@@ -65,8 +143,23 @@ const updateProgramController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * DELETE /internal/workout/programs/:id
+ * @openapi
+ * /internal/workout/programs/{id}:
+ *   delete:
+ *     tags:
+ *       - Workout - Programs
+ *     summary: Delete a workout program (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Workout program deleted
  */
 const deleteProgramController = async (req, res, next) => {
   try {

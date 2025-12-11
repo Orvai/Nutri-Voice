@@ -8,8 +8,27 @@ const {
 } = require("../services/food.service");
 
 /**
- * INTERNAL ONLY
- * POST /internal/menu/food
+ * @openapi
+ * /internal/menu/food:
+ *   post:
+ *     tags:
+ *       - Menu - Food
+ *     summary: Create a food item (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Menu_FoodItemCreateRequestDto'
+ *     responses:
+ *       201:
+ *         description: Food item created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu_FoodItemResponseDto'
  */
 const createFoodItemController = async (req, res, next) => {
   try {
@@ -24,8 +43,23 @@ const createFoodItemController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/menu/food
+ * @openapi
+ * /internal/menu/food:
+ *   get:
+ *     tags:
+ *       - Menu - Food
+ *     summary: List food items (internal)
+ *     security:
+ *       - internalToken: []
+ *     responses:
+ *       200:
+ *         description: List of food items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Menu_FoodItemResponseDto'
  */
 const listFoodItemsController = async (req, res, next) => {
   try {
@@ -37,8 +71,33 @@ const listFoodItemsController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * PUT /internal/menu/food/:id
+ * @openapi
+ * /internal/menu/food/{id}:
+ *   put:
+ *     tags:
+ *       - Menu - Food
+ *     summary: Update a food item (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Menu_FoodItemUpdateRequestDto'
+ *     responses:
+ *       200:
+ *         description: Updated food item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu_FoodItemResponseDto'
  */
 const updateFoodItemController = async (req, res, next) => {
   try {
@@ -53,8 +112,30 @@ const updateFoodItemController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * DELETE /internal/menu/food/:id
+ * @openapi
+ * /internal/menu/food/{id}:
+ *   delete:
+ *     tags:
+ *       - Menu - Food
+ *     summary: Delete a food item (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Food item deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 const deleteFoodItemController = async (req, res, next) => {
   try {
@@ -66,8 +147,29 @@ const deleteFoodItemController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/menu/food/by-category
+ * @openapi
+ * /internal/menu/food/by-category:
+ *   get:
+ *     tags:
+ *       - Menu - Food
+ *     summary: List food items by category (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Food items filtered by category
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Menu_FoodItemResponseDto'
  */
 const listByCategoryController = async (req, res, next) => {
   try {
@@ -82,8 +184,29 @@ const listByCategoryController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/menu/food/search
+ * @openapi
+ * /internal/menu/food/search:
+ *   get:
+ *     tags:
+ *       - Menu - Food
+ *     summary: Search food items by name (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Menu_FoodItemResponseDto'
  */
 const searchByNameController = async (req, res, next) => {
   try {

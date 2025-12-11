@@ -10,17 +10,20 @@ const swaggerDefinition = {
     },
     servers: [{ url: 'http://localhost:4003' }],
     components: {
+        securitySchemes: {
+            internalToken: {
+                type: 'apiKey',
+                name: 'x-internal-token',
+                in: 'header',
+            },
+        },
         schemas: {
             ...dtoSchemas,
         },
-        securitySchemes: {
-            bearerAuth: {
-                type: 'http',
-                scheme: 'bearer',
-                bearerFormat: 'JWT',
-            },
-        },
     },
+    security: [
+        { internalToken: [] },
+    ],
 };
 
 const options = {

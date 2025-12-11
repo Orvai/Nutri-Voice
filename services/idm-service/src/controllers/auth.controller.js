@@ -2,8 +2,27 @@ const A = require('../services/auth.service');
 const { AppError } = require('../common/errors');
 
 /**
- * INTERNAL ONLY
- * POST /internal/auth/register
+ * @openapi
+ * /internal/auth/register:
+ *   post:
+ *     tags:
+ *       - IDM - Auth
+ *     summary: Register a new user (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IDM_RegisterRequestDto'
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_RegisterSuccessResponseDto'
  */
 const registerUser = async (req, res, next) => {
   try {
@@ -15,8 +34,27 @@ const registerUser = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * POST /internal/auth/login
+ * @openapi
+ * /internal/auth/login:
+ *   post:
+ *     tags:
+ *       - IDM - Auth
+ *     summary: Authenticate a user (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IDM_LoginRequestDto'
+ *     responses:
+ *       200:
+ *         description: Authenticated session
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_SessionResponseDto'
  */
 const login = async (req, res, next) => {
   try {
@@ -45,8 +83,23 @@ const login = async (req, res, next) => {
 
 
 /**
- * INTERNAL ONLY
- * POST /internal/auth/logout
+ * @openapi
+ * /internal/auth/logout:
+ *   post:
+ *     tags:
+ *       - IDM - Auth
+ *     summary: Logout a user session (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IDM_LogoutRequestDto'
+ *     responses:
+ *       204:
+ *         description: Session terminated
  */
 const logout = async (req, res, next) => {
   try {
@@ -59,8 +112,30 @@ const logout = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * POST /internal/auth/mfa/verify
+ * @openapi
+ * /internal/auth/mfa/verify:
+ *   post:
+ *     tags:
+ *       - IDM - Auth
+ *     summary: Verify MFA code (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IDM_VerifyMFARequestDto'
+ *     responses:
+ *       200:
+ *         description: MFA verification result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
  */
 const verifyMFA = async (req, res, next) => {
   try {
@@ -74,8 +149,27 @@ const verifyMFA = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * POST /internal/auth/mfa/register
+ * @openapi
+ * /internal/auth/mfa/register:
+ *   post:
+ *     tags:
+ *       - IDM - Auth
+ *     summary: Register a new MFA device (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IDM_RegisterMFADeviceRequestDto'
+ *     responses:
+ *       200:
+ *         description: Registered MFA device
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_MFADeviceResponseDto'
  */
 const registerMFADevice = async (req, res, next) => {
   try {
@@ -88,8 +182,32 @@ const registerMFADevice = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * POST /internal/auth/token/refresh
+ * @openapi
+ * /internal/auth/token/refresh:
+ *   post:
+ *     tags:
+ *       - IDM - Auth
+ *     summary: Refresh an access token (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *             required:
+ *               - refreshToken
+ *     responses:
+ *       200:
+ *         description: Refreshed token pair
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_SessionResponseDto'
  */
 const refresh = async (req, res, next) => {
   try {

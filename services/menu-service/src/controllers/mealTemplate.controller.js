@@ -7,8 +7,27 @@ const {
 } = require("../services/mealTemplate.service");
 
 /**
- * INTERNAL ONLY
- * POST /internal/menu/templates
+ * @openapi
+ * /internal/menu/templates:
+ *   post:
+ *     tags:
+ *       - Menu - Meal Templates
+ *     summary: Create a meal template (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Menu_MealTemplateCreateDto'
+ *     responses:
+ *       201:
+ *         description: Meal template created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu_MealTemplateResponseDto'
  */
 const createMealTemplateController = async (req, res, next) => {
   try {
@@ -25,8 +44,23 @@ const createMealTemplateController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/menu/templates
+ * @openapi
+ * /internal/menu/templates:
+ *   get:
+ *     tags:
+ *       - Menu - Meal Templates
+ *     summary: List meal templates (internal)
+ *     security:
+ *       - internalToken: []
+ *     responses:
+ *       200:
+ *         description: Meal template list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Menu_MealTemplateResponseDto'
  */
 const listMealTemplatesController = async (req, res, next) => {
   try {
@@ -38,8 +72,27 @@ const listMealTemplatesController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/menu/templates/:id
+ * @openapi
+ * /internal/menu/templates/{id}:
+ *   get:
+ *     tags:
+ *       - Menu - Meal Templates
+ *     summary: Get a meal template by ID (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Meal template detail
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu_MealTemplateResponseDto'
  */
 const getMealTemplateController = async (req, res, next) => {
   try {
@@ -51,8 +104,33 @@ const getMealTemplateController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * PUT /internal/menu/templates/:id
+ * @openapi
+ * /internal/menu/templates/{id}:
+ *   put:
+ *     tags:
+ *       - Menu - Meal Templates
+ *     summary: Create or update a meal template (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Menu_MealTemplateUpsertDto'
+ *     responses:
+ *       200:
+ *         description: Meal template saved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Menu_MealTemplateResponseDto'
  */
 const upsertMealTemplateController = async (req, res, next) => {
   try {
@@ -67,8 +145,30 @@ const upsertMealTemplateController = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * DELETE /internal/menu/templates/:id
+ * @openapi
+ * /internal/menu/templates/{id}:
+ *   delete:
+ *     tags:
+ *       - Menu - Meal Templates
+ *     summary: Delete a meal template (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Meal template deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 const deleteMealTemplateController = async (req, res, next) => {
   try {

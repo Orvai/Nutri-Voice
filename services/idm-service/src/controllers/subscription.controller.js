@@ -1,8 +1,27 @@
 const S = require('../services/subscription.service');
 
 /**
- * INTERNAL ONLY
- * POST /internal/subscriptions
+ * @openapi
+ * /internal/subscriptions:
+ *   post:
+ *     tags:
+ *       - IDM - Subscriptions
+ *     summary: Create a subscription (internal)
+ *     security:
+ *       - internalToken: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IDM_CreateSubscriptionRequestDto'
+ *     responses:
+ *       200:
+ *         description: Created subscription
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_SubscriptionResponseDto'
  */
 const createSubscription = async (req, res, next) => {
   try {
@@ -14,8 +33,33 @@ const createSubscription = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * PATCH /internal/subscriptions/:id
+ * @openapi
+ * /internal/subscriptions/{id}:
+ *   patch:
+ *     tags:
+ *       - IDM - Subscriptions
+ *     summary: Update a subscription (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IDM_UpdateSubscriptionRequestDto'
+ *     responses:
+ *       200:
+ *         description: Updated subscription
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_SubscriptionResponseDto'
  */
 const updateSubscription = async (req, res, next) => {
   try {
@@ -27,8 +71,27 @@ const updateSubscription = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * DELETE /internal/subscriptions/:id
+ * @openapi
+ * /internal/subscriptions/{id}:
+ *   delete:
+ *     tags:
+ *       - IDM - Subscriptions
+ *     summary: Delete a subscription (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Deleted subscription
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_SubscriptionResponseDto'
  */
 const deleteSubscription = async (req, res, next) => {
   try {
@@ -40,8 +103,27 @@ const deleteSubscription = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/subscriptions/:id
+ * @openapi
+ * /internal/subscriptions/{id}:
+ *   get:
+ *     tags:
+ *       - IDM - Subscriptions
+ *     summary: Get a subscription by ID (internal)
+ *     security:
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Subscription details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IDM_SubscriptionResponseDto'
  */
 const getSubscription = async (req, res, next) => {
   try {
@@ -53,8 +135,23 @@ const getSubscription = async (req, res, next) => {
 };
 
 /**
- * INTERNAL ONLY
- * GET /internal/subscriptions
+ * @openapi
+ * /internal/subscriptions:
+ *   get:
+ *     tags:
+ *       - IDM - Subscriptions
+ *     summary: List subscriptions (internal)
+ *     security:
+ *       - internalToken: []
+ *     responses:
+ *       200:
+ *         description: List of subscriptions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/IDM_SubscriptionResponseDto'
  */
 const listSubscriptions = async (req, res, next) => {
   try {

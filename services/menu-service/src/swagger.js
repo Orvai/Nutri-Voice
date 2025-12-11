@@ -3,24 +3,23 @@ const dtoSchemas = require('./docs/zod-schemas');
 
 const swaggerDefinition = {
     openapi: '3.0.0',
-    info: {
-        title: 'Menu Service API',
-        version: '1.0.0',
-        description: 'Menu service for food items, meal templates, daily templates, and client menus',
-    },
-    servers: [{ url: 'http://localhost:3002' }],
+    info: { title: 'Menu Service API', version: '1.0.0' },
+    servers: [{ url: 'http://localhost:4002' }],
     components: {
+        securitySchemes: {
+            internalToken: {
+                type: 'apiKey',
+                name: 'x-internal-token',
+                in: 'header',
+            },
+        },
         schemas: {
             ...dtoSchemas,
         },
-        securitySchemes: {
-            bearerAuth: {
-                type: 'http',
-                scheme: 'bearer',
-                bearerFormat: 'JWT',
-            },
-        },
     },
+    security: [
+        { internalToken: [] },
+    ],
 };
 
 const options = {

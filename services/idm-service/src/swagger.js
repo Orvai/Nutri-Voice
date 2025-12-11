@@ -1,29 +1,32 @@
 const swaggerJSDoc = require('swagger-jsdoc');
-const dtoSchemas = require('./docs/zod-schemas'); // adjust path if necessary
+const dtoSchemas = require('./docs/zod-schemas');
 
 const swaggerDefinition = {
     openapi: '3.0.0',
     info: { title: 'IDM Service API', version: '1.0.0' },
     servers: [{ url: 'http://localhost:3000' }],
     components: {
-        schemas: {
-            ...dtoSchemas, // spread the Zod-derived schemas here
-        },
         securitySchemes: {
-            bearerAuth: {
-                type: 'http',
-                scheme: 'bearer',
-                bearerFormat: 'JWT',
+            internalToken: {
+                type: 'apiKey',
+                name: 'x-internal-token',
+                in: 'header',
             },
         },
+        schemas: {
+            ...dtoSchemas,
+        },
     },
+    security: [
+        { internalToken: [] },
+    ],
 };
 
 const options = {
     definition: swaggerDefinition,
     apis: [
         './src/controllers/*.js',
-        './src/docs/jsdoc-schemas.js', // include the file with your schema definitions
+        './src/docs/jsdoc-schemas.js',
     ]
 };
 

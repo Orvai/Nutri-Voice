@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import menuRoutes from "./routes/menu.routes.js";
 import workoutRoutes from "./routes/workout.routes.js";
 import clientRoutes from "./routes/clients.routes.js";
+import trackingRoutes from "./routes/tracking.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyJwt } from "./middleware/verifyJwt.js";
 
@@ -43,6 +44,8 @@ app.use(verifyJwt);
 app.use("/api", menuRoutes);
 app.use("/api/workout", workoutRoutes);
 app.use("/api/clients", clientRoutes);
+app.use("/api/tracking", trackingRoutes);
+
 
 // ----------------------
 // 5) Error Handler

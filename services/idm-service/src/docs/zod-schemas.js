@@ -1,114 +1,60 @@
-// This file converts your Zod DTOs into JSON Schema definitions using
-// Zod's built-in `toJSONSchema` method (available in Zod v4).  No
-// external dependencies are required.  Each exported constant can be
-// merged into the `components.schemas` section of your Swagger config.
 const { z } = require('zod');
-const {
-        createCredentialDto,
-        updateCredentialDto,
-        credentialResponseDto
-} = require('../dto/credential.dto');
-const {
-        registerMFADeviceDto,
-        verifyMFADto,
-        mfaDeviceDto, sessionDto,
-        revokeTokenInput
-} = require('../dto/mfa.dto');
-const {
-        createUserDto,
-        updateUserDto,
-        userResponseDto
-} = require('../dto/user.dto');
-const {
-        createSubscriptionDto,
-        updateSubscriptionDto,
-        subscriptionResponseDto
-} = require('../dto/subscription.dto');
-const { upsertUserInfoDto,
-        UserInfoResponseDto
-} = require('../dto/userInfo.dto');
-const {
-    registerRequestDto,
-    registerSuccessResponseDto,
-    loginRequestDto,
-    logoutRequestDto
-} = require('../dto/auth.dto');
 
+const { createCredentialDto, updateCredentialDto, credentialResponseDto } = require('../dto/credential.dto');
+const { registerMFADeviceDto, verifyMFADto, revokeTokenInput, mfaDeviceDto, sessionDto } = require('../dto/mfa.dto');
+const { createUserDto, updateUserDto, userResponseDto, userRoleEnum, userStatusEnum } = require('../dto/user.dto');
+const { createSubscriptionDto, updateSubscriptionDto, subscriptionResponseDto } = require('../dto/subscription.dto');
+const { upsertUserInfoDto, UserInfoResponseDto } = require('../dto/userInfo.dto');
+const { createOrgDto, updateOrgDto, organizationResponseDto } = require('../dto/organization.dto');
+const { registerRequestDto, registerSuccessResponseDto, loginRequestDto, loginContextDto, logoutRequestDto } = require('../dto/auth.dto');
 
-function toJsonSchema(dto, name) {
-    const schema = z.toJSONSchema(dto, {
-        // allow unrepresentable types instead of throwing
-        unrepresentable: "any",
-        // custom conversion for dates
-        override: (ctx) => {
-            const def = ctx.zodSchema._zod.def;
-            if (def && def.type === 'date') {
-                ctx.jsonSchema.type = 'string';
-                ctx.jsonSchema.format = 'date-time';
-            }
-        },
-    });
-    // attach a title so the schema appears with a friendly name
-    return { title: name, ...schema };
+function toJsonSchema(name, schema) {
+  const json = z.toJSONSchema(schema, {
+    unrepresentable: 'any',
+    override: (ctx) => {
+      const def = ctx.zodSchema?._zod?.def;
+      if (def && def.type === 'date') {
+        ctx.jsonSchema.type = 'string';
+        ctx.jsonSchema.format = 'date-time';
+      }
+    },
+  });
+  return { title: name, ...json };
 }
-// Convert each DTO into a JSON Schema and assign a descriptive name
-const CreateCredentialInput   = toJsonSchema(createCredentialDto,   'CreateCredentialInput');
-const UpdateCredentialInput   = toJsonSchema(updateCredentialDto,   'UpdateCredentialInput');
 
-const RegisterMFAInput        = toJsonSchema(registerMFADeviceDto, 'RegisterMFAInput');
-const VerifyMFAInput          = toJsonSchema(verifyMFADto,          'VerifyMFAInput');
-const RevokeTokenInput          = toJsonSchema(revokeTokenInput,          'revokeTokenInput');
+const schemas = {
+  // Request DTOs
+  IDM_CreateCredentialRequestDto: createCredentialDto,
+  IDM_UpdateCredentialRequestDto: updateCredentialDto,
+  IDM_RegisterMFADeviceRequestDto: registerMFADeviceDto,
+  IDM_VerifyMFARequestDto: verifyMFADto,
+  IDM_RevokeTokenRequestDto: revokeTokenInput,
+  IDM_CreateUserRequestDto: createUserDto,
+  IDM_UpdateUserRequestDto: updateUserDto,
+  IDM_CreateSubscriptionRequestDto: createSubscriptionDto,
+  IDM_UpdateSubscriptionRequestDto: updateSubscriptionDto,
+  IDM_UpsertUserInfoRequestDto: upsertUserInfoDto,
+  IDM_CreateOrganizationRequestDto: createOrgDto,
+  IDM_UpdateOrganizationRequestDto: updateOrgDto,
+  IDM_RegisterRequestDto: registerRequestDto,
+  IDM_LoginRequestDto: loginRequestDto,
+  IDM_LoginContextDto: loginContextDto,
+  IDM_LogoutRequestDto: logoutRequestDto,
 
-const CreateUserInput         = toJsonSchema(createUserDto,         'CreateUserInput');
-const UpdateUserInput         = toJsonSchema(updateUserDto,         'UpdateUserInput');
-
-const CreateSubscriptionInput = toJsonSchema(createSubscriptionDto, 'CreateSubscriptionInput');
-const UpdateSubscriptionInput = toJsonSchema(updateSubscriptionDto, 'UpdateSubscriptionInput');
-
-const UserInfoInput           = toJsonSchema(upsertUserInfoDto,     'UserInfoInput');
-
-
-const RegisterRequestDto           = toJsonSchema(registerRequestDto,     'registerRequestDto');
-const LoginRequestDto           = toJsonSchema(loginRequestDto,     'loginRequestDto');
-const LogoutRequestDto           = toJsonSchema(logoutRequestDto,     'LogoutRequestDto');
-
-
-
-
-
-// ---- response DTOs ----
-const User          = toJsonSchema(userResponseDto,          'User');
-const Credential    = toJsonSchema(credentialResponseDto,    'Credential');
-const Subscription  = toJsonSchema(subscriptionResponseDto,  'Subscription');
-const MFADevice     = toJsonSchema(mfaDeviceDto,             'MFADevice');
-const Session       = toJsonSchema(sessionDto,               'Session');
-const UserInfo       = toJsonSchema(UserInfoResponseDto,               'UserInfo');
-const RegisterSuccessResponseDto       = toJsonSchema(registerSuccessResponseDto,               'registerResponseDto');
-
-
-// Export all schemas under the names referenced by your controllers
-module.exports = {
-    // request
-    CreateCredentialInput,
-    UpdateCredentialInput,
-    RegisterMFAInput,
-    VerifyMFAInput,
-    CreateUserInput,
-    UpdateUserInput,
-    CreateSubscriptionInput,
-    UpdateSubscriptionInput,
-    UserInfoInput,
-    RevokeTokenInput,
-    RegisterRequestDto,
-    LoginRequestDto,
-    LogoutRequestDto,
-
-    // response
-    User,
-    Credential,
-    Subscription,
-    MFADevice,
-    Session,
-    UserInfo,
-    RegisterSuccessResponseDto
+  // Response DTOs
+  IDM_CredentialResponseDto: credentialResponseDto,
+  IDM_MFADeviceResponseDto: mfaDeviceDto,
+  IDM_SessionResponseDto: sessionDto,
+  IDM_UserResponseDto: userResponseDto,
+  IDM_UserStatusEnum: userStatusEnum,
+  IDM_UserRoleEnum: userRoleEnum,
+  IDM_SubscriptionResponseDto: subscriptionResponseDto,
+  IDM_UserInfoResponseDto: UserInfoResponseDto,
+  IDM_OrganizationResponseDto: organizationResponseDto,
+  IDM_RegisterSuccessResponseDto: registerSuccessResponseDto,
 };
+
+module.exports = Object.entries(schemas).reduce((acc, [name, schema]) => {
+  acc[name] = toJsonSchema(name, schema);
+  return acc;
+}, {});

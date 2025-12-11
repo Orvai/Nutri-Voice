@@ -1,94 +1,48 @@
-// src/docs/zod-schemas.js
+const { z } = require('zod');
+const { FoodItemCreateRequestDto, FoodItemUpdateRequestDto, FoodItemResponseDto } = require('../dto/food.dto');
+const { MealTemplateCreateDto, MealTemplateUpsertDto, MealTemplateResponseDto } = require('../dto/mealTemplate.dto');
+const { ClientMenuCreateRequestDto, ClientMenuCreateFromTemplateDto, ClientMenuUpdateRequestDto, ClientMenuResponseDto } = require('../dto/clientMenu.dto');
+const { TemplateMenuCreateDto, TemplateMenuUpdateDto, TemplateMenuResponseDto } = require('../dto/templateMenu.dto');
+const { VitaminCreateDto, VitaminUpdateDto, VitaminResponseDto, TemplateMenuVitaminDto } = require('../dto/vitamin.dto');
 
-const { zodToJsonSchema } = require("zod-to-json-schema");
-
-/* ============================
-   IMPORT DTOs (Zod Schemas)
-   ============================ */
-
-const {
-  FoodItemCreateRequestDto,
-  FoodItemUpdateRequestDto,
-  FoodItemResponseDto,
-} = require("../dto/food.dto");
-
-const {
-  MealTemplateCreateDto,
-  MealTemplateUpsertDto,
-  MealTemplateResponseDto,
-} = require("../dto/mealTemplate.dto");
-
-const {
-  ClientMenuCreateRequestDto,
-  ClientMenuUpdateRequestDto,
-  ClientMenuResponseDto,
-} = require("../dto/clientMenu.dto");
-
-
-/* ============================
-   JSON SCHEMAS GENERATION
-   ============================ */
-
-function make(name, schema) {
-  return zodToJsonSchema(schema, name);
+function toJsonSchema(name, schema) {
+  const json = z.toJSONSchema(schema, {
+    unrepresentable: 'any',
+    override: (ctx) => {
+      const def = ctx.zodSchema?._zod?.def;
+      if (def && def.type === 'date') {
+        ctx.jsonSchema.type = 'string';
+        ctx.jsonSchema.format = 'date-time';
+      }
+    },
+  });
+  return { title: name, ...json };
 }
 
-/* FOOD */
-const FoodItemCreateRequestSchema = make(
-  "FoodItemCreateRequestDto",
-  FoodItemCreateRequestDto
-);
-const FoodItemUpdateRequestSchema = make(
-  "FoodItemUpdateRequestDto",
-  FoodItemUpdateRequestDto
-);
-const FoodItemResponseSchema = make(
-  "FoodItemResponseDto",
-  FoodItemResponseDto
-);
+const schemas = {
+  // Requests
+  Menu_FoodItemCreateRequestDto: FoodItemCreateRequestDto,
+  Menu_FoodItemUpdateRequestDto: FoodItemUpdateRequestDto,
+  Menu_MealTemplateCreateDto: MealTemplateCreateDto,
+  Menu_MealTemplateUpsertDto: MealTemplateUpsertDto,
+  Menu_ClientMenuCreateRequestDto: ClientMenuCreateRequestDto,
+  Menu_ClientMenuCreateFromTemplateDto: ClientMenuCreateFromTemplateDto,
+  Menu_ClientMenuUpdateRequestDto: ClientMenuUpdateRequestDto,
+  Menu_TemplateMenuCreateDto: TemplateMenuCreateDto,
+  Menu_TemplateMenuUpdateDto: TemplateMenuUpdateDto,
+  Menu_VitaminCreateDto: VitaminCreateDto,
+  Menu_VitaminUpdateDto: VitaminUpdateDto,
 
-/* MEAL TEMPLATE */
-const MealTemplateCreateSchema = make(
-  "MealTemplateCreateDto",
-  MealTemplateCreateDto
-);
-const MealTemplateUpdateSchema = make(
-  "MealTemplateUpsertDto",
-  MealTemplateUpsertDto
-);
-const MealTemplateResponseSchema = make(
-  "MealTemplateResponseDto",
-  MealTemplateResponseDto
-);
-
-/* CLIENT MENU */
-const ClientMenuCreateRequestSchema = make(
-  "ClientMenuCreateRequestDto",
-  ClientMenuCreateRequestDto
-);
-const ClientMenuUpdateRequestSchema = make(
-  "ClientMenuUpdateRequestDto",
-  ClientMenuUpdateRequestDto
-);
-const ClientMenuResponseSchema = make(
-  "ClientMenuResponseDto",
-  ClientMenuResponseDto
-);
-
-/* ============================
-   EXPORT
-   ============================ */
-
-module.exports = {
-  FoodItemCreateRequestDto: FoodItemCreateRequestSchema,
-  FoodItemUpdateRequestDto: FoodItemUpdateRequestSchema,
-  FoodItemResponseDto: FoodItemResponseSchema,
-
-  MealTemplateCreateDto: MealTemplateCreateSchema,
-  MealTemplateUpsertDto: MealTemplateUpdateSchema,
-  MealTemplateResponseDto: MealTemplateResponseSchema,
-
-  ClientMenuCreateRequestDto: ClientMenuCreateRequestSchema,
-  ClientMenuUpdateRequestDto: ClientMenuUpdateRequestSchema,
-  ClientMenuResponseDto: ClientMenuResponseSchema,
+  // Responses
+  Menu_FoodItemResponseDto: FoodItemResponseDto,
+  Menu_MealTemplateResponseDto: MealTemplateResponseDto,
+  Menu_ClientMenuResponseDto: ClientMenuResponseDto,
+  Menu_TemplateMenuResponseDto: TemplateMenuResponseDto,
+  Menu_VitaminResponseDto: VitaminResponseDto,
+  Menu_TemplateMenuVitaminDto: TemplateMenuVitaminDto,
 };
+
+module.exports = Object.entries(schemas).reduce((acc, [name, schema]) => {
+  acc[name] = toJsonSchema(name, schema);
+  return acc;
+}, {});

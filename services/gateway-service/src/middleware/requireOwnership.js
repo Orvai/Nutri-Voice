@@ -1,31 +1,21 @@
-import * as idm from "../adapters/idm.adapter.js";
-
-export async function requireClientOwnership(req, res, next) {
-  const requestingUser = req.user;      
+export async function requireOwnership(req, res, next) {
   const clientId = req.params.clientId || req.body.clientId;
 
-  if (!clientId) {
-    return res.status(400).json({ message: "clientId is required" });
+  if (!clientId) return next();
+
+  if (req.user.role === "client") {
+     if (clientId !== req.user.id) {
+        return res.status(403).json({ message: "Forbidden" });
+     }
+     return next();
   }
 
-  if (requestingUser.role === "client") {
-    if (requestingUser.userId !== clientId) {
-      return res.status(403).json({ message: "Not your account" });
-    }
-    return next();
+  if (req.user.role === "coach") {
+     const isOwned = await checkCoachOwnsClient(req.user.id, clientId);
+     if (!isOwned) {
+        return res.status(403).json({ message: "You do not own this client" });
+     }
   }
 
-  if (requestingUser.role === "coach") {
-    const clients = await idm.listUsers({ coachId: requestingUser.userId });
-
-    const isOwned = clients.data.some(c => c.id === clientId);
-
-    if (!isOwned) {
-      return res.status(403).json({ message: "Client does not belong to this coach" });
-    }
-
-    return next();
-  }
-
-  return res.status(403).json({ message: "Unauthorized" });
+  next();
 }

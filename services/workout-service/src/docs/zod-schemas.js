@@ -1,81 +1,37 @@
-// src/docs/zod-schemas.js
-const { z } = require("zod");
+const { z } = require('zod');
+const { ExerciseCreateDto, ExerciseUpdateDto, ExerciseResponseDto } = require('../dto/exercise.dto');
+const { WorkoutTemplateResponseDto } = require('../dto/workoutTemplate.dto');
+const { WorkoutProgramCreateRequestDto, WorkoutProgramUpdateRequestDto, WorkoutProgramResponseDto, WorkoutExerciseResponseDto } = require('../dto/workoutProgram.dto');
 
-const {
-  ExerciseCreateDto,
-  ExerciseUpdateDto,
-  ExerciseResponseDto,
-} = require("../dto/exercise.dto");
-const { WorkoutTemplateResponseDto } = require("../dto/workoutTemplate.dto");
-const {
-  WorkoutProgramCreateRequestDto,
-  WorkoutProgramUpdateRequestDto,
-  WorkoutProgramResponseDto,
-  WorkoutExerciseResponseDto,
-} = require("../dto/workoutProgram.dto");
-
-function toJsonSchema(dto, name) {
-  const schema = z.toJSONSchema(dto, {
-    unrepresentable: "any",
+function toJsonSchema(name, schema) {
+  const json = z.toJSONSchema(schema, {
+    unrepresentable: 'any',
     override: (ctx) => {
       const def = ctx.zodSchema?._zod?.def;
-      if (def && def.type === "date") {
-        ctx.jsonSchema.type = "string";
-        ctx.jsonSchema.format = "date-time";
+      if (def && def.type === 'date') {
+        ctx.jsonSchema.type = 'string';
+        ctx.jsonSchema.format = 'date-time';
       }
     },
   });
-
-  return { title: name, ...schema };
+  return { title: name, ...json };
 }
 
-/* EXERCISES */
-const ExerciseCreateSchema = toJsonSchema(
-  ExerciseCreateDto,
-  "ExerciseCreateDto"
-);
-const ExerciseUpdateSchema = toJsonSchema(
-  ExerciseUpdateDto,
-  "ExerciseUpdateDto"
-);
-const ExerciseResponseSchema = toJsonSchema(
-  ExerciseResponseDto,
-  "ExerciseResponseDto"
-);
+const schemas = {
+  // Requests
+  Workout_ExerciseCreateDto: ExerciseCreateDto,
+  Workout_ExerciseUpdateDto: ExerciseUpdateDto,
+  Workout_WorkoutProgramCreateRequestDto: WorkoutProgramCreateRequestDto,
+  Workout_WorkoutProgramUpdateRequestDto: WorkoutProgramUpdateRequestDto,
 
-/* WORKOUT TEMPLATES */
-const WorkoutTemplateResponseSchema = toJsonSchema(
-  WorkoutTemplateResponseDto,
-  "WorkoutTemplateResponseDto"
-);
-
-/* WORKOUT PROGRAMS */
-const WorkoutProgramCreateSchema = toJsonSchema(
-  WorkoutProgramCreateRequestDto,
-  "WorkoutProgramCreateRequestDto"
-);
-const WorkoutProgramUpdateSchema = toJsonSchema(
-  WorkoutProgramUpdateRequestDto,
-  "WorkoutProgramUpdateRequestDto"
-);
-const WorkoutProgramResponseSchema = toJsonSchema(
-  WorkoutProgramResponseDto,
-  "WorkoutProgramResponseDto"
-);
-const WorkoutExerciseResponseSchema = toJsonSchema(
-  WorkoutExerciseResponseDto,
-  "WorkoutExerciseResponseDto"
-);
-
-module.exports = {
-  ExerciseCreateDto: ExerciseCreateSchema,
-  ExerciseUpdateDto: ExerciseUpdateSchema,
-  ExerciseResponseDto: ExerciseResponseSchema,
-
-  WorkoutTemplateResponseDto: WorkoutTemplateResponseSchema,
-
-  WorkoutProgramCreateRequestDto: WorkoutProgramCreateSchema,
-  WorkoutProgramUpdateRequestDto: WorkoutProgramUpdateSchema,
-  WorkoutProgramResponseDto: WorkoutProgramResponseSchema,
-  WorkoutExerciseResponseDto: WorkoutExerciseResponseSchema,
+  // Responses
+  Workout_ExerciseResponseDto: ExerciseResponseDto,
+  Workout_WorkoutTemplateResponseDto: WorkoutTemplateResponseDto,
+  Workout_WorkoutProgramResponseDto: WorkoutProgramResponseDto,
+  Workout_WorkoutExerciseResponseDto: WorkoutExerciseResponseDto,
 };
+
+module.exports = Object.entries(schemas).reduce((acc, [name, schema]) => {
+  acc[name] = toJsonSchema(name, schema);
+  return acc;
+}, {});
