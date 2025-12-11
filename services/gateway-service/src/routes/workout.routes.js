@@ -66,103 +66,61 @@ r.use("/uploads", forward(BASE, null, { preservePath: true }));
    WORKOUT TEMPLATES
 ============================================ */
 
-r.get(
-  "/templates",
-  authRequired,
-  forward(BASE, "/internal/workout/templates")
-);
+r.get("/templates",authRequired,forward(BASE, "/internal/workout/templates"));
 
-r.get(
-  "/templates/:id",
-  authRequired,
+r.get("/templates/:id",authRequired,forward(BASE, "/internal/workout/templates/:id"));
+
+r.post("/templates",authRequired,(req, res, next) => {req.body = { ...req.body, coachId: req.user.id };next();},forward(BASE, "/internal/workout/templates"));
+
+r.put("/templates/:id",authRequired,(req, res, next) => {req.body = { ...req.body, coachId: req.user.id };next();},
   forward(BASE, "/internal/workout/templates/:id")
 );
 
-r.post(
-  "/templates",
-  authRequired,
-  (req, res, next) => {
-    req.body = { ...req.body, coachId: req.user.id };
-    next();
-  },
-  forward(BASE, "/internal/workout/templates")
-);
-
-r.put(
-  "/templates/:id",
-  authRequired,
-  (req, res, next) => {
-    req.body = { ...req.body, coachId: req.user.id };
-    next();
-  },
-  forward(BASE, "/internal/workout/templates/:id")
-);
-
-r.delete(
-  "/templates/:id",
-  authRequired,
-  (req, res, next) => {
-    req.body = { coachId: req.user.id };
-    next();
-  },
-  forward(BASE, "/internal/workout/templates/:id")
-);
+r.delete("/templates/:id",authRequired,(req, res, next) => {req.body = { coachId: req.user.id };next();},
+  forward(BASE, "/internal/workout/templates/:id"));
 
 /* ============================================
    CLIENT WORKOUT PROGRAMS
 ============================================ */
 
 r.get(
-  "/clients/:clientId/workout-programs",
+  "/:clientId/workout-programs",
   authRequired,
-  (req, res, next) => {
-    req.query = { ...req.query, clientId: req.params.clientId };
-    next();
-  },
+  (req, res, next) => {req.query.clientId = req.params.clientId;next();},
   forward(BASE, "/internal/workout/programs")
 );
 
-r.get(
-  "/clients/:clientId/workout-programs/:programId",
-  authRequired,
-  forward(BASE, "/internal/workout/programs/:id")
-);
+r.get("/:clientId/workout-programs/:programId",authRequired,forward(BASE, "/internal/workout/programs/:programId"));
 
-r.post(
-  "/clients/:clientId/workout-programs",
-  authRequired,
-  (req, res, next) => {
+r.post("/:clientId/workout-programs",authRequired,(req, res, next) => {
     req.body = {
       ...req.body,
       clientId: req.params.clientId,
-      coachId: req.user.id,     // 👈 חובה
+      coachId: req.user.id,
     };
     next();
   },
   forward(BASE, "/internal/workout/programs")
 );
 
+
 r.put(
-  "/clients/:clientId/workout-programs/:programId",
-  authRequired,
-  (req, res, next) => {
+  "/:clientId/workout-programs/:programId",authRequired,(req, res, next) => {
     req.body = {
       ...req.body,
-      coachId: req.user.id,     // 👈 חובה
+      coachId: req.user.id,
     };
     next();
   },
-  forward(BASE, "/internal/workout/programs/:id")
+  forward(BASE, "/internal/workout/programs/:programId")
 );
 
-r.delete(
-  "/clients/:clientId/workout-programs/:programId",
-  authRequired,
-  (req, res, next) => {
-    req.body = { coachId: req.user.id };  // 👈 חובה
+r.delete("/:clientId/workout-programs/:programId",authRequired,(req, res, next) => {
+    req.body = { coachId: req.user.id };
     next();
   },
-  forward(BASE, "/internal/workout/programs/:id")
+  forward(BASE, "/internal/workout/programs/:programId")
 );
+
 
 export default r;

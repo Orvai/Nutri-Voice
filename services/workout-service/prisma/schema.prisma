@@ -50,27 +50,27 @@ enum MuscleGroup {
 
 // Exercise master data; can be system-defined or coach-defined
 model Exercise {
-  id              String          @id @default(cuid())
-  name            String
-  description     String?         // how to perform the exercise
-  notes           String?         // general tips / warnings
-  videoUrl        String?
-  muscleGroup     MuscleGroup
+  id          String      @id @default(cuid())
+  name        String
+  description String? // how to perform the exercise
+  notes       String? // general tips / warnings
+  videoUrl    String?
+  muscleGroup MuscleGroup
 
-  gender          Gender?         // null = for all
-  bodyType        BodyType?       // null = for all
+  gender   Gender? // null = for all
+  bodyType BodyType? // null = for all
 
   // Which workout types this exercise is especially suitable for (A/B/FBW/etc.)
-  workoutTypes    WorkoutType[]
+  workoutTypes WorkoutType[]
 
-  equipment       String?         // Barbell, Dumbbell, Machine, Bodyweight...
-  difficulty      String?         // optional text, e.g. "easy", "medium", "hard"
+  equipment  String? // Barbell, Dumbbell, Machine, Bodyweight...
+  difficulty String? // optional text, e.g. "easy", "medium", "hard"
 
   // null => system exercise; otherwise, created by a specific coach
   createdByCoachId String?
 
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   workoutExercises WorkoutExercise[]
 }
@@ -78,7 +78,7 @@ model Exercise {
 // Template that defines WHICH MUSCLES should be included in a workout
 // For example: male, level 2, ecto, type A => [CHEST, BACK, SHOULDERS, BICEPS, TRICEPS]
 model WorkoutTemplate {
-  id          String        @id @default(cuid())
+  id          String      @id @default(cuid())
   gender      Gender
   level       Int
   bodyType    BodyType?
@@ -86,47 +86,49 @@ model WorkoutTemplate {
 
   muscleGroups MuscleGroup[]
 
-  name        String?
-  notes       String?
+  name            String?
+  notes           String?
+  workoutPrograms WorkoutProgram[] @relation("WorkoutProgramTemplate")
 }
 
-// Concrete workout program for a specific client
 model WorkoutProgram {
-  id        String             @id @default(cuid())
-  clientId  String
-  coachId   String
-  name      String
+  id       String @id @default(cuid())
+  clientId String
+  coachId  String
+  name     String
 
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  templateId String?
+  template   WorkoutTemplate? @relation("WorkoutProgramTemplate", fields: [templateId], references: [id])
 
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
   exercises WorkoutExercise[]
 }
 
 // Exercise instance inside a client's program
 model WorkoutExercise {
-  id         String   @id @default(cuid())
+  id String @id @default(cuid())
 
   programId  String
   exerciseId String
 
-  sets       Int
-  reps       String           // "8-12"
-  weight     Float?
-  rest       Int?             // seconds
-  order      Int
-  notes      String?          // coach notes specific to this client
+  sets   Int
+  reps   String // "8-12"
+  weight Float?
+  rest   Int? // seconds
+  order  Int
+  notes  String? // coach notes specific to this client
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  program    WorkoutProgram   @relation(fields: [programId], references: [id], onDelete: Cascade)
-  exercise   Exercise         @relation(fields: [exerciseId], references: [id])
+  program  WorkoutProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  exercise Exercise       @relation(fields: [exerciseId], references: [id])
 }
 
 // Optional: logging model compatible with the shared logger used in menu-service
 model LogEntry {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   level     String
   method    String
   path      String

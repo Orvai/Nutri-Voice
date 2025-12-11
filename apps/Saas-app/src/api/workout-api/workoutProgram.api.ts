@@ -7,7 +7,7 @@ import type {
 
 export async function fetchClientWorkoutPrograms(clientId: string) {
   const res = await api.get<{ data: WorkoutProgram[] }>(
-    `/clients/${clientId}/workout-programs`
+    `/workout/${clientId}/workout-programs`
   );
   return res.data?.data ?? [];
 }
@@ -17,7 +17,7 @@ export async function fetchClientWorkoutProgram(
   programId: string
 ) {
   const res = await api.get<{ data: WorkoutProgram }>(
-    `/clients/${clientId}/workout-programs/${programId}`
+    `/workout/${clientId}/workout-programs/${programId}`
   );
   return res.data?.data;
 }
@@ -27,7 +27,7 @@ export async function createClientWorkoutProgram(
   payload: CreateWorkoutProgramPayload
 ) {
   const res = await api.post<{ data: WorkoutProgram }>(
-    `/clients/${clientId}/workout-programs`,
+    `/workout/${clientId}/workout-programs`,
     payload
   );
   return res.data?.data;
@@ -39,7 +39,7 @@ export async function updateClientWorkoutProgram(
   payload: UpdateWorkoutProgramPayload
 ) {
   const res = await api.put<{ data: WorkoutProgram }>(
-    `/clients/${clientId}/workout-programs/${programId}`,
+    `/workout/${clientId}/workout-programs/${programId}`,
     payload
   );
   return res.data?.data;
@@ -50,7 +50,7 @@ export async function deleteClientWorkoutProgram(
   programId: string
 ) {
   const res = await api.delete<{ data: { success: boolean } | null }>(
-    `/clients/${clientId}/workout-programs/${programId}`
+    `/workout/${clientId}/workout-programs/${programId}`
   );
   return res.data?.data;
 }

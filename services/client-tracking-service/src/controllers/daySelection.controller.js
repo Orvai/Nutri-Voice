@@ -1,6 +1,5 @@
 const { setDayType, getTodayDayType } = require('../services/daySelection.service');
-const { DaySelectionCreateDto } = require('../dto/daySelection.dto');
-
+const { DaySelectionCreateDto, DaySelectionResponseDto } = require('../dto/daySelection.dto');
 
 /**
  * @openapi
@@ -9,9 +8,9 @@ const { DaySelectionCreateDto } = require('../dto/daySelection.dto');
  *     tags:
  *       - Tracking
  *     summary: Set the training or nutrition day type for a client
- *     description: Assigns a day type (LOW, HIGH, MEDIUM, or REST) for the specified date. Defaults to today when date is omitted.
+ *     description: Authenticated client sets today's (or a provided date's) nutrition/training day type.
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
  *     requestBody:
  *       required: true
  *       content:
@@ -24,18 +23,16 @@ const { DaySelectionCreateDto } = require('../dto/daySelection.dto');
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 data:
- *                   $ref: '#/components/schemas/DaySelectionCreateDto'
+ *               $ref: '#/components/schemas/DaySelectionResponseDto'
  */
 const setDayTypeController = async (req, res, next) => {
   try {
-    const { clientId, dayType, date } = DaySelectionCreateDto.parse(req.body);
-    const data = await setDayType(clientId, dayType, date);
-    res.status(201).json({ message: 'Day type saved', data });
+    const payload = DaySelectionCreateDto.parse(req.body);
+    const clientId = req.user.id;
+
+    const data = await setDayType(clientId, payload.dayType, payload.date);
+
+    res.status(201).json({ message: 'Day type saved', data: DaySelectionResponseDto.parse(data) });
   } catch (e) {
     next(e);
   }
@@ -43,29 +40,34 @@ const setDayTypeController = async (req, res, next) => {
 
 /**
  * @openapi
- * /api/tracking/day-selection/today:
+ * /api/tracking/day-selection/today/{clientId}:
  *   get:
  *     tags:
  *       - Tracking
- *     summary: Get today's day type for a client
+ *     summary: Get today's day type for a specific client
+ *     description: Used by coaches to view a client's current day-selection.
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         schema:
+ *           type: string
+ *         required: true
  *     responses:
  *       200:
  *         description: Current day selection
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   $ref: '#/components/schemas/DaySelectionCreateDto'
+ *               $ref: '#/components/schemas/DaySelectionResponseDto'
  */
 const getToday = async (req, res, next) => {
   try {
     const { clientId } = req.params;
     const data = await getTodayDayType(clientId);
-    res.json({ data });
+
+    res.json({ data: data ? DaySelectionResponseDto.parse(data) : null });
   } catch (e) {
     next(e);
   }

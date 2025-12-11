@@ -1,69 +1,86 @@
-import { View, Text, Pressable, TextInput } from "react-native";
+// apps/Saas-app/src/components/client-profile/workout/WorkoutExerciseItem.tsx
 
-export default function WorkoutExerciseItem({ exercise, onRemove }) {
+import { View, Text, Pressable } from "react-native";
+
+type Props = {
+  exercise: {
+    id: string;
+    name: string;
+    muscleGroup: string | null;
+    sets: number;
+    reps: string;
+    weight: number | null;
+  };
+  onRemove: () => void;
+};
+
+export default function WorkoutExerciseItem({ exercise, onRemove }: Props) {
   return (
     <View
       style={{
-        marginBottom: 12,
-        padding: 12,
-        backgroundColor: "#f9fafb",
-        borderRadius: 8,
+        marginTop: 8,
+        padding: 10,
+        borderRadius: 12,
+        backgroundColor: "#ffffff",
         borderWidth: 1,
         borderColor: "#e5e7eb",
       }}
     >
-      <Text style={{ fontSize: 16, fontWeight: "600" }}>
-        {exercise.name}
-      </Text>
-
-      <View style={{ flexDirection: "row-reverse", marginTop: 8, gap: 8 }}>
-        <View style={{ flex: 1 }}>
-          <Text>סטים</Text>
-          <TextInput
-            defaultValue={exercise.sets.toString()}
+      <View
+        style={{
+          flexDirection: "row-reverse",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View style={{ flex: 1, marginLeft: 8 }}>
+          <Text
             style={{
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              borderRadius: 6,
-              padding: 6,
-              textAlign: "center",
+              fontSize: 14,
+              fontWeight: "700",
+              color: "#111827",
+              textAlign: "right",
             }}
-          />
+          >
+            {exercise.name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 11,
+              color: "#6b7280",
+              textAlign: "right",
+              marginTop: 2,
+            }}
+          >
+            {exercise.muscleGroup ?? "ללא שיוך שריר"}
+          </Text>
         </View>
 
-        <View style={{ flex: 1 }}>
-          <Text>חזרות</Text>
-          <TextInput
-            defaultValue={exercise.reps}
-            style={{
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              borderRadius: 6,
-              padding: 6,
-              textAlign: "center",
-            }}
-          />
-        </View>
-
-        <View style={{ flex: 1 }}>
-          <Text>משקל</Text>
-          <TextInput
-            defaultValue={exercise.weight?.toString() ?? ""}
-            style={{
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              borderRadius: 6,
-              padding: 6,
-              textAlign: "center",
-            }}
-          />
+        <View
+          style={{
+            alignItems: "flex-end",
+            gap: 2,
+          }}
+        >
+          <Text style={{ fontSize: 11, color: "#374151" }}>
+            סטים:{" "}
+            <Text style={{ fontWeight: "700" }}>{exercise.sets}</Text>
+          </Text>
+          <Text style={{ fontSize: 11, color: "#374151" }}>
+            חזרות:{" "}
+            <Text style={{ fontWeight: "700" }}>{exercise.reps}</Text>
+          </Text>
+          <Text style={{ fontSize: 11, color: "#374151" }}>
+            משקל:{" "}
+            <Text style={{ fontWeight: "700" }}>
+              {exercise.weight != null ? `${exercise.weight} ק״ג` : "-"}
+            </Text>
+          </Text>
         </View>
       </View>
 
-      <Pressable onPress={onRemove} style={{ marginTop: 8 }}>
-        <Text style={{ color: "#dc2626", textAlign: "right" }}>
-          ✕ הסר תרגיל
-        </Text>
+      <Pressable onPress={onRemove} style={{ marginTop: 6, alignSelf: "flex-end" }}>
+        <Text style={{ color: "#dc2626", fontSize: 11 }}>✕ הסר תרגיל</Text>
       </Pressable>
     </View>
   );

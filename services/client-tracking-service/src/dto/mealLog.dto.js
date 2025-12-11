@@ -11,5 +11,18 @@ const MealLogCreateDto = z.object({
   matchedMenuItemId: z.string().optional(),
   dayType: DayTypeEnum
 });
+const MealLogResponseDto = z.object({
+  id: z.string(),
+  clientId: z.string(),
+  date: z.string().datetime(),
+  dayType: z.enum(["LOW", "HIGH", "MEDIUM", "REST"]),
+  calories: z.number(),
+  protein: z.number(),
+  carbs: z.number(),
+  fat: z.number(),
+  description: z.string().nullable(),
+  matchedMenuItemId: z.string().nullable(),
+  loggedAt: z.string().datetime().optional()
+});
 
-module.exports = { MealLogCreateDto };
+module.exports = { MealLogCreateDto,MealLogResponseDto };

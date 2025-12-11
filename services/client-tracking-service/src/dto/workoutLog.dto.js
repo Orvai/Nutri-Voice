@@ -49,10 +49,35 @@ const WorkoutLogUpdateDto = z.object({
   exercises: z.array(WorkoutExerciseUpdateDto).optional()
 });
 
+const WorkoutExerciseResponseDto = z.object({
+  id: z.string(),
+  workoutLogId: z.string(),
+  exerciseName: z.string(),
+  weight: z.number().nullable()
+});
+
+const WorkoutLogResponseDto = z.object({
+  id: z.string(),
+  clientId: z.string(),
+  date: z.string().datetime(),
+  workoutType: z.string(),
+  effortLevel: EffortLevelEnum,
+  notes: z.string().nullable(),
+  loggedAt: z.string().datetime().optional(),
+  exercises: z.array(WorkoutExerciseResponseDto)
+});
+const WorkoutHistoryResponseDto = z.array(WorkoutLogResponseDto);
+
+
+
+
 module.exports = {
   EffortLevelEnum,
   WorkoutLogCreateDto,
   WorkoutLogUpdateDto,
   WorkoutExerciseCreateDto,
-  WorkoutExerciseUpdateDto
+  WorkoutExerciseUpdateDto,
+  WorkoutLogResponseDto,
+  WorkoutExerciseResponseDto,
+  WorkoutHistoryResponseDto 
 };

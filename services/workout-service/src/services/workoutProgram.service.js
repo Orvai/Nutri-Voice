@@ -1,4 +1,3 @@
-// src/services/workoutProgram.service.js
 const { prisma } = require("../db/prisma");
 const { AppError } = require("../common/errors");
 const {
@@ -6,6 +5,22 @@ const {
   WorkoutProgramUpdateRequestDto,
 } = require("../dto/workoutProgram.dto");
 
+/* ==============================================================
+   INCLUDE FULL RELATIONS — USED EVERYWHERE
+============================================================== */
+const programIncludes = {
+  template: true, // מחזיר את הטמפלייט במידה ויש
+  exercises: {
+    orderBy: { order: "asc" },
+    include: {
+      exercise: true,   // ❗ זה החלק הקריטי שחסר אצלך
+    },
+  },
+};
+
+/* ==============================================================
+   CREATE PROGRAM
+============================================================== */
 const createProgram = async (data) => {
   const parsed = WorkoutProgramCreateRequestDto.parse(data);
 
@@ -15,10 +30,42 @@ const createProgram = async (data) => {
         name: parsed.name,
         clientId: parsed.clientId,
         coachId: parsed.coachId,
+        templateId: parsed.templateId ?? null,
       },
     });
 
-    if (parsed.exercises && parsed.exercises.length > 0) {
+    /* ----- Build from Template ----- */
+    if (parsed.templateId) {
+      const template = await tx.workoutTemplate.findUnique({
+        where: { id: parsed.templateId },
+      });
+
+      if (!template) throw new AppError(404, "Template not found");
+
+      const autoExercises = await prisma.exercise.findMany({
+        where: {
+          muscleGroup: { in: template.muscleGroups },
+        },
+      });
+
+      let order = 0;
+
+      await tx.workoutExercise.createMany({
+        data: autoExercises.map((ex) => ({
+          programId: program.id,
+          exerciseId: ex.id,
+          sets: 4,
+          reps: "10-12",
+          weight: null,
+          rest: null,
+          order: order++,
+          notes: null,
+        })),
+      });
+    }
+
+    /* ----- User Provided Exercises ----- */
+    if (!parsed.templateId && parsed.exercises?.length > 0) {
       await tx.workoutExercise.createMany({
         data: parsed.exercises.map((ex) => ({
           programId: program.id,
@@ -35,45 +82,46 @@ const createProgram = async (data) => {
 
     return tx.workoutProgram.findUnique({
       where: { id: program.id },
-      include: { exercises: { orderBy: { order: "asc" } } },
+      include: programIncludes,
     });
   });
 };
 
+/* ==============================================================
+   LIST PROGRAMS
+============================================================== */
 const listPrograms = async (filters = {}) => {
   const where = {};
 
-  if (filters.clientId) {
-    where.clientId = filters.clientId;
-  }
-
-  if (filters.coachId) {
-    where.coachId = filters.coachId;
-  }
+  if (filters.clientId) where.clientId = filters.clientId;
+  if (filters.coachId) where.coachId = filters.coachId;
 
   return prisma.workoutProgram.findMany({
     where,
     orderBy: { createdAt: "desc" },
-    include: { exercises: { orderBy: { order: "asc" } } },
+    include: programIncludes,
   });
 };
 
+/* ==============================================================
+   GET PROGRAM BY ID
+============================================================== */
 const getProgramById = async (id) => {
   const program = await prisma.workoutProgram.findUnique({
     where: { id },
-    include: { exercises: { orderBy: { order: "asc" } } },
+    include: programIncludes,
   });
 
-  if (!program) {
-    throw new AppError(404, "Workout program not found");
-  }
+  if (!program) throw new AppError(404, "Workout program not found");
 
   return program;
 };
 
-
+/* ==============================================================
+   DELETE EXERCISES
+============================================================== */
 const deleteExercises = async (tx, programId, exercisesToDelete = []) => {
-  if (!exercisesToDelete || exercisesToDelete.length === 0) return;
+  if (!exercisesToDelete?.length) return;
 
   await tx.workoutExercise.deleteMany({
     where: {
@@ -83,9 +131,15 @@ const deleteExercises = async (tx, programId, exercisesToDelete = []) => {
   });
 };
 
+/* ==============================================================
+   UPDATE EXERCISES
+============================================================== */
 const updateExercises = async (tx, programId, exercisesToUpdate = []) => {
   for (const update of exercisesToUpdate || []) {
-    const existing = await tx.workoutExercise.findUnique({ where: { id: update.id } });
+    const existing = await tx.workoutExercise.findUnique({
+      where: { id: update.id },
+    });
+
     if (!existing || existing.programId !== programId) {
       throw new AppError(404, "Workout exercise not found");
     }
@@ -105,6 +159,9 @@ const updateExercises = async (tx, programId, exercisesToUpdate = []) => {
   }
 };
 
+/* ==============================================================
+   ADD EXERCISES
+============================================================== */
 const addExercises = async (tx, programId, exercisesToAdd = []) => {
   for (const ex of exercisesToAdd || []) {
     await tx.workoutExercise.create({
@@ -121,14 +178,16 @@ const addExercises = async (tx, programId, exercisesToAdd = []) => {
     });
   }
 };
+
+/* ==============================================================
+   UPDATE PROGRAM
+============================================================== */
 const updateProgram = async (id, data) => {
   const parsed = WorkoutProgramUpdateRequestDto.parse(data);
 
   return prisma.$transaction(async (tx) => {
     const program = await tx.workoutProgram.findUnique({ where: { id } });
-    if (!program) {
-      throw new AppError(404, "Workout program not found");
-    }
+    if (!program) throw new AppError(404, "Workout program not found");
 
     if (parsed.name !== undefined) {
       await tx.workoutProgram.update({
@@ -143,16 +202,17 @@ const updateProgram = async (id, data) => {
 
     return tx.workoutProgram.findUnique({
       where: { id },
-      include: { exercises: { orderBy: { order: "asc" } } },
+      include: programIncludes,
     });
   });
 };
 
+/* ==============================================================
+   DELETE PROGRAM
+============================================================== */
 const deleteProgram = async (id) => {
   const program = await prisma.workoutProgram.findUnique({ where: { id } });
-  if (!program) {
-    throw new AppError(404, "Workout program not found");
-  }
+  if (!program) throw new AppError(404, "Workout program not found");
 
   await prisma.workoutProgram.delete({ where: { id } });
 };

@@ -1,5 +1,9 @@
 const { createWeightLog, listWeightHistory } = require('../services/weightLog.service');
-const { WeightLogCreateDto } = require('../dto/weightLog.dto');
+const {
+  WeightLogCreateDto,
+  WeightLogResponseDto,
+  WeightHistoryResponseDto
+} = require('../dto/weightLog.dto');
 
 /**
  * @openapi
@@ -7,10 +11,10 @@ const { WeightLogCreateDto } = require('../dto/weightLog.dto');
  *   post:
  *     tags:
  *       - Tracking
- *     summary: Log a client's weight
- *     description: Records a weight entry for a client. Defaults to today's date when not provided.
+ *     summary: Log client's weight
+ *     description: Authenticated client records weight for a date (defaults to today).
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
  *     requestBody:
  *       required: true
  *       content:
@@ -19,22 +23,19 @@ const { WeightLogCreateDto } = require('../dto/weightLog.dto');
  *             $ref: '#/components/schemas/WeightLogCreateDto'
  *     responses:
  *       201:
- *         description: Weight logged
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 data:
- *                   $ref: '#/components/schemas/WeightLogCreateDto'
+ *         description: Weight logged successfully
  */
 const createWeight = async (req, res, next) => {
   try {
-    const { clientId, ...payload } = WeightLogCreateDto.parse(req.body);
+    const payload = WeightLogCreateDto.parse(req.body);
+    const clientId = req.user.id;
+
     const data = await createWeightLog({ ...payload, clientId });
-    res.status(201).json({ message: 'Weight logged', data });
+
+    res.status(201).json({
+      message: 'Weight logged',
+      data: WeightLogResponseDto.parse(data)
+    });
   } catch (e) {
     next(e);
   }
@@ -42,31 +43,31 @@ const createWeight = async (req, res, next) => {
 
 /**
  * @openapi
- * /api/tracking/weight-log/history:
+ * /api/tracking/weight-log/history/{clientId}:
  *   get:
  *     tags:
  *       - Tracking
  *     summary: List weight history for a client
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
+ *     parameters:
+ *       - name: clientId
+ *         in: path
+ *         schema:
+ *           type: string
+ *         required: true
  *     responses:
  *       200:
- *         description: Weight history ordered by date
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/WeightLogCreateDto'
+ *         description: Weight history returned
  */
 const history = async (req, res, next) => {
   try {
     const { clientId } = req.params;
     const data = await listWeightHistory(clientId);
-    res.json({ data });
+
+    res.json({
+      data: WeightHistoryResponseDto.parse(data)
+    });
   } catch (e) {
     next(e);
   }

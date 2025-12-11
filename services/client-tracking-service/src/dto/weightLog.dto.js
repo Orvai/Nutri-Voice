@@ -6,4 +6,15 @@ const WeightLogCreateDto = z.object({
   notes: z.string().optional()
 });
 
-module.exports = { WeightLogCreateDto };
+const WeightLogResponseDto = z.object({
+  id: z.string(),
+  clientId: z.string(),
+  date: z.string().datetime(),
+  weightKg: z.number(),
+  notes: z.string().nullable()
+});
+
+const WeightHistoryResponseDto = z.array(WeightLogResponseDto);
+
+
+module.exports = { WeightLogCreateDto,WeightLogResponseDto,WeightHistoryResponseDto };

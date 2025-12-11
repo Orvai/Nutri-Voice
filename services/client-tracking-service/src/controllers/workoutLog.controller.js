@@ -7,9 +7,10 @@ const {
 
 const {
   WorkoutLogCreateDto,
-  WorkoutLogUpdateDto
+  WorkoutLogUpdateDto,
+  WorkoutLogResponseDto,
+  WorkoutHistoryResponseDto
 } = require('../dto/workoutLog.dto');
-
 
 /**
  * @openapi
@@ -17,8 +18,8 @@ const {
  *   post:
  *     tags:
  *       - Tracking
- *     summary: Log a new workout for a client
- *     description: Creates a workout log + list of exercises performed with weights.
+ *     summary: Log a new workout
+ *     description: Authenticated client records a workout + exercises.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -29,14 +30,19 @@ const {
  *             $ref: '#/components/schemas/WorkoutLogCreateDto'
  *     responses:
  *       201:
- *         description: Workout successfully logged
+ *         description: Workout logged successfully
  */
 const createWorkout = async (req, res, next) => {
   try {
-    const { clientId, ...payload } = WorkoutLogCreateDto.parse(req.body);
+    const payload = WorkoutLogCreateDto.parse(req.body);
+    const clientId = req.user.id;
+
     const data = await createWorkoutLog({ ...payload, clientId });
 
-    res.status(201).json({ message: 'Workout logged', data });
+    res.status(201).json({
+      message: 'Workout logged',
+      data: WorkoutLogResponseDto.parse(data)
+    });
   } catch (e) {
     next(e);
   }
@@ -44,18 +50,18 @@ const createWorkout = async (req, res, next) => {
 
 /**
  * @openapi
- * /api/tracking/workout-log/history:
+ * /api/tracking/workout-log/history/{clientId}:
  *   get:
  *     tags:
  *       - Tracking
- *     summary: Get full workout history for a client
- *     description: Returns all workouts + all exercises + weights.
+ *     summary: Get workout history for a client
+ *     description: Returns all workouts + exercises.
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: clientId
- *         in: query
- *         required: false
+ *       - in: path
+ *         name: clientId
+ *         required: true
  *         schema:
  *           type: string
  *     responses:
@@ -65,9 +71,12 @@ const createWorkout = async (req, res, next) => {
 const history = async (req, res, next) => {
   try {
     const { clientId } = req.params;
+
     const data = await listAllWorkouts(clientId);
 
-    res.json({ data });
+    res.json({
+      data: WorkoutHistoryResponseDto.parse(data)
+    });
   } catch (e) {
     next(e);
   }
@@ -79,25 +88,19 @@ const history = async (req, res, next) => {
  *   put:
  *     tags:
  *       - Tracking
- *     summary: Update a full workout log
- *     description: Update workout type, effort level, notes, and exercise list.
+ *     summary: Update workout log
+ *     description: Updates workout type, notes, effort level, and exercises.
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
  *     parameters:
  *       - name: logId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/WorkoutLogUpdateDto'
  *     responses:
  *       200:
- *         description: Workout updated
+ *         description: Workout updated successfully
  */
 const updateWorkout = async (req, res, next) => {
   try {
@@ -106,7 +109,10 @@ const updateWorkout = async (req, res, next) => {
 
     const data = await updateWorkoutLog(logId, payload);
 
-    res.json({ message: 'Workout updated', data });
+    res.json({
+      message: 'Workout updated',
+      data: WorkoutLogResponseDto.parse(data)
+    });
   } catch (e) {
     next(e);
   }
@@ -118,29 +124,19 @@ const updateWorkout = async (req, res, next) => {
  *   patch:
  *     tags:
  *       - Tracking
- *     summary: Update a single exercise entry (weight)
- *     description: Allows correcting or updating weight for a single logged exercise.
+ *     summary: Update exercise weight
+ *     description: Updates a single logged exercise's weight.
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
  *     parameters:
  *       - name: exerciseLogId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               weight:
- *                 type: number
- *                 nullable: true
  *     responses:
  *       200:
- *         description: Exercise updated
+ *         description: Exercise updated successfully
  */
 const updateExercise = async (req, res, next) => {
   try {
@@ -149,7 +145,10 @@ const updateExercise = async (req, res, next) => {
 
     const data = await updateExerciseWeight(exerciseLogId, weight);
 
-    res.json({ message: 'Exercise updated', data });
+    res.json({
+      message: 'Exercise updated',
+      data // could validate with WorkoutExerciseResponseDto if needed
+    });
   } catch (e) {
     next(e);
   }

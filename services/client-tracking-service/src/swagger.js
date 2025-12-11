@@ -1,3 +1,5 @@
+// src/swagger.js (or wherever swagger-jsdoc is configured)
+
 const swaggerJSDoc = require('swagger-jsdoc');
 const dtoSchemas = require('./docs/zod-schemas');
 
@@ -6,21 +8,30 @@ const swaggerDefinition = {
     info: {
         title: 'Client Tracking Service API',
         version: '1.0.0',
-        description: 'Service for tracking client meals, workouts, weights, and summaries',
+        description: 'Internal service for tracking client meals, workouts, weights, and day selections.',
     },
+
     servers: [{ url: 'http://localhost:4004' }],
+
     components: {
         schemas: {
             ...dtoSchemas,
         },
+
         securitySchemes: {
-            bearerAuth: {
-                type: 'http',
-                scheme: 'bearer',
-                bearerFormat: 'JWT',
-            },
-        },
+            internalToken: {
+                type: "apiKey",
+                in: "header",
+                name: "x-internal-token"
+            }
+        }
     },
+
+    security: [
+        {
+            internalToken: []
+        }
+    ]
 };
 
 const options = {

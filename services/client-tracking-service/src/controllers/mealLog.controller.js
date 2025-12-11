@@ -1,10 +1,5 @@
-const {
-  createMeal,
-  listAllMeals
-} = require('../services/mealLog.service');
-
-const { MealLogCreateDto } = require('../dto/mealLog.dto');
-
+const { createMeal, listAllMeals } = require('../services/mealLog.service');
+const { MealLogCreateDto, MealLogResponseDto } = require('../dto/mealLog.dto');
 
 /**
  * @openapi
@@ -13,9 +8,9 @@ const { MealLogCreateDto } = require('../dto/mealLog.dto');
  *     tags:
  *       - Tracking
  *     summary: Log a meal for a client
- *     description: Saves a meal entry including macros and optional description.
+ *     description: Authenticated client records a meal including calories and macros.
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
  *     requestBody:
  *       required: true
  *       content:
@@ -28,9 +23,15 @@ const { MealLogCreateDto } = require('../dto/mealLog.dto');
  */
 const createMealController = async (req, res, next) => {
   try {
-    const { clientId, ...payload } = MealLogCreateDto.parse(req.body);
+    const payload = MealLogCreateDto.parse(req.body);
+    const clientId = req.user.id;
+
     const data = await createMeal({ ...payload, clientId });
-    res.status(201).json({ message: 'Meal logged', data });
+
+    res.status(201).json({
+      message: 'Meal logged',
+      data: MealLogResponseDto.parse(data)
+    });
   } catch (e) {
     next(e);
   }
@@ -38,20 +39,19 @@ const createMealController = async (req, res, next) => {
 
 /**
  * @openapi
- * /api/tracking/meal-log/history:
+ * /api/tracking/meal-log/history/{clientId}:
  *   get:
  *     tags:
  *       - Tracking
- *     summary: Get full meal history for a client
- *     description: Returns all meals for the client (no date limits).
+ *     summary: Get meal history for a client
  *     security:
- *       - bearerAuth: []
+ *       - internalToken: []
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: clientId
  *         schema:
  *           type: string
- *         required: false
+ *         required: true
  *     responses:
  *       200:
  *         description: Full meal history
@@ -60,13 +60,13 @@ const history = async (req, res, next) => {
   try {
     const { clientId } = req.params;
     const data = await listAllMeals(clientId);
-    res.json({ data });
+
+    res.json({
+      data: data.map((m) => MealLogResponseDto.parse(m))
+    });
   } catch (e) {
     next(e);
   }
 };
 
-module.exports = {
-  createMeal: createMealController,
-  history
-};
+module.exports = { createMeal: createMealController, history };
