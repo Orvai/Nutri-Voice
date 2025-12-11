@@ -57,19 +57,16 @@ export default function WorkoutPlansScreen() {
       style={{ flex: 1, backgroundColor: "#f3f4f6" }}
       contentContainerStyle={{ padding: 20 }}
     >
-      {/* תבניות אימון */}
       <WorkoutTemplatesList
         templates={templates}
         isLoading={isLoadingTemplates || isFetchingTemplates}
         isError={isTemplatesError}
         onRetry={refetchTemplates}
         onCreateNew={() => {
-          // בעתיד: navigate ליצירת תבנית אימון חדשה
           console.log("create new template");
         }}
       />
 
-      {/* ספריית תרגילים */}
       <View
         style={{
           backgroundColor: "#fff",
@@ -89,10 +86,8 @@ export default function WorkoutPlansScreen() {
           ספריית תרגילים (Exercise Library)
         </Text>
 
-        {/* חיפוש */}
         <WorkoutSearchBar query={query} onChange={setQuery} />
 
-        {/* פילטרים */}
         <WorkoutFilters
           selectedMuscle={selectedMuscle}
           muscleOptions={muscleOptions}
@@ -100,7 +95,6 @@ export default function WorkoutPlansScreen() {
           totalCount={filteredExercises.length}
         />
 
-        {/* גריד תרגילים */}
         {isLoadingExercises || isFetchingExercises ? (
           <LoadingGridPlaceholder />
         ) : isExercisesError ? (
