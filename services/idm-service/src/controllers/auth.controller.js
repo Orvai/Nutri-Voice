@@ -47,7 +47,7 @@ const registerUser = async (req, res, next) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/IDM_LoginRequestDto'
+ *             $ref: '#/components/schemas/LoginResponseDto'
  *     responses:
  *       200:
  *         description: Authenticated session

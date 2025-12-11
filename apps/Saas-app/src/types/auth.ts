@@ -17,12 +17,21 @@ export interface LoginResponse {
 export interface UserProfile {
   id: string;
   email: string;
-  role: "coach" | "client";
+  phone: string,
+  role: "trainer" | "client" | "admin";
   firstName: string | null;
   lastName: string | null;
   status: string;
-  phone?: string | null;
+
+  // Optional profile-related fields:
+  gender?: string | null;
+  city?: string | null;
   imageUrl?: string | null;
+  // ✨ שדות מורחבים
+  address?: string | null;
+  dateOfBirth?: string | null;
+  height?: number | null;
+  age?: number | null;
 }
 
 export interface UserInfoResponse {
@@ -42,24 +51,38 @@ export interface UserInfoResponse {
   updatedAt: string;
 }
 
-// types/auth.ts
+const roleMap: Record<string, UserProfile["role"]> = {
+  coach: "trainer", 
+  client: "client",
+  admin: "admin",   
+};
+
+
 
 export function buildUserProfile(
   base: LoginResponse["user"],
   info?: UserInfoResponse | null
 ): UserProfile {
   return {
+    // ---- בסיס מ-login ----
     id: base.id,
     email: base.email,
-    role: base.role,
+    role: roleMap[base.role] ?? "client",
     firstName: base.firstName,
     lastName: base.lastName,
-    status: base.status, // סטטוס של היוזר עצמו, לא של הרשומת info
+    status: base.status,
 
-    // כרגע אין phone ב-UserInfo, אז null
-    phone: null,
+    // ---- phone: אם מגיע מ-login העתידי או מה-IDM ----
+    phone: (base as any).phone ?? null,  // תואם לכל הרחבה עתידית
 
-    // ממפים מ-profileImageUrl ל-imageUrl
+    // ---- מידע מ-user info ----
+    gender: info?.gender ?? null,
+    city: info?.city ?? null,
     imageUrl: info?.profileImageUrl ?? null,
+
+    address: info?.address ?? null,
+    dateOfBirth: info?.dateOfBirth ?? null,
+    height: info?.height ?? null,
+     age: info?.age ?? null,
   };
 }

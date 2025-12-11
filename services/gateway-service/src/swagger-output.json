@@ -1,0 +1,1788 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Nutri-App Gateway API",
+    "version": "1.0.0",
+    "description": "Unified API Gateway documentation for all Nutri-App services"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api",
+      "description": "Local Gateway Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "LoginRequestDto": {},
+      "LoginResponseDto": {},
+      "RegisterRequestDto": {},
+      "RegisterResponseDto": {},
+      "RefreshTokenResponseDto": {},
+      "LogoutRequestDto": {},
+      "LogoutResponseDto": {},
+      "MfaRegisterRequestDto": {},
+      "MfaRegisterResponseDto": {},
+      "MfaVerifyRequestDto": {},
+      "MfaVerifyResponseDto": {},
+      "ClientListItemDto": {},
+      "ClientsListResponseDto": {},
+      "UserInfoResponseDto": {},
+      "UpsertUserInfoRequestDto": {},
+      "UpsertUserInfoResponseDto": {},
+      "FoodItemRequestCreateDto": {},
+      "FoodItemRequestUpdateDto": {},
+      "FoodItemResponseDto": {},
+      "MealTemplateCreateRequestDto": {},
+      "MealTemplateUpdateRequestDto": {},
+      "MealTemplateResponseDto": {},
+      "TemplateMenuCreateRequestDto": {},
+      "TemplateMenuUpdateRequestDto": {},
+      "TemplateMenuResponseDto": {},
+      "ClientMenuCreateRequestDto": {},
+      "ClientMenuUpdateRequestDto": {},
+      "ClientMenuCreateFromTemplateRequestDto": {},
+      "ClientMenuResponseDto": {},
+      "VitaminCreateRequestDto": {},
+      "VitaminUpdateRequestDto": {},
+      "VitaminResponseDto": {},
+      "DayTypeEnum": {},
+      "DaySelectionCreateRequestDto": {},
+      "DaySelectionResponseDto": {},
+      "MealLogCreateRequestDto": {},
+      "MealLogResponseDto": {},
+      "WorkoutLogCreateRequestDto": {},
+      "WorkoutLogUpdateRequestDto": {},
+      "WorkoutLogResponseDto": {},
+      "WeightLogCreateRequestDto": {},
+      "WeightLogResponseDto": {},
+      "MealLogHistoryResponseDto": {},
+      "WorkoutLogHistoryResponseDto": {},
+      "WeightHistoryResponseDto": {},
+      "DaySelectionTodayResponseDto": {},
+      "GenderEnum": {},
+      "BodyTypeEnum": {},
+      "WorkoutTypeEnum": {},
+      "MuscleGroupEnum": {},
+      "ExerciseCreateRequestDto": {},
+      "ExerciseUpdateRequestDto": {},
+      "ExerciseResponseDto": {},
+      "WorkoutTemplateCreateRequestDto": {},
+      "WorkoutTemplateUpdateRequestDto": {},
+      "WorkoutTemplateResponseDto": {},
+      "WorkoutProgramExerciseCreateDto": {},
+      "WorkoutProgramExerciseUpdateDto": {},
+      "WorkoutProgramExerciseDeleteDto": {},
+      "WorkoutProgramCreateRequestDto": {},
+      "WorkoutProgramUpdateRequestDto": {},
+      "WorkoutProgramResponseDto": {}
+    }
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register new account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/token/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh expired access token",
+        "responses": {
+          "200": {
+            "description": "New session tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshTokenResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout current session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully logged out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/mfa/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register MFA device",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MFA device registered"
+          }
+        }
+      }
+    },
+    "/api/auth/mfa/verify": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verify MFA code",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaVerifyRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "MFA verified & session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaVerifyResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clients": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Get list of enriched client profiles for coach",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of clients",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientsListResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clients/{id}": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Get raw client info from IDM",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client data retrieved"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/info": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get full user info",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User info retrieved"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user info",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertUserInfoRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User info updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete user info record",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User info deleted"
+          }
+        }
+      }
+    },
+    "/api/food": {
+      "get": {
+        "tags": [
+          "Food"
+        ],
+        "summary": "Get all food items",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of food items"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Food"
+        ],
+        "summary": "Create new food item",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodItemRequestCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Food item created"
+          }
+        }
+      }
+    },
+    "/api/food/search": {
+      "get": {
+        "tags": [
+          "Food"
+        ],
+        "summary": "Search food items",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/api/food/by-category": {
+      "get": {
+        "tags": [
+          "Food"
+        ],
+        "summary": "Get food categorized",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categorized food list"
+          }
+        }
+      }
+    },
+    "/api/food/{id}": {
+      "put": {
+        "tags": [
+          "Food"
+        ],
+        "summary": "Update food item",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodItemRequestUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Food item updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Food"
+        ],
+        "summary": "Delete food item",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Food item deleted"
+          }
+        }
+      }
+    },
+    "/api/templates": {
+      "get": {
+        "tags": [
+          "Workout Templates"
+        ],
+        "summary": "Get all workout templates",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of workout templates"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workout Templates"
+        ],
+        "summary": "Create workout template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkoutTemplateCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Workout template created"
+          }
+        }
+      }
+    },
+    "/api/templates/{id}": {
+      "get": {
+        "tags": [
+          "Meal Templates"
+        ],
+        "summary": "Get meal template by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template retrieved"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Workout Templates"
+        ],
+        "summary": "Update workout template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkoutTemplateUpdateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workout template updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workout Templates"
+        ],
+        "summary": "Delete workout template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workout template deleted"
+          }
+        }
+      }
+    },
+    "/api/template-menus": {
+      "get": {
+        "tags": [
+          "Template Menus"
+        ],
+        "summary": "List all template menus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template menus list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Template Menus"
+        ],
+        "summary": "Create a new template menu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateMenuCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Template menu created"
+          }
+        }
+      }
+    },
+    "/api/template-menus/{id}": {
+      "get": {
+        "tags": [
+          "Template Menus"
+        ],
+        "summary": "Get template menu by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template menu retrieved"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Template Menus"
+        ],
+        "summary": "Update template menu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template menu updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Template Menus"
+        ],
+        "summary": "Delete template menu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template menu deleted"
+          }
+        }
+      }
+    },
+    "/api/client-menus": {
+      "get": {
+        "tags": [
+          "Client Menus"
+        ],
+        "summary": "List client menus (coach or client)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client menus list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Client Menus"
+        ],
+        "summary": "Create a new client menu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientMenuCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Client menu created"
+          }
+        }
+      }
+    },
+    "/api/client-menus/{id}": {
+      "put": {
+        "tags": [
+          "Client Menus"
+        ],
+        "summary": "Update client menu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientMenuUpdateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Client menu updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Client Menus"
+        ],
+        "summary": "Delete client menu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client menu deleted"
+          }
+        }
+      }
+    },
+    "/api/client-menus/from-template": {
+      "post": {
+        "tags": [
+          "Client Menus"
+        ],
+        "summary": "Create client menu from template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientMenuCreateFromTemplateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Client menu created from template"
+          }
+        }
+      }
+    },
+    "/api/vitamins": {
+      "get": {
+        "tags": [
+          "Vitamins"
+        ],
+        "summary": "Get all vitamins",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of vitamins"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Vitamins"
+        ],
+        "summary": "Create a new vitamin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VitaminCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vitamin created"
+          }
+        }
+      }
+    },
+    "/api/tracking/day-selection": {
+      "post": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Client sets day type",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DaySelectionCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Day type updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DaySelectionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/meal-log": {
+      "post": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Client logs a meal",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MealLogCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Meal logged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MealLogResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/workout-log": {
+      "post": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Client logs workout of the day",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkoutLogCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workout logged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkoutLogResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/workout-log/{logId}": {
+      "put": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Client updates workout log",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkoutLogUpdateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workout log updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkoutLogResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/workout-log/exercise/{exerciseLogId}": {
+      "patch": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Client updates a single exercise entry",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "exerciseLogId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exercise entry updated"
+          }
+        }
+      }
+    },
+    "/api/tracking/weight-log": {
+      "post": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Client logs body weight",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeightLogCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Weight logged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeightLogResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/day-selection/today/{clientId}": {
+      "get": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Coach views today's day type for the client",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Today's day selection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DaySelectionTodayResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/meal-log/history/{clientId}": {
+      "get": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Coach views meal log history",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Meal log history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MealLogHistoryResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/workout-log/history/{clientId}": {
+      "get": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Coach views workout log history",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workout log history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkoutLogHistoryResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/weight-log/history/{clientId}": {
+      "get": {
+        "tags": [
+          "Tracking"
+        ],
+        "summary": "Coach views weight log history",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Weight log history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeightHistoryResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exercises": {
+      "get": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Get all exercises",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of exercises"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Create new exercise",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExerciseCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Exercise created"
+          }
+        }
+      }
+    },
+    "/api/exercises/{id}": {
+      "get": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Get exercise by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exercise retrieved"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Update exercise",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExerciseUpdateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exercise updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Delete exercise",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exercise deleted"
+          }
+        }
+      }
+    },
+    "/api/exercises/{id}/video": {
+      "post": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Upload exercise video",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video uploaded"
+          }
+        }
+      }
+    },
+    "/api/exercises/uploads": {
+      "get": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Serve uploaded exercise assets",
+        "responses": {
+          "200": {
+            "description": "Assets served"
+          }
+        }
+      }
+    },
+    "/api/programs": {
+      "get": {
+        "tags": [
+          "Workout Programs"
+        ],
+        "summary": "Coach fetches all programs",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of workout programs"
+          }
+        }
+      }
+    },
+    "/api/programs/{programId}": {
+      "get": {
+        "tags": [
+          "Workout Programs"
+        ],
+        "summary": "Coach fetches a single program",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workout program retrieved"
+          }
+        }
+      }
+    },
+    "/api/{clientId}/workout-programs": {
+      "get": {
+        "tags": [
+          "Workout Programs"
+        ],
+        "summary": "Client or coach fetch client programs",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client workout programs list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workout Programs"
+        ],
+        "summary": "Coach assigns program to client",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clientId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkoutProgramCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Workout program created"
+          }
+        }
+      }
+    },
+    "/api/{clientId}/workout-programs/{programId}": {
+      "get": {
+        "tags": [
+          "Workout Programs"
+        ],
+        "summary": "Fetch specific program by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "programId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client program retrieved"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Workout Programs"
+        ],
+        "summary": "Coach updates client's workout program",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "programId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkoutProgramUpdateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workout program updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workout Programs"
+        ],
+        "summary": "Coach deletes program",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "programId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workout program deleted"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Clients"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Food"
+    },
+    {
+      "name": "Meal Templates"
+    },
+    {
+      "name": "Template Menus"
+    },
+    {
+      "name": "Client Menus"
+    },
+    {
+      "name": "Vitamins"
+    },
+    {
+      "name": "Tracking"
+    },
+    {
+      "name": "Exercises"
+    },
+    {
+      "name": "Workout Templates"
+    },
+    {
+      "name": "Workout Programs"
+    }
+  ]
+}

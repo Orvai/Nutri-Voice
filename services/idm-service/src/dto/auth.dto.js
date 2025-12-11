@@ -64,12 +64,32 @@ const logoutRequestDto = z.object({
     sessionId: z.string().uuid(),
 });
 
+const LoginResponseDto = z.object({
+    user: z.object({
+        id: z.string(),
+        email: z.string().email(),
+        phone: z.string().nullable().optional(),
+        firstName: z.string().nullable(),
+        lastName: z.string().nullable(),
+        status: z.enum(["active", "locked"]),
+        role: z.string(),
+    }),
 
+    sessionId: z.string(),
+
+    tokens: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string(),
+        accessTokenExp: z.number().optional(),
+        refreshTokenExp: z.number().optional(),
+    }),
+});
 
 module.exports = {
     registerRequestDto,
     registerSuccessResponseDto,
     loginRequestDto,
     loginContextDto,
-    logoutRequestDto
+    logoutRequestDto,
+    LoginResponseDto
 };

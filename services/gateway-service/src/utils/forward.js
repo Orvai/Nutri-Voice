@@ -2,7 +2,11 @@ import axios from "axios";
 
 export function forward(baseURL, targetPath, options = {}) {
   const { preservePath = false } = options;
+
   return async (req, res, next) => {
+    let url = "";
+    let method = req.method.toLowerCase();
+
     try {
       if (!baseURL) {
         console.error("❌ Missing baseURL for forward:", targetPath);
@@ -17,8 +21,7 @@ export function forward(baseURL, targetPath, options = {}) {
         }
       }
 
-      const url = `${baseURL}${resolvedPath}`;
-      const method = req.method.toLowerCase();
+      url = `${baseURL}${resolvedPath}`;
 
       const headers = {
         "x-internal-token": process.env.INTERNAL_TOKEN,
@@ -27,7 +30,6 @@ export function forward(baseURL, targetPath, options = {}) {
           authorization: req.headers.authorization,
         }),
 
-        // Forward client cookies to the microservice
         ...(req.headers.cookie && {
           cookie: req.headers.cookie,
         }),
@@ -53,18 +55,19 @@ export function forward(baseURL, targetPath, options = {}) {
         config.maxContentLength = Infinity;
       } else if (method !== "get" && method !== "delete") {
         config.data = { ...req.body };
-            }
-      console.log("➡️ FORWARDING", method.toUpperCase(), url, "QUERY:", req.query);
+      }
+
+      console.log("➡️ FORWARDING", method.toUpperCase(), url);
 
       const response = await axios(config);
 
-      // Forward cookies coming from the microservice
+      // Forward cookies from microservice
       const cookies = response.headers["set-cookie"];
       if (cookies) {
         res.setHeader("set-cookie", cookies);
       }
 
-      // AUTH routes → return raw (no normalization)
+      // AUTH ROUTES → return raw
       const isAuthRoute =
         targetPath === "/internal/auth/login" ||
         targetPath === "/internal/auth/logout" ||
@@ -74,50 +77,42 @@ export function forward(baseURL, targetPath, options = {}) {
         return res.status(response.status).json(response.data);
       }
 
-      // ⭐ Robust Normalizer – handles BOTH arrays and objects
+      // -------------------------------
+      // ⭐ ROBUST NORMALIZER (safe!)
+      // -------------------------------
       let payload = response.data;
 
-      // 1️⃣ If payload.data is a single object → return object
-      if (
-        payload?.data &&
-        typeof payload.data === "object" &&
-        !Array.isArray(payload.data)
-      ) {
-        return res.status(response.status).json({
-          data: payload.data,
-        });
+      // Case A: Has .data field
+      if (payload?.data !== undefined) {
+        const d = payload.data;
+
+        // 1️⃣ data = array
+        if (Array.isArray(d)) {
+          const flattened = d.some(Array.isArray) ? d.flat() : d;
+          return res.status(response.status).json({ data: flattened });
+        }
+
+        // 2️⃣ data = object
+        if (typeof d === "object" && d !== null) {
+          return res.status(response.status).json({ data: d });
+        }
+
+        // 3️⃣ any other type
+        return res.status(response.status).json({ data: d });
       }
 
-      // 2️⃣ If payload is an array → return array (flatten nested arrays)
+      // Case B: Entire payload is array
       if (Array.isArray(payload)) {
-        return res.status(response.status).json({
-          data: payload.flat(),
-        });
+        const flattened = payload.some(Array.isArray) ? payload.flat() : payload;
+        return res.status(response.status).json({ data: flattened });
       }
 
-      // 3️⃣ If payload.data is array → return array (flatten)
-      if (Array.isArray(payload?.data)) {
-        return res.status(response.status).json({
-          data: payload.data.flat(),
-        });
-      }
-
-      // 4️⃣ If payload.items is array → return array (flatten)
-      if (Array.isArray(payload?.items)) {
-        return res.status(response.status).json({
-          data: payload.items.flat(),
-        });
-      }
-
-      // 5️⃣ Fallback → return original payload
-      return res.status(response.status).json({
-        data: payload,
-      });
+      // Case C: fallback (leave untouched)
+      return res.status(response.status).json({ data: payload });
 
     } catch (err) {
       console.error("❌ ERROR on", method.toUpperCase(), url);
       console.error("   DETAILS:", err?.message, err?.code, err?.response?.status);
-      
 
       if (err.response) {
         return res.status(err.response.status).json({

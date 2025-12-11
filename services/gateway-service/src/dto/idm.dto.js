@@ -11,10 +11,23 @@ const LoginRequestDto = z.object({
 });
 
 const LoginResponseDto = z.object({
-  data: z.object({
+  user: z.object({
+    id: z.string(),
+    email: z.string().email(),
+    firstName: z.string().nullable(),
+    phone: z.string().nullable().optional(),
+    lastName: z.string().nullable(),
+    status: z.enum(["active", "locked"]),
+    role: z.string(),
+  }),
+
+  sessionId: z.string(),
+
+  tokens: z.object({
     accessToken: z.string(),
-    expiresAt: z.string(),
-    tokenType: z.string(),
+    refreshToken: z.string(),
+    accessTokenExp: z.number().optional(),
+    refreshTokenExp: z.number().optional(),
   }),
 });
 
@@ -110,8 +123,23 @@ const ClientsListResponseDto = z.object({
 ============================================ */
 
 const UserInfoResponseDto = z.object({
-  data: z.any(),
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  status: z.enum(['active', 'deleted', 'archived']).default('active'),
+
+  dateOfBirth: z.string().datetime().nullish(),
+  gender: z.string().nullish(),
+  address: z.string().nullish(),
+  city: z.string().nullish(),
+  profileImageUrl: z.string().url().nullish(),
+  height: z.number().int().nullish(),
+  age: z.number().int().nullish(),
+
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
+
+
 
 const UpsertUserInfoRequestDto = z.object({
   dateOfBirth: z.string().optional(),

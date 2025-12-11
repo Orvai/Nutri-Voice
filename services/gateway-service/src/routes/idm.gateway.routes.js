@@ -5,7 +5,7 @@
  *   - name: Clients
  *   - name: Users
  */
-
+import axios from "axios";
 import { Router } from "express";
 import { forward } from "../utils/forward.js";
 import { authRequired } from "../middleware/authRequired.js";
@@ -161,30 +161,55 @@ r.post("/auth/mfa/verify", authRequired, forward(BASE, "/internal/auth/mfa/verif
  */
 r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
   try {
-    const usersResponse = await forward(BASE, "/internal/users")(req, res, () => {});
-    const rawUsers = usersResponse?.data ?? [];
+    const usersRes = await axios.get(`${BASE}/internal/users`, {
+      headers: {
+        "x-internal-token": process.env.INTERNAL_TOKEN,
+      },
+    });
+
+    // --- FIX: normalize IDM response ---
+    let rawUsers = [];
+    if (Array.isArray(usersRes.data)) {
+      rawUsers = usersRes.data;
+    } else if (Array.isArray(usersRes.data?.data)) {
+      rawUsers = usersRes.data.data;
+    } else {
+      console.error("❌ Unexpected IDM response format:", usersRes.data);
+    }
 
     const enriched = await Promise.all(
       rawUsers.map(async (user) => {
-        const infoRes = await forward(
-          BASE,
-          `/internal/users/${user.id}/info`
-        )(req, res, () => {});
-        const info = infoRes?.data ?? {};
-        const preferences = info.preferences ?? {};
+        const infoRes = await axios.get(`${BASE}/internal/users/${user.id}/info`, {
+          headers: {
+            "x-internal-token": process.env.INTERNAL_TOKEN,
+          },
+        });
+
+
+        const info =
+          Array.isArray(infoRes.data) ? infoRes.data[0] :
+          infoRes.data?.data ?? {};
+
+        const prefs = info.preferences ?? {};
+        console.log("🔥 IDM USER INFO RAW:", info);
+
 
         return {
           id: user.id,
-          name: [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || user.phone,
+          name:
+            [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+            user.email ||
+            user.phone ||
+            "לא צוין",
           phone: user.phone || "",
           email: user.email || "",
-          profileImageUrl: info.profileImageUrl || null,
+          profileImageUrl: info.profileImageUrl ?? null,
           gender: info.gender ?? null,
           age: info.age ?? null,
           height: info.height ?? null,
-          weight: info.weight ?? preferences.weight ?? null,
-          goals: info.goals ?? preferences.goals ?? null,
-          activityLevel: info.activityLevel ?? preferences.activityLevel ?? null,
+          weight: info.weight ?? prefs.weight ?? null,
+          goals: info.goals ?? prefs.goals ?? null,
+          activityLevel: info.activityLevel ?? prefs.activityLevel ?? null,
           creationDate: info.createdAt || user.createdAt || null,
           city: info.city ?? null,
           address: info.address ?? null,
@@ -192,11 +217,13 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
       })
     );
 
-    res.json({ data: enriched });
+    return res.json({ data: enriched });
   } catch (err) {
+    console.error("❌ Error in /api/clients:", err?.response?.data || err.message);
     next(err);
   }
 });
+
 
 /**
  * @openapi
@@ -228,7 +255,8 @@ r.get("/clients/:id", authRequired, forward(BASE, "/internal/users/:id"));
  * @openapi
  * /api/users/{id}/info:
  *   get:
- *     tags: [Users]
+ *     tags:
+ *       - Users
  *     summary: Get full user info
  *     security:
  *       - bearerAuth: []
@@ -236,10 +264,15 @@ r.get("/clients/:id", authRequired, forward(BASE, "/internal/users/:id"));
  *       - name: id
  *         in: path
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: User info retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UserInfoResponseDto"
  */
 r.get("/users/:id/info", authRequired, forward(BASE, "/internal/users/:id/info"));
 

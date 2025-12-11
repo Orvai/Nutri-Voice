@@ -190,6 +190,7 @@ const login = async (payload) => {
         user: {
             id: user.id,
             email: user.email,
+            phone: user.phone,
             firstName: user.firstName || null,
             lastName: user.lastName || null,
             status: 'active',

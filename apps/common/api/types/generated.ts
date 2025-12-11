@@ -284,7 +284,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Client data retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -306,26 +314,48 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description User info retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UserInfoResponseDto"];
+                    };
+                };
+            };
         };
         /** Update user info */
         put: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["UpsertUserInfoRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description User info updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         post?: never;
         /** Delete user info record */
@@ -333,11 +363,21 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description User info deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         options?: never;
         head?: never;
@@ -360,7 +400,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description List of food items */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         /** Create new food item */
@@ -371,12 +419,20 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["FoodItemRequestCreateDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Food item created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -400,7 +456,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Search results */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -426,7 +490,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Categorized food list */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -454,12 +526,20 @@ export interface paths {
                 };
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["FoodItemRequestUpdateDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Food item updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         post?: never;
         /** Delete food item */
@@ -467,11 +547,21 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Food item deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         options?: never;
         head?: never;
@@ -494,7 +584,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description List of workout templates */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         /** Create workout template */
@@ -505,12 +603,20 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["WorkoutTemplateCreateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Workout template created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -525,27 +631,51 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get workout template by ID */
+        /** Get meal template by ID */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Template retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         /** Update workout template */
         put: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
-            requestBody?: never;
-            responses: never;
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["WorkoutTemplateUpdateRequestDto"];
+                };
+            };
+            responses: {
+                /** @description Workout template updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         post?: never;
         /** Delete workout template */
@@ -553,11 +683,21 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Workout template deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         options?: never;
         head?: never;
@@ -580,7 +720,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Template menus list */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         /** Create a new template menu */
@@ -591,12 +739,20 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["TemplateMenuCreateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Template menu created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -616,22 +772,42 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Template menu retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         /** Update template menu */
         put: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Template menu updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         post?: never;
         /** Delete template menu */
@@ -639,11 +815,21 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Template menu deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         options?: never;
         head?: never;
@@ -666,7 +852,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Client menus list */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         /** Create a new client menu */
@@ -677,12 +871,20 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["ClientMenuCreateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Client menu created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -697,27 +899,31 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get specific client menu */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: never;
-        };
+        get?: never;
         /** Update client menu */
         put: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
-            requestBody?: never;
-            responses: never;
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ClientMenuUpdateRequestDto"];
+                };
+            };
+            responses: {
+                /** @description Client menu updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         post?: never;
         /** Delete client menu */
@@ -725,11 +931,21 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Client menu deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         options?: never;
         head?: never;
@@ -758,7 +974,15 @@ export interface paths {
                     "application/json": components["schemas"]["ClientMenuCreateFromTemplateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Client menu created from template */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -782,7 +1006,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description List of vitamins */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         /** Create a new vitamin */
@@ -798,7 +1030,15 @@ export interface paths {
                     "application/json": components["schemas"]["VitaminCreateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Vitamin created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -823,7 +1063,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["DaySelectionCreateRequestDto"];
                 };
@@ -863,7 +1103,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["MealLogCreateRequestDto"];
                 };
@@ -903,7 +1143,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["WorkoutLogCreateRequestDto"];
                 };
@@ -944,7 +1184,7 @@ export interface paths {
                 };
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["WorkoutLogUpdateRequestDto"];
                 };
@@ -991,8 +1231,20 @@ export interface paths {
                 };
                 cookie?: never;
             };
-            requestBody?: never;
-            responses: never;
+            requestBody?: {
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            responses: {
+                /** @description Exercise entry updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         trace?: never;
     };
@@ -1013,7 +1265,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["WeightLogCreateRequestDto"];
                 };
@@ -1043,16 +1295,28 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Coach views the client's day type for today */
+        /** Coach views today's day type for the client */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Today's day selection */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DaySelectionTodayResponseDto"];
+                    };
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -1074,11 +1338,23 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Meal log history */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MealLogHistoryResponseDto"];
+                    };
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -1100,11 +1376,23 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Workout log history */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorkoutLogHistoryResponseDto"];
+                    };
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -1126,11 +1414,23 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Weight log history */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WeightHistoryResponseDto"];
+                    };
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -1156,7 +1456,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description List of exercises */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         /** Create new exercise */
@@ -1167,12 +1475,20 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["ExerciseCreateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Exercise created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -1192,22 +1508,46 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Exercise retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         /** Update exercise */
         put: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
-            requestBody?: never;
-            responses: never;
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ExerciseUpdateRequestDto"];
+                };
+            };
+            responses: {
+                /** @description Exercise updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         post?: never;
         /** Delete exercise */
@@ -1215,11 +1555,21 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Exercise deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         options?: never;
         head?: never;
@@ -1240,11 +1590,28 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
-            requestBody?: never;
-            responses: never;
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        /** Format: binary */
+                        file?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Video uploaded */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -1268,7 +1635,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Assets served */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -1294,7 +1669,15 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description List of workout programs */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -1311,16 +1694,26 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Coach fetches single program */
+        /** Coach fetches a single program */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    programId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Workout program retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         post?: never;
@@ -1342,11 +1735,21 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Client workout programs list */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         put?: never;
         /** Coach assigns program to client */
@@ -1354,15 +1757,25 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                };
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["WorkoutProgramCreateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Workout program created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         delete?: never;
         options?: never;
@@ -1382,26 +1795,48 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                    programId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Client program retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         /** Coach updates client's workout program */
         put: {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                    programId: string;
+                };
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": components["schemas"]["WorkoutProgramUpdateRequestDto"];
                 };
             };
-            responses: never;
+            responses: {
+                /** @description Workout program updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         post?: never;
         /** Coach deletes program */
@@ -1409,11 +1844,22 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    clientId: string;
+                    programId: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
-            responses: never;
+            responses: {
+                /** @description Workout program deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
         options?: never;
         head?: never;
@@ -1424,68 +1870,776 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ClientListItemDto: unknown;
-        ClientsListResponseDto: unknown;
-        LoginRequestDto: unknown;
-        LoginResponseDto: unknown;
-        LogoutRequestDto: unknown;
-        LogoutResponseDto: unknown;
-        MfaRegisterRequestDto: unknown;
-        MfaRegisterResponseDto: unknown;
-        MfaVerifyRequestDto: unknown;
-        MfaVerifyResponseDto: unknown;
-        RefreshTokenResponseDto: unknown;
-        RegisterRequestDto: unknown;
-        RegisterResponseDto: unknown;
-        UpsertUserInfoRequestDto: unknown;
-        UpsertUserInfoResponseDto: unknown;
-        UserInfoResponseDto: unknown;
-        ClientMenuCreateFromTemplateRequestDto: unknown;
-        ClientMenuCreateRequestDto: unknown;
-        ClientMenuResponseDto: unknown;
-        ClientMenuUpdateRequestDto: unknown;
-        FoodItemRequestCreateDto: unknown;
-        FoodItemRequestUpdateDto: unknown;
-        FoodItemResponseDto: unknown;
-        MealTemplateCreateRequestDto: unknown;
-        MealTemplateResponseDto: unknown;
-        MealTemplateUpdateRequestDto: unknown;
-        TemplateMenuCreateRequestDto: unknown;
-        TemplateMenuResponseDto: unknown;
-        TemplateMenuUpdateRequestDto: unknown;
-        VitaminCreateRequestDto: unknown;
-        VitaminResponseDto: unknown;
-        VitaminUpdateRequestDto: unknown;
-        DaySelectionCreateRequestDto: unknown;
-        DaySelectionResponseDto: unknown;
-        DaySelectionTodayResponseDto: unknown;
-        DayTypeEnum: unknown;
-        MealLogCreateRequestDto: unknown;
-        MealLogHistoryResponseDto: unknown;
-        MealLogResponseDto: unknown;
-        WeightHistoryResponseDto: unknown;
-        WeightLogCreateRequestDto: unknown;
-        WeightLogResponseDto: unknown;
-        WorkoutLogCreateRequestDto: unknown;
-        WorkoutLogHistoryResponseDto: unknown;
-        WorkoutLogResponseDto: unknown;
-        WorkoutLogUpdateRequestDto: unknown;
-        BodyTypeEnum: unknown;
-        ExerciseCreateRequestDto: unknown;
-        ExerciseResponseDto: unknown;
-        ExerciseUpdateRequestDto: unknown;
-        GenderEnum: unknown;
-        MuscleGroupEnum: unknown;
-        WorkoutProgramCreateRequestDto: unknown;
-        WorkoutProgramExerciseCreateDto: unknown;
-        WorkoutProgramExerciseDeleteDto: unknown;
-        WorkoutProgramExerciseUpdateDto: unknown;
-        WorkoutProgramResponseDto: unknown;
-        WorkoutProgramUpdateRequestDto: unknown;
-        WorkoutTemplateCreateRequestDto: unknown;
-        WorkoutTemplateResponseDto: unknown;
-        WorkoutTemplateUpdateRequestDto: unknown;
-        WorkoutTypeEnum: unknown;
+        ClientListItemDto: {
+            id: string;
+            name: string;
+            phone: string | null;
+            email: string | null;
+            /** Format: url */
+            profileImageUrl: string | null;
+            gender: string | null;
+            age: number | null;
+            height: number | null;
+            weight: number | null;
+            goals: unknown;
+            activityLevel: unknown;
+            creationDate: string | null;
+            city: string | null;
+            address: string | null;
+        };
+        ClientsListResponseDto: {
+            data: {
+                id: string;
+                name: string;
+                phone: string | null;
+                email: string | null;
+                /** Format: url */
+                profileImageUrl: string | null;
+                gender: string | null;
+                age: number | null;
+                height: number | null;
+                weight: number | null;
+                goals: unknown;
+                activityLevel: unknown;
+                creationDate: string | null;
+                city: string | null;
+                address: string | null;
+            }[];
+        };
+        LoginRequestDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        LoginResponseDto: {
+            user: {
+                id: string;
+                /** Format: email */
+                email: string;
+                firstName: string | null;
+                phone?: string | null;
+                lastName: string | null;
+                /** @enum {string} */
+                status: "active" | "locked";
+                role: string;
+            };
+            sessionId: string;
+            tokens: {
+                accessToken: string;
+                refreshToken: string;
+                accessTokenExp?: number;
+                refreshTokenExp?: number;
+            };
+        };
+        LogoutRequestDto: Record<string, never>;
+        LogoutResponseDto: {
+            data: {
+                success: boolean;
+            };
+        };
+        MfaRegisterRequestDto: Record<string, never>;
+        MfaRegisterResponseDto: {
+            data: {
+                id: string;
+                type: string;
+                userId: string;
+            };
+        };
+        MfaVerifyRequestDto: {
+            code: string;
+        };
+        MfaVerifyResponseDto: {
+            data: {
+                accessToken: string;
+                expiresAt: string;
+                tokenType: string;
+            };
+        };
+        RefreshTokenResponseDto: {
+            data: {
+                accessToken: string;
+                expiresAt: string;
+                tokenType: string;
+            };
+        };
+        RegisterRequestDto: {
+            /** Format: email */
+            email: string;
+            phone: string;
+            firstName: string;
+            lastName: string;
+            password: string;
+            /** @enum {string} */
+            role?: "trainer" | "client" | "admin";
+        };
+        RegisterResponseDto: {
+            data: {
+                message: string;
+                id: Record<string, never>;
+            };
+        };
+        UpsertUserInfoRequestDto: {
+            dateOfBirth?: string;
+            gender?: string;
+            address?: string;
+            city?: string;
+            /** Format: url */
+            profileImageUrl?: string;
+            height?: number;
+            age?: number;
+        };
+        UpsertUserInfoResponseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            userId: string;
+            status: Record<string, never>;
+            /** Format: datetime */
+            dateOfBirth?: string | null;
+            gender?: string | null;
+            address?: string | null;
+            city?: string | null;
+            /** Format: url */
+            profileImageUrl?: string | null;
+            height?: number | null;
+            age?: number | null;
+            /** Format: datetime */
+            createdAt: string;
+            /** Format: datetime */
+            updatedAt: string;
+        };
+        UserInfoResponseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            userId: string;
+            status: Record<string, never>;
+            /** Format: datetime */
+            dateOfBirth?: string | null;
+            gender?: string | null;
+            address?: string | null;
+            city?: string | null;
+            /** Format: url */
+            profileImageUrl?: string | null;
+            height?: number | null;
+            age?: number | null;
+            /** Format: datetime */
+            createdAt: string;
+            /** Format: datetime */
+            updatedAt: string;
+        };
+        ClientMenuCreateFromTemplateRequestDto: {
+            templateMenuId: string;
+            clientId: string;
+            coachId: string;
+            name?: string;
+            selectedOptions?: {
+                templateMealId: string;
+                optionId: string;
+            }[];
+        };
+        ClientMenuCreateRequestDto: {
+            clientId: string;
+            name: string;
+            type: string;
+            notes?: string | null;
+            startDate?: string;
+            endDate?: string;
+        };
+        ClientMenuResponseDto: {
+            id: string;
+            name: string;
+            type: string;
+            notes: string | null;
+            isActive: boolean;
+            meals: {
+                id: string;
+                name: string;
+                selectedOptionId: string | null;
+                options: {
+                    id: string;
+                    name: string | null;
+                    orderIndex: number;
+                    mealTemplate: {
+                        id: string;
+                        name: string;
+                        kind: string;
+                        items: {
+                            id: string;
+                            role: string;
+                            defaultGrams: number;
+                            notes: string | null;
+                            foodItem: {
+                                id: string;
+                                name: string;
+                                caloriesPer100g: number | null;
+                            };
+                        }[];
+                    };
+                }[];
+                items: {
+                    id: string;
+                    quantity: number;
+                    calories: number;
+                    notes: string | null;
+                    foodItem: {
+                        id: string;
+                        name: string;
+                        caloriesPer100g: number | null;
+                    };
+                }[];
+            }[];
+            vitamins: {
+                id: string;
+                vitaminId: string | null;
+                name: string;
+                description: string | null;
+            }[];
+        };
+        ClientMenuUpdateRequestDto: {
+            name?: string;
+            type?: string;
+            notes?: string | null;
+            isActive?: boolean;
+            startDate?: string;
+            endDate?: string;
+            mealsToAdd?: {
+                templateId: string;
+                name?: string;
+            }[];
+            mealsToUpdate?: unknown;
+            mealsToDelete?: {
+                id: string;
+            }[];
+            mealOptionsToAdd?: unknown;
+            mealOptionsToDelete?: unknown;
+            itemsToAdd?: unknown;
+            itemsToUpdate?: unknown;
+            itemsToDelete?: unknown;
+            vitaminsToAdd?: unknown;
+            vitaminsToUpdate?: unknown;
+            vitaminsToDelete?: unknown;
+        };
+        FoodItemRequestCreateDto: {
+            name: string;
+            description?: string | null;
+            category?: string | null;
+            caloriesPer100g?: number | null;
+            proteinPer100g?: number | null;
+        };
+        FoodItemRequestUpdateDto: {
+            name?: string;
+            description?: string | null;
+            category?: string | null;
+            caloriesPer100g?: number | null;
+            proteinPer100g?: number | null;
+        };
+        FoodItemResponseDto: {
+            id: string;
+            name: string;
+            description: string | null;
+            category: string | null;
+            caloriesPer100g: number | null;
+            proteinPer100g: number | null;
+        };
+        MealTemplateCreateRequestDto: {
+            name: string;
+            kind: string;
+            totalCalories?: number;
+            items?: {
+                foodItemId: string;
+                role: string;
+                defaultGrams?: number;
+                defaultCalories?: number | null;
+                notes?: string | null;
+            }[];
+        };
+        MealTemplateResponseDto: {
+            id: string;
+            name: string;
+            kind: string;
+            totalCalories: number;
+            items: {
+                id: string;
+                role: string;
+                defaultGrams: number;
+                defaultCalories: number | null;
+                notes: string | null;
+                foodItem: {
+                    id: string;
+                    name: string;
+                    caloriesPer100g: number | null;
+                };
+            }[];
+        };
+        MealTemplateUpdateRequestDto: {
+            name?: string;
+            kind?: string;
+            totalCalories?: number;
+            itemsToAdd?: {
+                foodItemId: string;
+                role: string;
+                defaultGrams?: number;
+                defaultCalories?: number | null;
+                notes?: string | null;
+            }[];
+            itemsToUpdate?: {
+                id: string;
+                foodItemId?: string;
+                role?: string;
+                defaultGrams?: number;
+                defaultCalories?: number | null;
+                notes?: string | null;
+            }[];
+            itemsToDelete?: {
+                id: string;
+            }[];
+        };
+        TemplateMenuCreateRequestDto: {
+            name: string;
+            dayType: string;
+            notes?: string | null;
+            meals?: {
+                name: string;
+                options?: {
+                    mealTemplateId: string;
+                    name?: string | null;
+                    orderIndex?: number;
+                }[];
+            }[];
+            vitamins?: {
+                vitaminId?: string | null;
+                name: string;
+                description?: string | null;
+            }[];
+        };
+        TemplateMenuResponseDto: {
+            id: string;
+            name: string;
+            coachId: string;
+            dayType: string;
+            notes: string | null;
+            totalCalories: number;
+            meals: {
+                id: string;
+                name: string;
+                totalCalories?: number | null;
+                selectedOptionId: string | null;
+                options: {
+                    id: string;
+                    name: string | null;
+                    orderIndex: number;
+                    mealTemplate: {
+                        id: string;
+                        name: string;
+                        kind: string;
+                        totalCalories?: number | null;
+                        items: {
+                            id: string;
+                            role: string;
+                            defaultGrams: number;
+                            notes: string | null;
+                            foodItem: {
+                                id: string;
+                                name: string;
+                                caloriesPer100g: number | null;
+                            };
+                        }[];
+                    };
+                }[];
+            }[];
+            vitamins: {
+                id: string;
+                vitaminId: string | null;
+                name: string;
+                description: string | null;
+            }[];
+        };
+        TemplateMenuUpdateRequestDto: {
+            name?: string;
+            dayType?: string;
+            notes?: string | null;
+            totalCalories?: number;
+            mealsToAdd?: {
+                name: string;
+                totalCalories?: number | null;
+                orderIndex?: number;
+            }[];
+            mealsToUpdate?: {
+                id: string;
+                name?: string;
+                selectedOptionId?: string | null;
+                totalCalories?: number | null;
+            }[];
+            mealsToDelete?: {
+                id: string;
+            }[];
+            mealOptionsToAdd?: {
+                mealId: string;
+                mealTemplateId?: string;
+                name?: string | null;
+                orderIndex?: number;
+            }[];
+            mealOptionsToDelete?: {
+                id: string;
+            }[];
+            vitaminsToAdd?: {
+                vitaminId?: string | null;
+                name: string;
+                description?: string | null;
+            }[];
+            vitaminsToDelete?: {
+                id: string;
+            }[];
+        };
+        VitaminCreateRequestDto: {
+            name: string;
+            description?: string | null;
+        };
+        VitaminResponseDto: {
+            id: string;
+            name: string;
+            description: string | null;
+        };
+        VitaminUpdateRequestDto: {
+            name?: string;
+            description?: string | null;
+        };
+        DaySelectionCreateRequestDto: {
+            /** @enum {string} */
+            dayType: "LOW" | "HIGH" | "MEDIUM" | "REST";
+            /** Format: datetime */
+            date?: string;
+        };
+        DaySelectionResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                /** @enum {string} */
+                dayType: "LOW" | "HIGH" | "MEDIUM" | "REST";
+                /** Format: datetime */
+                changedAt: string;
+            };
+        };
+        DaySelectionTodayResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                /** @enum {string} */
+                dayType: "LOW" | "HIGH" | "MEDIUM" | "REST";
+                /** Format: datetime */
+                changedAt: string;
+            };
+        };
+        /** @enum {string} */
+        DayTypeEnum: "LOW" | "HIGH" | "MEDIUM" | "REST";
+        MealLogCreateRequestDto: {
+            /** Format: datetime */
+            date?: string;
+            calories: number;
+            protein: number;
+            carbs: number;
+            fat: number;
+            description?: string;
+            matchedMenuItemId?: string;
+            /** @enum {string} */
+            dayType: "LOW" | "HIGH" | "MEDIUM" | "REST";
+        };
+        MealLogHistoryResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                /** @enum {string} */
+                dayType: "LOW" | "HIGH" | "MEDIUM" | "REST";
+                calories: number;
+                protein: number;
+                carbs: number;
+                fat: number;
+                description: string | null;
+                matchedMenuItemId: string | null;
+                /** Format: datetime */
+                loggedAt?: string;
+            }[];
+        };
+        MealLogResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                /** @enum {string} */
+                dayType: "LOW" | "HIGH" | "MEDIUM" | "REST";
+                calories: number;
+                protein: number;
+                carbs: number;
+                fat: number;
+                description: string | null;
+                matchedMenuItemId: string | null;
+                /** Format: datetime */
+                loggedAt?: string;
+            };
+        };
+        WeightHistoryResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                weightKg: number;
+                notes: string | null;
+            }[];
+        };
+        WeightLogCreateRequestDto: {
+            /** Format: datetime */
+            date?: string;
+            weightKg: number;
+            notes?: string;
+        };
+        WeightLogResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                weightKg: number;
+                notes: string | null;
+            };
+        };
+        WorkoutLogCreateRequestDto: {
+            /** Format: datetime */
+            date?: string;
+            workoutType: string;
+            /** @enum {string} */
+            effortLevel: "EASY" | "NORMAL" | "HARD" | "FAILED" | "SKIPPED";
+            notes?: string;
+            exercises: {
+                exerciseName: string;
+                weight?: number | null;
+            }[];
+        };
+        WorkoutLogHistoryResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                workoutType: string;
+                /** @enum {string} */
+                effortLevel: "EASY" | "NORMAL" | "HARD" | "FAILED" | "SKIPPED";
+                notes: string | null;
+                /** Format: datetime */
+                loggedAt?: string;
+                exercises: {
+                    id: string;
+                    workoutLogId: string;
+                    exerciseName: string;
+                    weight: number | null;
+                }[];
+            }[];
+        };
+        WorkoutLogResponseDto: {
+            data: {
+                id: string;
+                clientId: string;
+                /** Format: datetime */
+                date: string;
+                workoutType: string;
+                /** @enum {string} */
+                effortLevel: "EASY" | "NORMAL" | "HARD" | "FAILED" | "SKIPPED";
+                notes: string | null;
+                /** Format: datetime */
+                loggedAt?: string;
+                exercises: {
+                    id: string;
+                    workoutLogId: string;
+                    exerciseName: string;
+                    weight: number | null;
+                }[];
+            };
+        };
+        WorkoutLogUpdateRequestDto: {
+            workoutType?: string;
+            /** @enum {string} */
+            effortLevel?: "EASY" | "NORMAL" | "HARD" | "FAILED" | "SKIPPED";
+            notes?: string;
+            exercises?: {
+                id: string;
+                exerciseName: string;
+                weight?: number | null;
+            }[];
+        };
+        /** @enum {string} */
+        BodyTypeEnum: "ECTO" | "ENDO";
+        ExerciseCreateRequestDto: {
+            name: string;
+            description?: string;
+            notes?: string;
+            /** Format: url */
+            videoUrl?: string;
+            /** @enum {string} */
+            muscleGroup: "CHEST" | "BACK" | "SHOULDERS" | "LEGS" | "GLUTES" | "ARMS" | "BICEPS" | "TRICEPS" | "ABS" | "FULL_BODY";
+            /** @enum {string} */
+            gender?: "MALE" | "FEMALE";
+            /** @enum {string} */
+            bodyType?: "ECTO" | "ENDO";
+            workoutTypes?: ("A" | "B" | "FBW" | "UPPER" | "LOWER" | "GLUTES" | "HIIT" | "PUSH" | "PULL" | "LEGS")[];
+            equipment?: string;
+            difficulty?: string;
+        };
+        ExerciseResponseDto: {
+            id: string;
+            name: string;
+            description: string | null;
+            notes: string | null;
+            videoUrl: string | null;
+            muscleGroup: string;
+            gender: string | null;
+            bodyType: string | null;
+            workoutTypes: string[];
+            equipment: string | null;
+            difficulty: string | null;
+            createdByCoachId: string | null;
+            createdAt: string;
+            updatedAt: string;
+        };
+        ExerciseUpdateRequestDto: {
+            name?: string;
+            description?: string;
+            notes?: string;
+            /** Format: url */
+            videoUrl?: string;
+            /** @enum {string} */
+            muscleGroup?: "CHEST" | "BACK" | "SHOULDERS" | "LEGS" | "GLUTES" | "ARMS" | "BICEPS" | "TRICEPS" | "ABS" | "FULL_BODY";
+            /** @enum {string} */
+            gender?: "MALE" | "FEMALE";
+            /** @enum {string} */
+            bodyType?: "ECTO" | "ENDO";
+            workoutTypes?: ("A" | "B" | "FBW" | "UPPER" | "LOWER" | "GLUTES" | "HIIT" | "PUSH" | "PULL" | "LEGS")[];
+            equipment?: string;
+            difficulty?: string;
+        };
+        /** @enum {string} */
+        GenderEnum: "MALE" | "FEMALE";
+        /** @enum {string} */
+        MuscleGroupEnum: "CHEST" | "BACK" | "SHOULDERS" | "LEGS" | "GLUTES" | "ARMS" | "BICEPS" | "TRICEPS" | "ABS" | "FULL_BODY";
+        WorkoutProgramCreateRequestDto: {
+            name: string;
+            clientId: string;
+            coachId: string;
+            templateId?: string;
+            exercises: Record<string, never>;
+        };
+        WorkoutProgramExerciseCreateDto: {
+            exerciseId: string;
+            sets: number;
+            reps: string;
+            weight?: number | null;
+            rest?: number | null;
+            order: number;
+            notes?: string | null;
+        };
+        WorkoutProgramExerciseDeleteDto: {
+            id: string;
+        };
+        WorkoutProgramExerciseUpdateDto: {
+            id: string;
+            exerciseId?: string;
+            sets?: number;
+            reps?: string;
+            weight?: number | null;
+            rest?: number | null;
+            order?: number;
+            notes?: string | null;
+        };
+        WorkoutProgramResponseDto: {
+            id: string;
+            name: string;
+            clientId: string;
+            coachId: string;
+            templateId?: string | null;
+            createdAt: string;
+            updatedAt: string;
+            exercises: {
+                id: string;
+                programId: string;
+                exerciseId: string;
+                sets: number;
+                reps: string;
+                weight: number | null;
+                rest: number | null;
+                order: number;
+                notes: string | null;
+                createdAt: string;
+                updatedAt: string;
+            }[];
+        };
+        WorkoutProgramUpdateRequestDto: {
+            name?: string;
+            exercisesToAdd?: {
+                exerciseId: string;
+                sets: number;
+                reps: string;
+                weight?: number | null;
+                rest?: number | null;
+                order: number;
+                notes?: string | null;
+            }[];
+            exercisesToUpdate?: {
+                id: string;
+                exerciseId?: string;
+                sets?: number;
+                reps?: string;
+                weight?: number | null;
+                rest?: number | null;
+                order?: number;
+                notes?: string | null;
+            }[];
+            exercisesToDelete?: {
+                id: string;
+            }[];
+        };
+        WorkoutTemplateCreateRequestDto: {
+            /** @enum {string} */
+            gender: "MALE" | "FEMALE";
+            level: number;
+            /** @enum {string|null} */
+            bodyType?: "ECTO" | "ENDO" | null;
+            workoutType: string;
+            muscleGroups: string[];
+            name?: string | null;
+            notes?: string | null;
+        };
+        WorkoutTemplateResponseDto: {
+            id: string;
+            /** @enum {string} */
+            gender: "MALE" | "FEMALE";
+            level: number;
+            /** @enum {string|null} */
+            bodyType: "ECTO" | "ENDO" | null;
+            workoutType: string;
+            muscleGroups: string[];
+            name: string | null;
+            notes: string | null;
+        };
+        WorkoutTemplateUpdateRequestDto: {
+            /** @enum {string} */
+            gender?: "MALE" | "FEMALE";
+            level?: number;
+            /** @enum {string|null} */
+            bodyType?: "ECTO" | "ENDO" | null;
+            workoutType?: string;
+            muscleGroups?: string[];
+            name?: string | null;
+            notes?: string | null;
+        };
+        /** @enum {string} */
+        WorkoutTypeEnum: "A" | "B" | "FBW" | "UPPER" | "LOWER" | "GLUTES" | "HIIT" | "PUSH" | "PULL" | "LEGS";
     };
     responses: never;
     parameters: never;
