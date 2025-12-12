@@ -24,4 +24,54 @@ const getTemplateById = async (id) => {
   return template;
 };
 
-module.exports = { listTemplates, getTemplateById };
+const createTemplate = async (data, coachId) => {
+  return prisma.workoutTemplate.create({
+    data: {
+      ...data,
+      createdByCoachId: coachId,
+    },
+  });
+};
+
+const updateTemplate = async (id, data, coachId) => {
+  const template = await prisma.workoutTemplate.findUnique({ where: { id } });
+  if (!template) {
+    throw new AppError(404, "Workout template not found");
+  }
+
+  if (
+    template.createdByCoachId &&
+    template.createdByCoachId !== coachId
+  ) {
+    throw new AppError(403, "Forbidden");
+  }
+
+  return prisma.workoutTemplate.update({
+    where: { id },
+    data,
+  });
+};
+
+const deleteTemplate = async (id, coachId) => {
+  const template = await prisma.workoutTemplate.findUnique({ where: { id } });
+  if (!template) {
+    throw new AppError(404, "Workout template not found");
+  }
+
+  if (
+    template.createdByCoachId &&
+    template.createdByCoachId !== coachId
+  ) {
+    throw new AppError(403, "Forbidden");
+  }
+
+  await prisma.workoutTemplate.delete({ where: { id } });
+};
+
+module.exports = {
+  listTemplates,
+  getTemplateById,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate,
+};

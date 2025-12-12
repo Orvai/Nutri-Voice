@@ -1,24 +1,13 @@
-const { listTemplates, getTemplateById } = require("../services/workoutTemplate.service");
+// src/controllers/workoutTemplate.controller.js
+const {
+  listTemplates,
+  getTemplateById,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate,
+} = require("../services/workoutTemplate.service");
 
-/**
- * @openapi
- * /internal/workout/templates:
- *   get:
- *     tags:
- *       - Workout - Templates
- *     summary: List workout templates (internal)
- *     security:
- *       - internalToken: []
- *     responses:
- *       200:
- *         description: Workout template list
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Workout_WorkoutTemplateResponseDto'
- */
+// GET /internal/workout/templates
 const listTemplatesController = async (req, res, next) => {
   try {
     const result = await listTemplates(req.query);
@@ -28,29 +17,7 @@ const listTemplatesController = async (req, res, next) => {
   }
 };
 
-/**
- * @openapi
- * /internal/workout/templates/{id}:
- *   get:
- *     tags:
- *       - Workout - Templates
- *     summary: Get a workout template by ID (internal)
- *     security:
- *       - internalToken: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Workout template detail
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Workout_WorkoutTemplateResponseDto'
- */
+// GET /internal/workout/templates/:id
 const getTemplateController = async (req, res, next) => {
   try {
     const result = await getTemplateById(req.params.id);
@@ -60,7 +27,44 @@ const getTemplateController = async (req, res, next) => {
   }
 };
 
+// POST /internal/workout/templates
+const createTemplateController = async (req, res, next) => {
+  try {
+    const result = await createTemplate(req.body, req.user.id);
+    res.status(201).json({ data: result });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// PUT /internal/workout/templates/:id
+const updateTemplateController = async (req, res, next) => {
+  try {
+    const result = await updateTemplate(
+      req.params.id,
+      req.body,
+      req.user.id
+    );
+    res.json({ data: result });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// DELETE /internal/workout/templates/:id
+const deleteTemplateController = async (req, res, next) => {
+  try {
+    await deleteTemplate(req.params.id, req.user.id);
+    res.json({ id: req.params.id });
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
   listTemplates: listTemplatesController,
   getTemplate: getTemplateController,
+  createTemplate: createTemplateController,
+  updateTemplate: updateTemplateController,
+  deleteTemplate: deleteTemplateController,
 };

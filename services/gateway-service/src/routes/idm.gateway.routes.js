@@ -109,7 +109,10 @@ r.post("/auth/logout", authRequired, forward(BASE, "/internal/auth/logout"));
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: MFA device registered
+ *         content:
+ *           application/json:
+ *             schema:
+  *              $ref: "#/components/schemas/MfaRegisterResponseDto"
  */
 r.post("/auth/mfa/register", authRequired, forward(BASE, "/internal/auth/mfa/register"));
 
@@ -161,38 +164,38 @@ r.post("/auth/mfa/verify", authRequired, forward(BASE, "/internal/auth/mfa/verif
  */
 r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
   try {
+    // ---- 1. Fetch users ----
     const usersRes = await axios.get(`${BASE}/internal/users`, {
-      headers: {
-        "x-internal-token": process.env.INTERNAL_TOKEN,
-      },
+      headers: { "x-internal-token": process.env.INTERNAL_TOKEN },
     });
 
-    // --- FIX: normalize IDM response ---
-    let rawUsers = [];
-    if (Array.isArray(usersRes.data)) {
-      rawUsers = usersRes.data;
-    } else if (Array.isArray(usersRes.data?.data)) {
-      rawUsers = usersRes.data.data;
-    } else {
-      console.error("❌ Unexpected IDM response format:", usersRes.data);
-    }
+    // Normalize list of users
+    const rawUsers = Array.isArray(usersRes.data)
+      ? usersRes.data
+      : Array.isArray(usersRes.data?.data)
+      ? usersRes.data.data
+      : [];
 
     const enriched = await Promise.all(
       rawUsers.map(async (user) => {
-        const infoRes = await axios.get(`${BASE}/internal/users/${user.id}/info`, {
-          headers: {
-            "x-internal-token": process.env.INTERNAL_TOKEN,
-          },
-        });
+        // ---- 2. Fetch user info ----
+        const infoRes = await axios.get(
+          `${BASE}/internal/users/${user.id}/info`,
+          {
+            headers: { "x-internal-token": process.env.INTERNAL_TOKEN },
+          }
+        );
 
+        // ⭐ ROBUST NORMALIZER FOR USER INFO ⭐
+        const rawInfo = infoRes.data;
 
         const info =
-          Array.isArray(infoRes.data) ? infoRes.data[0] :
-          infoRes.data?.data ?? {};
+          Array.isArray(rawInfo) ? rawInfo[0] :
+          rawInfo?.data ? rawInfo.data :
+          (rawInfo && typeof rawInfo === "object") ? rawInfo :
+          {};
 
         const prefs = info.preferences ?? {};
-        console.log("🔥 IDM USER INFO RAW:", info);
-
 
         return {
           id: user.id,
@@ -201,8 +204,11 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
             user.email ||
             user.phone ||
             "לא צוין",
+
           phone: user.phone || "",
           email: user.email || "",
+
+          // --- Info fields ---
           profileImageUrl: info.profileImageUrl ?? null,
           gender: info.gender ?? null,
           age: info.age ?? null,
@@ -210,6 +216,7 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
           weight: info.weight ?? prefs.weight ?? null,
           goals: info.goals ?? prefs.goals ?? null,
           activityLevel: info.activityLevel ?? prefs.activityLevel ?? null,
+
           creationDate: info.createdAt || user.createdAt || null,
           city: info.city ?? null,
           address: info.address ?? null,
@@ -219,10 +226,11 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
 
     return res.json({ data: enriched });
   } catch (err) {
-    console.error("❌ Error in /api/clients:", err?.response?.data || err.message);
+    console.error("❌ Error in /api/clients:", err?.response?.data || err);
     next(err);
   }
 });
+
 
 
 /**
@@ -241,7 +249,10 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
  *           type: string
  *     responses:
  *       200:
- *         description: Client data retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UserResponseDto"
  */
 r.get("/clients/:id", authRequired, forward(BASE, "/internal/users/:id"));
 
@@ -315,8 +326,8 @@ r.put("/users/:id/info", authRequired, forward(BASE, "/internal/users/:id/info")
  *         required: true
  *         schema: { type: string }
  *     responses:
- *       200:
- *         description: User info deleted
+ *       204:
+ *         description: Deleted successfully
  */
 r.delete("/users/:id/info", authRequired, forward(BASE, "/internal/users/:id/info"));
 

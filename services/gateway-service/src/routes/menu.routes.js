@@ -36,36 +36,18 @@ r.use(attachUser);
  *     responses:
  *       200:
  *         description: List of food items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                data:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/FoodItemResponseDto"
+ * 
  */
 r.get("/food", authRequired, forward(BASE, "/internal/menu/food"));
-
-/**
- * @openapi
- * /api/food/search:
- *   get:
- *     tags: [Food]
- *     summary: Search food items
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Search results
- */
-r.get("/food/search", authRequired, forward(BASE, "/internal/menu/food/search"));
-
-/**
- * @openapi
- * /api/food/by-category:
- *   get:
- *     tags: [Food]
- *     summary: Get food categorized
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Categorized food list
- */
-r.get("/food/by-category", authRequired, forward(BASE, "/internal/menu/food/by-category"));
 
 /**
  * @openapi
@@ -130,110 +112,15 @@ r.put("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/foo
  *     responses:
  *       200:
  *         description: Food item deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 r.delete("/food/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/food/:id"));
-
-
-
-/* ======================================================
-   MEAL TEMPLATES
-====================================================== */
-
-/**
- * @openapi
- * /api/templates:
- *   get:
- *     tags: [Meal Templates]
- *     summary: Get all meal templates
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of templates
- */
-r.get("/templates", authRequired, requireCoach, forward(BASE, "/internal/menu/templates"));
-
-/**
- * @openapi
- * /api/templates/{id}:
- *   get:
- *     tags: [Meal Templates]
- *     summary: Get meal template by ID
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Template retrieved
- */
-r.get("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
-
-/**
- * @openapi
- * /api/templates:
- *   post:
- *     tags: [Meal Templates]
- *     summary: Create meal template
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/MealTemplateCreateRequestDto"
- *     responses:
- *       201:
- *         description: Template created
- */
-r.post("/templates", authRequired, requireCoach, forward(BASE, "/internal/menu/templates"));
-
-/**
- * @openapi
- * /api/templates/{id}:
- *   put:
- *     tags: [Meal Templates]
- *     summary: Update meal template
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: false
- *     responses:
- *       200:
- *         description: Template updated
- */
-r.put("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
-
-/**
- * @openapi
- * /api/templates/{id}:
- *   delete:
- *     tags: [Meal Templates]
- *     summary: Delete meal template
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Template deleted
- */
-r.delete("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/templates/:id"));
 
 
 
@@ -252,6 +139,12 @@ r.delete("/templates/:id", authRequired, requireCoach, forward(BASE, "/internal/
  *     responses:
  *       200:
  *         description: Template menus list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/TemplateMenuResponseDto"
  */
 r.get("/template-menus", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus"));
 
@@ -272,9 +165,14 @@ r.get("/template-menus", authRequired, requireCoach, forward(BASE, "/internal/me
  *     responses:
  *       200:
  *         description: Template menu retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/TemplateMenuResponseDto"
+ *       404:
+ *         description: Template menu not found
  */
 r.get("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus/:id"));
-
 /**
  * @openapi
  * /api/template-menus:
@@ -292,6 +190,10 @@ r.get("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/interna
  *     responses:
  *       201:
  *         description: Template menu created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/TemplateMenuResponseDto"
  */
 r.post("/template-menus", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus"));
 
@@ -309,9 +211,21 @@ r.post("/template-menus", authRequired, requireCoach, forward(BASE, "/internal/m
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/TemplateMenuUpdateRequestDto"
  *     responses:
  *       200:
  *         description: Template menu updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/TemplateMenuResponseDto"
+ *       404:
+ *         description: Template menu not found
  */
 r.put("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus/:id"));
 
@@ -332,6 +246,15 @@ r.put("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/interna
  *     responses:
  *       200:
  *         description: Template menu deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *       404:
+ *         description: Template menu not found
  */
 r.delete("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/internal/menu/template-menus/:id"));
 
@@ -352,38 +275,40 @@ r.delete("/template-menus/:id", authRequired, requireCoach, forward(BASE, "/inte
  *     responses:
  *       200:
  *         description: Client menus list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/ClientMenuResponseDto"
  */
 r.get("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"));
 
 /**
  * @openapi
  * /api/client-menus/{id}:
- *   put:
+ *   get:
  *     tags: [Client Menus]
- *     summary: Update client menu
+ *     summary: Get client menu by ID
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/ClientMenuUpdateRequestDto"
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: Client menu updated
+ *         description: Client menu retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ClientMenuResponseDto"
+ *       404:
+ *         description: Client menu not found
  */
-r.get(
-  "/client-menus/:id",
-  authRequired,
-  requireOwnership,
-  forward(BASE, "/internal/menu/client-menus/:id")
-);
+r.get("/client-menus/:id",authRequired,requireOwnership,forward(BASE, "/internal/menu/client-menus/:id"));
 
 /**
  * @openapi
@@ -402,13 +327,12 @@ r.get(
  *     responses:
  *       201:
  *         description: Client menu created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ClientMenuResponseDto"
  */
-r.post(
-  "/client-menus",
-  authRequired,
-  requireCoach,
-  forward(BASE, "/internal/menu/client-menus")
-);
+r.post("/client-menus",authRequired,requireCoach,forward(BASE, "/internal/menu/client-menus"));
 
 /**
  * @openapi
@@ -425,24 +349,29 @@ r.post(
  *         schema:
  *           type: string
  *     requestBody:
- *       required: false
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/ClientMenuUpdateRequestDto"
  *     responses:
  *       200:
  *         description: Client menu updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ClientMenuResponseDto"
+ *       404:
+ *         description: Client menu not found
  */
-r.put(
-  "/client-menus/:id",
-  authRequired,
-  requireCoach,
-  forward(BASE, "/internal/menu/client-menus/:id")
-);
+r.put("/client-menus/:id",authRequired,requireCoach,forward(BASE, "/internal/menu/client-menus/:id"));
 
 /**
  * @openapi
  * /api/client-menus/{id}:
  *   delete:
  *     tags: [Client Menus]
- *     summary: Delete client menu
+ *     summary: Deactivate client menu
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -453,14 +382,16 @@ r.put(
  *           type: string
  *     responses:
  *       200:
- *         description: Client menu deleted
+ *         description: Client menu deactivated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
  */
-r.delete(
-  "/client-menus/:id",
-  authRequired,
-  requireCoach,
-  forward(BASE, "/internal/menu/client-menus/:id")
-);
+r.delete("/client-menus/:id",authRequired,requireCoach,forward(BASE, "/internal/menu/client-menus/:id"));
 
 /**
  * @openapi
@@ -479,18 +410,17 @@ r.delete(
  *     responses:
  *       201:
  *         description: Client menu created from template
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ClientMenuResponseDto"
  */
-r.post(
-  "/client-menus/from-template",
-  authRequired,
-  requireCoach,
+r.post("/client-menus/from-template",authRequired,requireCoach,
   (req, res, next) => {
     const { clientId, templateMenuId } = req.body ?? {};
     if (!clientId) return res.status(400).json({ message: "clientId is required" });
     if (!templateMenuId) return res.status(400).json({ message: "templateMenuId is required" });
-
     req.body = { ...req.body, coachId: req.user.id };
-
     return forward(BASE, "/internal/menu/client-menus/from-template")(req, res, next);
   }
 );
@@ -512,6 +442,12 @@ r.post(
  *     responses:
  *       200:
  *         description: List of vitamins
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/VitaminResponseDto"
  */
 r.get("/vitamins", authRequired, forward(BASE, "/internal/menu/vitamins"));
 
@@ -532,6 +468,12 @@ r.get("/vitamins", authRequired, forward(BASE, "/internal/menu/vitamins"));
  *     responses:
  *       201:
  *         description: Vitamin created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/VitaminResponseDto"
+ *       403:
+ *         description: Forbidden (coach only)
  */
 r.post("/vitamins", authRequired, requireCoach, forward(BASE, "/internal/menu/vitamins"));
 

@@ -153,6 +153,22 @@ const UpsertUserInfoRequestDto = z.object({
 
 const UpsertUserInfoResponseDto = UserInfoResponseDto;
 
+const userStatusEnum = z.enum(['active', 'deleted', 'locked']);
+const userRoleEnum = z.enum(['trainer', 'client', 'admin']);
+
+const UserResponseDto = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  firstName: z.string(),
+  lastName: z.string(),
+  phone: z.string().optional(),
+  status: userStatusEnum,
+  role: userRoleEnum,
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+
 
 /* ============================================
    EXPORTS (CommonJS)
@@ -175,4 +191,5 @@ module.exports = {
   UserInfoResponseDto,
   UpsertUserInfoRequestDto,
   UpsertUserInfoResponseDto,
+  UserResponseDto
 };

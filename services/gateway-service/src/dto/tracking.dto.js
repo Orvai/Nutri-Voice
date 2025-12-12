@@ -170,6 +170,7 @@ module.exports = {
   WorkoutLogCreateRequestDto,
   WorkoutLogUpdateRequestDto,
   WorkoutLogResponseDto,
+  WorkoutExerciseUpdateDto,
 
   WeightLogCreateRequestDto,
   WeightLogResponseDto,

@@ -274,6 +274,7 @@ const ClientMenuCreateFromTemplateRequestDto = z.object({
 });
 
 const ClientMenuUpdateRequestDto = z.object({
+  // ===== Menu meta =====
   name: z.string().optional(),
   type: z.string().optional(),
   notes: z.string().nullable().optional(),
@@ -281,27 +282,94 @@ const ClientMenuUpdateRequestDto = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 
+  // ===== Meals =====
   mealsToAdd: z.array(
     z.object({
-      templateId: z.string(),
+      templateId: z.string(), // maps to originalTemplateId
       name: z.string().optional(),
     })
   ).optional(),
 
-  mealsToUpdate: z.any().optional(),
-  mealsToDelete: z.array(z.object({ id: z.string() })).optional(),
+  mealsToUpdate: z.array(
+    z.object({
+      id: z.string(),
 
-  mealOptionsToAdd: z.any().optional(),
-  mealOptionsToDelete: z.any().optional(),
+      name: z.string().optional(),
+      selectedOptionId: z.string().nullable().optional(),
+      totalCalories: z.number().optional(),
 
-  itemsToAdd: z.any().optional(),
-  itemsToUpdate: z.any().optional(),
-  itemsToDelete: z.any().optional(),
+      itemsToAdd: z.array(
+        z.object({
+          foodItemId: z.string(),
+          quantity: z.number(),
+          calories: z.number(),
+          notes: z.string().nullable().optional(),
+        })
+      ).optional(),
 
-  vitaminsToAdd: z.any().optional(),
-  vitaminsToUpdate: z.any().optional(),
-  vitaminsToDelete: z.any().optional(),
+      itemsToUpdate: z.array(
+        z.object({
+          id: z.string(),
+          quantity: z.number().optional(),
+          calories: z.number().optional(),
+          notes: z.string().nullable().optional(),
+        })
+      ).optional(),
+
+      itemsToDelete: z.array(
+        z.object({
+          id: z.string(),
+        })
+      ).optional(),
+    })
+  ).optional(),
+
+  mealsToDelete: z.array(
+    z.object({
+      id: z.string(),
+    })
+  ).optional(),
+
+  // ===== Meal Options =====
+  mealOptionsToAdd: z.array(
+    z.object({
+      mealId: z.string(),
+      mealTemplateId: z.string(),
+      name: z.string().nullable().optional(),
+      orderIndex: z.number().optional(),
+    })
+  ).optional(),
+
+  mealOptionsToDelete: z.array(
+    z.object({
+      id: z.string(),
+    })
+  ).optional(),
+
+  // ===== Vitamins =====
+  vitaminsToAdd: z.array(
+    z.object({
+      vitaminId: z.string().nullable().optional(),
+      name: z.string(),
+      description: z.string().nullable().optional(),
+    })
+  ).optional(),
+
+  vitaminsToUpdate: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string().optional(),
+      description: z.string().nullable().optional(),
+    })
+  ).optional(),
+
+  vitaminsToDelete: z.array(
+    z.object({
+      id: z.string(),
+    })
+  ).optional(),
 });
+
 
 // REAL FULL RESPONSE
 const ClientMenuResponseDto = z.object({

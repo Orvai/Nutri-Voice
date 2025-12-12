@@ -9,11 +9,11 @@ const {
    INCLUDE FULL RELATIONS — USED EVERYWHERE
 ============================================================== */
 const programIncludes = {
-  template: true, // מחזיר את הטמפלייט במידה ויש
+  template: true, 
   exercises: {
     orderBy: { order: "asc" },
     include: {
-      exercise: true,   // ❗ זה החלק הקריטי שחסר אצלך
+      exercise: true,  
     },
   },
 };

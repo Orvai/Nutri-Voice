@@ -49,6 +49,7 @@ const ExerciseCreateRequestDto = z.object({
 });
 
 const ExerciseUpdateRequestDto = z.object({
+  id: z.string(),
   name: z.string().min(2).optional(),
   description: z.string().optional(),
   notes: z.string().optional(),
@@ -167,7 +168,14 @@ const WorkoutExerciseResponseDto = z.object({
   notes: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
+
+  exercise: z.object({
+    id: z.string(),
+    name: z.string(),
+    muscleGroup: z.string(),
+  }),
 });
+
 
 /** Full program response */
 const WorkoutProgramResponseDto = z.object({

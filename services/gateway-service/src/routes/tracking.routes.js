@@ -41,6 +41,10 @@ r.use(attachUser);
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/DaySelectionResponseDto"
+ *       400:
+ *         description: Invalid payload
+ *       401:
+ *         description: Unauthorized
  */
 r.post(
   "/tracking/day-selection",
@@ -70,6 +74,10 @@ r.post(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/MealLogResponseDto"
+ *       400:
+ *         description: Invalid payload
+ *       401:
+ *         description: Unauthorized
  */
 r.post(
   "/tracking/meal-log",
@@ -83,7 +91,7 @@ r.post(
  * /api/tracking/workout-log:
  *   post:
  *     tags: [Tracking]
- *     summary: Client logs workout of the day
+ *     summary: Client logs a workout
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -99,6 +107,10 @@ r.post(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WorkoutLogResponseDto"
+ *       400:
+ *         description: Invalid payload
+ *       401:
+ *         description: Unauthorized
  */
 r.post(
   "/tracking/workout-log",
@@ -112,12 +124,12 @@ r.post(
  * /api/tracking/workout-log/{logId}:
  *   put:
  *     tags: [Tracking]
- *     summary: Client updates workout log
+ *     summary: Client updates a workout log
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: logId
- *         in: path
+ *       - in: path
+ *         name: logId
  *         required: true
  *         schema:
  *           type: string
@@ -134,6 +146,12 @@ r.post(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WorkoutLogResponseDto"
+ *       400:
+ *         description: Invalid payload
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Workout log not found
  */
 r.put(
   "/tracking/workout-log/:logId",
@@ -147,23 +165,34 @@ r.put(
  * /api/tracking/workout-log/exercise/{exerciseLogId}:
  *   patch:
  *     tags: [Tracking]
- *     summary: Client updates a single exercise entry
+ *     summary: Client updates a single exercise entry in a workout log
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: exerciseLogId
- *         in: path
+ *       - in: path
+ *         name: exerciseLogId
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     requestBody:
- *       required: false
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             $ref: "#/components/schemas/WorkoutExerciseUpdateDto"
  *     responses:
  *       200:
  *         description: Exercise entry updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutLogResponseDto"
+ *       400:
+ *         description: Invalid payload
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Exercise entry not found
  */
 r.patch(
   "/tracking/workout-log/exercise/:exerciseLogId",
@@ -193,6 +222,10 @@ r.patch(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WeightLogResponseDto"
+ *       400:
+ *         description: Invalid payload
+ *       401:
+ *         description: Unauthorized
  */
 r.post(
   "/tracking/weight-log",
@@ -210,12 +243,12 @@ r.post(
  * /api/tracking/day-selection/today/{clientId}:
  *   get:
  *     tags: [Tracking]
- *     summary: Coach views today's day type for the client
+ *     summary: Coach views today's day type for a client
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: clientId
- *         in: path
+ *       - in: path
+ *         name: clientId
  *         required: true
  *         schema:
  *           type: string
@@ -226,6 +259,10 @@ r.post(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/DaySelectionTodayResponseDto"
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (coach only)
  */
 r.get(
   "/tracking/day-selection/today/:clientId",
@@ -239,12 +276,12 @@ r.get(
  * /api/tracking/meal-log/history/{clientId}:
  *   get:
  *     tags: [Tracking]
- *     summary: Coach views meal log history
+ *     summary: Coach views meal log history for a client
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: clientId
- *         in: path
+ *       - in: path
+ *         name: clientId
  *         required: true
  *         schema:
  *           type: string
@@ -255,6 +292,10 @@ r.get(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/MealLogHistoryResponseDto"
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (coach only)
  */
 r.get(
   "/tracking/meal-log/history/:clientId",
@@ -268,12 +309,12 @@ r.get(
  * /api/tracking/workout-log/history/{clientId}:
  *   get:
  *     tags: [Tracking]
- *     summary: Coach views workout log history
+ *     summary: Coach views workout log history for a client
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: clientId
- *         in: path
+ *       - in: path
+ *         name: clientId
  *         required: true
  *         schema:
  *           type: string
@@ -284,6 +325,10 @@ r.get(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WorkoutLogHistoryResponseDto"
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (coach only)
  */
 r.get(
   "/tracking/workout-log/history/:clientId",
@@ -297,12 +342,12 @@ r.get(
  * /api/tracking/weight-log/history/{clientId}:
  *   get:
  *     tags: [Tracking]
- *     summary: Coach views weight log history
+ *     summary: Coach views weight log history for a client
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: clientId
- *         in: path
+ *       - in: path
+ *         name: clientId
  *         required: true
  *         schema:
  *           type: string
@@ -313,6 +358,10 @@ r.get(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WeightHistoryResponseDto"
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (coach only)
  */
 r.get(
   "/tracking/weight-log/history/:clientId",

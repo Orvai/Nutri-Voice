@@ -146,85 +146,10 @@ const deleteFoodItemController = async (req, res, next) => {
   }
 };
 
-/**
- * @openapi
- * /internal/menu/food/by-category:
- *   get:
- *     tags:
- *       - Menu - Food
- *     summary: List food items by category (internal)
- *     security:
- *       - internalToken: []
- *     parameters:
- *       - in: query
- *         name: category
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Food items filtered by category
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Menu_FoodItemResponseDto'
- */
-const listByCategoryController = async (req, res, next) => {
-  try {
-    const category = req.query.category;
-    if (!category) return res.status(400).json({ message: "category is required" });
-
-    const result = await listByCategory(category);
-    res.json({ data: result });
-  } catch (e) {
-    next(e);
-  }
-};
-
-/**
- * @openapi
- * /internal/menu/food/search:
- *   get:
- *     tags:
- *       - Menu - Food
- *     summary: Search food items by name (internal)
- *     security:
- *       - internalToken: []
- *     parameters:
- *       - in: query
- *         name: name
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Search results
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Menu_FoodItemResponseDto'
- */
-const searchByNameController = async (req, res, next) => {
-  try {
-    const name = req.query.name;
-    if (!name) return res.status(400).json({ message: "name is required" });
-
-    const result = await searchByName(name);
-    res.json({ data: result });
-  } catch (e) {
-    next(e);
-  }
-};
-
 module.exports = {
   createFoodItem: createFoodItemController,
   listFoodItems: listFoodItemsController,
   updateFoodItem: updateFoodItemController,
   deleteFoodItem: deleteFoodItemController,
-  listByCategory: listByCategoryController,
-  searchByName: searchByNameController,
+
 };

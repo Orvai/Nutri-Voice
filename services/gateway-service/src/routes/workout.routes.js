@@ -16,7 +16,6 @@ const r = Router();
 const BASE = process.env.WORKOUT_SERVICE_URL;
 
 r.use(attachUser);
-
 /* ======================================================
    EXERCISES
 ====================================================== */
@@ -32,8 +31,14 @@ r.use(attachUser);
  *     responses:
  *       200:
  *         description: List of exercises
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/ExerciseResponseDto"
  */
-r.get("/exercises", authRequired, forward(BASE, "/internal/workout/exercises"));
+r.get("/exercises",authRequired,forward(BASE, "/internal/workout/exercises"));
 
 /**
  * @openapi
@@ -46,14 +51,20 @@ r.get("/exercises", authRequired, forward(BASE, "/internal/workout/exercises"));
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
  *     responses:
  *       200:
  *         description: Exercise retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ExerciseResponseDto"
+ *       404:
+ *         description: Exercise not found
  */
-r.get("/exercises/:id", authRequired, forward(BASE, "/internal/workout/exercises/:id"));
+r.get("/exercises/:id",authRequired,forward(BASE, "/internal/workout/exercises/:id"));
 
 /**
  * @openapi
@@ -72,17 +83,17 @@ r.get("/exercises/:id", authRequired, forward(BASE, "/internal/workout/exercises
  *     responses:
  *       201:
  *         description: Exercise created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ExerciseResponseDto"
+ *       403:
+ *         description: Forbidden (coach only)
  */
-r.post(
-  "/exercises",
-  authRequired,
-  requireCoach,
-  (req, res, next) => {
+r.post("/exercises",authRequired,requireCoach,(req, res, next) => {
     req.body = { ...req.body, coachId: req.user.id };
     next();
-  },
-  forward(BASE, "/internal/workout/exercises")
-);
+  },forward(BASE, "/internal/workout/exercises"));
 
 /**
  * @openapi
@@ -93,10 +104,11 @@ r.post(
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -106,17 +118,20 @@ r.post(
  *     responses:
  *       200:
  *         description: Exercise updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ExerciseResponseDto"
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Exercise not found
  */
-r.put(
-  "/exercises/:id",
-  authRequired,
-  requireCoach,
+r.put("/exercises/:id",authRequired,requireCoach,
   (req, res, next) => {
     req.body = { ...req.body, coachId: req.user.id };
     next();
-  },
-  forward(BASE, "/internal/workout/exercises/:id")
-);
+  },forward(BASE, "/internal/workout/exercises/:id"));
 
 /**
  * @openapi
@@ -127,38 +142,39 @@ r.put(
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Exercise deleted
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Exercise not found
  */
-r.delete(
-  "/exercises/:id",
-  authRequired,
-  requireCoach,
+r.delete("/exercises/:id",authRequired,requireCoach,
   (req, res, next) => {
     req.body = { coachId: req.user.id };
     next();
-  },
-  forward(BASE, "/internal/workout/exercises/:id")
-);
+  },forward(BASE, "/internal/workout/exercises/:id"));
 
 /**
  * @openapi
  * /api/exercises/{id}/video:
  *   post:
  *     tags: [Exercises]
- *     summary: Upload exercise video
+ *     summary: Upload or update exercise video
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -171,28 +187,31 @@ r.delete(
  *                 format: binary
  *     responses:
  *       200:
- *         description: Video uploaded
+ *         description: Video uploaded successfully
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Exercise not found
  */
-r.post(
-  "/exercises/:id/video",
-  authRequired,
-  requireCoach,
-  forward(BASE, "/internal/workout/exercises/:id/video")
-);
+r.post("/exercises/:id/video",authRequired,requireCoach,forward(BASE, "/internal/workout/exercises/:id/video"));
 
 /**
  * @openapi
- * /api/exercises/uploads:
+ * /api/exercises/uploads/{path}:
  *   get:
  *     tags: [Exercises]
  *     summary: Serve uploaded exercise assets
+ *     parameters:
+ *       - in: path
+ *         name: path
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: Assets served
+ *         description: Asset served
  */
 r.use("/uploads", forward(BASE, null, { preservePath: true }));
-
-
 
 /* ======================================================
    WORKOUT TEMPLATES
@@ -209,33 +228,40 @@ r.use("/uploads", forward(BASE, null, { preservePath: true }));
  *     responses:
  *       200:
  *         description: List of workout templates
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/WorkoutTemplateResponseDto"
  */
-r.get("/templates", authRequired, forward(BASE, "/internal/workout/templates"));
+r.get("/templates",authRequired,forward(BASE, "/internal/workout/templates"));
 
 /**
-  * @openapi
+ * @openapi
  * /api/templates/{id}:
- *   put:
+ *   get:
  *     tags: [Workout Templates]
- *     summary: Update workout template
+ *     summary: Get workout template by ID
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/WorkoutTemplateUpdateRequestDto"
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: Workout template updated
+ *         description: Workout template retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutTemplateResponseDto"
+ *       404:
+ *         description: Workout template not found
  */
-r.get("/templates/:id", authRequired, forward(BASE, "/internal/workout/templates/:id"));
+r.get("/templates/:id",authRequired,forward(BASE, "/internal/workout/templates/:id"));
 
 /**
  * @openapi
@@ -254,17 +280,17 @@ r.get("/templates/:id", authRequired, forward(BASE, "/internal/workout/templates
  *     responses:
  *       201:
  *         description: Workout template created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutTemplateResponseDto"
+ *       403:
+ *         description: Forbidden (coach only)
  */
-r.post(
-  "/templates",
-  authRequired,
-  requireCoach,
-  (req, res, next) => {
+r.post("/templates",authRequired,requireCoach,(req, res, next) => {
     req.body = { ...req.body, coachId: req.user.id };
     next();
-  },
-  forward(BASE, "/internal/workout/templates")
-);
+  },forward(BASE, "/internal/workout/templates"));
 
 /**
  * @openapi
@@ -278,23 +304,30 @@ r.post(
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/WorkoutTemplateUpdateRequestDto"
  *     responses:
  *       200:
  *         description: Workout template updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutTemplateResponseDto"
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Workout template not found
  */
-r.put(
-  "/templates/:id",
-  authRequired,
-  requireCoach,
-  (req, res, next) => {
+r.put("/templates/:id",authRequired,requireCoach,(req, res, next) => {
     req.body = { ...req.body, coachId: req.user.id };
     next();
-  },
-  forward(BASE, "/internal/workout/templates/:id")
-);
+  },forward(BASE, "/internal/workout/templates/:id"));
 
 /**
  * @openapi
@@ -308,21 +341,26 @@ r.put(
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Workout template deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Workout template not found
  */
-r.delete(
-  "/templates/:id",
-  authRequired,
-  requireCoach,
-  (req, res, next) => {
+r.delete("/templates/:id",authRequired,requireCoach,(req, res, next) => {
     req.body = { coachId: req.user.id };
-    next();
-  },
-  forward(BASE, "/internal/workout/templates/:id")
-);
+    next();},forward(BASE, "/internal/workout/templates/:id"));
 
 
 
@@ -335,102 +373,118 @@ r.delete(
  * /api/programs:
  *   get:
  *     tags: [Workout Programs]
- *     summary: Coach fetches all programs
+ *     summary: Coach fetches all workout programs
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of workout programs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/WorkoutProgramResponseDto"
  */
-r.get("/programs", authRequired, requireCoach, forward(BASE, "/internal/workout/programs"));
+r.get("/programs",authRequired,requireCoach,forward(BASE, "/internal/workout/programs"));
 
 /**
  * @openapi
  * /api/programs/{programId}:
  *   get:
  *     tags: [Workout Programs]
- *     summary: Coach fetches a single program
+ *     summary: Coach fetches a workout program by ID
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: programId
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Workout program retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutProgramResponseDto"
+ *       404:
+ *         description: Workout program not found
  */
-r.get(
-  "/programs/:programId",
-  authRequired,
-  requireCoach,
-  forward(BASE, "/internal/workout/programs/:programId")
-);
+r.get("/programs/:programId",authRequired,requireCoach,forward(BASE, "/internal/workout/programs/:programId"));
 
 /**
  * @openapi
  * /api/{clientId}/workout-programs:
  *   get:
  *     tags: [Workout Programs]
- *     summary: Client or coach fetch client programs
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: clientId
- *         in: path
- *         required: true
- *         schema: { type: string }
- *     responses:
- *       200:
- *         description: Client workout programs list
- */
-r.get(
-  "/:clientId/workout-programs",
-  authRequired,
-  forward(BASE, "/internal/workout/programs")
-);
-
-/**
- * @openapi
- * /api/{clientId}/workout-programs/{programId}:
- *   get:
- *     tags: [Workout Programs]
- *     summary: Fetch specific program by ID
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: clientId
- *         in: path
- *         required: true
- *         schema: { type: string }
- *       - name: programId
- *         in: path
- *         required: true
- *         schema: { type: string }
- *     responses:
- *       200:
- *         description: Client program retrieved
- */
-r.get(
-  "/:clientId/workout-programs/:programId",
-  authRequired,
-  forward(BASE, "/internal/workout/programs/:programId")
-);
-
-/**
- * @openapi
- * /api/{clientId}/workout-programs:
- *   post:
- *     tags: [Workout Programs]
- *     summary: Coach assigns program to client
+ *     summary: Fetch workout programs for a specific client
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: clientId
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Client workout programs list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/WorkoutProgramResponseDto"
+ */
+r.get("/:clientId/workout-programs",authRequired,forward(BASE, "/internal/workout/programs"));
+
+/**
+ * @openapi
+ * /api/{clientId}/workout-programs/{programId}:
+ *   get:
+ *     tags: [Workout Programs]
+ *     summary: Fetch a specific workout program for a client
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: programId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Workout program retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutProgramResponseDto"
+ *       404:
+ *         description: Workout program not found
+ */
+r.get("/:clientId/workout-programs/:programId",authRequired,forward(BASE, "/internal/workout/programs/:programId"));
+
+/**
+ * @openapi
+ * /api/{clientId}/workout-programs:
+ *   post:
+ *     tags: [Workout Programs]
+ *     summary: Coach creates a workout program for a client
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -440,39 +494,41 @@ r.get(
  *     responses:
  *       201:
  *         description: Workout program created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutProgramResponseDto"
+ *       403:
+ *         description: Forbidden (coach only)
  */
-r.post(
-  "/:clientId/workout-programs",
-  authRequired,
-  requireCoach,
-  (req, res, next) => {
+r.post("/:clientId/workout-programs",authRequired,requireCoach,(req, res, next) => {
     req.body = {
       ...req.body,
       clientId: req.params.clientId,
       coachId: req.user.id,
     };
     next();
-  },
-  forward(BASE, "/internal/workout/programs")
-);
+  },forward(BASE, "/internal/workout/programs"));
 
 /**
  * @openapi
  * /api/{clientId}/workout-programs/{programId}:
  *   put:
  *     tags: [Workout Programs]
- *     summary: Coach updates client's workout program
+ *     summary: Coach updates a client's workout program
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: clientId
- *         in: path
+ *       - in: path
+ *         name: clientId
  *         required: true
- *         schema: { type: string }
- *       - name: programId
- *         in: path
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: programId
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -482,55 +538,63 @@ r.post(
  *     responses:
  *       200:
  *         description: Workout program updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WorkoutProgramResponseDto"
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Workout program not found
  */
-r.put(
-  "/:clientId/workout-programs/:programId",
-  authRequired,
-  requireCoach,
+r.put("/:clientId/workout-programs/:programId",authRequired,requireCoach,
   (req, res, next) => {
     req.body = {
       ...req.body,
       clientId: req.params.clientId,
       coachId: req.user.id,
-    };
-    next();
-  },
-  forward(BASE, "/internal/workout/programs/:programId")
-);
+    }; next();},
+  forward(BASE, "/internal/workout/programs/:programId"));
 
 /**
  * @openapi
  * /api/{clientId}/workout-programs/{programId}:
  *   delete:
  *     tags: [Workout Programs]
- *     summary: Coach deletes program
+ *     summary: Coach deletes a workout program
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: clientId
- *         in: path
+ *       - in: path
+ *         name: clientId
  *         required: true
- *         schema: { type: string }
- *       - name: programId
- *         in: path
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: programId
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Workout program deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Workout program not found
  */
-r.delete(
-  "/:clientId/workout-programs/:programId",
-  authRequired,
-  requireCoach,
-  (req, res, next) => {
+r.delete("/:clientId/workout-programs/:programId",authRequired,requireCoach,(req, res, next) => {
     req.body = {
       clientId: req.params.clientId,
       coachId: req.user.id,
-    };
-    next();
-  },
-  forward(BASE, "/internal/workout/programs/:programId")
+    }; next();},forward(BASE, "/internal/workout/programs/:programId")
 );
 
 export default r;

@@ -19,6 +19,9 @@ r.post("/internal/workout/exercises/:id/video",verifyInternalToken,videoUpload.s
 /* Workout Templates */
 r.get("/internal/workout/templates", verifyInternalToken, Templates.listTemplates);
 r.get("/internal/workout/templates/:id", verifyInternalToken, Templates.getTemplate);
+r.post("/internal/workout/templates",verifyInternalToken,Templates.createTemplate);
+r.put("/internal/workout/templates/:id",verifyInternalToken,Templates.updateTemplate);
+r.delete("/internal/workout/templates/:id",verifyInternalToken,Templates.deleteTemplate);
 
 /* Workout Programs */
 r.post("/internal/workout/programs", verifyInternalToken, Programs.createProgram);

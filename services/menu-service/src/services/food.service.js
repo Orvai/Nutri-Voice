@@ -56,17 +56,6 @@ const deleteFoodItem = async (id) => {
   });
 };
 
-const listByCategory = async (category) => {
-  return prisma.foodItem.findMany({ where: { category } });
-};
-
-const searchByName = async (name) => {
-  return prisma.foodItem.findMany({
-    where: {
-      name: { contains: name, mode: "insensitive" },
-    },
-  });
-};
 
 module.exports = {
   createFoodItem,
@@ -74,6 +63,5 @@ module.exports = {
   getFoodItem,
   updateFoodItem,
   deleteFoodItem,
-  listByCategory,
-  searchByName,
+
 };
