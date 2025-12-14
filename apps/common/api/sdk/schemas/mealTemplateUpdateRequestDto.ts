@@ -4,5 +4,15 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { MealTemplateUpdateRequestDtoItemsToAddItem } from './mealTemplateUpdateRequestDtoItemsToAddItem';
+import type { MealTemplateUpdateRequestDtoItemsToUpdateItem } from './mealTemplateUpdateRequestDtoItemsToUpdateItem';
+import type { MealTemplateUpdateRequestDtoItemsToDeleteItem } from './mealTemplateUpdateRequestDtoItemsToDeleteItem';
 
-export interface MealTemplateUpdateRequestDto {}
+export interface MealTemplateUpdateRequestDto {
+  name?: string;
+  kind?: string;
+  totalCalories?: number;
+  itemsToAdd?: MealTemplateUpdateRequestDtoItemsToAddItem[];
+  itemsToUpdate?: MealTemplateUpdateRequestDtoItemsToUpdateItem[];
+  itemsToDelete?: MealTemplateUpdateRequestDtoItemsToDeleteItem[];
+}

@@ -1,174 +1,113 @@
 const { z } = require("zod");
+const {
+  TemplateMealCreateDto,
+  TemplateMealAddDto,
+  TemplateMealUpdateDto,
+  TemplateMealDeleteDto,
+  TemplateMealOptionUpsertDto,
+} = require("./meals.dto");
+const { TemplateMealOptionCreateDto, MealOptionDeleteDto } = require("./options.dto");
+const { TemplateMenuVitaminDto, VitaminCreateDto } = require("./vitamin.dto");
 
-//
-// CREATE TemplateMenu
-//
-const TemplateMenuCreateDto = z.object({
-  coachId: z.string(),
-  name: z.string().min(1),
-  dayType: z.string(), // enum
-  notes: z.string().nullable().optional(),
+const TemplateMenuCreateDto = z
+  .object({
+    name: z.string().min(1),
+    dayType: z.string(),
+    notes: z.string().nullable().optional(),
+    meals: z.array(TemplateMealCreateDto).optional(),
+    vitamins: z.array(
+      VitaminCreateDto.extend({ vitaminId: z.string().nullable().optional() }).strict()
+    ).optional(),
+  })
+  .strict();
 
-  meals: z
-    .array(
-      z.object({
-        name: z.string(),
-        options: z
-          .array(
-            z.object({
-              mealTemplateId: z.string(),
-              name: z.string().nullable().optional(),
-              orderIndex: z.number().optional(),
-            })
-          )
-          .optional(),
-      })
-    )
-    .optional(),
+const TemplateMenuUpdateDto = z
+  .object({
+    name: z.string().min(1).optional(),
+    dayType: z.string().optional(),
+    notes: z.string().nullable().optional(),
+    totalCalories: z.number().optional(),
+    mealsToAdd: z.array(TemplateMealAddDto).optional(),
+    mealsToUpdate: z.array(TemplateMealUpdateDto).optional(),
+    mealsToDelete: z.array(TemplateMealDeleteDto).optional(),
+    mealOptionsToAdd: z.array(TemplateMealOptionUpsertDto).optional(),
+    mealOptionsToDelete: z.array(MealOptionDeleteDto).optional(),
+    vitaminsToAdd: z
+      .array(
+        VitaminCreateDto.extend({ vitaminId: z.string() })
+          .strict()
+      )
+      .optional(),
+    vitaminsToDelete: z.array(TemplateMenuVitaminDto.pick({ id: true })).optional(),
+  })
+  .strict();
 
-  vitamins: z
-    .array(
-      z.object({
-        vitaminId: z.string().nullable().optional(),
-        name: z.string(),
-        description: z.string().nullable().optional(),
-      })
-    )
-    .optional(),
-});
-
-//
-// UPDATE TemplateMenu
-//
-const TemplateMenuUpdateDto = z.object({
-  name: z.string().optional(),
-  dayType: z.string().optional(),
-  notes: z.string().nullable().optional(),
-  totalCalories: z.number().optional(),
-  mealsToAdd: z
-    .array(
-      z.object({
-        name: z.string(),
-        totalCalories: z.number().nullable().optional(),
-        orderIndex: z.number().optional(),
-      })
-    )
-    .optional(),
-
-  mealsToUpdate: z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string().optional(),
-        selectedOptionId: z.string().nullable().optional(),
-        totalCalories: z.number().nullable().optional(),
-      })
-    )
-    .optional(),
-
-  mealsToDelete: z
-    .array(
-      z.object({
-        id: z.string(),
-      })
-    )
-    .optional(),
-
-  mealOptionsToAdd: z
-    .array(
-      z.object({
-        mealId: z.string(),
-        mealTemplateId: z.string().optional(),
-        name: z.string().nullable().optional(),
-        orderIndex: z.number().optional(),
-      })
-    )
-    .optional(),
-
-  mealOptionsToDelete: z
-    .array(
-      z.object({
-        id: z.string(),
-      })
-    )
-    .optional(),
-  vitaminsToAdd: z
-  .array(
-    z.object({
-      vitaminId: z.string(),
-      name: z.string(),
-      description: z.string().nullable().optional(),
-    })
-  )
-  .optional(),
-
-vitaminsToDelete: z
-  .array(
-    z.object({
-      id: z.string(),
-    })
-  )
-  .optional(),
-});
-
-//
-// RESPONSE TemplateMenu (FULL)
-//
-const TemplateMenuResponseDto = z.object({
-  id: z.string(),
-  coachId: z.string(),
-  name: z.string(),
-  dayType: z.string(),
-  notes: z.string().nullable(),
-  totalCalories: z.number(),
-
-  meals: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      totalCalories: z.number().nullable().optional(),
-      selectedOptionId: z.string().nullable(),
-      options: z.array(
-        z.object({
+const TemplateMenuResponseDto = z
+  .object({
+    id: z.string(),
+    coachId: z.string(),
+    name: z.string(),
+    dayType: z.string(),
+    notes: z.string().nullable(),
+    totalCalories: z.number(),
+    meals: z.array(
+      z
+        .object({
           id: z.string(),
-          name: z.string().nullable(),
-          orderIndex: z.number(),
-          mealTemplate: z.object({
-            id: z.string(),
-            name: z.string(),
-            kind: z.string(),
-            totalCalories: z.number().nullable().optional(),
-            items: z.array(
-              z.object({
+          name: z.string(),
+          totalCalories: z.number().nullable().optional(),
+          selectedOptionId: z.string().nullable(),
+          options: z.array(
+            z
+              .object({
                 id: z.string(),
-                role: z.string(),
-                defaultGrams: z.number(),
-                notes: z.string().nullable(),
-                foodItem: z.object({
-                  id: z.string(),
-                  name: z.string(),
-                  caloriesPer100g: z.number().nullable(),
-                }),
+                name: z.string().nullable(),
+                orderIndex: z.number(),
+                mealTemplate: z
+                  .object({
+                    id: z.string(),
+                    name: z.string(),
+                    kind: z.string(),
+                    totalCalories: z.number().nullable().optional(),
+                    items: z.array(
+                      z
+                        .object({
+                          id: z.string(),
+                          role: z.string(),
+                          defaultGrams: z.number(),
+                          notes: z.string().nullable(),
+                          foodItem: z
+                            .object({
+                              id: z.string(),
+                              name: z.string(),
+                              caloriesPer100g: z.number().nullable(),
+                            })
+                            .strict(),
+                        })
+                        .strict()
+                    ),
+                  })
+                  .strict(),
               })
-            ),
-          }),
+              .strict()
+          ),
         })
-      ),
-    })
-  ),
+        .strict()
+    ),
+    vitamins: z.array(TemplateMenuVitaminDto),
+  })
+  .strict();
 
-  vitamins: z.array(
-    z.object({
-      id: z.string(),
-      vitaminId: z.string().nullable(),
-      name: z.string(),
-      description: z.string().nullable(),
-    })
-  ),
-});
+const TemplateMenuListQueryDto = z
+  .object({
+    coachId: z.string().optional(),
+  })
+  .strict();
 
 module.exports = {
   TemplateMenuCreateDto,
   TemplateMenuUpdateDto,
   TemplateMenuResponseDto,
+  TemplateMenuListQueryDto,
+  TemplateMealOptionCreateDto,
 };

@@ -1,6 +1,5 @@
 const { z } = require('zod');
 
-
 const UserInfoResponseDto = z.object({
   // --- Core Response Fields ---
   id: z.string().uuid(), // Assumes a UUID for the UserInfo record
@@ -29,7 +28,14 @@ const upsertUserInfoDto = z.object({
   profileImageUrl: z.string().trim().url().optional(),
   height: z.coerce.number().int().positive().optional(),
   age: z.coerce.number().int().positive().optional(),
-  
+}).strict().superRefine((data, ctx) => {
+  if (!Object.values(data).some((value) => value !== undefined)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'No valid fields provided for user info update',
+      path: [],
+    });
+  }
 });
 
 module.exports = { upsertUserInfoDto, UserInfoResponseDto };

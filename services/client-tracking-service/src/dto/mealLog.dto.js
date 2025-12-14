@@ -10,7 +10,7 @@ const MealLogCreateDto = z.object({
   description: z.string().optional(),
   matchedMenuItemId: z.string().optional(),
   dayType: DayTypeEnum
-});
+}).strict();
 const MealLogResponseDto = z.object({
   id: z.string(),
   clientId: z.string(),
@@ -23,6 +23,6 @@ const MealLogResponseDto = z.object({
   description: z.string().nullable(),
   matchedMenuItemId: z.string().nullable(),
   loggedAt: z.string().datetime().optional()
-});
+}).strict();
 
 module.exports = { MealLogCreateDto,MealLogResponseDto };

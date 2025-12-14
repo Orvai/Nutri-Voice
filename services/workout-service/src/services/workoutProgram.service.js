@@ -22,22 +22,20 @@ const programIncludes = {
    CREATE PROGRAM
 ============================================================== */
 const createProgram = async (data) => {
-  const parsed = WorkoutProgramCreateRequestDto.parse(data);
-
   return prisma.$transaction(async (tx) => {
     const program = await tx.workoutProgram.create({
       data: {
-        name: parsed.name,
-        clientId: parsed.clientId,
-        coachId: parsed.coachId,
-        templateId: parsed.templateId ?? null,
+        name: data.name,
+        clientId: data.clientId,
+        coachId: data.coachId,
+        templateId: data.templateId ?? null,
       },
     });
 
     /* ----- Build from Template ----- */
-    if (parsed.templateId) {
+    if (data.templateId) {
       const template = await tx.workoutTemplate.findUnique({
-        where: { id: parsed.templateId },
+        where: { id: data.templateId },
       });
 
       if (!template) throw new AppError(404, "Template not found");
@@ -65,9 +63,9 @@ const createProgram = async (data) => {
     }
 
     /* ----- User Provided Exercises ----- */
-    if (!parsed.templateId && parsed.exercises?.length > 0) {
+    if (!data.templateId && data.exercises?.length > 0) {
       await tx.workoutExercise.createMany({
-        data: parsed.exercises.map((ex) => ({
+        data: data.exercises.map((ex) => ({
           programId: program.id,
           exerciseId: ex.exerciseId,
           sets: ex.sets,
@@ -183,22 +181,20 @@ const addExercises = async (tx, programId, exercisesToAdd = []) => {
    UPDATE PROGRAM
 ============================================================== */
 const updateProgram = async (id, data) => {
-  const parsed = WorkoutProgramUpdateRequestDto.parse(data);
-
   return prisma.$transaction(async (tx) => {
     const program = await tx.workoutProgram.findUnique({ where: { id } });
     if (!program) throw new AppError(404, "Workout program not found");
 
-    if (parsed.name !== undefined) {
+    if (data.name !== undefined) {
       await tx.workoutProgram.update({
         where: { id },
-        data: { name: parsed.name },
+        data: { name: data.name },
       });
     }
 
-    await deleteExercises(tx, id, parsed.exercisesToDelete);
-    await updateExercises(tx, id, parsed.exercisesToUpdate);
-    await addExercises(tx, id, parsed.exercisesToAdd);
+    await deleteExercises(tx, id, data.exercisesToDelete);
+    await updateExercises(tx, id, data.exercisesToUpdate);
+    await addExercises(tx, id, data.exercisesToAdd);
 
     return tx.workoutProgram.findUnique({
       where: { id },
@@ -206,7 +202,6 @@ const updateProgram = async (id, data) => {
     });
   });
 };
-
 /* ==============================================================
    DELETE PROGRAM
 ============================================================== */

@@ -26,8 +26,8 @@ const findSelectionForDate = async (clientId, date) => {
   });
 };
 
-const setDayType = async (clientId, dayType, date) => {
-  const parsed = DaySelectionCreateDto.parse({ dayType, date });
+const setDayType = async (clientId, payload) => {
+  const parsed = DaySelectionCreateDto.parse(payload);
   const targetDate = parsed.date ? new Date(parsed.date) : new Date();
   const existing = await findSelectionForDate(clientId, targetDate);
 

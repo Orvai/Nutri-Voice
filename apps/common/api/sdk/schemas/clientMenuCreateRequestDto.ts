@@ -5,4 +5,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface ClientMenuCreateRequestDto {}
+export interface ClientMenuCreateRequestDto {
+  clientId: string;
+  name: string;
+  type: string;
+  /** @nullable */
+  notes?: string | null;
+  startDate?: string;
+  endDate?: string;
+}

@@ -4,5 +4,29 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { ClientMenuUpdateRequestDtoMealsToAddItem } from './clientMenuUpdateRequestDtoMealsToAddItem';
+import type { ClientMenuUpdateRequestDtoMealsToUpdateItem } from './clientMenuUpdateRequestDtoMealsToUpdateItem';
+import type { ClientMenuUpdateRequestDtoMealsToDeleteItem } from './clientMenuUpdateRequestDtoMealsToDeleteItem';
+import type { ClientMenuUpdateRequestDtoMealOptionsToAddItem } from './clientMenuUpdateRequestDtoMealOptionsToAddItem';
+import type { ClientMenuUpdateRequestDtoMealOptionsToDeleteItem } from './clientMenuUpdateRequestDtoMealOptionsToDeleteItem';
+import type { ClientMenuUpdateRequestDtoVitaminsToAddItem } from './clientMenuUpdateRequestDtoVitaminsToAddItem';
+import type { ClientMenuUpdateRequestDtoVitaminsToUpdateItem } from './clientMenuUpdateRequestDtoVitaminsToUpdateItem';
+import type { ClientMenuUpdateRequestDtoVitaminsToDeleteItem } from './clientMenuUpdateRequestDtoVitaminsToDeleteItem';
 
-export interface ClientMenuUpdateRequestDto {}
+export interface ClientMenuUpdateRequestDto {
+  name?: string;
+  type?: string;
+  /** @nullable */
+  notes?: string | null;
+  isActive?: boolean;
+  startDate?: string;
+  endDate?: string;
+  mealsToAdd?: ClientMenuUpdateRequestDtoMealsToAddItem[];
+  mealsToUpdate?: ClientMenuUpdateRequestDtoMealsToUpdateItem[];
+  mealsToDelete?: ClientMenuUpdateRequestDtoMealsToDeleteItem[];
+  mealOptionsToAdd?: ClientMenuUpdateRequestDtoMealOptionsToAddItem[];
+  mealOptionsToDelete?: ClientMenuUpdateRequestDtoMealOptionsToDeleteItem[];
+  vitaminsToAdd?: ClientMenuUpdateRequestDtoVitaminsToAddItem[];
+  vitaminsToUpdate?: ClientMenuUpdateRequestDtoVitaminsToUpdateItem[];
+  vitaminsToDelete?: ClientMenuUpdateRequestDtoVitaminsToDeleteItem[];
+}

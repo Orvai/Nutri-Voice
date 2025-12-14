@@ -1,3 +1,6 @@
++11
+-6
+
 const { z } = require('zod');
 
 const EMAIL_USERNAME_REGEX = /^[A-Za-z][A-Za-z0-9._+-]{2,29}$/;
@@ -8,15 +11,15 @@ const PASSWORD_RULES = [
     {regex: /[^A-Za-z0-9]/, description: 'one special character'},
 ];
 
-
 const registerRequestDto = z
     .object({
         email: z.string().trim().email(),
         phone: z.string().trim().min(4),
         firstName: z.string().trim().min(1),
         lastName: z.string().trim().min(1),
-        password: z.string().trim().min(8), // or whatever base length you want
-        role: z.enum(['trainer','client','admin']).optional().default('client')    })
+        password: z.string().trim().min(8),
+    })
+    .strict()
     .superRefine((data, ctx) => {
         const [username] = data.email.split("@");
         if (!username || !EMAIL_USERNAME_REGEX.test(username)) {
@@ -51,18 +54,22 @@ const registerSuccessResponseDto = z.object({
 const loginRequestDto = z.object({
     email: z.string().trim().email(),
     password: z.string().min(8),
-});
+}).strict();
 
 const loginContextDto = z.object({
     email: z.string().trim().email(),
     password: z.string().min(8),
     ip: z.string().trim().nullable().optional(),
     userAgent: z.string().trim().nullable().optional(),
-});
+}).strict();
 
 const logoutRequestDto = z.object({
     sessionId: z.string().uuid(),
-});
+}).strict();
+
+const refreshTokenDto = z.object({
+    refreshToken: z.string().min(1),
+}).strict();
 
 const LoginResponseDto = z.object({
     user: z.object({
@@ -91,5 +98,6 @@ module.exports = {
     loginRequestDto,
     loginContextDto,
     logoutRequestDto,
+    refreshTokenDto,
     LoginResponseDto
 };

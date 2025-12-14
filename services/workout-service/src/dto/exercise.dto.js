@@ -5,39 +5,48 @@ const BodyTypeEnum = z.enum(["ECTO", "ENDO"]);
 const WorkoutTypeEnum = z.enum(["A", "B", "FBW", "UPPER", "LOWER", "GLUTES", "HIIT", "PUSH", "PULL", "LEGS"]);
 const MuscleGroupEnum = z.enum(["CHEST", "BACK", "SHOULDERS", "LEGS", "GLUTES", "ARMS", "BICEPS", "TRICEPS", "ABS", "FULL_BODY"]);
 
-const ExerciseCreateDto = z.object({
-  name: z.string().min(2),
-  description: z.string().optional(),
-  notes: z.string().optional(),
-  videoUrl: z.string().url().optional(),
-  muscleGroup: MuscleGroupEnum,
-  gender: GenderEnum.optional(),
-  bodyType: BodyTypeEnum.optional(),
-  workoutTypes: z.array(WorkoutTypeEnum).optional(),
-  equipment: z.string().optional(),
-  difficulty: z.string().optional(),
-});
-
-const ExerciseUpdateDto = z.object({
+const ExerciseIdParamDto = z.object({
   id: z.string(),
-  name: z.string().min(2).optional(),
-  description: z.string().optional(),
-  notes: z.string().optional(),
-  videoUrl: z.string().url().optional(),
-  muscleGroup: MuscleGroupEnum.optional(),
-  gender: GenderEnum.optional(),
-  bodyType: BodyTypeEnum.optional(),
-  workoutTypes: z.array(WorkoutTypeEnum).optional(),
-  equipment: z.string().optional(),
-  difficulty: z.string().optional(),
-});
+}).strict();
 
-const ExerciseFilterDto = z.object({
-  gender: GenderEnum.optional(),
-  bodyType: BodyTypeEnum.optional(),
-  workoutType: WorkoutTypeEnum.optional(),
-  muscleGroup: MuscleGroupEnum.optional(),
-});
+const ExerciseCreateDto = z
+  .object({
+    name: z.string().min(2),
+    description: z.string().optional(),
+    notes: z.string().optional(),
+    videoUrl: z.string().url().optional(),
+    muscleGroup: MuscleGroupEnum,
+    gender: GenderEnum.optional(),
+    bodyType: BodyTypeEnum.optional(),
+    workoutTypes: z.array(WorkoutTypeEnum).optional(),
+    equipment: z.string().optional(),
+    difficulty: z.string().optional(),
+  })
+  .strict();
+
+const ExerciseUpdateDto = z
+  .object({
+    name: z.string().min(2).optional(),
+    description: z.string().optional(),
+    notes: z.string().optional(),
+    videoUrl: z.string().url().optional(),
+    muscleGroup: MuscleGroupEnum.optional(),
+    gender: GenderEnum.optional(),
+    bodyType: BodyTypeEnum.optional(),
+    workoutTypes: z.array(WorkoutTypeEnum).optional(),
+    equipment: z.string().optional(),
+    difficulty: z.string().optional(),
+  })
+  .strict();
+
+const ExerciseFilterDto = z
+  .object({
+    gender: GenderEnum.optional(),
+    bodyType: BodyTypeEnum.optional(),
+    workoutType: WorkoutTypeEnum.optional(),
+    muscleGroup: MuscleGroupEnum.optional(),
+  })
+  .strict();
 
 const ExerciseResponseDto = z.object({
   id: z.string(),
@@ -61,6 +70,7 @@ module.exports = {
   BodyTypeEnum,
   WorkoutTypeEnum,
   MuscleGroupEnum,
+  ExerciseIdParamDto,
   ExerciseCreateDto,
   ExerciseUpdateDto,
   ExerciseFilterDto,

@@ -1,16 +1,22 @@
 // src/components/nutrition/MealBlock.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, Pressable, TextInput, Modal } from "react-native";
-import { useQueryClient } from "@tanstack/react-query";
+
 import MealOptionsBlock from "./MealOptionsBlock";
 import MealFoodItem from "./MealFoodItem";
 import FoodPickerModal from "./FoodPickerModal";
-import { UIFoodItem, UIMeal, UINutritionSource } from "../../types/ui/nutrition-ui";
+
 import {
-  getMenuQueryKey,
-  useNutritionMealTemplateMutation,
-  useNutritionMenuMutation,
-} from "../../hooks/nutrition/useNutritionMenuMutation";
+  UIFoodItem,
+  UIMeal,
+  UINutritionSource,
+} from "../../types/ui/nutrition/nutrition.types";
+
+import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
+
+/* =====================================
+   Helpers
+===================================== */
 
 function categoryToRole(category?: string) {
   switch (category) {
@@ -18,8 +24,6 @@ function categoryToRole(category?: string) {
       return "PROTEIN";
     case "CARB":
       return "CARB";
-    case "FREE":
-      return "FREE";
     case "HEALTH":
       return "HEALTH";
     case "MENTAL_HEALTH":
@@ -28,6 +32,10 @@ function categoryToRole(category?: string) {
       return "FREE";
   }
 }
+
+/* =====================================
+   Optionless Meal Foods
+===================================== */
 
 function OptionlessMealFoods({
   foods,
@@ -41,36 +49,24 @@ function OptionlessMealFoods({
   menuSource: UINutritionSource;
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
-  const updateTemplate = useNutritionMealTemplateMutation(
-    mealTemplateId,
-    menuId,
-    menuSource
-  );
+
+  const menuActions = useNutritionMenuMutation(menuSource);
 
   const visibleFoods = useMemo(
-    () => foods.filter((food) => !removedFoodIds.includes(food.id)),
-    [foods, removedFoodIds]
+    () => foods.filter((f) => !removedIds.includes(f.id)),
+    [foods, removedIds]
   );
 
   const handleRemoveFood = (foodId: string) => {
     setRemovingIds((prev) => [...prev, foodId]);
 
-    updateTemplate.mutate(
-      {
-        itemsToDelete: [{ id: foodId }],
-        mealTemplateId,
-      },
-      {
-        onSuccess: () => {
-          setRemovedFoodIds((prev) => [...prev, foodId]);
-        },
-        onSettled: () => {
-          setRemovingIds((prev) => prev.filter((id) => id !== foodId));
-        },
-      }
-    );
+    // food is removed by removing the meal option
+    menuActions.removeMealOption(menuId, foodId);
+
+    setRemovedIds((prev) => [...prev, foodId]);
+    setRemovingIds((prev) => prev.filter((id) => id !== foodId));
   };
 
   return (
@@ -102,25 +98,22 @@ function OptionlessMealFoods({
         onClose={() => setPickerOpen(false)}
         existingIds={foods.map((f) => f.id)}
         onSelect={(food) => {
-          const role = categoryToRole(food.category);
-
-          updateTemplate.mutate({
-            itemsToAdd: [
-              {
-                foodItemId: food.id,
-                role,
-                defaultGrams: 100,
-              },
-            ],
+          menuActions.addMealOption(
+            menuId,
             mealTemplateId,
-          });
-
+            food.id,
+            categoryToRole(food.category)
+          );
           setPickerOpen(false);
         }}
       />
     </View>
   );
 }
+
+/* =====================================
+   MealBlock
+===================================== */
 
 type Props = {
   meal: UIMeal;
@@ -129,29 +122,25 @@ type Props = {
 };
 
 export default function MealBlock({ meal, menuId, menuSource }: Props) {
-  const queryClient = useQueryClient();
-  const sortedOptions = [...meal.options].sort(
-    (a, b) => a.orderIndex - b.orderIndex
-  );
-  const [removedOptionIds, setRemovedOptionIds] = useState<string[]>([]);
-  const [removingOptionIds, setRemovingOptionIds] = useState<string[]>([]);
-  const visibleOptions = useMemo(
-    () => sortedOptions.filter((opt) => !removedOptionIds.includes(opt.id)),
-    [removedOptionIds, sortedOptions]
-  );
-  const hasOptions = visibleOptions.length > 0;
+  const menuActions = useNutritionMenuMutation(menuSource);
+
   const [removed, setRemoved] = useState(false);
   const [removing, setRemoving] = useState(false);
-  const updateMenu = useNutritionMenuMutation(menuId, menuSource);
-    const [selectedOptionId, setSelectedOptionId] = useState(
+
+  const [selectedOptionId, setSelectedOptionId] = useState(
     meal.selectedOptionId
   );
   const [caloriesInput, setCaloriesInput] = useState(
     meal.totalCalories?.toString() ?? ""
   );
-  const [optionPickerOpen, setOptionPickerOpen] = useState(false);
+
+  const [optionModalOpen, setOptionModalOpen] = useState(false);
   const [newOptionName, setNewOptionName] = useState("");
-  const menuQueryKey = getMenuQueryKey(menuSource, menuId);
+
+  const sortedOptions = useMemo(
+    () => [...meal.options].sort((a, b) => a.orderIndex - b.orderIndex),
+    [meal.options]
+  );
 
   useEffect(() => {
     setSelectedOptionId(meal.selectedOptionId);
@@ -163,90 +152,43 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
 
   const handleRemoveMeal = () => {
     setRemoving(true);
-
-    updateMenu.mutate(
-      { mealsToDelete: [{ id: meal.id }] },
-      {
-        onSuccess: () => setRemoved(true),
-        onSettled: () => setRemoving(false),
-      }
-    );
+    menuActions.removeMeal(menuId, meal.id);
+    setRemoved(true);
+    setRemoving(false);
   };
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
-    updateMenu.mutate({
-      mealsToUpdate: [
-        {
-          id: meal.id,
-          selectedOptionId: optionId,
-        },
-      ],
-    });
+    menuActions.selectMealOption(menuId, meal.id, optionId);
   };
 
   const handleCaloriesBlur = () => {
     const parsed = parseInt(caloriesInput, 10);
     const totalCalories = Number.isNaN(parsed) ? null : parsed;
-
-    updateMenu.mutate({
-      mealsToUpdate: [
-        {
-          id: meal.id,
-          totalCalories,
-        },
-      ],
-    });
+    menuActions.updateMealCalories(menuId, meal.id, totalCalories);
   };
 
   const handleAddOption = () => {
-    const trimmedName = newOptionName.trim();
-    if (!trimmedName) return;
+    const trimmed = newOptionName.trim();
+    if (!trimmed || !meal.mealTemplateId) return;
 
-    updateMenu.mutate(
-      {
-        mealOptionsToAdd: [
-          {
-            mealId: meal.id,
-            name: trimmedName,
-          },
-        ],
-        },
-        {
-          onSuccess: (data) => {
-            queryClient.setQueryData(menuQueryKey, data);
-            setNewOptionName("");
-            setOptionPickerOpen(false);
-          },
-        }
+    menuActions.addMealOption(
+      menuId,
+      meal.id,
+      meal.mealTemplateId,
+      trimmed
     );
+
+    setNewOptionName("");
+    setOptionModalOpen(false);
   };
 
   const handleRemoveOption = (optionId: string) => {
-    setRemovingOptionIds((prev) => [...prev, optionId]);
-
-      updateMenu.mutate(
-        { mealOptionsToDelete: [{ id: optionId }] },
-        {
-          onSuccess: (data) => {
-            queryClient.setQueryData(menuQueryKey, data);
-            setRemovedOptionIds((prev) => [...prev, optionId]);
-          },
-          onSettled: () => {
-            setRemovingOptionIds((prev) => prev.filter((id) => id !== optionId));
-          },
-      }
-    );
+    menuActions.removeMealOption(menuId, optionId);
   };
 
-  const renderedOptions = visibleOptions.map((opt) => ({
-    ...opt,
-    isSelected: selectedOptionId ? opt.id === selectedOptionId : opt.isSelected,
-  }));
+  if (removed) return null;
 
-  if (removed) {
-    return null;
-  }
   return (
     <View
       style={{
@@ -267,40 +209,37 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
       >
         <View>
           <Text style={{ fontSize: 18, fontWeight: "700" }}>{meal.title}</Text>
-          {meal.timeRange ? (
+          {meal.timeRange && (
             <Text style={{ fontSize: 13, color: "#6b7280" }}>
               {meal.timeRange}
             </Text>
-          ) : null}
+          )}
         </View>
 
-        <View style={{ flexDirection: "row-reverse", gap: 12, alignItems: "center" }}>
-          <View
+        <View style={{ flexDirection: "row-reverse", gap: 12 }}>
+          <TextInput
+            value={caloriesInput}
+            onChangeText={setCaloriesInput}
+            onBlur={handleCaloriesBlur}
+            keyboardType="numeric"
+            placeholder="קלוריות"
             style={{
               borderWidth: 1,
               borderColor: "#d1d5db",
               borderRadius: 10,
               paddingHorizontal: 8,
-              paddingVertical: 2,
               minWidth: 90,
+              textAlign: "center",
+              fontWeight: "600",
             }}
-          >
-            <TextInput
-              value={caloriesInput}
-              onChangeText={setCaloriesInput}
-              onBlur={handleCaloriesBlur}
-              placeholder="קלוריות"
-              keyboardType="numeric"
-              style={{ textAlign: "center", fontWeight: "600", color: "#111827" }}
-            />
-          </View>
+          />
 
           <Pressable
             onPress={handleRemoveMeal}
             disabled={removing}
             style={{
               backgroundColor: "#fee2e2",
-              borderColor: "#fecdd3",
+              borderColor: "#fecaca",
               borderWidth: 1,
               paddingHorizontal: 10,
               paddingVertical: 6,
@@ -320,38 +259,38 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
         </View>
       </View>
 
-      {hasOptions
-        ? renderedOptions.map((opt) => (
-            <MealOptionsBlock
-              key={opt.id}
-              option={opt}
-              isSelected={opt.isSelected}
-              onSelect={() => handleSelectOption(opt.id)}
-              onRemove={() => handleRemoveOption(opt.id)}
-              removing={removingOptionIds.includes(opt.id)}
-              menuId={menuId}
-              menuSource={menuSource}
-            />
-          ))
-        : meal.foods && meal.mealTemplateId && (
-            <OptionlessMealFoods
-              foods={meal.foods}
-              mealTemplateId={meal.mealTemplateId}
-              menuId={menuId}
-              menuSource={menuSource}
-            />
-          )}
+      {sortedOptions.length > 0 ? (
+        sortedOptions.map((opt) => (
+          <MealOptionsBlock
+            key={opt.id}
+            option={opt}
+            mealId={meal.id}
+            isSelected={opt.id === selectedOptionId}
+            onSelect={() => handleSelectOption(opt.id)}
+            onRemove={() => handleRemoveOption(opt.id)}
+            menuId={menuId}
+            menuSource={menuSource}
+          />
+        ))
+      ) : meal.foods && meal.mealTemplateId ? (
+        <OptionlessMealFoods
+          foods={meal.foods}
+          mealTemplateId={meal.mealTemplateId}
+          menuId={menuId}
+          menuSource={menuSource}
+        />
+      ) : null}
 
       <Pressable
-        onPress={() => setOptionPickerOpen(true)}
+        onPress={() => setOptionModalOpen(true)}
         style={{
           backgroundColor: "#eef2ff",
           borderColor: "#c7d2fe",
           borderWidth: 1,
-          paddingHorizontal: 12,
           paddingVertical: 10,
           borderRadius: 10,
           alignItems: "center",
+          marginTop: 12,
         }}
       >
         <Text style={{ color: "#4338ca", fontWeight: "700" }}>
@@ -359,8 +298,8 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
         </Text>
       </Pressable>
 
-      {optionPickerOpen && (
-        <Modal transparent animationType="fade" visible={optionPickerOpen}>
+      {optionModalOpen && (
+        <Modal transparent animationType="fade" visible>
           <View
             style={{
               flex: 1,
@@ -377,28 +316,14 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
                 gap: 12,
               }}
             >
-              <View
-                style={{
-                  flexDirection: "row-reverse",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 18, fontWeight: "800" }}>
-                  שם האופציה
-                </Text>
-
-                <Pressable onPress={() => setOptionPickerOpen(false)}>
-                  <Text style={{ color: "#ef4444", fontWeight: "700" }}>
-                    סגור
-                  </Text>
-                </Pressable>
-              </View>
+              <Text style={{ fontSize: 18, fontWeight: "800" }}>
+                שם האופציה
+              </Text>
 
               <TextInput
-                placeholder="לדוגמה: אופציה 1"
                 value={newOptionName}
                 onChangeText={setNewOptionName}
+                placeholder="לדוגמה: אופציה 1"
                 style={{
                   borderWidth: 1,
                   borderColor: "#d1d5db",
@@ -417,7 +342,13 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
                   borderRadius: 10,
                 }}
               >
-                <Text style={{ color: "white", fontWeight: "700", textAlign: "center" }}>
+                <Text
+                  style={{
+                    color: "white",
+                    fontWeight: "700",
+                    textAlign: "center",
+                  }}
+                >
                   הוסף אופציה
                 </Text>
               </Pressable>

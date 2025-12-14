@@ -4,5 +4,12 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { ClientMenuCreateFromTemplateRequestDtoSelectedOptionsItem } from './clientMenuCreateFromTemplateRequestDtoSelectedOptionsItem';
 
-export interface ClientMenuCreateFromTemplateRequestDto {}
+export interface ClientMenuCreateFromTemplateRequestDto {
+  templateMenuId: string;
+  clientId: string;
+  coachId: string;
+  name?: string;
+  selectedOptions?: ClientMenuCreateFromTemplateRequestDtoSelectedOptionsItem[];
+}

@@ -4,8 +4,8 @@ const speakeasy = require('speakeasy');
 const {addDays, isAfter} = require('date-fns');
 const U = require('./user.service');
 const {prisma} = require('../db/prisma');
-const {createCredentialDto, updateCredentialDto} = require('../dto/credential.dto');
-const {registerMFADeviceDto, verifyMFADto} = require('../dto/mfa.dto');
+const {createCredentialDto} = require('../dto/credential.dto');
+const {registerMFARequestDto, verifyMFARequestDto} = require('../dto/mfa.dto');
 const {AppError} = require('../common/errors');
 const {loginContextDto, logoutRequestDto, registerRequestDto} = require('../dto/auth.dto');
 
@@ -36,7 +36,6 @@ async function registerUser(payload) {
         phone: data.phone,
         firstName: data.firstName,
         lastName: data.lastName,
-        role: data.role,
     });
 
     await createCredential(user.id, 'password', {password: data.password});
@@ -70,22 +69,24 @@ const verifyCredential = async (userId, input = {}) => {
     return bcrypt.compare(input.password || '', cred.passwordHash);
 };
 
-
 // ---------------- MFA ----------------
 const registerMFADevice = async (userId, type) => {
-    const parsed = registerMFADeviceDto.parse({userId, type});
+    if (!userId) throw new AppError(401, 'Invalid token');
+    const { type: parsedType } = registerMFARequestDto.parse({ type });
     const secret = speakeasy.generateSecret({length: 20}).base32;
-    const device = await prisma.mFADevice.create({data: {userId: parsed.userId, type: parsed.type, secret}});
-    return {device, otpauth: `otpauth://totp/App:${parsed.userId}?secret=${secret}&issuer=App`};
+    const device = await prisma.mFADevice.create({data: {userId, type: parsedType, secret}});
+    return {device, otpauth: `otpauth://totp/App:${userId}?secret=${secret}&issuer=App`};
 };
 
 const verifyMFA = async (userId, code, deviceId) => {
-    const parsed = verifyMFADto.parse({userId, code, deviceId});
-    const devices = await prisma.mFADevice.findMany({where: {userId: parsed.userId, status: 'active'}});
+    if (!userId) throw new AppError(401, 'Invalid token');
+    const parsed = verifyMFARequestDto.parse({code, deviceId});
+    const devices = await prisma.mFADevice.findMany({where: {userId, status: 'active'}});
     const d = parsed.deviceId ? devices.find(x => x.id === parsed.deviceId) : devices[0];
     if (!d) throw new AppError(404, 'MFA device not found');
     return speakeasy.totp.verify({secret: d.secret, encoding: 'base32', token: parsed.code, window: 1});
 };
+
 
 // ---------------- TOKENS ----------------
 const signAccess = (sessionId, userId, role) =>

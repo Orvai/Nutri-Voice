@@ -4,5 +4,13 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { RegisterRequestDtoRole } from './registerRequestDtoRole';
 
-export interface RegisterRequestDto {}
+export interface RegisterRequestDto {
+  email: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  role?: RegisterRequestDtoRole;
+}

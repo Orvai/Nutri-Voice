@@ -4,5 +4,8 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { RegisterResponseDtoData } from './registerResponseDtoData';
 
-export interface RegisterResponseDto {}
+export interface RegisterResponseDto {
+  data: RegisterResponseDtoData;
+}

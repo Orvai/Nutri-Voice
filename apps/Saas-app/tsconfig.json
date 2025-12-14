@@ -4,27 +4,21 @@
     "jsx": "react-native",
     "baseUrl": "./",
     "paths": {
-      "@/app/*": [
-        "app/*"
-      ],
-      "@/components/*": [
-        "src/components/*"
-      ],
-      "@/styles/*": [
-        "src/styles/*"
-      ],
-      "@/utils/*": [
-        "app/utils/*"
-      ],
-      "@/hooks/*": [
-        "src/hooks/*"
-      ],
-      "@/lib/*": [
-        "src/lib/*"
-      ],
-      "@/services/*": [
-        "src/services/*"
-      ]
+      "@/app/*": ["app/*"],
+      "@/components/*": ["src/components/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/utils/*": ["app/utils/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/services/*": ["src/services/*"],
+    
+      "@/mappers/*": ["src/mappers/*"],  
+      "@/types/*": ["src/types/*"],       
+
+      "@common/*": ["../common/*"],
+      "@/context/*": ["src/context/*"],
+      "@/queryKeys/*": ["src/queryKeys/*"]
+
     }
   },
   "include": [

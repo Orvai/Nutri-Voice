@@ -1,35 +1,39 @@
-import {
-  ScrollView,
-  View,
-  ActivityIndicator,
-  Text,
-  Pressable,
-} from "react-native";
-import { useEffect, useState, useMemo } from "react";
-
+import {ScrollView,View,ActivityIndicator,Text,Pressable,} from "react-native";
+import { useEffect, useState } from "react";
 import NutritionTabs from "../../../src/components/nutrition/NutritionTabs";
 import NutritionDayCard from "../../../src/components/nutrition/NutritionDayCard";
-
-import { useTemplateMenus, useTemplateMenu } from "../../../src/hooks/nutrition/useTemplateMenus";
-import { mapTemplateMenuToNutritionPlan } from "../../../src/utils/mapTemplateMenuToNutritionPlan";
+import {useTemplateMenus,useTemplateMenu,} from "../../../src/hooks/nutrition/useTemplateMenus";
 
 export default function NutritionPlansScreen() {
-  const { data: menus, isLoading: loadingMenus, error } = useTemplateMenus();
+  const {
+    data: menus,
+    isLoading: loadingMenus,
+    error,
+  } = useTemplateMenus();
+
+  console.log("TEMPLATE MENUS:", menus, "loading:", loadingMenus);
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("EFFECT RUN", { menus, activeTab });
+
     if (menus && menus.length > 0 && !activeTab) {
+      console.log("SETTING ACTIVE TAB:", menus[0].id);
+
       setActiveTab(menus[0].id);
     }
   }, [menus, activeTab]);
 
-  const { data: fullMenu, isLoading: loadingMenu } = useTemplateMenu(activeTab);
+  
+  const {
+    data: plan,
+    isLoading: loadingMenu,
+  } = useTemplateMenu(activeTab);
 
-  const plan = useMemo(() => {
-    if (!fullMenu) return null;
-    return mapTemplateMenuToNutritionPlan(fullMenu);
-  }, [fullMenu]);
+  /* ===============================
+     Loading
+  =============================== */
 
   if (loadingMenus || loadingMenu || !plan) {
     return (
@@ -39,6 +43,10 @@ export default function NutritionPlansScreen() {
     );
   }
 
+  /* ===============================
+     Error
+  =============================== */
+
   if (error) {
     return (
       <View style={{ padding: 20 }}>
@@ -46,6 +54,10 @@ export default function NutritionPlansScreen() {
       </View>
     );
   }
+
+  /* ===============================
+     Empty state
+  =============================== */
 
   if (!menus || menus.length === 0) {
     return (
@@ -73,7 +85,11 @@ export default function NutritionPlansScreen() {
           marginBottom: 16,
         }}
       >
-        <NutritionTabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
+        <NutritionTabs
+          tabs={tabs}
+          active={activeTab}
+          onChange={setActiveTab}
+        />
 
         <Pressable
           onPress={() => console.log("TODO: open create-template flow")}

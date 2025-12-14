@@ -1,83 +1,117 @@
 // src/components/client-profile/nutrition/ClientNutritionPlans.tsx
 
-import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+
 import NutritionTabs from "../../nutrition/NutritionTabs";
 import NutritionDayCard from "../../nutrition/NutritionDayCard";
-import { useClientMenu, useClientMenus } from "../../../hooks/nutrition/useClientMenus";
+
+import {
+  useClientMenu,
+  useClientMenus,
+  useCreateClientMenuFromTemplate,
+} from "../../../hooks/nutrition/useClientMenus";
+
 import { useTemplateMenus } from "../../../hooks/nutrition/useTemplateMenus";
-import { useCreateClientMenuFromTemplate } from "../../../hooks/nutrition/useClientMenus";
-import { mapClientMenuToNutritionPlan } from "../../../utils/mapClientMenuToNutritionPlan";
 
 type Props = {
   clientId: string;
 };
 
 export default function ClientNutritionPlans({ clientId }: Props) {
-  // Load existing client menus
+  /* ============================
+     Queries
+  ============================ */
+
   const {
-    data: menus = [],
-    isLoading: loadingMenus,
+    data: clientMenus = [],
+    isLoading: loadingClientMenus,
     error,
-    refetch,
   } = useClientMenus(clientId);
 
-  // Load coach template menus
   const {
     data: templates = [],
     isLoading: loadingTemplates,
   } = useTemplateMenus();
 
-  const createMenu = useCreateClientMenuFromTemplate(clientId);
+  const createFromTemplate = useCreateClientMenuFromTemplate();
+
+  /* ============================
+     Local state
+  ============================ */
+
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
-  // Auto-create client menus from all templates (e.g., HIGH + LOW)
+  /* ============================
+     Auto-create client menus
+  ============================ */
+
   useEffect(() => {
-    if (!loadingMenus && !loadingTemplates) {
-      if (menus.length === 0 && templates.length > 0) {
-        // Create client menus for each template
-        templates.forEach((tmpl) => {
-          createMenu.mutate({
-            templateMenuId: tmpl.id,
-            name: tmpl.name,
-            selectedOptions: [],
-          });
+    if (
+      !loadingClientMenus &&
+      !loadingTemplates &&
+      clientMenus.length === 0 &&
+      templates.length > 0
+    ) {
+      templates.forEach((tmpl) => {
+        createFromTemplate.mutate({
+          clientId,
+          templateMenuId: tmpl.id,
         });
-
-        // Re-fetch client menus after creation
-        refetch();
-      }
+      });
     }
-  }, [menus, templates, loadingMenus, loadingTemplates]);
+  }, [
+    clientId,
+    clientMenus.length,
+    templates,
+    loadingClientMenus,
+    loadingTemplates,
+  ]);
 
-  // Select first tab automatically
+  /* ============================
+     Select first tab
+  ============================ */
+
   useEffect(() => {
-    if (menus.length > 0 && !activeTab) {
-      setActiveTab(menus[0].id);
+    if (clientMenus.length > 0 && !activeTab) {
+      setActiveTab(clientMenus[0].id);
     }
-  }, [menus, activeTab]);
+  }, [clientMenus, activeTab]);
 
-  // Load full menu
+  /* ============================
+     Load full menu (ALREADY UI MODEL)
+  ============================ */
+
   const {
-    data: fullMenu,
+    data: plan,
     isLoading: loadingMenu,
   } = useClientMenu(activeTab);
 
-  const plan = useMemo(() => {
-    if (!fullMenu) return null;
-    return mapClientMenuToNutritionPlan(fullMenu);
-  }, [fullMenu]);
+  /* ============================
+     Loading / Error states
+  ============================ */
 
-  // Loading states
-  if (loadingMenus || loadingTemplates || loadingMenu || !plan) {
+  if (loadingClientMenus || loadingTemplates || loadingMenu || !plan) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 20,
+        }}
+      >
         <ActivityIndicator size="large" />
       </View>
     );
   }
 
-  // Error state
   if (error) {
     return (
       <View style={{ padding: 20 }}>
@@ -86,11 +120,18 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     );
   }
 
-  // Tabs labels
-  const tabs = menus.map((p) => ({
-    id: p.id,
-    label: p.type === "TRAINING" ? "יום אימון" : "יום מנוחה",
+  /* ============================
+     Tabs
+  ============================ */
+
+  const tabs = clientMenus.map((menu) => ({
+    id: menu.id,
+    label: menu.dayType === "TRAINING" ? "יום אימון" : "יום מנוחה",
   }));
+
+  /* ============================
+     Render
+  ============================ */
 
   return (
     <ScrollView
@@ -105,7 +146,11 @@ export default function ClientNutritionPlans({ clientId }: Props) {
           marginBottom: 16,
         }}
       >
-        <NutritionTabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
+        <NutritionTabs
+          tabs={tabs}
+          active={activeTab}
+          onChange={setActiveTab}
+        />
 
         <Pressable
           disabled
@@ -117,7 +162,9 @@ export default function ClientNutritionPlans({ clientId }: Props) {
             opacity: 0.8,
           }}
         >
-          <Text style={{ color: "#374151", fontWeight: "700", fontSize: 13 }}>
+          <Text
+            style={{ color: "#374151", fontWeight: "700", fontSize: 13 }}
+          >
             תפריט לקוח
           </Text>
         </Pressable>

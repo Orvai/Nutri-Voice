@@ -5,4 +5,13 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface DayTypeEnum {}
+export type DayTypeEnum = typeof DayTypeEnum[keyof typeof DayTypeEnum];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DayTypeEnum = {
+  LOW: 'LOW',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  REST: 'REST',
+} as const;

@@ -26,41 +26,57 @@ import type {
 import type {
   ClientMenuCreateFromTemplateRequestDto,
   ClientMenuCreateRequestDto,
+  ClientMenuResponseDto,
   ClientMenuUpdateRequestDto,
   ClientsListResponseDto,
   DaySelectionCreateRequestDto,
   DaySelectionResponseDto,
   DaySelectionTodayResponseDto,
+  DeleteApiClientIdWorkoutProgramsProgramId200,
+  DeleteApiClientMenusId200,
+  DeleteApiFoodId200,
+  DeleteApiTemplateMenusId200,
+  DeleteApiTemplatesId200,
   ExerciseCreateRequestDto,
+  ExerciseResponseDto,
   ExerciseUpdateRequestDto,
   FoodItemRequestCreateDto,
   FoodItemRequestUpdateDto,
+  GetApiFood200,
   LoginRequestDto,
   LoginResponseDto,
   LogoutResponseDto,
   MealLogCreateRequestDto,
   MealLogHistoryResponseDto,
   MealLogResponseDto,
+  MfaRegisterResponseDto,
   MfaVerifyRequestDto,
   MfaVerifyResponseDto,
-  PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody,
   PostApiExercisesIdVideoBody,
   RefreshTokenResponseDto,
   RegisterRequestDto,
   RegisterResponseDto,
   TemplateMenuCreateRequestDto,
+  TemplateMenuResponseDto,
+  TemplateMenuUpdateRequestDto,
   UpsertUserInfoRequestDto,
+  UserInfoResponseDto,
+  UserResponseDto,
   VitaminCreateRequestDto,
+  VitaminResponseDto,
   WeightHistoryResponseDto,
   WeightLogCreateRequestDto,
   WeightLogResponseDto,
+  WorkoutExerciseUpdateDto,
   WorkoutLogCreateRequestDto,
   WorkoutLogHistoryResponseDto,
   WorkoutLogResponseDto,
   WorkoutLogUpdateRequestDto,
   WorkoutProgramCreateRequestDto,
+  WorkoutProgramResponseDto,
   WorkoutProgramUpdateRequestDto,
   WorkoutTemplateCreateRequestDto,
+  WorkoutTemplateResponseDto,
   WorkoutTemplateUpdateRequestDto
 } from './schemas';
 
@@ -337,7 +353,7 @@ export const postApiAuthMfaRegister = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<MfaRegisterResponseDto>(
       {url: `/api/auth/mfa/register`, method: 'POST', signal
     },
       );
@@ -558,7 +574,7 @@ export const getApiClientsId = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<UserResponseDto>(
       {url: `/api/clients/${id}`, method: 'GET', signal
     },
       );
@@ -651,7 +667,7 @@ export const getApiUsersIdInfo = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<UserInfoResponseDto>(
       {url: `/api/users/${id}/info`, method: 'GET', signal
     },
       );
@@ -863,6 +879,449 @@ export const useDeleteApiUsersIdInfo = <TError = unknown,
     }
     
 /**
+ * @summary List client menus (coach or client)
+ */
+export const getApiClientMenus = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<ClientMenuResponseDto[]>(
+      {url: `/api/client-menus`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiClientMenusQueryKey = () => {
+    return [
+    `/api/client-menus`
+    ] as const;
+    }
+
+    
+export const getGetApiClientMenusQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiClientMenusQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClientMenus>>> = ({ signal }) => getApiClientMenus(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiClientMenusQueryResult = NonNullable<Awaited<ReturnType<typeof getApiClientMenus>>>
+export type GetApiClientMenusQueryError = unknown
+
+
+export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiClientMenus>>,
+          TError,
+          Awaited<ReturnType<typeof getApiClientMenus>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiClientMenus>>,
+          TError,
+          Awaited<ReturnType<typeof getApiClientMenus>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List client menus (coach or client)
+ */
+
+export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiClientMenusQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Create a new client menu
+ */
+export const postApiClientMenus = (
+    clientMenuCreateRequestDto: ClientMenuCreateRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<ClientMenuResponseDto>(
+      {url: `/api/client-menus`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: clientMenuCreateRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiClientMenusMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenus>>, TError,{data: ClientMenuCreateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenus>>, TError,{data: ClientMenuCreateRequestDto}, TContext> => {
+
+const mutationKey = ['postApiClientMenus'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiClientMenus>>, {data: ClientMenuCreateRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiClientMenus(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiClientMenusMutationResult = NonNullable<Awaited<ReturnType<typeof postApiClientMenus>>>
+    export type PostApiClientMenusMutationBody = ClientMenuCreateRequestDto
+    export type PostApiClientMenusMutationError = unknown
+
+    /**
+ * @summary Create a new client menu
+ */
+export const usePostApiClientMenus = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenus>>, TError,{data: ClientMenuCreateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiClientMenus>>,
+        TError,
+        {data: ClientMenuCreateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiClientMenusMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Get client menu by ID
+ */
+export const getApiClientMenusId = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<ClientMenuResponseDto>(
+      {url: `/api/client-menus/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiClientMenusIdQueryKey = (id?: string,) => {
+    return [
+    `/api/client-menus/${id}`
+    ] as const;
+    }
+
+    
+export const getGetApiClientMenusIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientMenusId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenusId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiClientMenusIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClientMenusId>>> = ({ signal }) => getApiClientMenusId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenusId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiClientMenusIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiClientMenusId>>>
+export type GetApiClientMenusIdQueryError = void
+
+
+export function useGetApiClientMenusId<TData = Awaited<ReturnType<typeof getApiClientMenusId>>, TError = void>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenusId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiClientMenusId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiClientMenusId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiClientMenusId<TData = Awaited<ReturnType<typeof getApiClientMenusId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenusId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiClientMenusId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiClientMenusId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiClientMenusId<TData = Awaited<ReturnType<typeof getApiClientMenusId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenusId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get client menu by ID
+ */
+
+export function useGetApiClientMenusId<TData = Awaited<ReturnType<typeof getApiClientMenusId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenusId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiClientMenusIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Update client menu
+ */
+export const putApiClientMenusId = (
+    id: string,
+    clientMenuUpdateRequestDto: ClientMenuUpdateRequestDto,
+ ) => {
+      
+      
+      return customFetcher<ClientMenuResponseDto>(
+      {url: `/api/client-menus/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: clientMenuUpdateRequestDto
+    },
+      );
+    }
+  
+
+
+export const getPutApiClientMenusIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientMenusId>>, TError,{id: string;data: ClientMenuUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiClientMenusId>>, TError,{id: string;data: ClientMenuUpdateRequestDto}, TContext> => {
+
+const mutationKey = ['putApiClientMenusId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiClientMenusId>>, {id: string;data: ClientMenuUpdateRequestDto}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiClientMenusId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiClientMenusIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiClientMenusId>>>
+    export type PutApiClientMenusIdMutationBody = ClientMenuUpdateRequestDto
+    export type PutApiClientMenusIdMutationError = void
+
+    /**
+ * @summary Update client menu
+ */
+export const usePutApiClientMenusId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientMenusId>>, TError,{id: string;data: ClientMenuUpdateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiClientMenusId>>,
+        TError,
+        {id: string;data: ClientMenuUpdateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiClientMenusIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Deactivate client menu
+ */
+export const deleteApiClientMenusId = (
+    id: string,
+ ) => {
+      
+      
+      return customFetcher<DeleteApiClientMenusId200>(
+      {url: `/api/client-menus/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiClientMenusIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientMenusId>>, TError,{id: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientMenusId>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deleteApiClientMenusId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiClientMenusId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiClientMenusId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiClientMenusIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiClientMenusId>>>
+    
+    export type DeleteApiClientMenusIdMutationError = unknown
+
+    /**
+ * @summary Deactivate client menu
+ */
+export const useDeleteApiClientMenusId = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientMenusId>>, TError,{id: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiClientMenusId>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiClientMenusIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Create client menu from template
+ */
+export const postApiClientMenusFromTemplate = (
+    clientMenuCreateFromTemplateRequestDto: ClientMenuCreateFromTemplateRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<ClientMenuResponseDto>(
+      {url: `/api/client-menus/from-template`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: clientMenuCreateFromTemplateRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiClientMenusFromTemplateMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, TError,{data: ClientMenuCreateFromTemplateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, TError,{data: ClientMenuCreateFromTemplateRequestDto}, TContext> => {
+
+const mutationKey = ['postApiClientMenusFromTemplate'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, {data: ClientMenuCreateFromTemplateRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiClientMenusFromTemplate(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiClientMenusFromTemplateMutationResult = NonNullable<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>>
+    export type PostApiClientMenusFromTemplateMutationBody = ClientMenuCreateFromTemplateRequestDto
+    export type PostApiClientMenusFromTemplateMutationError = unknown
+
+    /**
+ * @summary Create client menu from template
+ */
+export const usePostApiClientMenusFromTemplate = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, TError,{data: ClientMenuCreateFromTemplateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>,
+        TError,
+        {data: ClientMenuCreateFromTemplateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiClientMenusFromTemplateMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
  * @summary Get all food items
  */
 export const getApiFood = (
@@ -871,7 +1330,7 @@ export const getApiFood = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<GetApiFood200>(
       {url: `/api/food`, method: 'GET', signal
     },
       );
@@ -1021,192 +1480,6 @@ export const usePostApiFood = <TError = unknown,
     }
     
 /**
- * @summary Search food items
- */
-export const getApiFoodSearch = (
-    
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/food/search`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiFoodSearchQueryKey = () => {
-    return [
-    `/api/food/search`
-    ] as const;
-    }
-
-    
-export const getGetApiFoodSearchQueryOptions = <TData = Awaited<ReturnType<typeof getApiFoodSearch>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodSearch>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiFoodSearchQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiFoodSearch>>> = ({ signal }) => getApiFoodSearch(signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiFoodSearch>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiFoodSearchQueryResult = NonNullable<Awaited<ReturnType<typeof getApiFoodSearch>>>
-export type GetApiFoodSearchQueryError = unknown
-
-
-export function useGetApiFoodSearch<TData = Awaited<ReturnType<typeof getApiFoodSearch>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodSearch>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiFoodSearch>>,
-          TError,
-          Awaited<ReturnType<typeof getApiFoodSearch>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiFoodSearch<TData = Awaited<ReturnType<typeof getApiFoodSearch>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodSearch>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiFoodSearch>>,
-          TError,
-          Awaited<ReturnType<typeof getApiFoodSearch>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiFoodSearch<TData = Awaited<ReturnType<typeof getApiFoodSearch>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodSearch>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Search food items
- */
-
-export function useGetApiFoodSearch<TData = Awaited<ReturnType<typeof getApiFoodSearch>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodSearch>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiFoodSearchQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Get food categorized
- */
-export const getApiFoodByCategory = (
-    
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/food/by-category`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiFoodByCategoryQueryKey = () => {
-    return [
-    `/api/food/by-category`
-    ] as const;
-    }
-
-    
-export const getGetApiFoodByCategoryQueryOptions = <TData = Awaited<ReturnType<typeof getApiFoodByCategory>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodByCategory>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiFoodByCategoryQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiFoodByCategory>>> = ({ signal }) => getApiFoodByCategory(signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiFoodByCategory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiFoodByCategoryQueryResult = NonNullable<Awaited<ReturnType<typeof getApiFoodByCategory>>>
-export type GetApiFoodByCategoryQueryError = unknown
-
-
-export function useGetApiFoodByCategory<TData = Awaited<ReturnType<typeof getApiFoodByCategory>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodByCategory>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiFoodByCategory>>,
-          TError,
-          Awaited<ReturnType<typeof getApiFoodByCategory>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiFoodByCategory<TData = Awaited<ReturnType<typeof getApiFoodByCategory>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodByCategory>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiFoodByCategory>>,
-          TError,
-          Awaited<ReturnType<typeof getApiFoodByCategory>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiFoodByCategory<TData = Awaited<ReturnType<typeof getApiFoodByCategory>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodByCategory>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get food categorized
- */
-
-export function useGetApiFoodByCategory<TData = Awaited<ReturnType<typeof getApiFoodByCategory>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFoodByCategory>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiFoodByCategoryQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
  * @summary Update food item
  */
 export const putApiFoodId = (
@@ -1279,7 +1552,7 @@ export const deleteApiFoodId = (
  ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<DeleteApiFoodId200>(
       {url: `/api/food/${id}`, method: 'DELETE'
     },
       );
@@ -1334,384 +1607,6 @@ export const useDeleteApiFoodId = <TError = unknown,
     }
     
 /**
- * @summary Get all workout templates
- */
-export const getApiTemplates = (
-    
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/templates`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiTemplatesQueryKey = () => {
-    return [
-    `/api/templates`
-    ] as const;
-    }
-
-    
-export const getGetApiTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplates>>> = ({ signal }) => getApiTemplates(signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplates>>>
-export type GetApiTemplatesQueryError = unknown
-
-
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplates>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTemplates>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplates>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTemplates>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get all workout templates
- */
-
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiTemplatesQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Create workout template
- */
-export const postApiTemplates = (
-    workoutTemplateCreateRequestDto: WorkoutTemplateCreateRequestDto,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/templates`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: workoutTemplateCreateRequestDto, signal
-    },
-      );
-    }
-  
-
-
-export const getPostApiTemplatesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext> => {
-
-const mutationKey = ['postApiTemplates'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiTemplates>>, {data: WorkoutTemplateCreateRequestDto}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiTemplates(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiTemplatesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTemplates>>>
-    export type PostApiTemplatesMutationBody = WorkoutTemplateCreateRequestDto
-    export type PostApiTemplatesMutationError = unknown
-
-    /**
- * @summary Create workout template
- */
-export const usePostApiTemplates = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiTemplates>>,
-        TError,
-        {data: WorkoutTemplateCreateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPostApiTemplatesMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
- * @summary Get meal template by ID
- */
-export const getApiTemplatesId = (
-    id: string,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/templates/${id}`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiTemplatesIdQueryKey = (id?: string,) => {
-    return [
-    `/api/templates/${id}`
-    ] as const;
-    }
-
-    
-export const getGetApiTemplatesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = unknown>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesIdQueryKey(id);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplatesId>>> = ({ signal }) => getApiTemplatesId(id, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiTemplatesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplatesId>>>
-export type GetApiTemplatesIdQueryError = unknown
-
-
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = unknown>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplatesId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTemplatesId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = unknown>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplatesId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTemplatesId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = unknown>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get meal template by ID
- */
-
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = unknown>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiTemplatesIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Update workout template
- */
-export const putApiTemplatesId = (
-    id: string,
-    workoutTemplateUpdateRequestDto: WorkoutTemplateUpdateRequestDto,
- ) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/templates/${id}`, method: 'PUT',
-      headers: {'Content-Type': 'application/json', },
-      data: workoutTemplateUpdateRequestDto
-    },
-      );
-    }
-  
-
-
-export const getPutApiTemplatesIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext> => {
-
-const mutationKey = ['putApiTemplatesId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTemplatesId>>, {id: string;data: WorkoutTemplateUpdateRequestDto}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  putApiTemplatesId(id,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTemplatesId>>>
-    export type PutApiTemplatesIdMutationBody = WorkoutTemplateUpdateRequestDto
-    export type PutApiTemplatesIdMutationError = unknown
-
-    /**
- * @summary Update workout template
- */
-export const usePutApiTemplatesId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putApiTemplatesId>>,
-        TError,
-        {id: string;data: WorkoutTemplateUpdateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPutApiTemplatesIdMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
- * @summary Delete workout template
- */
-export const deleteApiTemplatesId = (
-    id: string,
- ) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/templates/${id}`, method: 'DELETE'
-    },
-      );
-    }
-  
-
-
-export const getDeleteApiTemplatesIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['deleteApiTemplatesId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiTemplatesId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteApiTemplatesId(id,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiTemplatesId>>>
-    
-    export type DeleteApiTemplatesIdMutationError = unknown
-
-    /**
- * @summary Delete workout template
- */
-export const useDeleteApiTemplatesId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteApiTemplatesId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-
-      const mutationOptions = getDeleteApiTemplatesIdMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
  * @summary List all template menus
  */
 export const getApiTemplateMenus = (
@@ -1720,7 +1615,7 @@ export const getApiTemplateMenus = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<TemplateMenuResponseDto[]>(
       {url: `/api/template-menus`, method: 'GET', signal
     },
       );
@@ -1813,7 +1708,7 @@ export const postApiTemplateMenus = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<TemplateMenuResponseDto>(
       {url: `/api/template-menus`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: templateMenuCreateRequestDto, signal
@@ -1878,7 +1773,7 @@ export const getApiTemplateMenusId = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<TemplateMenuResponseDto>(
       {url: `/api/template-menus/${id}`, method: 'GET', signal
     },
       );
@@ -1894,7 +1789,7 @@ export const getGetApiTemplateMenusIdQueryKey = (id?: string,) => {
     }
 
     
-export const getGetApiTemplateMenusIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = unknown>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError, TData>>, }
+export const getGetApiTemplateMenusIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
@@ -1913,10 +1808,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiTemplateMenusIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplateMenusId>>>
-export type GetApiTemplateMenusIdQueryError = unknown
+export type GetApiTemplateMenusIdQueryError = void
 
 
-export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = unknown>(
+export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = void>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTemplateMenusId>>,
@@ -1926,7 +1821,7 @@ export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getAp
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = unknown>(
+export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = void>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTemplateMenusId>>,
@@ -1936,7 +1831,7 @@ export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getAp
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = unknown>(
+export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = void>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1944,7 +1839,7 @@ export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getAp
  * @summary Get template menu by ID
  */
 
-export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = unknown>(
+export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError = void>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplateMenusId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1967,20 +1862,23 @@ export function useGetApiTemplateMenusId<TData = Awaited<ReturnType<typeof getAp
  */
 export const putApiTemplateMenusId = (
     id: string,
+    templateMenuUpdateRequestDto: TemplateMenuUpdateRequestDto,
  ) => {
       
       
-      return customFetcher<void>(
-      {url: `/api/template-menus/${id}`, method: 'PUT'
+      return customFetcher<TemplateMenuResponseDto>(
+      {url: `/api/template-menus/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: templateMenuUpdateRequestDto
     },
       );
     }
   
 
 
-export const getPutApiTemplateMenusIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplateMenusId>>, TError,{id: string}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof putApiTemplateMenusId>>, TError,{id: string}, TContext> => {
+export const getPutApiTemplateMenusIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplateMenusId>>, TError,{id: string;data: TemplateMenuUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiTemplateMenusId>>, TError,{id: string;data: TemplateMenuUpdateRequestDto}, TContext> => {
 
 const mutationKey = ['putApiTemplateMenusId'];
 const {mutation: mutationOptions} = options ?
@@ -1992,10 +1890,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTemplateMenusId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTemplateMenusId>>, {id: string;data: TemplateMenuUpdateRequestDto}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  putApiTemplateMenusId(id,)
+          return  putApiTemplateMenusId(id,data,)
         }
 
         
@@ -2004,18 +1902,18 @@ const {mutation: mutationOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PutApiTemplateMenusIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTemplateMenusId>>>
-    
-    export type PutApiTemplateMenusIdMutationError = unknown
+    export type PutApiTemplateMenusIdMutationBody = TemplateMenuUpdateRequestDto
+    export type PutApiTemplateMenusIdMutationError = void
 
     /**
  * @summary Update template menu
  */
-export const usePutApiTemplateMenusId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplateMenusId>>, TError,{id: string}, TContext>, }
+export const usePutApiTemplateMenusId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplateMenusId>>, TError,{id: string;data: TemplateMenuUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiTemplateMenusId>>,
         TError,
-        {id: string},
+        {id: string;data: TemplateMenuUpdateRequestDto},
         TContext
       > => {
 
@@ -2032,7 +1930,7 @@ export const deleteApiTemplateMenusId = (
  ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<DeleteApiTemplateMenusId200>(
       {url: `/api/template-menus/${id}`, method: 'DELETE'
     },
       );
@@ -2040,7 +1938,7 @@ export const deleteApiTemplateMenusId = (
   
 
 
-export const getDeleteApiTemplateMenusIdMutationOptions = <TError = unknown,
+export const getDeleteApiTemplateMenusIdMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplateMenusId>>, TError,{id: string}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplateMenusId>>, TError,{id: string}, TContext> => {
 
@@ -2067,12 +1965,12 @@ const {mutation: mutationOptions} = options ?
 
     export type DeleteApiTemplateMenusIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiTemplateMenusId>>>
     
-    export type DeleteApiTemplateMenusIdMutationError = unknown
+    export type DeleteApiTemplateMenusIdMutationError = void
 
     /**
  * @summary Delete template menu
  */
-export const useDeleteApiTemplateMenusId = <TError = unknown,
+export const useDeleteApiTemplateMenusId = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplateMenusId>>, TError,{id: string}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiTemplateMenusId>>,
@@ -2087,356 +1985,6 @@ export const useDeleteApiTemplateMenusId = <TError = unknown,
     }
     
 /**
- * @summary List client menus (coach or client)
- */
-export const getApiClientMenus = (
-    
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/client-menus`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiClientMenusQueryKey = () => {
-    return [
-    `/api/client-menus`
-    ] as const;
-    }
-
-    
-export const getGetApiClientMenusQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiClientMenusQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClientMenus>>> = ({ signal }) => getApiClientMenus(signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiClientMenusQueryResult = NonNullable<Awaited<ReturnType<typeof getApiClientMenus>>>
-export type GetApiClientMenusQueryError = unknown
-
-
-export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiClientMenus>>,
-          TError,
-          Awaited<ReturnType<typeof getApiClientMenus>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiClientMenus>>,
-          TError,
-          Awaited<ReturnType<typeof getApiClientMenus>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary List client menus (coach or client)
- */
-
-export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiClientMenusQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Create a new client menu
- */
-export const postApiClientMenus = (
-    clientMenuCreateRequestDto: ClientMenuCreateRequestDto,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/client-menus`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: clientMenuCreateRequestDto, signal
-    },
-      );
-    }
-  
-
-
-export const getPostApiClientMenusMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenus>>, TError,{data: ClientMenuCreateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenus>>, TError,{data: ClientMenuCreateRequestDto}, TContext> => {
-
-const mutationKey = ['postApiClientMenus'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiClientMenus>>, {data: ClientMenuCreateRequestDto}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiClientMenus(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiClientMenusMutationResult = NonNullable<Awaited<ReturnType<typeof postApiClientMenus>>>
-    export type PostApiClientMenusMutationBody = ClientMenuCreateRequestDto
-    export type PostApiClientMenusMutationError = unknown
-
-    /**
- * @summary Create a new client menu
- */
-export const usePostApiClientMenus = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenus>>, TError,{data: ClientMenuCreateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiClientMenus>>,
-        TError,
-        {data: ClientMenuCreateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPostApiClientMenusMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
- * @summary Update client menu
- */
-export const putApiClientMenusId = (
-    id: string,
-    clientMenuUpdateRequestDto?: ClientMenuUpdateRequestDto,
- ) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/client-menus/${id}`, method: 'PUT',
-      headers: {'Content-Type': 'application/json', },
-      data: clientMenuUpdateRequestDto
-    },
-      );
-    }
-  
-
-
-export const getPutApiClientMenusIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientMenusId>>, TError,{id: string;data: ClientMenuUpdateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof putApiClientMenusId>>, TError,{id: string;data: ClientMenuUpdateRequestDto}, TContext> => {
-
-const mutationKey = ['putApiClientMenusId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiClientMenusId>>, {id: string;data: ClientMenuUpdateRequestDto}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  putApiClientMenusId(id,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutApiClientMenusIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiClientMenusId>>>
-    export type PutApiClientMenusIdMutationBody = ClientMenuUpdateRequestDto
-    export type PutApiClientMenusIdMutationError = unknown
-
-    /**
- * @summary Update client menu
- */
-export const usePutApiClientMenusId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientMenusId>>, TError,{id: string;data: ClientMenuUpdateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putApiClientMenusId>>,
-        TError,
-        {id: string;data: ClientMenuUpdateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPutApiClientMenusIdMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
- * @summary Delete client menu
- */
-export const deleteApiClientMenusId = (
-    id: string,
- ) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/client-menus/${id}`, method: 'DELETE'
-    },
-      );
-    }
-  
-
-
-export const getDeleteApiClientMenusIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientMenusId>>, TError,{id: string}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientMenusId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['deleteApiClientMenusId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiClientMenusId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteApiClientMenusId(id,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteApiClientMenusIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiClientMenusId>>>
-    
-    export type DeleteApiClientMenusIdMutationError = unknown
-
-    /**
- * @summary Delete client menu
- */
-export const useDeleteApiClientMenusId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientMenusId>>, TError,{id: string}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteApiClientMenusId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-
-      const mutationOptions = getDeleteApiClientMenusIdMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
- * @summary Create client menu from template
- */
-export const postApiClientMenusFromTemplate = (
-    clientMenuCreateFromTemplateRequestDto: ClientMenuCreateFromTemplateRequestDto,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/client-menus/from-template`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: clientMenuCreateFromTemplateRequestDto, signal
-    },
-      );
-    }
-  
-
-
-export const getPostApiClientMenusFromTemplateMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, TError,{data: ClientMenuCreateFromTemplateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, TError,{data: ClientMenuCreateFromTemplateRequestDto}, TContext> => {
-
-const mutationKey = ['postApiClientMenusFromTemplate'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, {data: ClientMenuCreateFromTemplateRequestDto}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiClientMenusFromTemplate(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiClientMenusFromTemplateMutationResult = NonNullable<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>>
-    export type PostApiClientMenusFromTemplateMutationBody = ClientMenuCreateFromTemplateRequestDto
-    export type PostApiClientMenusFromTemplateMutationError = unknown
-
-    /**
- * @summary Create client menu from template
- */
-export const usePostApiClientMenusFromTemplate = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>, TError,{data: ClientMenuCreateFromTemplateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiClientMenusFromTemplate>>,
-        TError,
-        {data: ClientMenuCreateFromTemplateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPostApiClientMenusFromTemplateMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
  * @summary Get all vitamins
  */
 export const getApiVitamins = (
@@ -2445,7 +1993,7 @@ export const getApiVitamins = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<VitaminResponseDto[]>(
       {url: `/api/vitamins`, method: 'GET', signal
     },
       );
@@ -2538,7 +2086,7 @@ export const postApiVitamins = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<VitaminResponseDto>(
       {url: `/api/vitamins`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: vitaminCreateRequestDto, signal
@@ -2548,7 +2096,7 @@ export const postApiVitamins = (
   
 
 
-export const getPostApiVitaminsMutationOptions = <TError = unknown,
+export const getPostApiVitaminsMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiVitamins>>, TError,{data: VitaminCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiVitamins>>, TError,{data: VitaminCreateRequestDto}, TContext> => {
 
@@ -2575,12 +2123,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiVitaminsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiVitamins>>>
     export type PostApiVitaminsMutationBody = VitaminCreateRequestDto
-    export type PostApiVitaminsMutationError = unknown
+    export type PostApiVitaminsMutationError = void
 
     /**
  * @summary Create a new vitamin
  */
-export const usePostApiVitamins = <TError = unknown,
+export const usePostApiVitamins = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiVitamins>>, TError,{data: VitaminCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiVitamins>>,
@@ -2613,7 +2161,7 @@ export const postApiTrackingDaySelection = (
   
 
 
-export const getPostApiTrackingDaySelectionMutationOptions = <TError = unknown,
+export const getPostApiTrackingDaySelectionMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingDaySelection>>, TError,{data: DaySelectionCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingDaySelection>>, TError,{data: DaySelectionCreateRequestDto}, TContext> => {
 
@@ -2640,12 +2188,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiTrackingDaySelectionMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingDaySelection>>>
     export type PostApiTrackingDaySelectionMutationBody = DaySelectionCreateRequestDto
-    export type PostApiTrackingDaySelectionMutationError = unknown
+    export type PostApiTrackingDaySelectionMutationError = void
 
     /**
  * @summary Client sets day type
  */
-export const usePostApiTrackingDaySelection = <TError = unknown,
+export const usePostApiTrackingDaySelection = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingDaySelection>>, TError,{data: DaySelectionCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiTrackingDaySelection>>,
@@ -2659,6 +2207,99 @@ export const usePostApiTrackingDaySelection = <TError = unknown,
       return useMutation(mutationOptions, queryClient);
     }
     
+/**
+ * @summary Coach views today's day type for a client
+ */
+export const getApiTrackingDaySelectionTodayClientId = (
+    clientId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<DaySelectionTodayResponseDto>(
+      {url: `/api/tracking/day-selection/today/${clientId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTrackingDaySelectionTodayClientIdQueryKey = (clientId?: string,) => {
+    return [
+    `/api/tracking/day-selection/today/${clientId}`
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingDaySelectionTodayClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingDaySelectionTodayClientIdQueryKey(clientId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>> = ({ signal }) => getApiTrackingDaySelectionTodayClientId(clientId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTrackingDaySelectionTodayClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>>
+export type GetApiTrackingDaySelectionTodayClientIdQueryError = void
+
+
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+ clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Coach views today's day type for a client
+ */
+
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingDaySelectionTodayClientIdQueryOptions(clientId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
 /**
  * @summary Client logs a meal
  */
@@ -2678,7 +2319,7 @@ export const postApiTrackingMealLog = (
   
 
 
-export const getPostApiTrackingMealLogMutationOptions = <TError = unknown,
+export const getPostApiTrackingMealLogMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMealLog>>, TError,{data: MealLogCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMealLog>>, TError,{data: MealLogCreateRequestDto}, TContext> => {
 
@@ -2705,12 +2346,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiTrackingMealLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingMealLog>>>
     export type PostApiTrackingMealLogMutationBody = MealLogCreateRequestDto
-    export type PostApiTrackingMealLogMutationError = unknown
+    export type PostApiTrackingMealLogMutationError = void
 
     /**
  * @summary Client logs a meal
  */
-export const usePostApiTrackingMealLog = <TError = unknown,
+export const usePostApiTrackingMealLog = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMealLog>>, TError,{data: MealLogCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiTrackingMealLog>>,
@@ -2725,200 +2366,98 @@ export const usePostApiTrackingMealLog = <TError = unknown,
     }
     
 /**
- * @summary Client logs workout of the day
+ * @summary Coach views meal log history for a client
  */
-export const postApiTrackingWorkoutLog = (
-    workoutLogCreateRequestDto: WorkoutLogCreateRequestDto,
+export const getApiTrackingMealLogHistoryClientId = (
+    clientId: string,
  signal?: AbortSignal
 ) => {
       
       
-      return customFetcher<WorkoutLogResponseDto>(
-      {url: `/api/tracking/workout-log`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: workoutLogCreateRequestDto, signal
+      return customFetcher<MealLogHistoryResponseDto>(
+      {url: `/api/tracking/meal-log/history/${clientId}`, method: 'GET', signal
     },
       );
     }
   
 
 
-export const getPostApiTrackingWorkoutLogMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext> => {
 
-const mutationKey = ['postApiTrackingWorkoutLog'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+export const getGetApiTrackingMealLogHistoryClientIdQueryKey = (clientId?: string,) => {
+    return [
+    `/api/tracking/meal-log/history/${clientId}`
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingMealLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingMealLogHistoryClientIdQueryKey(clientId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>> = ({ signal }) => getApiTrackingMealLogHistoryClientId(clientId, signal);
 
       
 
+      
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, {data: WorkoutLogCreateRequestDto}> = (props) => {
-          const {data} = props ?? {};
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
 
-          return  postApiTrackingWorkoutLog(data,)
-        }
-
-        
+export type GetApiTrackingMealLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>>
+export type GetApiTrackingMealLogHistoryClientIdQueryError = void
 
 
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiTrackingWorkoutLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>>
-    export type PostApiTrackingWorkoutLogMutationBody = WorkoutLogCreateRequestDto
-    export type PostApiTrackingWorkoutLogMutationError = unknown
-
-    /**
- * @summary Client logs workout of the day
- */
-export const usePostApiTrackingWorkoutLog = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>,
-        TError,
-        {data: WorkoutLogCreateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPostApiTrackingWorkoutLogMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
+ clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Client updates workout log
+ * @summary Coach views meal log history for a client
  */
-export const putApiTrackingWorkoutLogLogId = (
-    logId: string,
-    workoutLogUpdateRequestDto: WorkoutLogUpdateRequestDto,
- ) => {
-      
-      
-      return customFetcher<WorkoutLogResponseDto>(
-      {url: `/api/tracking/workout-log/${logId}`, method: 'PUT',
-      headers: {'Content-Type': 'application/json', },
-      data: workoutLogUpdateRequestDto
-    },
-      );
-    }
-  
+
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingMealLogHistoryClientIdQueryOptions(clientId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
 
 
-export const getPutApiTrackingWorkoutLogLogIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext> => {
-
-const mutationKey = ['putApiTrackingWorkoutLogLogId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, {logId: string;data: WorkoutLogUpdateRequestDto}> = (props) => {
-          const {logId,data} = props ?? {};
 
-          return  putApiTrackingWorkoutLogLogId(logId,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutApiTrackingWorkoutLogLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>>
-    export type PutApiTrackingWorkoutLogLogIdMutationBody = WorkoutLogUpdateRequestDto
-    export type PutApiTrackingWorkoutLogLogIdMutationError = unknown
-
-    /**
- * @summary Client updates workout log
- */
-export const usePutApiTrackingWorkoutLogLogId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>,
-        TError,
-        {logId: string;data: WorkoutLogUpdateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPutApiTrackingWorkoutLogLogIdMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
-/**
- * @summary Client updates a single exercise entry
- */
-export const patchApiTrackingWorkoutLogExerciseExerciseLogId = (
-    exerciseLogId: string,
-    patchApiTrackingWorkoutLogExerciseExerciseLogIdBody?: PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody,
- ) => {
-      
-      
-      return customFetcher<void>(
-      {url: `/api/tracking/workout-log/exercise/${exerciseLogId}`, method: 'PATCH',
-      headers: {'Content-Type': 'application/json', },
-      data: patchApiTrackingWorkoutLogExerciseExerciseLogIdBody
-    },
-      );
-    }
-  
-
-
-export const getPatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody}, TContext> => {
-
-const mutationKey = ['patchApiTrackingWorkoutLogExerciseExerciseLogId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, {exerciseLogId: string;data: PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody}> = (props) => {
-          const {exerciseLogId,data} = props ?? {};
-
-          return  patchApiTrackingWorkoutLogExerciseExerciseLogId(exerciseLogId,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>>
-    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationBody = PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody
-    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationError = unknown
-
-    /**
- * @summary Client updates a single exercise entry
- */
-export const usePatchApiTrackingWorkoutLogExerciseExerciseLogId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>,
-        TError,
-        {exerciseLogId: string;data: PatchApiTrackingWorkoutLogExerciseExerciseLogIdBody},
-        TContext
-      > => {
-
-      const mutationOptions = getPatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
 /**
  * @summary Client logs body weight
  */
@@ -2938,7 +2477,7 @@ export const postApiTrackingWeightLog = (
   
 
 
-export const getPostApiTrackingWeightLogMutationOptions = <TError = unknown,
+export const getPostApiTrackingWeightLogMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWeightLog>>, TError,{data: WeightLogCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWeightLog>>, TError,{data: WeightLogCreateRequestDto}, TContext> => {
 
@@ -2965,12 +2504,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiTrackingWeightLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingWeightLog>>>
     export type PostApiTrackingWeightLogMutationBody = WeightLogCreateRequestDto
-    export type PostApiTrackingWeightLogMutationError = unknown
+    export type PostApiTrackingWeightLogMutationError = void
 
     /**
  * @summary Client logs body weight
  */
-export const usePostApiTrackingWeightLog = <TError = unknown,
+export const usePostApiTrackingWeightLog = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWeightLog>>, TError,{data: WeightLogCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiTrackingWeightLog>>,
@@ -2985,286 +2524,7 @@ export const usePostApiTrackingWeightLog = <TError = unknown,
     }
     
 /**
- * @summary Coach views today's day type for the client
- */
-export const getApiTrackingDaySelectionTodayClientId = (
-    clientId: string,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<DaySelectionTodayResponseDto>(
-      {url: `/api/tracking/day-selection/today/${clientId}`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiTrackingDaySelectionTodayClientIdQueryKey = (clientId?: string,) => {
-    return [
-    `/api/tracking/day-selection/today/${clientId}`
-    ] as const;
-    }
-
-    
-export const getGetApiTrackingDaySelectionTodayClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingDaySelectionTodayClientIdQueryKey(clientId);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>> = ({ signal }) => getApiTrackingDaySelectionTodayClientId(clientId, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiTrackingDaySelectionTodayClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>>
-export type GetApiTrackingDaySelectionTodayClientIdQueryError = unknown
-
-
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
- clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Coach views today's day type for the client
- */
-
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiTrackingDaySelectionTodayClientIdQueryOptions(clientId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Coach views meal log history
- */
-export const getApiTrackingMealLogHistoryClientId = (
-    clientId: string,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<MealLogHistoryResponseDto>(
-      {url: `/api/tracking/meal-log/history/${clientId}`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiTrackingMealLogHistoryClientIdQueryKey = (clientId?: string,) => {
-    return [
-    `/api/tracking/meal-log/history/${clientId}`
-    ] as const;
-    }
-
-    
-export const getGetApiTrackingMealLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingMealLogHistoryClientIdQueryKey(clientId);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>> = ({ signal }) => getApiTrackingMealLogHistoryClientId(clientId, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiTrackingMealLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>>
-export type GetApiTrackingMealLogHistoryClientIdQueryError = unknown
-
-
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
- clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Coach views meal log history
- */
-
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiTrackingMealLogHistoryClientIdQueryOptions(clientId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Coach views workout log history
- */
-export const getApiTrackingWorkoutLogHistoryClientId = (
-    clientId: string,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<WorkoutLogHistoryResponseDto>(
-      {url: `/api/tracking/workout-log/history/${clientId}`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiTrackingWorkoutLogHistoryClientIdQueryKey = (clientId?: string,) => {
-    return [
-    `/api/tracking/workout-log/history/${clientId}`
-    ] as const;
-    }
-
-    
-export const getGetApiTrackingWorkoutLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingWorkoutLogHistoryClientIdQueryKey(clientId);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>> = ({ signal }) => getApiTrackingWorkoutLogHistoryClientId(clientId, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiTrackingWorkoutLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>>
-export type GetApiTrackingWorkoutLogHistoryClientIdQueryError = unknown
-
-
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
- clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Coach views workout log history
- */
-
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiTrackingWorkoutLogHistoryClientIdQueryOptions(clientId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Coach views weight log history
+ * @summary Coach views weight log history for a client
  */
 export const getApiTrackingWeightLogHistoryClientId = (
     clientId: string,
@@ -3288,7 +2548,7 @@ export const getGetApiTrackingWeightLogHistoryClientIdQueryKey = (clientId?: str
     }
 
     
-export const getGetApiTrackingWeightLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
+export const getGetApiTrackingWeightLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
@@ -3307,10 +2567,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiTrackingWeightLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>>
-export type GetApiTrackingWeightLogHistoryClientIdQueryError = unknown
+export type GetApiTrackingWeightLogHistoryClientIdQueryError = void
 
 
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
  clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>,
@@ -3320,7 +2580,7 @@ export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<Return
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>,
@@ -3330,20 +2590,308 @@ export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<Return
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Coach views weight log history
+ * @summary Coach views weight log history for a client
  */
 
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetApiTrackingWeightLogHistoryClientIdQueryOptions(clientId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Client logs a workout
+ */
+export const postApiTrackingWorkoutLog = (
+    workoutLogCreateRequestDto: WorkoutLogCreateRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<WorkoutLogResponseDto>(
+      {url: `/api/tracking/workout-log`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: workoutLogCreateRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiTrackingWorkoutLogMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext> => {
+
+const mutationKey = ['postApiTrackingWorkoutLog'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, {data: WorkoutLogCreateRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiTrackingWorkoutLog(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiTrackingWorkoutLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>>
+    export type PostApiTrackingWorkoutLogMutationBody = WorkoutLogCreateRequestDto
+    export type PostApiTrackingWorkoutLogMutationError = void
+
+    /**
+ * @summary Client logs a workout
+ */
+export const usePostApiTrackingWorkoutLog = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>,
+        TError,
+        {data: WorkoutLogCreateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiTrackingWorkoutLogMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Client updates a workout log
+ */
+export const putApiTrackingWorkoutLogLogId = (
+    logId: string,
+    workoutLogUpdateRequestDto: WorkoutLogUpdateRequestDto,
+ ) => {
+      
+      
+      return customFetcher<WorkoutLogResponseDto>(
+      {url: `/api/tracking/workout-log/${logId}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: workoutLogUpdateRequestDto
+    },
+      );
+    }
+  
+
+
+export const getPutApiTrackingWorkoutLogLogIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext> => {
+
+const mutationKey = ['putApiTrackingWorkoutLogLogId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, {logId: string;data: WorkoutLogUpdateRequestDto}> = (props) => {
+          const {logId,data} = props ?? {};
+
+          return  putApiTrackingWorkoutLogLogId(logId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiTrackingWorkoutLogLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>>
+    export type PutApiTrackingWorkoutLogLogIdMutationBody = WorkoutLogUpdateRequestDto
+    export type PutApiTrackingWorkoutLogLogIdMutationError = void
+
+    /**
+ * @summary Client updates a workout log
+ */
+export const usePutApiTrackingWorkoutLogLogId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>,
+        TError,
+        {logId: string;data: WorkoutLogUpdateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiTrackingWorkoutLogLogIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Client updates a single exercise entry in a workout log
+ */
+export const patchApiTrackingWorkoutLogExerciseExerciseLogId = (
+    exerciseLogId: string,
+    workoutExerciseUpdateDto: WorkoutExerciseUpdateDto,
+ ) => {
+      
+      
+      return customFetcher<WorkoutLogResponseDto>(
+      {url: `/api/tracking/workout-log/exercise/${exerciseLogId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: workoutExerciseUpdateDto
+    },
+      );
+    }
+  
+
+
+export const getPatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: WorkoutExerciseUpdateDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: WorkoutExerciseUpdateDto}, TContext> => {
+
+const mutationKey = ['patchApiTrackingWorkoutLogExerciseExerciseLogId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, {exerciseLogId: string;data: WorkoutExerciseUpdateDto}> = (props) => {
+          const {exerciseLogId,data} = props ?? {};
+
+          return  patchApiTrackingWorkoutLogExerciseExerciseLogId(exerciseLogId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>>
+    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationBody = WorkoutExerciseUpdateDto
+    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationError = void
+
+    /**
+ * @summary Client updates a single exercise entry in a workout log
+ */
+export const usePatchApiTrackingWorkoutLogExerciseExerciseLogId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: WorkoutExerciseUpdateDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>,
+        TError,
+        {exerciseLogId: string;data: WorkoutExerciseUpdateDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Coach views workout log history for a client
+ */
+export const getApiTrackingWorkoutLogHistoryClientId = (
+    clientId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<WorkoutLogHistoryResponseDto>(
+      {url: `/api/tracking/workout-log/history/${clientId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTrackingWorkoutLogHistoryClientIdQueryKey = (clientId?: string,) => {
+    return [
+    `/api/tracking/workout-log/history/${clientId}`
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingWorkoutLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingWorkoutLogHistoryClientIdQueryKey(clientId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>> = ({ signal }) => getApiTrackingWorkoutLogHistoryClientId(clientId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTrackingWorkoutLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>>
+export type GetApiTrackingWorkoutLogHistoryClientIdQueryError = void
+
+
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+ clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Coach views workout log history for a client
+ */
+
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingWorkoutLogHistoryClientIdQueryOptions(clientId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3365,7 +2913,7 @@ export const getApiExercises = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<ExerciseResponseDto[]>(
       {url: `/api/exercises`, method: 'GET', signal
     },
       );
@@ -3458,7 +3006,7 @@ export const postApiExercises = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<ExerciseResponseDto>(
       {url: `/api/exercises`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: exerciseCreateRequestDto, signal
@@ -3468,7 +3016,7 @@ export const postApiExercises = (
   
 
 
-export const getPostApiExercisesMutationOptions = <TError = unknown,
+export const getPostApiExercisesMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext> => {
 
@@ -3495,12 +3043,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiExercisesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiExercises>>>
     export type PostApiExercisesMutationBody = ExerciseCreateRequestDto
-    export type PostApiExercisesMutationError = unknown
+    export type PostApiExercisesMutationError = void
 
     /**
  * @summary Create new exercise
  */
-export const usePostApiExercises = <TError = unknown,
+export const usePostApiExercises = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiExercises>>,
@@ -3523,7 +3071,7 @@ export const getApiExercisesId = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<ExerciseResponseDto>(
       {url: `/api/exercises/${id}`, method: 'GET', signal
     },
       );
@@ -3539,7 +3087,7 @@ export const getGetApiExercisesIdQueryKey = (id?: string,) => {
     }
 
     
-export const getGetApiExercisesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = unknown>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesId>>, TError, TData>>, }
+export const getGetApiExercisesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
@@ -3558,10 +3106,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiExercisesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiExercisesId>>>
-export type GetApiExercisesIdQueryError = unknown
+export type GetApiExercisesIdQueryError = void
 
 
-export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = unknown>(
+export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = void>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiExercisesId>>,
@@ -3571,7 +3119,7 @@ export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExe
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = unknown>(
+export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = void>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiExercisesId>>,
@@ -3581,7 +3129,7 @@ export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExe
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = unknown>(
+export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = void>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -3589,7 +3137,7 @@ export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExe
  * @summary Get exercise by ID
  */
 
-export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = unknown>(
+export function useGetApiExercisesId<TData = Awaited<ReturnType<typeof getApiExercisesId>>, TError = void>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -3616,7 +3164,7 @@ export const putApiExercisesId = (
  ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<ExerciseResponseDto>(
       {url: `/api/exercises/${id}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: exerciseUpdateRequestDto
@@ -3626,7 +3174,7 @@ export const putApiExercisesId = (
   
 
 
-export const getPutApiExercisesIdMutationOptions = <TError = unknown,
+export const getPutApiExercisesIdMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiExercisesId>>, TError,{id: string;data: ExerciseUpdateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof putApiExercisesId>>, TError,{id: string;data: ExerciseUpdateRequestDto}, TContext> => {
 
@@ -3653,12 +3201,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PutApiExercisesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiExercisesId>>>
     export type PutApiExercisesIdMutationBody = ExerciseUpdateRequestDto
-    export type PutApiExercisesIdMutationError = unknown
+    export type PutApiExercisesIdMutationError = void
 
     /**
  * @summary Update exercise
  */
-export const usePutApiExercisesId = <TError = unknown,
+export const usePutApiExercisesId = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiExercisesId>>, TError,{id: string;data: ExerciseUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiExercisesId>>,
@@ -3688,7 +3236,7 @@ export const deleteApiExercisesId = (
   
 
 
-export const getDeleteApiExercisesIdMutationOptions = <TError = unknown,
+export const getDeleteApiExercisesIdMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiExercisesId>>, TError,{id: string}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteApiExercisesId>>, TError,{id: string}, TContext> => {
 
@@ -3715,12 +3263,12 @@ const {mutation: mutationOptions} = options ?
 
     export type DeleteApiExercisesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiExercisesId>>>
     
-    export type DeleteApiExercisesIdMutationError = unknown
+    export type DeleteApiExercisesIdMutationError = void
 
     /**
  * @summary Delete exercise
  */
-export const useDeleteApiExercisesId = <TError = unknown,
+export const useDeleteApiExercisesId = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiExercisesId>>, TError,{id: string}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiExercisesId>>,
@@ -3735,7 +3283,7 @@ export const useDeleteApiExercisesId = <TError = unknown,
     }
     
 /**
- * @summary Upload exercise video
+ * @summary Upload or update exercise video
  */
 export const postApiExercisesIdVideo = (
     id: string,
@@ -3758,7 +3306,7 @@ if(postApiExercisesIdVideoBody.file !== undefined) {
   
 
 
-export const getPostApiExercisesIdVideoMutationOptions = <TError = unknown,
+export const getPostApiExercisesIdVideoMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercisesIdVideo>>, TError,{id: string;data: PostApiExercisesIdVideoBody}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiExercisesIdVideo>>, TError,{id: string;data: PostApiExercisesIdVideoBody}, TContext> => {
 
@@ -3785,12 +3333,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiExercisesIdVideoMutationResult = NonNullable<Awaited<ReturnType<typeof postApiExercisesIdVideo>>>
     export type PostApiExercisesIdVideoMutationBody = PostApiExercisesIdVideoBody
-    export type PostApiExercisesIdVideoMutationError = unknown
+    export type PostApiExercisesIdVideoMutationError = void
 
     /**
- * @summary Upload exercise video
+ * @summary Upload or update exercise video
  */
-export const usePostApiExercisesIdVideo = <TError = unknown,
+export const usePostApiExercisesIdVideo = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercisesIdVideo>>, TError,{id: string;data: PostApiExercisesIdVideoBody}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiExercisesIdVideo>>,
@@ -3807,14 +3355,14 @@ export const usePostApiExercisesIdVideo = <TError = unknown,
 /**
  * @summary Serve uploaded exercise assets
  */
-export const getApiExercisesUploads = (
-    
+export const getApiExercisesUploadsPath = (
+    path: string,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<void>(
-      {url: `/api/exercises/uploads`, method: 'GET', signal
+      {url: `/api/exercises/uploads/${path}`, method: 'GET', signal
     },
       );
     }
@@ -3822,69 +3370,69 @@ export const getApiExercisesUploads = (
 
 
 
-export const getGetApiExercisesUploadsQueryKey = () => {
+export const getGetApiExercisesUploadsPathQueryKey = (path?: string,) => {
     return [
-    `/api/exercises/uploads`
+    `/api/exercises/uploads/${path}`
     ] as const;
     }
 
     
-export const getGetApiExercisesUploadsQueryOptions = <TData = Awaited<ReturnType<typeof getApiExercisesUploads>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploads>>, TError, TData>>, }
+export const getGetApiExercisesUploadsPathQueryOptions = <TData = Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError = unknown>(path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiExercisesUploadsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiExercisesUploadsPathQueryKey(path);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiExercisesUploads>>> = ({ signal }) => getApiExercisesUploads(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>> = ({ signal }) => getApiExercisesUploadsPath(path, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploads>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(path), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiExercisesUploadsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiExercisesUploads>>>
-export type GetApiExercisesUploadsQueryError = unknown
+export type GetApiExercisesUploadsPathQueryResult = NonNullable<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>>
+export type GetApiExercisesUploadsPathQueryError = unknown
 
 
-export function useGetApiExercisesUploads<TData = Awaited<ReturnType<typeof getApiExercisesUploads>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploads>>, TError, TData>> & Pick<
+export function useGetApiExercisesUploadsPath<TData = Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError = unknown>(
+ path: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiExercisesUploads>>,
+          Awaited<ReturnType<typeof getApiExercisesUploadsPath>>,
           TError,
-          Awaited<ReturnType<typeof getApiExercisesUploads>>
+          Awaited<ReturnType<typeof getApiExercisesUploadsPath>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiExercisesUploads<TData = Awaited<ReturnType<typeof getApiExercisesUploads>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploads>>, TError, TData>> & Pick<
+export function useGetApiExercisesUploadsPath<TData = Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError = unknown>(
+ path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiExercisesUploads>>,
+          Awaited<ReturnType<typeof getApiExercisesUploadsPath>>,
           TError,
-          Awaited<ReturnType<typeof getApiExercisesUploads>>
+          Awaited<ReturnType<typeof getApiExercisesUploadsPath>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiExercisesUploads<TData = Awaited<ReturnType<typeof getApiExercisesUploads>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploads>>, TError, TData>>, }
+export function useGetApiExercisesUploadsPath<TData = Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError = unknown>(
+ path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Serve uploaded exercise assets
  */
 
-export function useGetApiExercisesUploads<TData = Awaited<ReturnType<typeof getApiExercisesUploads>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploads>>, TError, TData>>, }
+export function useGetApiExercisesUploadsPath<TData = Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError = unknown>(
+ path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercisesUploadsPath>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiExercisesUploadsQueryOptions(options)
+  const queryOptions = getGetApiExercisesUploadsPathQueryOptions(path,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3898,7 +3446,7 @@ export function useGetApiExercisesUploads<TData = Awaited<ReturnType<typeof getA
 
 
 /**
- * @summary Coach fetches all programs
+ * @summary Coach fetches all workout programs
  */
 export const getApiPrograms = (
     
@@ -3906,7 +3454,7 @@ export const getApiPrograms = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<WorkoutProgramResponseDto[]>(
       {url: `/api/programs`, method: 'GET', signal
     },
       );
@@ -3969,7 +3517,7 @@ export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiProgra
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Coach fetches all programs
+ * @summary Coach fetches all workout programs
  */
 
 export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiPrograms>>, TError = unknown>(
@@ -3991,7 +3539,7 @@ export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiProgra
 
 
 /**
- * @summary Coach fetches a single program
+ * @summary Coach fetches a workout program by ID
  */
 export const getApiProgramsProgramId = (
     programId: string,
@@ -3999,7 +3547,7 @@ export const getApiProgramsProgramId = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<WorkoutProgramResponseDto>(
       {url: `/api/programs/${programId}`, method: 'GET', signal
     },
       );
@@ -4015,7 +3563,7 @@ export const getGetApiProgramsProgramIdQueryKey = (programId?: string,) => {
     }
 
     
-export const getGetApiProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = unknown>(programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>>, }
+export const getGetApiProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
@@ -4034,10 +3582,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiProgramsProgramIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiProgramsProgramId>>>
-export type GetApiProgramsProgramIdQueryError = unknown
+export type GetApiProgramsProgramIdQueryError = void
 
 
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = unknown>(
+export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
  programId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiProgramsProgramId>>,
@@ -4047,7 +3595,7 @@ export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof get
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = unknown>(
+export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
  programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiProgramsProgramId>>,
@@ -4057,15 +3605,15 @@ export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof get
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = unknown>(
+export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
  programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Coach fetches a single program
+ * @summary Coach fetches a workout program by ID
  */
 
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = unknown>(
+export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
  programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -4084,7 +3632,7 @@ export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof get
 
 
 /**
- * @summary Client or coach fetch client programs
+ * @summary Fetch workout programs for a specific client
  */
 export const getApiClientIdWorkoutPrograms = (
     clientId: string,
@@ -4092,7 +3640,7 @@ export const getApiClientIdWorkoutPrograms = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<WorkoutProgramResponseDto[]>(
       {url: `/api/${clientId}/workout-programs`, method: 'GET', signal
     },
       );
@@ -4155,7 +3703,7 @@ export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<type
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Client or coach fetch client programs
+ * @summary Fetch workout programs for a specific client
  */
 
 export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError = unknown>(
@@ -4177,7 +3725,7 @@ export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<type
 
 
 /**
- * @summary Coach assigns program to client
+ * @summary Coach creates a workout program for a client
  */
 export const postApiClientIdWorkoutPrograms = (
     clientId: string,
@@ -4186,7 +3734,7 @@ export const postApiClientIdWorkoutPrograms = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<WorkoutProgramResponseDto>(
       {url: `/api/${clientId}/workout-programs`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: workoutProgramCreateRequestDto, signal
@@ -4196,7 +3744,7 @@ export const postApiClientIdWorkoutPrograms = (
   
 
 
-export const getPostApiClientIdWorkoutProgramsMutationOptions = <TError = unknown,
+export const getPostApiClientIdWorkoutProgramsMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>, TError,{clientId: string;data: WorkoutProgramCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>, TError,{clientId: string;data: WorkoutProgramCreateRequestDto}, TContext> => {
 
@@ -4223,12 +3771,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiClientIdWorkoutProgramsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>>
     export type PostApiClientIdWorkoutProgramsMutationBody = WorkoutProgramCreateRequestDto
-    export type PostApiClientIdWorkoutProgramsMutationError = unknown
+    export type PostApiClientIdWorkoutProgramsMutationError = void
 
     /**
- * @summary Coach assigns program to client
+ * @summary Coach creates a workout program for a client
  */
-export const usePostApiClientIdWorkoutPrograms = <TError = unknown,
+export const usePostApiClientIdWorkoutPrograms = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>, TError,{clientId: string;data: WorkoutProgramCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>,
@@ -4243,7 +3791,7 @@ export const usePostApiClientIdWorkoutPrograms = <TError = unknown,
     }
     
 /**
- * @summary Fetch specific program by ID
+ * @summary Fetch a specific workout program for a client
  */
 export const getApiClientIdWorkoutProgramsProgramId = (
     clientId: string,
@@ -4252,7 +3800,7 @@ export const getApiClientIdWorkoutProgramsProgramId = (
 ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<WorkoutProgramResponseDto>(
       {url: `/api/${clientId}/workout-programs/${programId}`, method: 'GET', signal
     },
       );
@@ -4269,7 +3817,7 @@ export const getGetApiClientIdWorkoutProgramsProgramIdQueryKey = (clientId?: str
     }
 
     
-export const getGetApiClientIdWorkoutProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = unknown>(clientId: string,
+export const getGetApiClientIdWorkoutProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(clientId: string,
     programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
 ) => {
 
@@ -4289,10 +3837,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiClientIdWorkoutProgramsProgramIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>>
-export type GetApiClientIdWorkoutProgramsProgramIdQueryError = unknown
+export type GetApiClientIdWorkoutProgramsProgramIdQueryError = void
 
 
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = unknown>(
+export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
     programId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
@@ -4303,7 +3851,7 @@ export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<Return
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = unknown>(
+export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
     programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
@@ -4314,16 +3862,16 @@ export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<Return
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = unknown>(
+export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
     programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Fetch specific program by ID
+ * @summary Fetch a specific workout program for a client
  */
 
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = unknown>(
+export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
     programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient 
@@ -4343,7 +3891,7 @@ export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<Return
 
 
 /**
- * @summary Coach updates client's workout program
+ * @summary Coach updates a client's workout program
  */
 export const putApiClientIdWorkoutProgramsProgramId = (
     clientId: string,
@@ -4352,7 +3900,7 @@ export const putApiClientIdWorkoutProgramsProgramId = (
  ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<WorkoutProgramResponseDto>(
       {url: `/api/${clientId}/workout-programs/${programId}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: workoutProgramUpdateRequestDto
@@ -4362,7 +3910,7 @@ export const putApiClientIdWorkoutProgramsProgramId = (
   
 
 
-export const getPutApiClientIdWorkoutProgramsProgramIdMutationOptions = <TError = unknown,
+export const getPutApiClientIdWorkoutProgramsProgramIdMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext> => {
 
@@ -4389,12 +3937,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PutApiClientIdWorkoutProgramsProgramIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>>
     export type PutApiClientIdWorkoutProgramsProgramIdMutationBody = WorkoutProgramUpdateRequestDto
-    export type PutApiClientIdWorkoutProgramsProgramIdMutationError = unknown
+    export type PutApiClientIdWorkoutProgramsProgramIdMutationError = void
 
     /**
- * @summary Coach updates client's workout program
+ * @summary Coach updates a client's workout program
  */
-export const usePutApiClientIdWorkoutProgramsProgramId = <TError = unknown,
+export const usePutApiClientIdWorkoutProgramsProgramId = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>,
@@ -4409,7 +3957,7 @@ export const usePutApiClientIdWorkoutProgramsProgramId = <TError = unknown,
     }
     
 /**
- * @summary Coach deletes program
+ * @summary Coach deletes a workout program
  */
 export const deleteApiClientIdWorkoutProgramsProgramId = (
     clientId: string,
@@ -4417,7 +3965,7 @@ export const deleteApiClientIdWorkoutProgramsProgramId = (
  ) => {
       
       
-      return customFetcher<void>(
+      return customFetcher<DeleteApiClientIdWorkoutProgramsProgramId200>(
       {url: `/api/${clientId}/workout-programs/${programId}`, method: 'DELETE'
     },
       );
@@ -4425,7 +3973,7 @@ export const deleteApiClientIdWorkoutProgramsProgramId = (
   
 
 
-export const getDeleteApiClientIdWorkoutProgramsProgramIdMutationOptions = <TError = unknown,
+export const getDeleteApiClientIdWorkoutProgramsProgramIdMutationOptions = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext> => {
 
@@ -4452,12 +4000,12 @@ const {mutation: mutationOptions} = options ?
 
     export type DeleteApiClientIdWorkoutProgramsProgramIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>>
     
-    export type DeleteApiClientIdWorkoutProgramsProgramIdMutationError = unknown
+    export type DeleteApiClientIdWorkoutProgramsProgramIdMutationError = void
 
     /**
- * @summary Coach deletes program
+ * @summary Coach deletes a workout program
  */
-export const useDeleteApiClientIdWorkoutProgramsProgramId = <TError = unknown,
+export const useDeleteApiClientIdWorkoutProgramsProgramId = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>,
@@ -4467,6 +4015,384 @@ export const useDeleteApiClientIdWorkoutProgramsProgramId = <TError = unknown,
       > => {
 
       const mutationOptions = getDeleteApiClientIdWorkoutProgramsProgramIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Get all workout templates
+ */
+export const getApiTemplates = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<WorkoutTemplateResponseDto[]>(
+      {url: `/api/templates`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTemplatesQueryKey = () => {
+    return [
+    `/api/templates`
+    ] as const;
+    }
+
+    
+export const getGetApiTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplates>>> = ({ signal }) => getApiTemplates(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplates>>>
+export type GetApiTemplatesQueryError = unknown
+
+
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get all workout templates
+ */
+
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTemplatesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Create workout template
+ */
+export const postApiTemplates = (
+    workoutTemplateCreateRequestDto: WorkoutTemplateCreateRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<WorkoutTemplateResponseDto>(
+      {url: `/api/templates`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: workoutTemplateCreateRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiTemplatesMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext> => {
+
+const mutationKey = ['postApiTemplates'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiTemplates>>, {data: WorkoutTemplateCreateRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiTemplates(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiTemplatesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTemplates>>>
+    export type PostApiTemplatesMutationBody = WorkoutTemplateCreateRequestDto
+    export type PostApiTemplatesMutationError = void
+
+    /**
+ * @summary Create workout template
+ */
+export const usePostApiTemplates = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiTemplates>>,
+        TError,
+        {data: WorkoutTemplateCreateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiTemplatesMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Get workout template by ID
+ */
+export const getApiTemplatesId = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<WorkoutTemplateResponseDto>(
+      {url: `/api/templates/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTemplatesIdQueryKey = (id?: string,) => {
+    return [
+    `/api/templates/${id}`
+    ] as const;
+    }
+
+    
+export const getGetApiTemplatesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplatesId>>> = ({ signal }) => getApiTemplatesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTemplatesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplatesId>>>
+export type GetApiTemplatesIdQueryError = void
+
+
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get workout template by ID
+ */
+
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTemplatesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Update workout template
+ */
+export const putApiTemplatesId = (
+    id: string,
+    workoutTemplateUpdateRequestDto: WorkoutTemplateUpdateRequestDto,
+ ) => {
+      
+      
+      return customFetcher<WorkoutTemplateResponseDto>(
+      {url: `/api/templates/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: workoutTemplateUpdateRequestDto
+    },
+      );
+    }
+  
+
+
+export const getPutApiTemplatesIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext> => {
+
+const mutationKey = ['putApiTemplatesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTemplatesId>>, {id: string;data: WorkoutTemplateUpdateRequestDto}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiTemplatesId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTemplatesId>>>
+    export type PutApiTemplatesIdMutationBody = WorkoutTemplateUpdateRequestDto
+    export type PutApiTemplatesIdMutationError = void
+
+    /**
+ * @summary Update workout template
+ */
+export const usePutApiTemplatesId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiTemplatesId>>,
+        TError,
+        {id: string;data: WorkoutTemplateUpdateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiTemplatesIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Delete workout template
+ */
+export const deleteApiTemplatesId = (
+    id: string,
+ ) => {
+      
+      
+      return customFetcher<DeleteApiTemplatesId200>(
+      {url: `/api/templates/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiTemplatesIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deleteApiTemplatesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiTemplatesId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiTemplatesId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiTemplatesId>>>
+    
+    export type DeleteApiTemplatesIdMutationError = void
+
+    /**
+ * @summary Delete workout template
+ */
+export const useDeleteApiTemplatesId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiTemplatesId>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiTemplatesIdMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

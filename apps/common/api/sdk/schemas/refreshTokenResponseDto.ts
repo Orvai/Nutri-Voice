@@ -4,5 +4,8 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { RefreshTokenResponseDtoData } from './refreshTokenResponseDtoData';
 
-export interface RefreshTokenResponseDto {}
+export interface RefreshTokenResponseDto {
+  data: RefreshTokenResponseDtoData;
+}

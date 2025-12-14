@@ -6,11 +6,18 @@ const {
   updateTemplate,
   deleteTemplate,
 } = require("../services/workoutTemplate.service");
+const {
+  WorkoutTemplateIdParamDto,
+  WorkoutTemplateQueryDto,
+  WorkoutTemplateCreateDto,
+  WorkoutTemplateUpdateDto,
+} = require("../dto/workoutTemplate.dto");
 
 // GET /internal/workout/templates
 const listTemplatesController = async (req, res, next) => {
   try {
-    const result = await listTemplates(req.query);
+    const query = WorkoutTemplateQueryDto.parse(req.query);
+    const result = await listTemplates(query);
     res.json({ data: result });
   } catch (e) {
     next(e);
@@ -20,7 +27,8 @@ const listTemplatesController = async (req, res, next) => {
 // GET /internal/workout/templates/:id
 const getTemplateController = async (req, res, next) => {
   try {
-    const result = await getTemplateById(req.params.id);
+    const { id } = WorkoutTemplateIdParamDto.parse(req.params);
+    const result = await getTemplateById(id);
     res.json({ data: result });
   } catch (e) {
     next(e);
@@ -30,7 +38,8 @@ const getTemplateController = async (req, res, next) => {
 // POST /internal/workout/templates
 const createTemplateController = async (req, res, next) => {
   try {
-    const result = await createTemplate(req.body, req.user.id);
+    const payload = WorkoutTemplateCreateDto.parse(req.body);
+    const result = await createTemplate(payload, req.user?.id);
     res.status(201).json({ data: result });
   } catch (e) {
     next(e);
@@ -40,11 +49,9 @@ const createTemplateController = async (req, res, next) => {
 // PUT /internal/workout/templates/:id
 const updateTemplateController = async (req, res, next) => {
   try {
-    const result = await updateTemplate(
-      req.params.id,
-      req.body,
-      req.user.id
-    );
+    const { id } = WorkoutTemplateIdParamDto.parse(req.params);
+    const payload = WorkoutTemplateUpdateDto.parse(req.body);
+    const result = await updateTemplate(id, payload, req.user?.id);
     res.json({ data: result });
   } catch (e) {
     next(e);
@@ -54,8 +61,9 @@ const updateTemplateController = async (req, res, next) => {
 // DELETE /internal/workout/templates/:id
 const deleteTemplateController = async (req, res, next) => {
   try {
-    await deleteTemplate(req.params.id, req.user.id);
-    res.json({ id: req.params.id });
+    const { id } = WorkoutTemplateIdParamDto.parse(req.params);
+    await deleteTemplate(id, req.user?.id);
+    res.json({ id });
   } catch (e) {
     next(e);
   }

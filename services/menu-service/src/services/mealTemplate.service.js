@@ -1,18 +1,11 @@
 const prisma = require("../db/prisma");
-const {
-  MealTemplateCreateDto,
-  MealTemplateUpsertDto, // update DTO
-} = require("../dto/mealTemplate.dto");
-
 // =========================================================
 // CREATE Meal Template
 // =========================================================
-const createMealTemplate = async (payload) => {
-  const data = MealTemplateCreateDto.parse(payload);
-
+const createMealTemplate = async (data, coachId) => {
   const created = await prisma.mealTemplate.create({
     data: {
-      coachId: data.coachId,
+      coachId,
       name: data.name,
       kind: data.kind,
       totalCalories: data.totalCalories ?? 0,
@@ -87,8 +80,7 @@ const getMealTemplate = async (id) => {
 // =========================================================
 // UPDATE Meal Template (Upsert style)
 // =========================================================
-const updateMealTemplate = async (id, payload) => {
-  const data = MealTemplateUpsertDto.parse(payload);
+const updateMealTemplate = async (id, data) => {
 
   return prisma.$transaction(async (tx) => {
     const existing = await tx.mealTemplate.findUnique({

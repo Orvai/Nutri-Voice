@@ -2,8 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const routes = require('./routes');
 const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swagger');
 
 const { errorHandler } = require('./common/errors');
 const { logger, dbLogger } = require('./middleware/logger');
@@ -24,8 +22,6 @@ app.use(express.json());
 app.use(attachCookies);
 app.use(dbLogger);
 
-// Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Health check
 app.get('/health', (_req, res) => res.json({ ok: true }));

@@ -4,10 +4,10 @@ import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger.js";
 
-import menuRoutes from "./routes/menu.routes.js";
-import workoutRoutes from "./routes/workout.routes.js";
-import trackingRoutes from "./routes/tracking.routes.js";
-import idmGatewayRoutes from "./routes/idm.gateway.routes.js";
+import menuRoutes from "./routes/menu/index.js";
+import workoutRoutes from "./routes/workout/index.js";
+import trackingRoutes from "./routes/tracking/index.js";
+import idmGatewayRoutes from "./routes/idm/index.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyJwt } from "./middleware/verifyJwt.js";
 

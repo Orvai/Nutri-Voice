@@ -1,101 +1,35 @@
+const { z } = require('zod');
 const I = require('../services/userInfo.service');
+const { validateDto } = require('../common/validation');
+const { upsertUserInfoDto } = require('../dto/userInfo.dto');
 
-/**
- * @openapi
- * /internal/users/{userId}/info:
- *   put:
- *     tags:
- *       - IDM - User Info
- *     summary: Create or update user information (internal)
- *     security:
- *       - internalToken: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/IDM_UpsertUserInfoRequestDto'
- *     responses:
- *       200:
- *         description: Upserted user info
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/IDM_UserInfoResponseDto'
- */
+const userIdParamDto = z.object({ userId: z.string().uuid() }).strict();
+
 const upsertUserInformation = async (req, res, next) => {
   try {
-    const data = await I.upsertUserInformation(req.params.userId, req.body);
+    const { userId } = validateDto(userIdParamDto, req.params);
+    const payload = validateDto(upsertUserInfoDto, req.body);
+    const data = await I.upsertUserInformation(userId, payload);
     res.json(data);
   } catch (e) {
     next(e);
   }
 };
 
-/**
- * @openapi
- * /internal/users/{userId}/info:
- *   get:
- *     tags:
- *       - IDM - User Info
- *     summary: Get user information (internal)
- *     security:
- *       - internalToken: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User info details
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/IDM_UserInfoResponseDto'
- */
 const getUserInformation = async (req, res, next) => {
   try {
-    const data = await I.getUserInformation(req.params.userId);
+    const { userId } = validateDto(userIdParamDto, req.params);
+    const data = await I.getUserInformation(userId);
     res.json(data);
   } catch (e) {
     next(e);
   }
 };
 
-/**
- * @openapi
- * /internal/users/{userId}/info:
- *   delete:
- *     tags:
- *       - IDM - User Info
- *     summary: Delete user information (internal)
- *     security:
- *       - internalToken: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Deleted user info record
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/IDM_UserInfoResponseDto'
- */
 const deleteUserInformation = async (req, res, next) => {
   try {
-    const data = await I.deleteUserInformation(req.params.userId);
+    const { userId } = validateDto(userIdParamDto, req.params);
+    const data = await I.deleteUserInformation(userId);
     res.json(data);
   } catch (e) {
     next(e);

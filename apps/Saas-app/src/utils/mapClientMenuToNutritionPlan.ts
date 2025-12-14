@@ -6,7 +6,7 @@ import {
     UIVitamin,
     UIDayType,
     UIFoodRole,
-  } from "../types/ui/nutrition-ui";
+  } from "../types/ui/nutrition/nutrition.types";
   import { ClientMenu } from "../types/api/nutrition-types/clientMenu.types";
   import { getColorByRole, normalizeDayType } from "./mapTemplateMenuToNutritionPlan";
   

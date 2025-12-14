@@ -5,4 +5,27 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface ExerciseResponseDto {}
+export interface ExerciseResponseDto {
+  id: string;
+  name: string;
+  /** @nullable */
+  description: string | null;
+  /** @nullable */
+  notes: string | null;
+  /** @nullable */
+  videoUrl: string | null;
+  muscleGroup: string;
+  /** @nullable */
+  gender: string | null;
+  /** @nullable */
+  bodyType: string | null;
+  workoutTypes: string[];
+  /** @nullable */
+  equipment: string | null;
+  /** @nullable */
+  difficulty: string | null;
+  /** @nullable */
+  createdByCoachId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -1,14 +1,23 @@
 import React, { useMemo, useState } from "react";
-import { Modal, View, Text, Pressable, TextInput, ScrollView } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  Pressable,
+  TextInput,
+  ScrollView,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
 import PickerItemCard from "../shared/PickerItemCard";
-import { useVitamins } from "../../hooks/nutrition/useVitamins";
+import { useVitamins } from "@/hooks/nutrition/useVitamins";
+import { Vitamin } from "@/types/ui/nutrition/vitamin.ui";
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   existingIds: string[];
-  onSelect: (vitamin: any) => void;
+  onSelect: (vitamin: Vitamin) => void;
 };
 
 export default function VitaminPickerModal({
@@ -18,15 +27,20 @@ export default function VitaminPickerModal({
   onSelect,
 }: Props) {
   const [search, setSearch] = useState("");
+
   const { data: vitamins = [] } = useVitamins();
 
-  const filteredVitamins = useMemo(
-    () =>
-      vitamins
-        .filter((v: any) => !existingIds.includes(v.id))
-        .filter((v: any) => v.name.toLowerCase().includes(search.toLowerCase())),
-    [existingIds, search, vitamins]
-  );
+  const filteredVitamins = useMemo(() => {
+    const withoutExisting = vitamins.filter(
+      (v) => !existingIds.includes(v.id)
+    );
+
+    if (!search) return withoutExisting;
+
+    return withoutExisting.filter((v) =>
+      v.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [existingIds, search, vitamins]);
 
   if (!visible) return null;
 
@@ -49,6 +63,7 @@ export default function VitaminPickerModal({
             gap: 12,
           }}
         >
+          {/* Header */}
           <View
             style={{
               flexDirection: "row-reverse",
@@ -56,12 +71,15 @@ export default function VitaminPickerModal({
               alignItems: "center",
             }}
           >
-            <Text style={{ fontWeight: "800", fontSize: 18 }}>בחר תוסף להוספה</Text>
+            <Text style={{ fontWeight: "800", fontSize: 18 }}>
+              בחר תוסף להוספה
+            </Text>
             <Pressable onPress={onClose}>
               <Ionicons name="close" size={24} color="#ef4444" />
             </Pressable>
           </View>
 
+          {/* Search */}
           <TextInput
             value={search}
             onChangeText={setSearch}
@@ -76,18 +94,25 @@ export default function VitaminPickerModal({
             }}
           />
 
-          <ScrollView style={{ flexGrow: 0 }}>
-            {filteredVitamins.map((v: any) => (
+          {/* List */}
+          <ScrollView>
+            {filteredVitamins.map((v) => (
               <PickerItemCard
                 key={v.id}
                 title={v.name}
-                subtitle={v.description}
+                subtitle={v.description ?? undefined}
                 onPress={() => onSelect(v)}
               />
             ))}
 
             {filteredVitamins.length === 0 && (
-              <Text style={{ textAlign: "center", color: "#6b7280", padding: 10 }}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#6b7280",
+                  padding: 10,
+                }}
+              >
                 לא נמצאו תוספים
               </Text>
             )}

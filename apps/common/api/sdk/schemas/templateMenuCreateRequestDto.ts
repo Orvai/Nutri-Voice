@@ -4,5 +4,14 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { TemplateMenuCreateRequestDtoMealsItem } from './templateMenuCreateRequestDtoMealsItem';
+import type { TemplateMenuCreateRequestDtoVitaminsItem } from './templateMenuCreateRequestDtoVitaminsItem';
 
-export interface TemplateMenuCreateRequestDto {}
+export interface TemplateMenuCreateRequestDto {
+  name: string;
+  dayType: string;
+  /** @nullable */
+  notes?: string | null;
+  meals?: TemplateMenuCreateRequestDtoMealsItem[];
+  vitamins?: TemplateMenuCreateRequestDtoVitaminsItem[];
+}

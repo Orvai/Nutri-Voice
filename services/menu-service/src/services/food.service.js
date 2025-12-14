@@ -1,12 +1,6 @@
 // src/services/food.service.js
 const prisma = require("../db/prisma");
-const {
-  FoodItemCreateRequestDto,
-  FoodItemUpdateRequestDto,
-} = require("../dto/food.dto");
-
-const createFoodItem = async (payload) => {
-  const data = FoodItemCreateRequestDto.parse(payload);
+const createFoodItem = async (data) => {
   return prisma.foodItem.create({ data });
 };
 
@@ -37,9 +31,7 @@ const getFoodItem = async (id) => {
 
   return existing;
 };
-const updateFoodItem = async (id, payload) => {
-  const data = FoodItemUpdateRequestDto.parse(payload);
-
+const updateFoodItem = async (id, data) => {
   await getFoodItem(id);
 
   return prisma.foodItem.update({

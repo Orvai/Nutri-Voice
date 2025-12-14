@@ -26,12 +26,6 @@ const {
   recomputeMenuCalories,
 } = require("./helpers/recompute");
 
-const {
-  ClientMenuCreateRequestDto,
-  ClientMenuUpdateRequestDto,
-  ClientMenuCreateFromTemplateDto,
-} = require("../../dto/clientMenu.dto");
-
 const withStatus = (error, status) => Object.assign(error, { status });
 
 const validateTemplateForClientMenu = (template, selectedOptions = []) => {
@@ -78,13 +72,11 @@ const validateTemplateForClientMenu = (template, selectedOptions = []) => {
 // =========================================================
 // CREATE empty ClientMenu
 // =========================================================
-const createClientMenu = async (payload, coachId) => {
-  const data = ClientMenuCreateRequestDto.parse(payload);
-
+const createClientMenu = async (data, coachId, clientId) => {
   const menu = await prisma.clientMenu.create({
     data: {
       name: data.name,
-      clientId: data.clientId,
+      clientId,
       coachId,
       type: data.type,
       notes: data.notes ?? null,
@@ -99,8 +91,7 @@ const createClientMenu = async (payload, coachId) => {
 // =========================================================
 // UPDATE ClientMenu (meals/items/vitamins)
 // =========================================================
-const updateClientMenu = async (id, payload) => {
-  const data = ClientMenuUpdateRequestDto.parse(payload);
+const updateClientMenu = async (id, data) => {
 
   await prisma.$transaction(async (tx) => {
     const existing = await tx.clientMenu.findUnique({ where: { id } });
@@ -254,28 +245,10 @@ const deleteClientMenu = async (id) => {
 // =========================================================
 // CREATE FROM TEMPLATE
 // =========================================================
-const createClientMenuFromTemplate = async (payload) => {
-  console.log("====== 🟦 Incoming payload for createClientMenuFromTemplate ======");
-  console.log(JSON.stringify(payload, null, 2));
-
-  let data;
-
-  try {
-    data = ClientMenuCreateFromTemplateDto.parse(payload);
-  } catch (zodErr) {
-    console.error("❌ ZOD VALIDATION ERROR");
-    console.error(zodErr);
-    // מחזיר שגיאה אמיתית, לא 500
-    throw Object.assign(new Error("Invalid payload for client menu creation"), {
-      status: 400,
-      details: zodErr.errors,
-    });
-  }
-
+const createClientMenuFromTemplate = async (data, coachId, clientId) => {
   try {
     const menu = await prisma.$transaction(async (tx) => {
       console.log("====== 🟧 Loading templateMenu from DB ======");
-
       const template = await tx.templateMenu.findUnique({
         where: { id: data.templateMenuId },
         include: {
@@ -309,8 +282,8 @@ const createClientMenuFromTemplate = async (payload) => {
       const clientMenu = await tx.clientMenu.create({
         data: {
           name: data.name ?? template.name,
-          clientId: data.clientId,
-          coachId: data.coachId,
+          clientId,
+          coachId,
           type: template.dayType,
           notes: template.notes ?? null,
           originalTemplateMenuId: template.id,

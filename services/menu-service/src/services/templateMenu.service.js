@@ -1,19 +1,12 @@
 // src/services/templateMenu.service.js
 const prisma = require("../db/prisma");
-const {
-  TemplateMenuCreateDto,
-  TemplateMenuUpdateDto,
-} = require("../dto/templateMenu.dto");
-
 // =========================================================
 // CREATE Template Menu
 // =========================================================
-const createTemplateMenu = async (payload) => {
-  const data = TemplateMenuCreateDto.parse(payload);
-
+const createTemplateMenu = async (data, coachId) => {
   const created = await prisma.templateMenu.create({
     data: {
-      coachId: data.coachId,
+      coachId,
       name: data.name,
       dayType: data.dayType,
       notes: data.notes ?? null,
@@ -141,8 +134,7 @@ const getTemplateMenu = async (id) => {
 // =========================================================
 // UPDATE Template Menu
 // =========================================================
-const updateTemplateMenu = async (id, payload) => {
-  const data = TemplateMenuUpdateDto.parse(payload);
+const updateTemplateMenu = async (id, data) => {
   const existing = await prisma.templateMenu.findUnique({
     where: { id },
     select: { coachId: true },

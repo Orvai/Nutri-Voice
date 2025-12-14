@@ -4,5 +4,9 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { DaySelectionCreateRequestDtoDayType } from './daySelectionCreateRequestDtoDayType';
 
-export interface DaySelectionCreateRequestDto {}
+export interface DaySelectionCreateRequestDto {
+  dayType: DaySelectionCreateRequestDtoDayType;
+  date?: string;
+}

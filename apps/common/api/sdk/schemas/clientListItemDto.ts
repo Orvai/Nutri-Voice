@@ -4,5 +4,34 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { ClientListItemDtoGoals } from './clientListItemDtoGoals';
+import type { ClientListItemDtoActivityLevel } from './clientListItemDtoActivityLevel';
 
-export interface ClientListItemDto {}
+export interface ClientListItemDto {
+  id: string;
+  name: string;
+  /** @nullable */
+  phone: string | null;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  profileImageUrl: string | null;
+  /** @nullable */
+  gender: string | null;
+  /** @nullable */
+  age: number | null;
+  /** @nullable */
+  height: number | null;
+  /** @nullable */
+  weight: number | null;
+  /** @nullable */
+  goals: ClientListItemDtoGoals;
+  /** @nullable */
+  activityLevel: ClientListItemDtoActivityLevel;
+  /** @nullable */
+  creationDate: string | null;
+  /** @nullable */
+  city: string | null;
+  /** @nullable */
+  address: string | null;
+}

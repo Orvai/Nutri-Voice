@@ -4,5 +4,13 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { WorkoutLogCreateRequestDtoEffortLevel } from './workoutLogCreateRequestDtoEffortLevel';
+import type { WorkoutLogCreateRequestDtoExercisesItem } from './workoutLogCreateRequestDtoExercisesItem';
 
-export interface WorkoutLogCreateRequestDto {}
+export interface WorkoutLogCreateRequestDto {
+  date?: string;
+  workoutType: string;
+  effortLevel: WorkoutLogCreateRequestDtoEffortLevel;
+  notes?: string;
+  exercises: WorkoutLogCreateRequestDtoExercisesItem[];
+}

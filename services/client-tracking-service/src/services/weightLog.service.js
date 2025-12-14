@@ -13,13 +13,13 @@ const endOfDay = (d) => {
   return date;
 };
 
-const createWeightLog = async (payload) => {
+const createWeightLog = async (clientId, payload) => {
   const data = WeightLogCreateDto.parse(payload);
   const logDate = data.date ? new Date(data.date) : new Date();
 
   return prisma.weightLog.create({
     data: {
-      clientId: payload.clientId,
+      clientId,
       date: logDate,
       weightKg: data.weightKg,
       notes: data.notes

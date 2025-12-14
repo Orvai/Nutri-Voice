@@ -1,11 +1,20 @@
+// src/components/nutrition/MealOptionsBlock.tsx
 import React, { useMemo, useState } from "react";
 import { View, Text, Pressable } from "react-native";
+
 import MealFoodItem from "./MealFoodItem";
-import { UIMealOption, UINutritionSource } from "../../types/ui/nutrition-ui";
 import FoodPickerModal from "./FoodPickerModal";
+
 import {
-  useNutritionMealTemplateMutation,
-} from "../../hooks/nutrition/useNutritionMenuMutation";
+  UIMealOption,
+  UINutritionSource,
+} from "../../types/ui/nutrition/nutrition.types";
+
+import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
+
+/* =====================================
+   Helpers
+===================================== */
 
 function categoryToRole(category?: string) {
   switch (category) {
@@ -13,19 +22,22 @@ function categoryToRole(category?: string) {
       return "PROTEIN";
     case "CARB":
       return "CARB";
-    case "FREE":
-      return "FREE";
     case "HEALTH":
       return "HEALTH";
     case "MENTAL_HEALTH":
       return "MENTAL_HEALTH";
     default:
-      return "FREE"; 
+      return "FREE";
   }
 }
 
+/* =====================================
+   Component
+===================================== */
+
 type Props = {
   option: UIMealOption;
+  mealId: string; 
   hideTitle?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
@@ -37,6 +49,7 @@ type Props = {
 
 export default function MealOptionsBlock({
   option,
+  mealId,
   hideTitle = false,
   isSelected,
   onSelect,
@@ -48,49 +61,40 @@ export default function MealOptionsBlock({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedFoodIds, setRemovedFoodIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
-  const updateTemplate = useNutritionMealTemplateMutation(
-    option.mealTemplateId,
-    menuId,
-    menuSource
-  );
+
+  const menuActions = useNutritionMenuMutation(menuSource);
+
   const visibleFoods = useMemo(
-    () => option.foods.filter((food) => !removedFoodIds.includes(food.id)),
+    () => option.foods.filter((f) => !removedFoodIds.includes(f.id)),
     [option.foods, removedFoodIds]
   );
 
   const handleRemoveFood = (foodId: string) => {
     setRemovingIds((prev) => [...prev, foodId]);
 
-    updateTemplate.mutate(
-      {
-        itemsToDelete: [{ id: foodId }],
-        mealTemplateId: option.mealTemplateId,
-      },
-      {
-        onSuccess: () => {
-          setRemovedFoodIds((prev) => [...prev, foodId]);
-        },
-        onSettled: () => {
-          setRemovingIds((prev) => prev.filter((id) => id !== foodId));
-        },
-      }
-    );
+    // Removing food = removing meal option item
+    menuActions.removeMealOption(menuId, foodId);
+
+    setRemovedFoodIds((prev) => [...prev, foodId]);
+    setRemovingIds((prev) => prev.filter((id) => id !== foodId));
   };
+
   const optionSelected = isSelected ?? option.isSelected;
+
   return (
     <Pressable
-    onPress={onSelect}
-    style={{
-      backgroundColor: "#fff",
-      borderWidth: 1,
-      borderColor: optionSelected ? "#a855f7" : "#c7d2fe",
-      borderRadius: 12,
-      padding: 14,
-      marginBottom: 16,
-    }}
-  >
-       {/* Title */}
-       {!hideTitle && (
+      onPress={onSelect}
+      style={{
+        backgroundColor: "#fff",
+        borderWidth: 1,
+        borderColor: optionSelected ? "#a855f7" : "#c7d2fe",
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 16,
+      }}
+    >
+      {/* Title */}
+      {!hideTitle && (
         <View
           style={{
             flexDirection: "row-reverse",
@@ -108,6 +112,7 @@ export default function MealOptionsBlock({
           >
             {option.title}
           </Text>
+
           {onRemove && (
             <Pressable
               onPress={onRemove}
@@ -132,10 +137,10 @@ export default function MealOptionsBlock({
               </Text>
             </Pressable>
           )}
-          </View>
-        )}
+        </View>
+      )}
 
-      {/* Food items */}
+      {/* Foods */}
       {visibleFoods.map((food) => (
         <MealFoodItem
           key={food.id}
@@ -145,33 +150,26 @@ export default function MealOptionsBlock({
         />
       ))}
 
-      {/* Add Food Button */}
+      {/* Add Food */}
       <Pressable style={{ marginTop: 8 }} onPress={() => setPickerOpen(true)}>
         <Text style={{ color: "#2563eb", fontSize: 13 }}>+ הוסף מוצר</Text>
       </Pressable>
 
-      {/* Modal */}
+      {/* Picker */}
       <FoodPickerModal
         visible={pickerOpen}
         onClose={() => setPickerOpen(false)}
         existingIds={option.foods.map((f) => f.id)}
         onSelect={(food) => {
-          const role = categoryToRole(food.category);
-
-          updateTemplate.mutate({
-            itemsToAdd: [
-              {
-                foodItemId: food.id,
-                role,
-                defaultGrams: 100,
-              },
-            ],
-            mealTemplateId: option.mealTemplateId,
-          });
-
+          menuActions.addMealOption(
+            menuId,
+            mealId,
+            food.id,
+            categoryToRole(food.category)
+          );
           setPickerOpen(false);
         }}
       />
     </Pressable>
-      );
+  );
 }

@@ -4,5 +4,13 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { WorkoutProgramUpdateRequestDtoExercisesToAddItem } from './workoutProgramUpdateRequestDtoExercisesToAddItem';
+import type { WorkoutProgramUpdateRequestDtoExercisesToUpdateItem } from './workoutProgramUpdateRequestDtoExercisesToUpdateItem';
+import type { WorkoutProgramUpdateRequestDtoExercisesToDeleteItem } from './workoutProgramUpdateRequestDtoExercisesToDeleteItem';
 
-export interface WorkoutProgramUpdateRequestDto {}
+export interface WorkoutProgramUpdateRequestDto {
+  name?: string;
+  exercisesToAdd?: WorkoutProgramUpdateRequestDtoExercisesToAddItem[];
+  exercisesToUpdate?: WorkoutProgramUpdateRequestDtoExercisesToUpdateItem[];
+  exercisesToDelete?: WorkoutProgramUpdateRequestDtoExercisesToDeleteItem[];
+}

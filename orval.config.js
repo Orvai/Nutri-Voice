@@ -4,10 +4,10 @@ module.exports = {
       target: "http://localhost:4000/api/docs-json",
     },
     output: {
-      target: "apps/common/api/sdk/nutri-api.ts",   
-      schemas: "apps/common/api/sdk/schemas",       
+      target: "apps/common/api/sdk/nutri-api.ts",
+      schemas: "apps/common/api/sdk/schemas",
       client: "react-query",
-      prettier: false,                            
+      prettier: false,
       override: {
         fetch: {
           baseUrl: "http://localhost:4000/api",

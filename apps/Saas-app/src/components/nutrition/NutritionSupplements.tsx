@@ -1,10 +1,14 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import VitaminPickerModal from "./VitaminPickerModal";
-import { useNutritionMenuMutation } from "../../hooks/nutrition/useNutritionMenuMutation";
-import { UINutritionSource, UIVitamin } from "../../types/ui/nutrition-ui";
 
+import VitaminPickerModal from "./VitaminPickerModal";
+
+import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
+import {
+  UINutritionSource,
+  UIVitamin,
+} from "@/types/ui/nutrition/nutrition.types";
 
 type Props = {
   vitamins: UIVitamin[];
@@ -12,33 +16,32 @@ type Props = {
   source: UINutritionSource;
 };
 
-export default function NutritionSupplements({ vitamins, menuId, source }: Props) {
+export default function NutritionSupplements({
+  vitamins,
+  menuId,
+  source,
+}: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [removedIds, setRemovedIds] = useState<string[]>([]);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
 
-  const updateMenu = useNutritionMenuMutation(menuId, source);
+  // Semantic mutation facade
+  const menuActions = useNutritionMenuMutation(source);
 
   const visibleVitamins = useMemo(
     () => vitamins.filter((v) => !removedIds.includes(v.id)),
     [removedIds, vitamins]
   );
 
-  const handleRemoveVitamin = (vitaminId: string) => {
-    setRemovingIds((prev) => [...prev, vitaminId]);
+  const handleRemoveVitamin = (vitaminRelationId: string) => {
+    setRemovingIds((prev) => [...prev, vitaminRelationId]);
 
-    updateMenu.mutate(
-      {
-        vitaminsToDelete: [{ id: vitaminId }],
-      },
-      {
-        onSuccess: () => {
-          setRemovedIds((prev) => [...prev, vitaminId]);
-        },
-        onSettled: () => {
-          setRemovingIds((prev) => prev.filter((id) => id !== vitaminId));
-        },
-      }
+    menuActions.removeVitamin(menuId, vitaminRelationId);
+
+    // optimistic UI (local only)
+    setRemovedIds((prev) => [...prev, vitaminRelationId]);
+    setRemovingIds((prev) =>
+      prev.filter((id) => id !== vitaminRelationId)
     );
   };
 
@@ -60,7 +63,13 @@ export default function NutritionSupplements({ vitamins, menuId, source }: Props
           marginBottom: 12,
         }}
       >
-        <View style={{ flexDirection: "row-reverse", alignItems: "center", gap: 6 }}>
+        <View
+          style={{
+            flexDirection: "row-reverse",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
           <Ionicons name="medical-outline" size={18} color="#0f766e" />
           <Text style={{ fontWeight: "700", color: "#0f766e" }}>
             ויטמינים ותוספים נלווים
@@ -85,7 +94,6 @@ export default function NutritionSupplements({ vitamins, menuId, source }: Props
         </Pressable>
       </View>
 
-      {/* List */}
       {visibleVitamins.map((v) => (
         <View
           key={v.id}
@@ -126,7 +134,9 @@ export default function NutritionSupplements({ vitamins, menuId, source }: Props
                 name="close"
                 size={16}
                 color="#dc2626"
-                style={{ opacity: removingIds.includes(v.id) ? 0.4 : 1 }}
+                style={{
+                  opacity: removingIds.includes(v.id) ? 0.4 : 1,
+                }}
               />
             </Pressable>
           </View>
@@ -135,6 +145,7 @@ export default function NutritionSupplements({ vitamins, menuId, source }: Props
             multiline
             value={v.description ?? ""}
             placeholder="Description..."
+            editable={false}
             style={{
               backgroundColor: "#f9fafb",
               borderRadius: 6,
@@ -155,22 +166,12 @@ export default function NutritionSupplements({ vitamins, menuId, source }: Props
         onClose={() => setPickerOpen(false)}
         existingIds={vitamins.map((v) => v.id)}
         onSelect={(vit) => {
-          updateMenu.mutate(
-            {
-              vitaminsToAdd: [
-                {
-                  vitaminId: vit.id,
-                  name: vit.name,
-                  description: vit.description ?? null,
-                },
-              ],
-            },
-            {
-              onSuccess(data) {
-                console.log("UPDATED MENU:", data);
-              },
-            }
-          );
+          menuActions.addVitamin(menuId, {
+            vitaminId: vit.id,
+            name: vit.name,
+            description: vit.description ?? null,
+          });
+
           setPickerOpen(false);
         }}
       />

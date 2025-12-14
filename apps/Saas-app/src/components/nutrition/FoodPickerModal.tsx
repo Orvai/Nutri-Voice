@@ -8,15 +8,16 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useFood } from "../../hooks/nutrition/useFood";
-import { FoodItem } from "../../types/api/nutrition-types/food.types";
+
+import { useFood } from "@/hooks/nutrition/useFood";
+import { Food } from "@/types/ui/nutrition/food.ui";
 import PickerItemCard from "../shared/PickerItemCard";
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   existingIds: string[];
-  onSelect: (food: FoodItem) => void;
+  onSelect: (food: Food) => void;
 };
 
 const categories = [
@@ -25,7 +26,7 @@ const categories = [
   "FREE",
   "HEALTH",
   "MENTAL_HEALTH",
-];
+] as const;
 
 export default function FoodPickerModal({
   visible,
@@ -39,12 +40,13 @@ export default function FoodPickerModal({
   const { data: allFood = [], isLoading } = useFood(search);
 
   const filteredFood = useMemo(() => {
-    const withoutExisting = allFood.filter((f) => !existingIds.includes(f.id));
-    const byCategory = category
-      ? withoutExisting.filter((f) => f.category === category)
-      : withoutExisting;
+    const withoutExisting = allFood.filter(
+      (f) => !existingIds.includes(f.id)
+    );
 
-    return byCategory;
+    if (!category) return withoutExisting;
+
+    return withoutExisting.filter((f) => f.category === category);
   }, [allFood, category, existingIds]);
 
   if (!visible) return null;
@@ -68,6 +70,7 @@ export default function FoodPickerModal({
             gap: 12,
           }}
         >
+          {/* Header */}
           <View
             style={{
               flexDirection: "row-reverse",
@@ -75,12 +78,15 @@ export default function FoodPickerModal({
               alignItems: "center",
             }}
           >
-            <Text style={{ fontWeight: "800", fontSize: 18 }}>בחירת מוצר מזון</Text>
+            <Text style={{ fontWeight: "800", fontSize: 18 }}>
+              בחירת מוצר מזון
+            </Text>
             <Pressable onPress={onClose}>
               <Ionicons name="close" size={24} color="#ef4444" />
             </Pressable>
           </View>
 
+          {/* Search */}
           <TextInput
             placeholder="חיפוש מוצר..."
             value={search}
@@ -95,6 +101,7 @@ export default function FoodPickerModal({
             }}
           />
 
+          {/* Categories */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -136,7 +143,8 @@ export default function FoodPickerModal({
             ))}
           </ScrollView>
 
-          <ScrollView style={{ flexGrow: 0 }}>
+          {/* List */}
+          <ScrollView>
             {isLoading && (
               <Text style={{ textAlign: "center", color: "#6b7280", padding: 10 }}>
                 טוען מוצרים...

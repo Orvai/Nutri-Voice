@@ -4,5 +4,8 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { MealLogResponseDtoData } from './mealLogResponseDtoData';
 
-export interface MealLogResponseDto {}
+export interface MealLogResponseDto {
+  data: MealLogResponseDtoData;
+}

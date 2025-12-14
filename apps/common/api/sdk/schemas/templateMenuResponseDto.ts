@@ -4,5 +4,17 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { TemplateMenuResponseDtoMealsItem } from './templateMenuResponseDtoMealsItem';
+import type { TemplateMenuResponseDtoVitaminsItem } from './templateMenuResponseDtoVitaminsItem';
 
-export interface TemplateMenuResponseDto {}
+export interface TemplateMenuResponseDto {
+  id: string;
+  name: string;
+  coachId: string;
+  dayType: string;
+  /** @nullable */
+  notes: string | null;
+  totalCalories: number;
+  meals: TemplateMenuResponseDtoMealsItem[];
+  vitamins: TemplateMenuResponseDtoVitaminsItem[];
+}

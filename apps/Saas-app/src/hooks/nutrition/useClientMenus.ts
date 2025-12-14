@@ -1,66 +1,85 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// src/hooks/nutrition/useClientMenus.ts
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import {
-  createClientMenuFromTemplate,
-  fetchClientMenus,
-  fetchClientMenu,
-  updateClientMenu,
-} from "../../api/nutrition-api/clientMenu.api";
+  getApiClientMenus,
+  getApiClientMenusId,
+  putApiClientMenusId,
+  postApiClientMenusFromTemplate,
+} from "@common/api/sdk/nutri-api";
+
+import {
+  ClientMenuUpdateRequestDto,
+  ClientMenuCreateFromTemplateRequestDto,
+} from "@common/api/sdk/schemas";
+
+import { nutritionKeys } from "@/queryKeys/nutritionKeys";
+import { mapClientMenu } from "@/mappers/nutrition/clientMenu.mapper";
+import { UINutritionPlan } from "@/types/ui/nutrition/nutrition.types";
+
+/* =====================================
+   Queries
+===================================== */
 
 export function useClientMenus(clientId?: string) {
-  return useQuery({
-    queryKey: ["clientMenus", clientId],
-    queryFn: () => fetchClientMenus(clientId)
+  return useQuery<UINutritionPlan[]>({
+    queryKey: nutritionKeys.clientMenus(clientId),
+    queryFn: async ({ signal }) => {
+      const res = await getApiClientMenus(signal);
+      return res.map(mapClientMenu);
+    },
   });
 }
 
 export function useClientMenu(id?: string | null) {
-  return useQuery({
-    queryKey: ["clientMenu", id],
+  return useQuery<UINutritionPlan>({
+    queryKey: id ? nutritionKeys.clientMenu(id) : [],
     enabled: !!id,
-    queryFn: () => fetchClientMenu(id as string)
-  });
-}
-
-export function useUpdateClientMenu(menuId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation<any, Error, any>({
-    mutationFn: (payload) => updateClientMenu(menuId, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["clientMenu"],
-        exact: false,
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["clientMenus"],
-        exact: false,
-      });
+    queryFn: async ({ signal }) => {
+      const res = await getApiClientMenusId(id as string, signal);
+      return mapClientMenu(res);
     },
   });
 }
-export function useCreateClientMenuFromTemplate(clientId: string) {
+
+/* =====================================
+   Mutations
+===================================== */
+
+export function useUpdateClientMenu() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ templateMenuId, name, selectedOptions }: {
-      templateMenuId: string;
-      name?: string;
-      selectedOptions?: Array<{ templateMealId: string; optionId: string }>;
-    }) => {
-      return await createClientMenuFromTemplate({
-        clientId,
-        templateMenuId,
-        name,
-        selectedOptions,
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: ClientMenuUpdateRequestDto;
+    }) => putApiClientMenusId(id, data),
+
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({
+        queryKey: nutritionKeys.clientMenu(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: nutritionKeys.clientMenus(),
       });
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["clientMenus"] });
+  });
+}
 
-      if (data?.id) {
-        queryClient.setQueryData(["clientMenu", data.id], data);
-      }
+export function useCreateClientMenuFromTemplate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: ClientMenuCreateFromTemplateRequestDto) =>
+      postApiClientMenusFromTemplate(data),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: nutritionKeys.clientMenus(),
+      });
     },
   });
 }

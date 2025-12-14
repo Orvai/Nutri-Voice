@@ -5,4 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface WeightLogCreateRequestDto {}
+export interface WeightLogCreateRequestDto {
+  date?: string;
+  weightKg: number;
+  notes?: string;
+}

@@ -1,5 +1,5 @@
 const {prisma} = require('../db/prisma');
-const {createUserDto, updateUserDto, userRoleEnum} = require('../dto/user.dto');
+const {createUserDto, updateUserDto} = require('../dto/user.dto');
 const {AppError} = require('../common/errors');
 
 const LOCK_THRESHOLD = parseInt(process.env.LOGIN_FAIL_THRESHOLD || '5', 10);          // number of failed attempts before lock
@@ -16,7 +16,8 @@ const createUser = async (attributes) => {
             phone: parsed.phone,
             firstName: parsed.firstName,
             lastName: parsed.lastName,
-            role: parsed.role ?? 'client'            }
+            role: 'client'
+        }
     });
 };
 
@@ -38,11 +39,6 @@ const updateUser = async (userId, attributes) => {
             throw new AppError(409, 'Email already exists');
         }
     }
-    if (data.role && !userRoleEnum.options.includes(data.role)) {
-        throw new AppError(400, 'Invalid role');
-    }
-
-
     try {
         //  Perform the update
         const updatedUser = await prisma.user.update({

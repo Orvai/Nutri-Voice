@@ -5,4 +5,19 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface WorkoutTypeEnum {}
+export type WorkoutTypeEnum = typeof WorkoutTypeEnum[keyof typeof WorkoutTypeEnum];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkoutTypeEnum = {
+  A: 'A',
+  B: 'B',
+  FBW: 'FBW',
+  UPPER: 'UPPER',
+  LOWER: 'LOWER',
+  GLUTES: 'GLUTES',
+  HIIT: 'HIIT',
+  PUSH: 'PUSH',
+  PULL: 'PULL',
+  LEGS: 'LEGS',
+} as const;

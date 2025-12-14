@@ -8,7 +8,7 @@ const listTemplates = async (filters = {}) => {
   if (filters.gender) where.gender = filters.gender;
   if (filters.bodyType) where.bodyType = filters.bodyType;
   if (filters.workoutType) where.workoutType = filters.workoutType;
-  if (filters.level) where.level = Number(filters.level);
+  if (filters.level) where.level = filters.level;
 
   return prisma.workoutTemplate.findMany({
     where,
@@ -27,7 +27,13 @@ const getTemplateById = async (id) => {
 const createTemplate = async (data, coachId) => {
   return prisma.workoutTemplate.create({
     data: {
-      ...data,
+      gender: data.gender,
+      level: data.level,
+      bodyType: data.bodyType ?? null,
+      workoutType: data.workoutType,
+      muscleGroups: data.muscleGroups,
+      name: data.name,
+      notes: data.notes,
       createdByCoachId: coachId,
     },
   });
@@ -46,9 +52,19 @@ const updateTemplate = async (id, data, coachId) => {
     throw new AppError(403, "Forbidden");
   }
 
+  const updateData = {
+    gender: data.gender ?? template.gender,
+    level: data.level ?? template.level,
+    bodyType: data.bodyType ?? template.bodyType,
+    workoutType: data.workoutType ?? template.workoutType,
+    muscleGroups: data.muscleGroups ?? template.muscleGroups,
+    name: data.name ?? template.name,
+    notes: data.notes ?? template.notes,
+  };
+
   return prisma.workoutTemplate.update({
     where: { id },
-    data,
+    data: updateData,
   });
 };
 

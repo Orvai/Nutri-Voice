@@ -4,5 +4,15 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { MealLogCreateRequestDtoDayType } from './mealLogCreateRequestDtoDayType';
 
-export interface MealLogCreateRequestDto {}
+export interface MealLogCreateRequestDto {
+  date?: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  description?: string;
+  matchedMenuItemId?: string;
+  dayType: MealLogCreateRequestDtoDayType;
+}

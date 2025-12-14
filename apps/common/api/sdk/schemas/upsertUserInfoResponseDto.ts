@@ -4,5 +4,26 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { UpsertUserInfoResponseDtoStatus } from './upsertUserInfoResponseDtoStatus';
 
-export interface UpsertUserInfoResponseDto {}
+export interface UpsertUserInfoResponseDto {
+  id: string;
+  userId: string;
+  status: UpsertUserInfoResponseDtoStatus;
+  /** @nullable */
+  dateOfBirth?: string | null;
+  /** @nullable */
+  gender?: string | null;
+  /** @nullable */
+  address?: string | null;
+  /** @nullable */
+  city?: string | null;
+  /** @nullable */
+  profileImageUrl?: string | null;
+  /** @nullable */
+  height?: number | null;
+  /** @nullable */
+  age?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}

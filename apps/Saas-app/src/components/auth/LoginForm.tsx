@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Pressable, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { useLogin } from "../../hooks/useLogin";
+import { useLogin } from "../../hooks/auth/useLogin";
 
 export default function LoginForm() {
   const { login, loading, error } = useLogin();

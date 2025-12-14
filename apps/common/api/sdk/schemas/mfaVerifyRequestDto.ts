@@ -5,4 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface MfaVerifyRequestDto {}
+export interface MfaVerifyRequestDto {
+  code: string;
+}

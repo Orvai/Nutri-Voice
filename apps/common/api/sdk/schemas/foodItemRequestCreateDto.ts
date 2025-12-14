@@ -5,4 +5,14 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface FoodItemRequestCreateDto {}
+export interface FoodItemRequestCreateDto {
+  name: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  category?: string | null;
+  /** @nullable */
+  caloriesPer100g?: number | null;
+  /** @nullable */
+  proteinPer100g?: number | null;
+}

@@ -1,18 +1,20 @@
 // src/services/exercise.service.js
 const { prisma } = require("../db/prisma");
 const { AppError } = require("../common/errors");
-const {
-  ExerciseCreateDto,
-  ExerciseUpdateDto,
-  ExerciseFilterDto,
-} = require("../dto/exercise.dto");
 
 const createExercise = async (data, coachId) => {
-  const parsed = ExerciseCreateDto.parse(data);
-
   const exercise = await prisma.exercise.create({
     data: {
-      ...parsed,
+      name: data.name,
+      description: data.description,
+      notes: data.notes,
+      videoUrl: data.videoUrl,
+      muscleGroup: data.muscleGroup,
+      gender: data.gender,
+      bodyType: data.bodyType,
+      workoutTypes: data.workoutTypes,
+      equipment: data.equipment,
+      difficulty: data.difficulty,
       createdByCoachId: coachId,
     },
   });
@@ -21,13 +23,11 @@ const createExercise = async (data, coachId) => {
 };
 
 const listExercises = async (filters = {}) => {
-  const parsed = ExerciseFilterDto.parse(filters);
-
   const where = {};
-  if (parsed.gender) where.gender = parsed.gender;
-  if (parsed.bodyType) where.bodyType = parsed.bodyType;
-  if (parsed.muscleGroup) where.muscleGroup = parsed.muscleGroup;
-  if (parsed.workoutType) where.workoutTypes = { has: parsed.workoutType };
+  if (filters.gender) where.gender = filters.gender;
+  if (filters.bodyType) where.bodyType = filters.bodyType;
+  if (filters.muscleGroup) where.muscleGroup = filters.muscleGroup;
+  if (filters.workoutType) where.workoutTypes = { has: filters.workoutType };
 
   return prisma.exercise.findMany({
     where,
@@ -44,14 +44,17 @@ const getExerciseById = async (id) => {
 };
 
 const assertExerciseOwnership = (exercise, coachId) => {
-  if (coachId &&exercise.createdByCoachId &&exercise.createdByCoachId !== coachId) {
-      throw new AppError(403, "Forbidden");
+  if (
+    coachId &&
+    exercise.createdByCoachId &&
+    exercise.createdByCoachId !== coachId
+  ) {
+    throw new AppError(403, "Forbidden");
   }
 };
 
-const updateExercise = async (data, coachId) => {
-  const parsed = ExerciseUpdateDto.parse(data);
-  const exercise = await prisma.exercise.findUnique({ where: { id: parsed.id } });
+const updateExercise = async (id, data, coachId) => {
+  const exercise = await prisma.exercise.findUnique({ where: { id } });
   if (!exercise) {
     throw new AppError(404, "Exercise not found");
   }
@@ -59,18 +62,18 @@ const updateExercise = async (data, coachId) => {
   assertExerciseOwnership(exercise, coachId);
 
   return prisma.exercise.update({
-    where: { id: parsed.id },
+    where: { id },
     data: {
-      name: parsed.name ?? exercise.name,
-      description: parsed.description ?? exercise.description,
-      notes: parsed.notes ?? exercise.notes,
-      videoUrl: parsed.videoUrl ?? exercise.videoUrl,
-      muscleGroup: parsed.muscleGroup ?? exercise.muscleGroup,
-      gender: parsed.gender ?? exercise.gender,
-      bodyType: parsed.bodyType ?? exercise.bodyType,
-      workoutTypes: parsed.workoutTypes ?? exercise.workoutTypes,
-      equipment: parsed.equipment ?? exercise.equipment,
-      difficulty: parsed.difficulty ?? exercise.difficulty,
+      name: data.name ?? exercise.name,
+      description: data.description ?? exercise.description,
+      notes: data.notes ?? exercise.notes,
+      videoUrl: data.videoUrl ?? exercise.videoUrl,
+      muscleGroup: data.muscleGroup ?? exercise.muscleGroup,
+      gender: data.gender ?? exercise.gender,
+      bodyType: data.bodyType ?? exercise.bodyType,
+      workoutTypes: data.workoutTypes ?? exercise.workoutTypes,
+      equipment: data.equipment ?? exercise.equipment,
+      difficulty: data.difficulty ?? exercise.difficulty,
     },
   });
 };

@@ -1,7 +1,9 @@
 import { View, Text, TextInput } from "react-native";
 import { useEffect, useState } from "react";
-import { useNutritionMenuMutation } from "../../hooks/nutrition/useNutritionMenuMutation";
-import { UINutritionSource } from "../../types/ui/nutrition-ui";
+
+import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
+import { UINutritionSource } from "@/types/ui/nutrition/nutrition.types";
+
 type Props = {
   notes: string | null;
   menuId: string;
@@ -10,15 +12,18 @@ type Props = {
 
 export default function NutritionNotes({ notes, menuId, source }: Props) {
   const [localNotes, setLocalNotes] = useState(notes ?? "");
-  const updateMenu = useNutritionMenuMutation(menuId, source);
+
+  //  UI-facing semantic mutation API
+  const menuActions = useNutritionMenuMutation(source);
 
   useEffect(() => {
     setLocalNotes(notes ?? "");
   }, [notes]);
 
   const handleBlur = () => {
-    updateMenu.mutate({ notes: localNotes });
+    menuActions.updateNotes(menuId, localNotes || null);
   };
+
   return (
     <View
       style={{
@@ -33,6 +38,7 @@ export default function NutritionNotes({ notes, menuId, source }: Props) {
       <Text style={{ fontSize: 14, fontWeight: "600", marginBottom: 8 }}>
         הערות כלליות
       </Text>
+
       <TextInput
         multiline
         placeholder="הוסף הערות..."

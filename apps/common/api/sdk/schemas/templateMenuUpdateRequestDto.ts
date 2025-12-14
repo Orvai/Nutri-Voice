@@ -4,5 +4,25 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { TemplateMenuUpdateRequestDtoMealsToAddItem } from './templateMenuUpdateRequestDtoMealsToAddItem';
+import type { TemplateMenuUpdateRequestDtoMealsToUpdateItem } from './templateMenuUpdateRequestDtoMealsToUpdateItem';
+import type { TemplateMenuUpdateRequestDtoMealsToDeleteItem } from './templateMenuUpdateRequestDtoMealsToDeleteItem';
+import type { TemplateMenuUpdateRequestDtoMealOptionsToAddItem } from './templateMenuUpdateRequestDtoMealOptionsToAddItem';
+import type { TemplateMenuUpdateRequestDtoMealOptionsToDeleteItem } from './templateMenuUpdateRequestDtoMealOptionsToDeleteItem';
+import type { TemplateMenuUpdateRequestDtoVitaminsToAddItem } from './templateMenuUpdateRequestDtoVitaminsToAddItem';
+import type { TemplateMenuUpdateRequestDtoVitaminsToDeleteItem } from './templateMenuUpdateRequestDtoVitaminsToDeleteItem';
 
-export interface TemplateMenuUpdateRequestDto {}
+export interface TemplateMenuUpdateRequestDto {
+  name?: string;
+  dayType?: string;
+  /** @nullable */
+  notes?: string | null;
+  totalCalories?: number;
+  mealsToAdd?: TemplateMenuUpdateRequestDtoMealsToAddItem[];
+  mealsToUpdate?: TemplateMenuUpdateRequestDtoMealsToUpdateItem[];
+  mealsToDelete?: TemplateMenuUpdateRequestDtoMealsToDeleteItem[];
+  mealOptionsToAdd?: TemplateMenuUpdateRequestDtoMealOptionsToAddItem[];
+  mealOptionsToDelete?: TemplateMenuUpdateRequestDtoMealOptionsToDeleteItem[];
+  vitaminsToAdd?: TemplateMenuUpdateRequestDtoVitaminsToAddItem[];
+  vitaminsToDelete?: TemplateMenuUpdateRequestDtoVitaminsToDeleteItem[];
+}

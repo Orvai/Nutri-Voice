@@ -4,5 +4,16 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { ClientMenuResponseDtoMealsItem } from './clientMenuResponseDtoMealsItem';
+import type { ClientMenuResponseDtoVitaminsItem } from './clientMenuResponseDtoVitaminsItem';
 
-export interface ClientMenuResponseDto {}
+export interface ClientMenuResponseDto {
+  id: string;
+  name: string;
+  type: string;
+  /** @nullable */
+  notes: string | null;
+  isActive: boolean;
+  meals: ClientMenuResponseDtoMealsItem[];
+  vitamins: ClientMenuResponseDtoVitaminsItem[];
+}

@@ -4,5 +4,12 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { MealTemplateResponseDtoItemsItem } from './mealTemplateResponseDtoItemsItem';
 
-export interface MealTemplateResponseDto {}
+export interface MealTemplateResponseDto {
+  id: string;
+  name: string;
+  kind: string;
+  totalCalories: number;
+  items: MealTemplateResponseDtoItemsItem[];
+}

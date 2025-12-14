@@ -5,4 +5,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface UpsertUserInfoRequestDto {}
+export interface UpsertUserInfoRequestDto {
+  dateOfBirth?: string;
+  gender?: string;
+  address?: string;
+  city?: string;
+  profileImageUrl?: string;
+  height?: number;
+  age?: number;
+}

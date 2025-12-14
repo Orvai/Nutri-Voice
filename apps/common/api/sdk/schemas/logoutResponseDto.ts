@@ -4,5 +4,8 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { LogoutResponseDtoData } from './logoutResponseDtoData';
 
-export interface LogoutResponseDto {}
+export interface LogoutResponseDto {
+  data: LogoutResponseDtoData;
+}

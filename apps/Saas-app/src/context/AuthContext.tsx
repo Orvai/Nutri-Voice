@@ -1,24 +1,30 @@
-import { createContext, useContext, useState } from "react";
-import { UserProfile } from "../types/auth";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
-type AuthContextType = {
-  user: UserProfile | null;
+export type AuthUser = {
+  id: string;
+  email: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  status: string;
+  role: "trainer" | "client" | "admin";
+  gender: string | null;
+  city: string | null;
+  imageUrl: string | null;
+};
+
+type AuthContextValue = {
+  user: AuthUser | null;
   token: string | null;
-  setUser: (u: UserProfile | null) => void;
-  setToken: (t: string | null) => void;
+  setUser: (user: AuthUser | null) => void;
+  setToken: (token: string | null) => void;
   logout: () => void;
 };
 
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  token: null,
-  setUser: () => {},
-  setToken: () => {},
-  logout: () => {},
-});
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState<UserProfile | null>(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   function logout() {
@@ -27,12 +33,24 @@ export function AuthProvider({ children }: any) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, setUser, setToken, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        setUser,
+        setToken,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+  return ctx;
 }

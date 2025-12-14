@@ -6,7 +6,7 @@ import {
   UIFoodItem,
   UIVitamin,
   UIDayType,
-} from "../types/ui/nutrition-ui";
+} from "../types/ui/nutrition/nutrition.types";
 
 type TemplateMenuDto = {
   id: string;

@@ -1,8 +1,7 @@
 // src/components/nutrition/NutritionTabs.tsx
 import { View, Pressable, Text } from "react-native";
-
 type Tab = {
-  id: string;
+id: string;
   label: string;
 };
 

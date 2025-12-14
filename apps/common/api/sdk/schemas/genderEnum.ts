@@ -5,4 +5,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface GenderEnum {}
+export type GenderEnum = typeof GenderEnum[keyof typeof GenderEnum];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GenderEnum = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+} as const;

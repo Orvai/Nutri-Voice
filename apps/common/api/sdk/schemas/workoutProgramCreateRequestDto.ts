@@ -4,5 +4,12 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { WorkoutProgramCreateRequestDtoExercises } from './workoutProgramCreateRequestDtoExercises';
 
-export interface WorkoutProgramCreateRequestDto {}
+export interface WorkoutProgramCreateRequestDto {
+  name: string;
+  clientId: string;
+  coachId: string;
+  templateId?: string;
+  exercises: WorkoutProgramCreateRequestDtoExercises;
+}

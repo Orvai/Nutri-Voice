@@ -21,7 +21,7 @@ const createSubscriptionDto = z.object({
     userType: z.enum(['internal','customer']),
     startDate: z.coerce.date().optional(),
     endDate: z.union([z.coerce.date(), z.null()]).optional()
-}).superRefine((data, ctx) => {
+}).strict().superRefine((data, ctx) => {
     const start = data.startDate;
     const end = data.endDate ?? undefined;
     if (start && end && end < start) {
@@ -39,7 +39,7 @@ const updateSubscriptionDto = z.object({
     endDate: z.union([z.coerce.date(), z.null()]).optional(),
     userType: z.enum(['internal','customer']).optional(),
     status: z.enum(['active','deleted','locked']).optional()
-}).superRefine((data, ctx) => {
+}).strict().superRefine((data, ctx) => {
     if (!Object.values(data).some((value) => value !== undefined)) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,

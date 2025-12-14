@@ -5,4 +5,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface BodyTypeEnum {}
+export type BodyTypeEnum = typeof BodyTypeEnum[keyof typeof BodyTypeEnum];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BodyTypeEnum = {
+  ECTO: 'ECTO',
+  ENDO: 'ENDO',
+} as const;

@@ -3,8 +3,6 @@ const express = require('express');
 const routes = require('./routes');
 const cors = require('cors');
 const path = require('path');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swagger');
 
 const { errorHandler } = require('./common/errors');
 const { logger, dbLogger } = require('./middleware/logger');
@@ -29,8 +27,6 @@ app.use(attachCookies);
 app.use(dbLogger);
 app.use('/uploads', express.static(path.resolve(uploadsRoot)));
 
-// Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Health check
 app.get('/health', (_req, res) => res.json({ ok: true }));

@@ -1,14 +1,12 @@
 import { View, Text, Pressable, Modal, TextInput } from "react-native";
 import { useMemo, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+
 import NutritionNotes from "./NutritionNotes";
 import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
-import { UINutritionPlan } from "../../types/ui/nutrition-ui";
-import {
-  getMenuQueryKey,
-  useNutritionMenuMutation,
-} from "../../hooks/nutrition/useNutritionMenuMutation";
+
+import { UINutritionPlan } from "../../types/ui/nutrition/nutrition.types";
+import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
 
 type Props = {
   plan: UINutritionPlan;
@@ -17,10 +15,11 @@ type Props = {
 export default function NutritionDayCard({ plan }: Props) {
   if (!plan) return null;
 
-  const queryClient = useQueryClient();
   const isTraining = plan.dayType === "TRAINING";
-  const menuQueryKey = getMenuQueryKey(plan.source, plan.id);
-  const updateMenu = useNutritionMenuMutation(plan.id, plan.source);
+
+  //  New semantic facade (no DTO leakage, no react-query in UI)
+  const menuActions = useNutritionMenuMutation(plan.source);
+
   const [addMealOpen, setAddMealOpen] = useState(false);
   const [newMealName, setNewMealName] = useState("");
 
@@ -33,23 +32,12 @@ export default function NutritionDayCard({ plan }: Props) {
     const trimmedName = newMealName.trim();
     if (!trimmedName) return;
 
-    updateMenu.mutate(
-      {
-        mealsToAdd: [
-          {
-            name: trimmedName,
-            totalCalories: 0,
-          },
-        ],
-      },
-      {
-        onSuccess: (data) => {
-          queryClient.setQueryData(menuQueryKey, data);
-          setNewMealName("");
-          setAddMealOpen(false);
-        },
-      }
-    );
+    //  Template: { name } | Client: { templateId }
+    // Here we are in UI => we always pass the semantic intent.
+    menuActions.addMeal(plan.id, { name: trimmedName });
+
+    setNewMealName("");
+    setAddMealOpen(false);
   };
 
   return (
@@ -99,6 +87,7 @@ export default function NutritionDayCard({ plan }: Props) {
               הוסף ארוחה
             </Text>
           </Pressable>
+
           <View
             style={{
               flexDirection: "row-reverse",
@@ -150,11 +139,10 @@ export default function NutritionDayCard({ plan }: Props) {
         />
       ))}
 
-        {addMealOpen && (
+      {addMealOpen && (
         <Modal transparent animationType="fade" visible={addMealOpen}>
           <View
             style={{
-
               flex: 1,
               backgroundColor: "rgba(0,0,0,0.35)",
               justifyContent: "center",
@@ -209,7 +197,13 @@ export default function NutritionDayCard({ plan }: Props) {
                   borderRadius: 10,
                 }}
               >
-                <Text style={{ color: "white", fontWeight: "700", textAlign: "center" }}>
+                <Text
+                  style={{
+                    color: "white",
+                    fontWeight: "700",
+                    textAlign: "center",
+                  }}
+                >
                   הוסף ארוחה
                 </Text>
               </Pressable>

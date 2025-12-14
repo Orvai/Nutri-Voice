@@ -19,14 +19,14 @@ const endOfDay = (d) => {
 /**
  * Create a workout log + exercises
  */
-const createWorkoutLog = async (payload) => {
+const createWorkoutLog = async (clientId, payload) => {
   const data = WorkoutLogCreateDto.parse(payload);
 
   const logDate = data.date ? new Date(data.date) : new Date();
 
   const workoutLog = await prisma.workoutLog.create({
     data: {
-      clientId: payload.clientId,
+      clientId,
       date: logDate,
       workoutType: data.workoutType,
       effortLevel: data.effortLevel,
@@ -44,8 +44,26 @@ const createWorkoutLog = async (payload) => {
     });
   }
 
-  return workoutLog;
-};
+  return prisma.workoutLog.findUnique({
+    where: { id: workoutLog.id },
+    select: {
+      id: true,
+      clientId: true,
+      date: true,
+      workoutType: true,
+      effortLevel: true,
+      notes: true,
+      loggedAt: true,
+      exercises: {
+        select: {
+          id: true,
+          workoutLogId: true,
+          exerciseName: true,
+          weight: true
+        }
+      }
+    }
+  });};
 
 /**
  * Get full workout history (no date limit)
@@ -54,8 +72,22 @@ const listAllWorkouts = (clientId) => {
   return prisma.workoutLog.findMany({
     where: { clientId },
     orderBy: [{ date: 'asc' }, { loggedAt: 'asc' }],
-    include: {
-      exercises: true
+    select: {
+      id: true,
+      clientId: true,
+      date: true,
+      workoutType: true,
+      effortLevel: true,
+      notes: true,
+      loggedAt: true,
+      exercises: {
+        select: {
+          id: true,
+          workoutLogId: true,
+          exerciseName: true,
+          weight: true
+        }
+      }
     }
   });
 };
@@ -66,13 +98,14 @@ const listAllWorkouts = (clientId) => {
 const updateWorkoutLog = async (logId, payload) => {
   const data = WorkoutLogUpdateDto.parse(payload);
 
-  const updatedWorkout = await prisma.workoutLog.update({
+  const updateData = {};
+  if (data.workoutType !== undefined) updateData.workoutType = data.workoutType;
+  if (data.effortLevel !== undefined) updateData.effortLevel = data.effortLevel;
+  if (data.notes !== undefined) updateData.notes = data.notes;
+
+  await prisma.workoutLog.update({
     where: { id: logId },
-    data: {
-      workoutType: data.workoutType,
-      effortLevel: data.effortLevel,
-      notes: data.notes
-    }
+    data: updateData
   });
 
   if (data.exercises && data.exercises.length > 0) {
@@ -81,13 +114,32 @@ const updateWorkoutLog = async (logId, payload) => {
         where: { id: ex.id },
         data: {
           exerciseName: ex.exerciseName,
-          weight: ex.weight
+          weight: ex.weight ?? null
         }
       });
     }
   }
 
-  return updatedWorkout;
+  return prisma.workoutLog.findUnique({
+    where: { id: logId },
+    select: {
+      id: true,
+      clientId: true,
+      date: true,
+      workoutType: true,
+      effortLevel: true,
+      notes: true,
+      loggedAt: true,
+      exercises: {
+        select: {
+          id: true,
+          workoutLogId: true,
+          exerciseName: true,
+          weight: true
+        }
+      }
+    }
+  });
 };
 
 /**
@@ -96,7 +148,13 @@ const updateWorkoutLog = async (logId, payload) => {
 const updateExerciseWeight = async (exerciseLogId, weight) => {
   return prisma.workoutExerciseLog.update({
     where: { id: exerciseLogId },
-    data: { weight }
+    data: { weight: weight ?? null },
+    select: {
+      id: true,
+      workoutLogId: true,
+      exerciseName: true,
+      weight: true
+    }
   });
 };
 

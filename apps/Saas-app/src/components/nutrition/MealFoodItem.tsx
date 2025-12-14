@@ -1,7 +1,7 @@
 // src/components/nutrition/MealFoodItem.tsx
 import { View, Text, TextInput, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { UIFoodItem } from "../../types/ui/nutrition-ui";
+import { UIFoodItem } from "../../types/ui/nutrition/nutrition.types";
 
 type Props = {
   food: UIFoodItem;

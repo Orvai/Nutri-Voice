@@ -4,5 +4,8 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { MfaRegisterResponseDtoData } from './mfaRegisterResponseDtoData';
 
-export interface MfaRegisterResponseDto {}
+export interface MfaRegisterResponseDto {
+  data: MfaRegisterResponseDtoData;
+}

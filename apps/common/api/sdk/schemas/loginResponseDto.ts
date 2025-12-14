@@ -4,5 +4,11 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { LoginResponseDtoUser } from './loginResponseDtoUser';
+import type { LoginResponseDtoTokens } from './loginResponseDtoTokens';
 
-export interface LoginResponseDto {}
+export interface LoginResponseDto {
+  user: LoginResponseDtoUser;
+  sessionId: string;
+  tokens: LoginResponseDtoTokens;
+}

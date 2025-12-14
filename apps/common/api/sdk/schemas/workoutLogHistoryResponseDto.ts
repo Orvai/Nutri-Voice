@@ -4,5 +4,8 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { WorkoutLogHistoryResponseDtoDataItem } from './workoutLogHistoryResponseDtoDataItem';
 
-export interface WorkoutLogHistoryResponseDto {}
+export interface WorkoutLogHistoryResponseDto {
+  data: WorkoutLogHistoryResponseDtoDataItem[];
+}

@@ -5,4 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface VitaminCreateRequestDto {}
+export interface VitaminCreateRequestDto {
+  name: string;
+  /** @nullable */
+  description?: string | null;
+}

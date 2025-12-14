@@ -1,8 +1,8 @@
 import { View, Text, Pressable } from "react-native";
-import { Link, usePathname, router } from "expo-router";
+import { Link, usePathname } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "../../context/AuthContext";
-import { api } from "../../api/api.ts";
+
+import { useLogout } from "@/hooks/auth/useLogout";
 
 const menuItems = [
   { label: "דשבורד",        icon: "grid-outline",        href: "/(dashboard)/dashboard" },
@@ -18,23 +18,7 @@ type MenuItem = (typeof menuItems)[number];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { setUser } = useAuth();
-
-  async function handleLogout() {
-    try {
-      await api.post("/api/auth/logout", null, {
-        headers: {
-          Authorization: `Bearer ${globalThis.ACCESS_TOKEN}`,
-        },
-      });
-    } catch (err: any) {
-      console.log("LOGOUT ERROR:", err?.response?.data || err);
-    } finally {
-      globalThis.ACCESS_TOKEN = undefined;
-      setUser(null);
-      router.replace("/login");
-    }
-  }
+  const { signOut } = useLogout();
 
   return (
     <View
@@ -46,7 +30,6 @@ export default function Sidebar() {
         paddingTop: 40,
       }}
     >
-      {/* חלק עליון – לוגו + תפריט */}
       <View>
         <Text
           style={{
@@ -98,9 +81,8 @@ export default function Sidebar() {
         </View>
       </View>
 
-      {/* חלק תחתון – כפתור התנתקות */}
       <Pressable
-        onPress={handleLogout}
+        onPress={signOut}
         style={{
           flexDirection: "row-reverse",
           alignItems: "center",

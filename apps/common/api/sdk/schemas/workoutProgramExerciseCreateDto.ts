@@ -5,4 +5,15 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface WorkoutProgramExerciseCreateDto {}
+export interface WorkoutProgramExerciseCreateDto {
+  exerciseId: string;
+  sets: number;
+  reps: string;
+  /** @nullable */
+  weight?: number | null;
+  /** @nullable */
+  rest?: number | null;
+  order: number;
+  /** @nullable */
+  notes?: string | null;
+}

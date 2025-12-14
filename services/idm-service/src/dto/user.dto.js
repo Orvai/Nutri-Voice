@@ -20,8 +20,7 @@ const createUserDto = z.object({
   phone: z.string().trim().min(4),
   firstName: z.string().trim().min(1),
   lastName: z.string().trim().min(1),
-  role: userRoleEnum.optional(),
-});
+}).strict();
 
 const updateUserDto = z
   .object({
@@ -29,8 +28,8 @@ const updateUserDto = z
     phone: z.string().trim().optional(),
     firstName: z.string().trim().optional(),
     lastName: z.string().trim().optional(),
-    role: userRoleEnum.optional(),
   })
+  .strict()
   .superRefine((data, ctx) => {
     if (!Object.values(data).some((value) => value !== undefined)) {
       ctx.addIssue({

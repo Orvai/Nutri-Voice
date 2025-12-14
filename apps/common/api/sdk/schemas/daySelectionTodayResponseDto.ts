@@ -4,5 +4,8 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { DaySelectionTodayResponseDtoData } from './daySelectionTodayResponseDtoData';
 
-export interface DaySelectionTodayResponseDto {}
+export interface DaySelectionTodayResponseDto {
+  data: DaySelectionTodayResponseDtoData;
+}

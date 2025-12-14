@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import ClientsSearchBar from "../../../src/components/clients/ClientSearchBar";
 import ClientsList from "../../../src/components/clients/ClientsList";
 
-import { useClients } from "../../../src/hooks/useClients";
+import { useClients } from "@/hooks/clients";
 
 export default function ClientsScreen() {
   const { data, isLoading, error } = useClients();

@@ -5,4 +5,19 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface MuscleGroupEnum {}
+export type MuscleGroupEnum = typeof MuscleGroupEnum[keyof typeof MuscleGroupEnum];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MuscleGroupEnum = {
+  CHEST: 'CHEST',
+  BACK: 'BACK',
+  SHOULDERS: 'SHOULDERS',
+  LEGS: 'LEGS',
+  GLUTES: 'GLUTES',
+  ARMS: 'ARMS',
+  BICEPS: 'BICEPS',
+  TRICEPS: 'TRICEPS',
+  ABS: 'ABS',
+  FULL_BODY: 'FULL_BODY',
+} as const;

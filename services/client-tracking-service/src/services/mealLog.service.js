@@ -13,13 +13,13 @@ const endOfDay = (d) => {
   return date;
 };
 
-const createMeal = async (payload) => {
+const createMeal = async (clientId, payload) => {
   const data = MealLogCreateDto.parse(payload);
   const logDate = data.date ? new Date(data.date) : new Date();
 
   return prisma.mealLog.create({
     data: {
-      clientId: payload.clientId,
+      clientId,
       dayType: data.dayType,
       calories: data.calories,
       protein: data.protein,

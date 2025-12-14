@@ -2,12 +2,11 @@
 const express = require('express');
 const routes = require('./routes');
 const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swagger');
 
 const { errorHandler } = require('./common/errors');
 const { logger, dbLogger } = require('./middleware/logger');
 const { attachCookies } = require('./common/http.utils');
+const { injectIdentity } = require('./middleware/injectIdentity');
 
 const app = express();
 
@@ -24,10 +23,10 @@ app.use(
 app.use(logger);
 app.use(express.json());
 app.use(attachCookies);
+app.use(injectIdentity);
 app.use(dbLogger);
 
-// Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // Health check
 app.get('/health', (_req, res) => res.json({ ok: true }));

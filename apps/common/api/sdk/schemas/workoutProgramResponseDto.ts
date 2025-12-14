@@ -4,5 +4,16 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { WorkoutProgramResponseDtoExercisesItem } from './workoutProgramResponseDtoExercisesItem';
 
-export interface WorkoutProgramResponseDto {}
+export interface WorkoutProgramResponseDto {
+  id: string;
+  name: string;
+  clientId: string;
+  coachId: string;
+  /** @nullable */
+  templateId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  exercises: WorkoutProgramResponseDtoExercisesItem[];
+}

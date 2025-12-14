@@ -4,30 +4,36 @@ const { z } = require("zod");
    WORKOUT EXERCISE ITEM DTOs
 ============================================ */
 
-const WorkoutExerciseItemCreateDto = z.object({
-  exerciseId: z.string(),
-  sets: z.number().int().positive(),
-  reps: z.string(),
-  weight: z.number().nullable().optional(),
-  rest: z.number().int().nullable().optional(),
-  order: z.number().int().nonnegative(),
-  notes: z.string().nullable().optional(),
-});
+const WorkoutExerciseItemCreateDto = z
+  .object({
+    exerciseId: z.string(),
+    sets: z.number().int().positive(),
+    reps: z.string(),
+    weight: z.number().nullable().optional(),
+    rest: z.number().int().nullable().optional(),
+    order: z.number().int().nonnegative(),
+    notes: z.string().nullable().optional(),
+  })
+  .strict();
 
-const WorkoutExerciseItemUpdateDto = z.object({
-  id: z.string(), // Exercise instance inside program
-  exerciseId: z.string().optional(),
-  sets: z.number().int().positive().optional(),
-  reps: z.string().optional(),
-  weight: z.number().nullable().optional(),
-  rest: z.number().int().nullable().optional(),
-  order: z.number().int().nonnegative().optional(),
-  notes: z.string().nullable().optional(),
-});
+const WorkoutExerciseItemUpdateDto = z
+  .object({
+    id: z.string(),
+    exerciseId: z.string().optional(),
+    sets: z.number().int().positive().optional(),
+    reps: z.string().optional(),
+    weight: z.number().nullable().optional(),
+    rest: z.number().int().nullable().optional(),
+    order: z.number().int().nonnegative().optional(),
+    notes: z.string().nullable().optional(),
+  })
+  .strict();
 
-const WorkoutExerciseItemDeleteDto = z.object({
-  id: z.string(),
-});
+const WorkoutExerciseItemDeleteDto = z
+  .object({
+    id: z.string(),
+  })
+  .strict();
 
 /* ============================================
    WORKOUT PROGRAM CREATE DTO
@@ -38,29 +44,42 @@ const WorkoutExerciseItemDeleteDto = z.object({
  * - "templateId" is optional (if created FROM a template)
  * - "exercises" can be empty (default [])
  */
-const WorkoutProgramCreateRequestDto = z.object({
-  name: z.string().min(2),
-  clientId: z.string(),
-  coachId: z.string(),
+const WorkoutProgramCreateRequestDto = z
+  .object({
+    name: z.string().min(2),
+    clientId: z.string(),
+    coachId: z.string(),
 
-  // NEW: Program created from Template
-  templateId: z.string().optional(),
+    templateId: z.string().optional(),
 
-  // Optional list of exercises to preload program with
-  exercises: z.array(WorkoutExerciseItemCreateDto).optional().default([]),
-});
+    exercises: z.array(WorkoutExerciseItemCreateDto).optional().default([]),
+  })
+  .strict();
 
 /* ============================================
    WORKOUT PROGRAM UPDATE DTO
 ============================================ */
 
-const WorkoutProgramUpdateRequestDto = z.object({
-  name: z.string().optional(),
+const WorkoutProgramUpdateRequestDto = z
+  .object({
+    name: z.string().optional(),
 
-  exercisesToAdd: z.array(WorkoutExerciseItemCreateDto).optional(),
-  exercisesToUpdate: z.array(WorkoutExerciseItemUpdateDto).optional(),
-  exercisesToDelete: z.array(WorkoutExerciseItemDeleteDto).optional(),
-});
+    exercisesToAdd: z.array(WorkoutExerciseItemCreateDto).optional(),
+    exercisesToUpdate: z.array(WorkoutExerciseItemUpdateDto).optional(),
+    exercisesToDelete: z.array(WorkoutExerciseItemDeleteDto).optional(),
+  })
+  .strict();
+
+const WorkoutProgramIdParamDto = z.object({
+  id: z.string(),
+}).strict();
+
+const WorkoutProgramListQueryDto = z
+  .object({
+    clientId: z.string().optional(),
+    coachId: z.string().optional(),
+  })
+  .strict();
 
 /* ============================================
    RESPONSE DTOs
@@ -101,6 +120,8 @@ module.exports = {
   WorkoutExerciseItemDeleteDto,
   WorkoutProgramCreateRequestDto,
   WorkoutProgramUpdateRequestDto,
+  WorkoutProgramIdParamDto,
+  WorkoutProgramListQueryDto,
   WorkoutExerciseResponseDto,
   WorkoutProgramResponseDto,
 };

@@ -4,5 +4,18 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { WorkoutTemplateUpdateRequestDtoGender } from './workoutTemplateUpdateRequestDtoGender';
+import type { WorkoutTemplateUpdateRequestDtoBodyType } from './workoutTemplateUpdateRequestDtoBodyType';
 
-export interface WorkoutTemplateUpdateRequestDto {}
+export interface WorkoutTemplateUpdateRequestDto {
+  gender?: WorkoutTemplateUpdateRequestDtoGender;
+  level?: number;
+  /** @nullable */
+  bodyType?: WorkoutTemplateUpdateRequestDtoBodyType;
+  workoutType?: string;
+  muscleGroups?: string[];
+  /** @nullable */
+  name?: string | null;
+  /** @nullable */
+  notes?: string | null;
+}
