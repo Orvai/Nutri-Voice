@@ -65,7 +65,6 @@ export default function ClientNutritionPlans({ clientId }: Props) {
 
     templates.forEach((tmpl) => {
       createFromTemplate.mutate({
-        clientId,
         templateMenuId: tmpl.id,
       });
     });

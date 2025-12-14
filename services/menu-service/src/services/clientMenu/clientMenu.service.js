@@ -59,13 +59,15 @@ const validateTemplateForClientMenu = (template, selectedOptions = []) => {
       );
     }
 
-    const missingTemplate = meal.options.find((opt) => !opt.mealTemplate);
-    if (missingTemplate) {
-      throw withStatus(
-        new Error(`Template option ${missingTemplate.id} is missing its linked meal template`),
-        400
-      );
-    }
+    const validOptions = meal.options.filter((opt) => opt.mealTemplate);
+
+if (!validOptions.length) {
+  throw withStatus(
+    new Error(`Template meal ${meal.id} has no valid options with mealTemplate`),
+    400
+  );
+}
+
   }
 };
 
