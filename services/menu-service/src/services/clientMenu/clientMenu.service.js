@@ -245,7 +245,8 @@ const deleteClientMenu = async (id) => {
 // =========================================================
 // CREATE FROM TEMPLATE
 // =========================================================
-const createClientMenuFromTemplate = async (data, coachId, clientId) => {
+const createClientMenuFromTemplate = async (data) => {
+  const { coachId, clientId } = data;
   try {
     const menu = await prisma.$transaction(async (tx) => {
       console.log("====== 🟧 Loading templateMenu from DB ======");
@@ -317,10 +318,8 @@ const createClientMenuFromTemplate = async (data, coachId, clientId) => {
     console.error("meta:", error.meta);
     console.error("stack:", error.stack);
 
-    // כיבוד status שהוגדר
     if (error?.status) throw error;
 
-    // שגיאת Prisma
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       const status = error.code === "P2025" ? 404 : 400;
       throw Object.assign(new Error("Failed to create client menu from template"), {

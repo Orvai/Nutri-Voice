@@ -9,7 +9,6 @@ import type { ClientMenuCreateFromTemplateRequestDtoSelectedOptionsItem } from '
 export interface ClientMenuCreateFromTemplateRequestDto {
   templateMenuId: string;
   clientId: string;
-  coachId: string;
   name?: string;
   selectedOptions?: ClientMenuCreateFromTemplateRequestDtoSelectedOptionsItem[];
 }

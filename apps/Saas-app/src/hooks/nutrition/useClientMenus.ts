@@ -1,19 +1,8 @@
 // src/hooks/nutrition/useClientMenus.ts
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
-import {
-  getApiClientMenus,
-  getApiClientMenusId,
-  putApiClientMenusId,
-  postApiClientMenusFromTemplate,
-} from "@common/api/sdk/nutri-api";
-
-import {
-  ClientMenuUpdateRequestDto,
-  ClientMenuCreateFromTemplateRequestDto,
-} from "@common/api/sdk/schemas";
-
+import {getApiClientMenus,getApiClientMenusId,putApiClientMenusId,postApiClientMenusFromTemplate,} from "@common/api/sdk/nutri-api";
+import {ClientMenuUpdateRequestDto,ClientMenuCreateFromTemplateRequestDto,} from "@common/api/sdk/schemas";
 import { nutritionKeys } from "@/queryKeys/nutritionKeys";
 import { mapClientMenu } from "@/mappers/nutrition/clientMenu.mapper";
 import { UINutritionPlan } from "@/types/ui/nutrition/nutrition.types";

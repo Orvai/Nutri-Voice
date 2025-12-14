@@ -7,5 +7,6 @@
 import type { ClientsListResponseDtoDataItem } from './clientsListResponseDtoDataItem';
 
 export interface ClientsListResponseDto {
+  map(buildClient: (c: import("./clientListItemDto").ClientListItemDto) => import("@/types/client").ClientExtended): import("@/types/client").ClientExtended[] | PromiseLike<import("@/types/client").ClientExtended[]>;
   data: ClientsListResponseDtoDataItem[];
 }

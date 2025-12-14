@@ -1,6 +1,6 @@
 // src/components/client-profile/nutrition/ClientNutritionPlans.tsx
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -30,17 +30,18 @@ export default function ClientNutritionPlans({ clientId }: Props) {
   ============================ */
 
   const {
-    data: clientMenus = [],
+    data: clientMenus,
     isLoading: loadingClientMenus,
     error,
   } = useClientMenus(clientId);
 
   const {
-    data: templates = [],
+    data: templates,
     isLoading: loadingTemplates,
   } = useTemplateMenus();
 
   const createFromTemplate = useCreateClientMenuFromTemplate();
+
 
   /* ============================
      Local state
@@ -48,30 +49,33 @@ export default function ClientNutritionPlans({ clientId }: Props) {
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
+  const didInitRef = useRef(false);
+
   /* ============================
      Auto-create client menus
   ============================ */
 
   useEffect(() => {
-    if (
-      !loadingClientMenus &&
-      !loadingTemplates &&
-      clientMenus.length === 0 &&
-      templates.length > 0
-    ) {
-      templates.forEach((tmpl) => {
-        createFromTemplate.mutate({
-          clientId,
-          templateMenuId: tmpl.id,
-        });
+    if (didInitRef.current) return;
+    if (loadingClientMenus || loadingTemplates) return;
+    if (!clientMenus || !templates) return;
+    if (clientMenus.length > 0) return;
+
+    didInitRef.current = true;
+
+    templates.forEach((tmpl) => {
+      createFromTemplate.mutate({
+        clientId,
+        templateMenuId: tmpl.id,
       });
-    }
+    });
   }, [
     clientId,
-    clientMenus.length,
-    templates,
     loadingClientMenus,
     loadingTemplates,
+    clientMenus,
+    templates,
+    createFromTemplate,
   ]);
 
   /* ============================
@@ -79,25 +83,32 @@ export default function ClientNutritionPlans({ clientId }: Props) {
   ============================ */
 
   useEffect(() => {
-    if (clientMenus.length > 0 && !activeTab) {
+    if (clientMenus && clientMenus.length > 0 && !activeTab) {
       setActiveTab(clientMenus[0].id);
     }
   }, [clientMenus, activeTab]);
 
   /* ============================
-     Load full menu (ALREADY UI MODEL)
+     Load full menu (UI model)
   ============================ */
 
   const {
     data: plan,
     isLoading: loadingMenu,
-  } = useClientMenu(activeTab);
+  } = useClientMenu(activeTab ?? undefined);
 
   /* ============================
      Loading / Error states
   ============================ */
 
-  if (loadingClientMenus || loadingTemplates || loadingMenu || !plan) {
+  if (
+    loadingClientMenus ||
+    loadingTemplates ||
+    loadingMenu ||
+    !clientMenus ||
+    !templates ||
+    !plan
+  ) {
     return (
       <View
         style={{
@@ -115,7 +126,9 @@ export default function ClientNutritionPlans({ clientId }: Props) {
   if (error) {
     return (
       <View style={{ padding: 20 }}>
-        <Text style={{ color: "red" }}>{error.message}</Text>
+        <Text style={{ color: "red" }}>
+          {error instanceof Error ? error.message : "Error loading menus"}
+        </Text>
       </View>
     );
   }

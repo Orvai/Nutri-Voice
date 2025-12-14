@@ -12,8 +12,8 @@ export const useClients = () => {
   return useQuery<ClientExtended[]>({
     queryKey: clientKeys.list(),
     queryFn: async ({ signal }) => {
-      const res = await getApiClients(signal);
-      return res.data.map(buildClient);
+      const clients = await getApiClients(signal);
+      return clients.map(buildClient);
     },
   });
 };

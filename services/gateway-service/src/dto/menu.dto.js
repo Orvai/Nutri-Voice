@@ -261,7 +261,6 @@ const ClientMenuCreateRequestDto = z.object({
 const ClientMenuCreateFromTemplateRequestDto = z.object({
   templateMenuId: z.string(),
   clientId: z.string(),
-  coachId: z.string(),
   name: z.string().optional(),
   selectedOptions: z
     .array(
