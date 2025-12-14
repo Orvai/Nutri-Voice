@@ -162,14 +162,18 @@ r.delete("/client-menus/:id",authRequired,requireCoach,forward(BASE, "/internal/
  *             schema:
  *               $ref: "#/components/schemas/ClientMenuResponseDto"
  */
-r.post("/client-menus/from-template",authRequired,requireCoach,
-  (req, res, next) => {
+r.post("/client-menus/from-template",authRequired,requireCoach,(req, res, next) => {
     const { clientId, templateMenuId } = req.body ?? {};
-    if (!clientId) return res.status(400).json({ message: "clientId is required" });
-    if (!templateMenuId) return res.status(400).json({ message: "templateMenuId is required" });
-    req.body = { ...req.body, coachId: req.user.id };
-    return forward(BASE, "/internal/menu/client-menus/from-template")(req, res, next);
-  }
+    if (!clientId) {
+      return res.status(400).json({ message: "clientId is required" });
+    }
+    if (!templateMenuId) {
+      return res.status(400).json({ message: "templateMenuId is required" });
+    }
+    req.headers["x-coach-id"] = req.user.id;
+    req.headers["x-client-id"] = clientId;
+    return forward(BASE,"/internal/menu/client-menus/from-template")(req, res, next);}
 );
+
 
 export default r;

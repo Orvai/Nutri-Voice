@@ -83,8 +83,12 @@ const createClientMenuFromTemplateController = async (req, res, next) => {
   try {
     requireIdentity(req, ["coachId", "clientId"]);
     const dto = ClientMenuCreateFromTemplateDto.parse(req.body);
-    const result = await createClientMenuFromTemplate(dto, req.identity.coachId, req.identity.clientId);
-    res.status(201).json({
+    const result = await createClientMenuFromTemplate({
+      ...dto,
+      coachId: req.identity.coachId,
+      clientId: req.identity.clientId,
+    });
+      res.status(201).json({
       message: "Client menu created from template successfully",
       data: result,
     });
@@ -99,5 +103,5 @@ module.exports = {
   getClientMenu: getClientMenuController,
   updateClientMenu: updateClientMenuController,
   deleteClientMenu: deleteClientMenuController,
-  createClientMenuFromTemplate: createClientMenuFromTemplateController, // ← חדש
+  createClientMenuFromTemplate: createClientMenuFromTemplateController, 
 };

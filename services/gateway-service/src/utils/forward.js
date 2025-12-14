@@ -24,15 +24,11 @@ export function forward(baseURL, targetPath, options = {}) {
       url = `${baseURL}${resolvedPath}`;
 
       const headers = {
+        ...req.headers,
         "x-internal-token": process.env.INTERNAL_TOKEN,
-
-        ...(req.headers.authorization && {
-          authorization: req.headers.authorization,
-        }),
-
-        ...(req.headers.cookie && {
-          cookie: req.headers.cookie,
-        }),
+        "cache-control": "no-cache",
+          pragma: "no-cache",
+          expires: "0",
       };
 
       const config = {
@@ -112,7 +108,8 @@ export function forward(baseURL, targetPath, options = {}) {
 
     } catch (err) {
       console.error("❌ ERROR on", method.toUpperCase(), url);
-      console.error("   DETAILS:", err?.message, err?.code, err?.response?.status);
+      console.error("   STATUS:", err?.response?.status);
+      console.error("   RESPONSE DATA:", JSON.stringify(err?.response?.data, null, 2));
 
       if (err.response) {
         return res.status(err.response.status).json({

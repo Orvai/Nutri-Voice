@@ -1,6 +1,8 @@
 // routes.js
 const { Router } = require("express");
 const verifyInternalToken = require("./middleware/verifyInternalToken");
+const { injectIdentity } = require("./middleware/injectIdentity");
+
 
 /* Controllers */
 const Food = require("./controllers/food.controller");
@@ -46,10 +48,6 @@ router.get("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.g
 router.put("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.updateClientMenu);
 router.delete("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.deleteClientMenu);
 
-router.post(
-  "/internal/menu/client-menus/from-template",
-  verifyInternalToken,
-  ClientMenus.createClientMenuFromTemplate
-);
+router.post("/internal/menu/client-menus/from-template",verifyInternalToken,injectIdentity,ClientMenus.createClientMenuFromTemplate);
 
 module.exports = router;
