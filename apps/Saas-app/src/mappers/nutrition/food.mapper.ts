@@ -7,7 +7,7 @@ export function mapFood(dto: FoodItemResponseDto): Food {
     id: dto.id,
     name: dto.name,
     description: dto.description ?? undefined,
-    category: dto.category ?? undefined,
+    category: dto.category?.toUpperCase() ,
     caloriesPer100g: dto.caloriesPer100g ?? undefined,
     proteinPer100g: dto.proteinPer100g ?? undefined,
   };

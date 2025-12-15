@@ -166,7 +166,10 @@ export default function FoodPickerModal({
                     ? `${item.caloriesPer100g} קק״ל ל־100 גרם`
                     : "אין מידע קלורי"
                 }
-                onPress={() => onSelect(item)}
+                onPress={() => {
+                  onSelect(item);
+                  onClose();
+                }}
               />
             ))}
           </ScrollView>

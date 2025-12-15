@@ -130,7 +130,6 @@ const getTemplateMenu = async (id) => {
   return menu;
 };
 
-
 // =========================================================
 // UPDATE Template Menu
 // =========================================================
@@ -147,6 +146,10 @@ const updateTemplateMenu = async (id, data) => {
   }
 
   await prisma.$transaction(async (tx) => {
+    /* ===============================
+       Menu meta
+    =============================== */
+
     await tx.templateMenu.update({
       where: { id },
       data: {
@@ -156,6 +159,10 @@ const updateTemplateMenu = async (id, data) => {
         totalCalories: data.totalCalories ?? undefined,
       },
     });
+
+    /* ===============================
+       Vitamins
+    =============================== */
 
     if (data.vitaminsToDelete?.length) {
       await tx.templateMenuVitamin.deleteMany({
@@ -176,6 +183,11 @@ const updateTemplateMenu = async (id, data) => {
         })),
       });
     }
+
+    /* ===============================
+       Meals
+    =============================== */
+
     if (data.mealsToDelete?.length) {
       await tx.templateMenuMeal.deleteMany({
         where: {
@@ -186,7 +198,7 @@ const updateTemplateMenu = async (id, data) => {
     }
 
     if (data.mealsToAdd?.length) {
-      for (const meal of data.mealsToAdd) {
+      for (const meal of data.mealsToAdd ?? []) {
         const createdMeal = await tx.templateMenuMeal.create({
           data: {
             templateMenuId: id,
@@ -222,7 +234,7 @@ const updateTemplateMenu = async (id, data) => {
     }
 
     if (data.mealsToUpdate?.length) {
-      for (const meal of data.mealsToUpdate) {
+      for (const meal of data.mealsToUpdate ?? []) {
         await tx.templateMenuMeal.update({
           where: { id: meal.id },
           data: {
@@ -234,16 +246,23 @@ const updateTemplateMenu = async (id, data) => {
       }
     }
 
+    /* ===============================
+       Meal Options (CRITICAL FIX)
+    =============================== */
+
     if (data.mealOptionsToDelete?.length) {
       await tx.templateMenuMealOption.deleteMany({
-        where: { id: { in: data.mealOptionsToDelete.map((opt) => opt.id) } },
+        where: {
+          id: { in: data.mealOptionsToDelete.map((opt) => opt.id) },
+        },
       });
     }
 
     if (data.mealOptionsToAdd?.length) {
-      for (const option of data.mealOptionsToAdd) {
+      for (const option of data.mealOptionsToAdd ?? []) {
         let mealTemplateId = option.mealTemplateId;
 
+        // Create template ONLY if ID is missing
         if (!mealTemplateId) {
           const newTemplate = await tx.mealTemplate.create({
             data: {
@@ -255,6 +274,20 @@ const updateTemplateMenu = async (id, data) => {
           });
 
           mealTemplateId = newTemplate.id;
+        } else {
+          // ✅ VALIDATION FIX — ensure template exists
+          const templateExists = await tx.mealTemplate.findUnique({
+            where: { id: mealTemplateId },
+            select: { id: true },
+          });
+
+          if (!templateExists) {
+            const e = new Error(
+              `Invalid mealTemplateId: ${mealTemplateId}. Must reference existing MealTemplate.`
+            );
+            e.status = 400;
+            throw e;
+          }
         }
 
         await tx.templateMenuMealOption.create({
@@ -267,6 +300,10 @@ const updateTemplateMenu = async (id, data) => {
         });
       }
     }
+
+    /* ===============================
+       Recalculate total calories
+    =============================== */
 
     const meals = await tx.templateMenuMeal.findMany({
       where: { templateMenuId: id },
@@ -287,6 +324,7 @@ const updateTemplateMenu = async (id, data) => {
   // Always return fresh full menu (with nested structures)
   return getTemplateMenu(id);
 };
+
 
 // =========================================================
 // DELETE Template Menu

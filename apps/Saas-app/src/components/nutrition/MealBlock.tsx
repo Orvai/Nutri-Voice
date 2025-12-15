@@ -40,12 +40,14 @@ function categoryToRole(category?: string) {
 function OptionlessMealFoods({
   foods,
   mealTemplateId,
+  mealId,
   menuId,
   menuSource,
 }: {
   foods: UIFoodItem[];
   mealTemplateId: string;
-  menuId: string;
+  mealId: string;
+    menuId: string;
   menuSource: UINutritionSource;
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -98,12 +100,16 @@ function OptionlessMealFoods({
         onClose={() => setPickerOpen(false)}
         existingIds={foods.map((f) => f.id)}
         onSelect={(food) => {
-          menuActions.addMealOption(
-            menuId,
-            mealTemplateId,
-            food.id,
-            categoryToRole(food.category)
-          );
+          const defaultQuantity = 100;
+          const caloriesPer100g = food.caloriesPer100g ?? 0;
+          const calories = Math.round((defaultQuantity * caloriesPer100g) / 100);
+
+          menuActions.addMealItem(menuId, mealId, {
+            foodItemId: food.id,
+            quantity: defaultQuantity,
+            calories,
+            notes: null,
+          });
           setPickerOpen(false);
         }}
       />
@@ -276,6 +282,7 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
         <OptionlessMealFoods
           foods={meal.foods}
           mealTemplateId={meal.mealTemplateId}
+          mealId = {meal.id}
           menuId={menuId}
           menuSource={menuSource}
         />

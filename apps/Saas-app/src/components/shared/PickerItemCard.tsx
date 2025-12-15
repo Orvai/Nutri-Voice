@@ -47,7 +47,9 @@ export default function PickerItemCard({
           backgroundColor: "#2563eb",
         }}
       >
-        <Text style={{ color: "white", fontWeight: "700", fontSize: 12 }}>בחר</Text>
+        <Text style={{ color: "white", fontWeight: "700", fontSize: 12 }}>
+          בחר
+        </Text>
       </Pressable>
     </View>
   );

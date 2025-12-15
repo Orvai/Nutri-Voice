@@ -137,8 +137,8 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
       });
     },
 
-    updateMealCalories(menuId: string, mealId: string, totalCalories: number) {
-      const payload = {
+    updateMealCalories(menuId: string,mealId: string,totalCalories: number | null) {  
+        const payload = {
         mealsToUpdate: [{ id: mealId, totalCalories }],
       };
 
@@ -153,6 +153,47 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
     removeMeal(menuId: string, mealId: string) {
       const payload = {
         mealsToDelete: [{ id: mealId }],
+      };
+
+      if (source === "client") {
+        mutateClient(menuId, payload);
+        return;
+      }
+
+      mutateTemplate(menuId, payload);
+    },
+    /* ===============================
+       Meal Items (Food inside Meal)
+    =============================== */
+
+    /**
+     * Add food item to an existing meal
+     * Implemented via mealsToUpdate.itemsToAdd
+     */
+    addMealItem(
+      menuId: string,
+      mealId: string,
+      item: {
+        foodItemId: string;
+        quantity: number;
+        calories: number;
+        notes?: string | null;
+      }
+    ) {
+      const payload = {
+        mealsToUpdate: [
+          {
+            id: mealId,
+            itemsToAdd: [
+              {
+                foodItemId: item.foodItemId,
+                quantity: item.quantity,
+                calories: item.calories,
+                notes: item.notes ?? null,
+              },
+            ],
+          },
+        ],
       };
 
       if (source === "client") {

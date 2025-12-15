@@ -15,7 +15,7 @@ export function useFood(search?: string) {
     queryKey: nutritionKeys.food(search),
     queryFn: async ({ signal }) => {
       const res = await getApiFood(signal);
-      return res.data.map(mapFood);
+      return  (res as any).map(mapFood);
     },
   });
 }
