@@ -1,5 +1,6 @@
 // src/services/templateMenu.service.js
 const prisma = require("../db/prisma");
+const {createMealTemplate,updateMealTemplate,} = require("./mealTemplate.service");
 // =========================================================
 // CREATE Template Menu
 // =========================================================
@@ -198,8 +199,8 @@ const updateTemplateMenu = async (id, data) => {
     }
 
     if (data.mealsToAdd?.length) {
-      for (const meal of data.mealsToAdd ?? []) {
-        const createdMeal = await tx.templateMenuMeal.create({
+      for (const meal of data.mealsToAdd) {
+        await tx.templateMenuMeal.create({
           data: {
             templateMenuId: id,
             name: meal.name,
@@ -207,34 +208,11 @@ const updateTemplateMenu = async (id, data) => {
             selectedOptionId: null,
           },
         });
-
-        const mealTemplate = await tx.mealTemplate.create({
-          data: {
-            coachId: existing.coachId,
-            name: meal.name,
-            kind: "FREE_CALORIES",
-            totalCalories: meal.totalCalories ?? 0,
-          },
-        });
-
-        const option = await tx.templateMenuMealOption.create({
-          data: {
-            mealId: createdMeal.id,
-            mealTemplateId: mealTemplate.id,
-            name: meal.name,
-            orderIndex: meal.orderIndex ?? 0,
-          },
-        });
-
-        await tx.templateMenuMeal.update({
-          where: { id: createdMeal.id },
-          data: { selectedOptionId: option.id },
-        });
       }
     }
 
     if (data.mealsToUpdate?.length) {
-      for (const meal of data.mealsToUpdate ?? []) {
+      for (const meal of data.mealsToUpdate) {
         await tx.templateMenuMeal.update({
           where: { id: meal.id },
           data: {
@@ -247,7 +225,7 @@ const updateTemplateMenu = async (id, data) => {
     }
 
     /* ===============================
-       Meal Options (CRITICAL FIX)
+       Meal Options
     =============================== */
 
     if (data.mealOptionsToDelete?.length) {
@@ -259,42 +237,35 @@ const updateTemplateMenu = async (id, data) => {
     }
 
     if (data.mealOptionsToAdd?.length) {
-      for (const option of data.mealOptionsToAdd ?? []) {
+      for (const option of data.mealOptionsToAdd) {
         let mealTemplateId = option.mealTemplateId;
 
-        // Create template ONLY if ID is missing
         if (!mealTemplateId) {
-          const newTemplate = await tx.mealTemplate.create({
-            data: {
-              coachId: existing.coachId,
-              name: option.name ?? "אופציה חדשה",
-              kind: "FREE_CALORIES",
-              totalCalories: 0,
-            },
-          });
-
-          mealTemplateId = newTemplate.id;
-        } else {
-          // ✅ VALIDATION FIX — ensure template exists
-          const templateExists = await tx.mealTemplate.findUnique({
-            where: { id: mealTemplateId },
-            select: { id: true },
-          });
-
-          if (!templateExists) {
+          if (!option.template) {
             const e = new Error(
-              `Invalid mealTemplateId: ${mealTemplateId}. Must reference existing MealTemplate.`
+              "template is required when mealTemplateId is missing"
             );
             e.status = 400;
             throw e;
           }
+
+          const createdTemplate = await createMealTemplate(
+            {
+              name: option.template.name,
+              kind: option.template.kind ?? "FREE_CALORIES",
+              items: option.template.items ?? [],
+            },
+            existing.coachId
+          );
+
+          mealTemplateId = createdTemplate.id;
         }
 
         await tx.templateMenuMealOption.create({
           data: {
             mealId: option.mealId,
             mealTemplateId,
-            name: option.name ?? null,
+            name: option.template?.name ?? option.name ?? null,
             orderIndex: option.orderIndex ?? 0,
           },
         });
@@ -321,7 +292,6 @@ const updateTemplateMenu = async (id, data) => {
     });
   });
 
-  // Always return fresh full menu (with nested structures)
   return getTemplateMenu(id);
 };
 

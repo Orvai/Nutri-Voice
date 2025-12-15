@@ -12,6 +12,5 @@ export type TemplateMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItem = {
   defaultGrams: number;
   /** @nullable */
   notes: string | null;
-
   foodItem: TemplateMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItemFoodItem;
 };

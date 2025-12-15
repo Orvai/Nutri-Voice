@@ -5,7 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type ClientMenuUpdateRequestDtoMealsToAddItem = {
-  originalTemplateId: string;
-  name?: string;
+export type DeleteApiMealTemplatesId200 = {
+  message?: string;
 };

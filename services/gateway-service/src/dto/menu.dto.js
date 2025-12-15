@@ -1,5 +1,8 @@
 const { z } = require("zod");
 
+// enums.dto.js
+const DayTypeEnum = z.enum(["TRAINING", "REST"]);
+
 /* =============================================================================
    FOOD ITEMS
 ============================================================================= */
@@ -245,6 +248,7 @@ const TemplateMenuResponseDto = z.object({
   ),
 });
 
+
 /* =============================================================================
    CLIENT MENUS
 ============================================================================= */
@@ -252,39 +256,24 @@ const TemplateMenuResponseDto = z.object({
 const ClientMenuCreateRequestDto = z.object({
   clientId: z.string(),
   name: z.string(),
-  type: z.string(),
+  type: DayTypeEnum,
   notes: z.string().nullable().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  startDate: z.string().optional(), // ISO
+  endDate: z.string().optional(),   // ISO
 });
-
-const ClientMenuCreateFromTemplateRequestDto = z.object({
-  templateMenuId: z.string(),
-  clientId: z.string(),
-  name: z.string().optional(),
-  selectedOptions: z
-    .array(
-      z.object({
-        templateMealId: z.string(),
-        optionId: z.string(),
-      })
-    )
-    .optional(),
-});
-
 const ClientMenuUpdateRequestDto = z.object({
   // ===== Menu meta =====
   name: z.string().optional(),
-  type: z.string().optional(),
+  type: DayTypeEnum.optional(),
   notes: z.string().nullable().optional(),
   isActive: z.boolean().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
 
   // ===== Meals =====
   mealsToAdd: z.array(
     z.object({
-      templateId: z.string(), // maps to originalTemplateId
+      originalTemplateId: z.string(),
       name: z.string().optional(),
     })
   ).optional(),
@@ -332,7 +321,7 @@ const ClientMenuUpdateRequestDto = z.object({
   // ===== Meal Options =====
   mealOptionsToAdd: z.array(
     z.object({
-      mealId: z.string(),
+      clientMenuMealId: z.string(),
       mealTemplateId: z.string(),
       name: z.string().nullable().optional(),
       orderIndex: z.number().optional(),
@@ -370,38 +359,67 @@ const ClientMenuUpdateRequestDto = z.object({
 });
 
 
-
-// REAL FULL RESPONSE
 const ClientMenuResponseDto = z.object({
   id: z.string(),
-  name: z.string(),
+  clientId: z.string(),
   coachId: z.string(),
-  type: z.string(),
+
+  name: z.string(),
+  type: DayTypeEnum,
+
   notes: z.string().nullable(),
+  isActive: z.boolean(),
+
+  startDate: z.string().nullable(),
+  endDate: z.string().nullable(),
+
   totalCalories: z.number(),
 
   meals: z.array(
     z.object({
       id: z.string(),
       name: z.string(),
-      totalCalories: z.number().nullable().optional(),
+      originalTemplateId: z.string().nullable(),
+
+      totalCalories: z.number(),
       selectedOptionId: z.string().nullable(),
+
+      // ===== Actual client items =====
+      items: z.array(
+        z.object({
+          id: z.string(),
+          quantity: z.number(),
+          calories: z.number(),
+          notes: z.string().nullable(),
+
+          foodItem: z.object({
+            id: z.string(),
+            name: z.string(),
+            caloriesPer100g: z.number().nullable(),
+          }),
+        })
+      ),
+
+      // ===== Options (from templates) =====
       options: z.array(
         z.object({
           id: z.string(),
           name: z.string().nullable(),
           orderIndex: z.number(),
+
           mealTemplate: z.object({
             id: z.string(),
             name: z.string(),
             kind: z.string(),
-            totalCalories: z.number().nullable().optional(),
+            totalCalories: z.number(),
+
             items: z.array(
               z.object({
                 id: z.string(),
                 role: z.string(),
                 defaultGrams: z.number(),
                 notes: z.string().nullable(),
+
                 foodItem: z.object({
                   id: z.string(),
                   name: z.string(),
@@ -423,6 +441,19 @@ const ClientMenuResponseDto = z.object({
       description: z.string().nullable(),
     })
   ),
+});
+
+const ClientMenuCreateFromTemplateRequestDto = z.object({
+  templateMenuId: z.string(),
+  clientId: z.string(),
+  name: z.string().optional(),
+
+  selectedOptions: z.array(
+    z.object({
+      templateMealId: z.string(),
+      optionId: z.string(),
+    })
+  ).optional(),
 });
 
 /* =============================================================================
@@ -475,4 +506,5 @@ module.exports = {
   VitaminCreateRequestDto,
   VitaminUpdateRequestDto,
   VitaminResponseDto,
+  DayTypeEnum,
 };

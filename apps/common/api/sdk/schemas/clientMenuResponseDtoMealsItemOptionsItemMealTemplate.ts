@@ -10,7 +10,6 @@ export type ClientMenuResponseDtoMealsItemOptionsItemMealTemplate = {
   id: string;
   name: string;
   kind: string;
-  /** @nullable */
-  totalCalories?: number | null;
+  totalCalories: number;
   items: ClientMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItem[];
 };

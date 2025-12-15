@@ -35,6 +35,7 @@ import type {
   DeleteApiClientIdWorkoutProgramsProgramId200,
   DeleteApiClientMenusId200,
   DeleteApiFoodId200,
+  DeleteApiMealTemplatesId200,
   DeleteApiTemplateMenusId200,
   DeleteApiTemplatesId200,
   ExerciseCreateRequestDto,
@@ -43,16 +44,22 @@ import type {
   FoodItemRequestCreateDto,
   FoodItemRequestUpdateDto,
   GetApiFood200,
+  GetApiMealTemplates200,
+  GetApiMealTemplatesId200,
   LoginRequestDto,
   LoginResponseDto,
   LogoutResponseDto,
   MealLogCreateRequestDto,
   MealLogHistoryResponseDto,
   MealLogResponseDto,
+  MealTemplateCreateRequestDto,
+  MealTemplateUpdateRequestDto,
   MfaRegisterResponseDto,
   MfaVerifyRequestDto,
   MfaVerifyResponseDto,
   PostApiExercisesIdVideoBody,
+  PostApiMealTemplates201,
+  PutApiMealTemplatesId200,
   RefreshTokenResponseDto,
   RegisterRequestDto,
   RegisterResponseDto,
@@ -1602,6 +1609,384 @@ export const useDeleteApiFoodId = <TError = unknown,
       > => {
 
       const mutationOptions = getDeleteApiFoodIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Create a meal template
+ */
+export const postApiMealTemplates = (
+    mealTemplateCreateRequestDto: MealTemplateCreateRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<PostApiMealTemplates201>(
+      {url: `/api/meal-templates`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: mealTemplateCreateRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiMealTemplatesMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMealTemplates>>, TError,{data: MealTemplateCreateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiMealTemplates>>, TError,{data: MealTemplateCreateRequestDto}, TContext> => {
+
+const mutationKey = ['postApiMealTemplates'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMealTemplates>>, {data: MealTemplateCreateRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiMealTemplates(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiMealTemplatesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMealTemplates>>>
+    export type PostApiMealTemplatesMutationBody = MealTemplateCreateRequestDto
+    export type PostApiMealTemplatesMutationError = unknown
+
+    /**
+ * @summary Create a meal template
+ */
+export const usePostApiMealTemplates = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMealTemplates>>, TError,{data: MealTemplateCreateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiMealTemplates>>,
+        TError,
+        {data: MealTemplateCreateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiMealTemplatesMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary List meal templates
+ */
+export const getApiMealTemplates = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<GetApiMealTemplates200>(
+      {url: `/api/meal-templates`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiMealTemplatesQueryKey = () => {
+    return [
+    `/api/meal-templates`
+    ] as const;
+    }
+
+    
+export const getGetApiMealTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getApiMealTemplates>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplates>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMealTemplatesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMealTemplates>>> = ({ signal }) => getApiMealTemplates(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMealTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMealTemplates>>>
+export type GetApiMealTemplatesQueryError = unknown
+
+
+export function useGetApiMealTemplates<TData = Awaited<ReturnType<typeof getApiMealTemplates>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplates>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMealTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMealTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMealTemplates<TData = Awaited<ReturnType<typeof getApiMealTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplates>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMealTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMealTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMealTemplates<TData = Awaited<ReturnType<typeof getApiMealTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List meal templates
+ */
+
+export function useGetApiMealTemplates<TData = Awaited<ReturnType<typeof getApiMealTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMealTemplatesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Get meal template by ID
+ */
+export const getApiMealTemplatesId = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<GetApiMealTemplatesId200>(
+      {url: `/api/meal-templates/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiMealTemplatesIdQueryKey = (id?: string,) => {
+    return [
+    `/api/meal-templates/${id}`
+    ] as const;
+    }
+
+    
+export const getGetApiMealTemplatesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMealTemplatesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMealTemplatesId>>> = ({ signal }) => getApiMealTemplatesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMealTemplatesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMealTemplatesId>>>
+export type GetApiMealTemplatesIdQueryError = void
+
+
+export function useGetApiMealTemplatesId<TData = Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError = void>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMealTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMealTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMealTemplatesId<TData = Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMealTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMealTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMealTemplatesId<TData = Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get meal template by ID
+ */
+
+export function useGetApiMealTemplatesId<TData = Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMealTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMealTemplatesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Update (upsert) meal template
+ */
+export const putApiMealTemplatesId = (
+    id: string,
+    mealTemplateUpdateRequestDto: MealTemplateUpdateRequestDto,
+ ) => {
+      
+      
+      return customFetcher<PutApiMealTemplatesId200>(
+      {url: `/api/meal-templates/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: mealTemplateUpdateRequestDto
+    },
+      );
+    }
+  
+
+
+export const getPutApiMealTemplatesIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiMealTemplatesId>>, TError,{id: string;data: MealTemplateUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiMealTemplatesId>>, TError,{id: string;data: MealTemplateUpdateRequestDto}, TContext> => {
+
+const mutationKey = ['putApiMealTemplatesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiMealTemplatesId>>, {id: string;data: MealTemplateUpdateRequestDto}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiMealTemplatesId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiMealTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiMealTemplatesId>>>
+    export type PutApiMealTemplatesIdMutationBody = MealTemplateUpdateRequestDto
+    export type PutApiMealTemplatesIdMutationError = unknown
+
+    /**
+ * @summary Update (upsert) meal template
+ */
+export const usePutApiMealTemplatesId = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiMealTemplatesId>>, TError,{id: string;data: MealTemplateUpdateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiMealTemplatesId>>,
+        TError,
+        {id: string;data: MealTemplateUpdateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiMealTemplatesIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Delete meal template
+ */
+export const deleteApiMealTemplatesId = (
+    id: string,
+ ) => {
+      
+      
+      return customFetcher<DeleteApiMealTemplatesId200>(
+      {url: `/api/meal-templates/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiMealTemplatesIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMealTemplatesId>>, TError,{id: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiMealTemplatesId>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deleteApiMealTemplatesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiMealTemplatesId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiMealTemplatesId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiMealTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiMealTemplatesId>>>
+    
+    export type DeleteApiMealTemplatesIdMutationError = unknown
+
+    /**
+ * @summary Delete meal template
+ */
+export const useDeleteApiMealTemplatesId = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMealTemplatesId>>, TError,{id: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiMealTemplatesId>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiMealTemplatesIdMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

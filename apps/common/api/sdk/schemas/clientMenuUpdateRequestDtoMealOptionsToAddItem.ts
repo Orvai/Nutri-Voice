@@ -6,7 +6,7 @@
  */
 
 export type ClientMenuUpdateRequestDtoMealOptionsToAddItem = {
-  mealId: string;
+  clientMenuMealId: string;
   mealTemplateId: string;
   /** @nullable */
   name?: string | null;

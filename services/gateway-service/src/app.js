@@ -3,7 +3,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger.js";
-
 import menuRoutes from "./routes/menu/index.js";
 import workoutRoutes from "./routes/workout/index.js";
 import trackingRoutes from "./routes/tracking/index.js";
