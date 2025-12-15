@@ -61,7 +61,6 @@ export interface UIMealOption {
   mealTemplateName: string;
   mealTemplateKind: UIMealTemplateKind;
   foods: UIFoodItem[];
-  totalCalories: number | null;
 }
 
 export interface UIFoodItem {

@@ -89,7 +89,6 @@ function mapMealOption(
     mealTemplateName: mt.name,
     mealTemplateKind: mt.kind,
     foods: mt.items.map(mapFoodItem),
-    totalCalories: mt.totalCalories ?? null,
   };
 }
 
@@ -102,7 +101,7 @@ function mapFoodItem(
     name: item.foodItem.name,
     role: item.role,
     grams: item.defaultGrams,
-    calories: null,
+    calories: item.foodItem.caloriesPer100g ?? null,
     color: "#E5E7EB",
     notes: item.notes,
   };

@@ -55,7 +55,7 @@ r.get("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"
  *       404:
  *         description: Client menu not found
  */
-r.get("/client-menus/:id",authRequired,requireOwnership,forward(BASE, "/internal/menu/client-menus/:id"));
+r.get("/client-menus/:id",authRequired,forward(BASE, "/internal/menu/client-menus/:id"));
 
 /**
  * @openapi

@@ -376,7 +376,7 @@ const ClientMenuResponseDto = z.object({
   id: z.string(),
   name: z.string(),
   coachId: z.string(),
-  dayType: z.string(),
+  type: z.string(),
   notes: z.string().nullable(),
   totalCalories: z.number(),
 
@@ -384,8 +384,8 @@ const ClientMenuResponseDto = z.object({
     z.object({
       id: z.string(),
       name: z.string(),
+      totalCalories: z.number().nullable().optional(),
       selectedOptionId: z.string().nullable(),
-
       options: z.array(
         z.object({
           id: z.string(),
@@ -395,6 +395,7 @@ const ClientMenuResponseDto = z.object({
             id: z.string(),
             name: z.string(),
             kind: z.string(),
+            totalCalories: z.number().nullable().optional(),
             items: z.array(
               z.object({
                 id: z.string(),
@@ -408,20 +409,6 @@ const ClientMenuResponseDto = z.object({
                 }),
               })
             ),
-          }),
-        })
-      ),
-
-      items: z.array(
-        z.object({
-          id: z.string(),
-          quantity: z.number(),
-          calories: z.number(),
-          notes: z.string().nullable(),
-          foodItem: z.object({
-            id: z.string(),
-            name: z.string(),
-            caloriesPer100g: z.number().nullable(),
           }),
         })
       ),

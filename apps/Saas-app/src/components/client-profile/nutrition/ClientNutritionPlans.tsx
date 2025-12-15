@@ -109,8 +109,13 @@ export default function ClientNutritionPlans({ clientId }: Props) {
      Loading / Error states
   ============================ */
 
-  if (loadingClientMenus || loadingTemplates || !clientMenus || !templates) {
-    return (
+  const initializingMenus =
+  loadingClientMenus ||
+  loadingTemplates ||
+  !clientMenus ||
+  (clientMenus.length === 0 && !!templates?.length);
+
+  if (initializingMenus) {    return (
       <View
         style={{
           flex: 1,
@@ -134,13 +139,20 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     );
   }
 
+  if (!clientMenus?.length) {
+    return (
+      <View style={{ padding: 20 }}>
+        <Text>לא נמצאו תפריטי תזונה ללקוח</Text>
+      </View>
+    );
+  }
   /* ============================
      Tabs
   ============================ */
 
   const tabs = clientMenus.map((menu) => ({
     id: menu.id,
-    label: menu.dayType === "TRAINING" ? "יום אימון" : "יום מנוחה",
+    label: menu.label,
   }));
 
   /* ============================

@@ -11,11 +11,10 @@ export interface ClientMenuResponseDto {
   id: string;
   name: string;
   coachId: string;
-  dayType: string;
+  type: string;
   /** @nullable */
   notes: string | null;
   totalCalories: number;
   meals: ClientMenuResponseDtoMealsItem[];
   vitamins: ClientMenuResponseDtoVitaminsItem[];
 }
-

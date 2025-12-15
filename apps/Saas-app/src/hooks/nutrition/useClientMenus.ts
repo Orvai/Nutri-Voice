@@ -1,22 +1,43 @@
 // src/hooks/nutrition/useClientMenus.ts
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {getApiClientMenus,getApiClientMenusId,putApiClientMenusId,postApiClientMenusFromTemplate,} from "@common/api/sdk/nutri-api";
-import {ClientMenuUpdateRequestDto,ClientMenuCreateFromTemplateRequestDto,} from "@common/api/sdk/schemas";
+import {
+  getApiClientMenusId,
+  putApiClientMenusId,
+  postApiClientMenusFromTemplate,
+} from "@common/api/sdk/nutri-api";
+import { customFetcher } from "@common/api/sdk/fetcher";
+import { ClientMenuResponseDto } from "@common/api/sdk/schemas/clientMenuResponseDto";
+import {
+  ClientMenuUpdateRequestDto,
+  ClientMenuCreateFromTemplateRequestDto,
+} from "@common/api/sdk/schemas";
 import { nutritionKeys } from "@/queryKeys/nutritionKeys";
-import { mapClientMenu } from "@/mappers/nutrition/clientMenu.mapper";
-import { UINutritionPlan } from "@/types/ui/nutrition/nutrition.types";
+import {
+  mapClientMenu,
+  mapClientMenuToTab,
+} from "@/mappers/nutrition/clientMenu.mapper";
+import {
+  UINutritionPlan,
+  UINutritionMenuTab,
+} from "@/types/ui/nutrition/nutrition.types";
 
 /* =====================================
    Queries
 ===================================== */
 
 export function useClientMenus(clientId?: string) {
-  return useQuery<UINutritionPlan[]>({
+  return useQuery<UINutritionMenuTab[]>({
     queryKey: nutritionKeys.clientMenus(clientId),
+    enabled: !!clientId,
     queryFn: async ({ signal }) => {
-      const res = await getApiClientMenus(signal);
-      return res.map(mapClientMenu);
+      const res = await customFetcher<ClientMenuResponseDto[]>({
+        url: "/api/client-menus",
+        method: "GET",
+        params: { clientId },
+        signal,
+      });
+
+      return res.map(mapClientMenuToTab);
     },
   });
 }

@@ -39,9 +39,6 @@ const ClientMenuUpdateRequestDto = z
     mealsToDelete: z.array(ClientMealDeleteDto).optional(),
     mealOptionsToAdd: z.array(TemplateMealOptionUpsertDto).optional(),
     mealOptionsToDelete: z.array(MealOptionDeleteDto).optional(),
-    itemsToAdd: z.array(MealItemCreateDto).optional(),
-    itemsToUpdate: z.array(MealItemUpdateDto).optional(),
-    itemsToDelete: z.array(MealItemDeleteDto).optional(),
     vitaminsToAdd: z.array(VitaminCreateDto.extend({ vitaminId: z.string().nullable().optional() }).strict()).optional(),
     vitaminsToUpdate: z
       .array(
@@ -73,6 +70,7 @@ const ClientMenuResponseDto = z
         .object({
           id: z.string(),
           name: z.string(),
+          totalCalories: z.number().nullable().optional(),
           selectedOptionId: z.string().nullable(),
           options: z.array(
             z
@@ -85,6 +83,7 @@ const ClientMenuResponseDto = z
                     id: z.string(),
                     name: z.string(),
                     kind: z.string(),
+                    totalCalories: z.number().nullable().optional(),
                     items: z.array(
                       z
                         .object({
@@ -102,23 +101,6 @@ const ClientMenuResponseDto = z
                         })
                         .strict()
                     ),
-                  })
-                  .strict(),
-              })
-              .strict()
-          ),
-          items: z.array(
-            z
-              .object({
-                id: z.string(),
-                quantity: z.number(),
-                calories: z.number(),
-                notes: z.string().nullable(),
-                foodItem: z
-                  .object({
-                    id: z.string(),
-                    name: z.string(),
-                    caloriesPer100g: z.number().nullable(),
                   })
                   .strict(),
               })

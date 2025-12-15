@@ -21,13 +21,14 @@ import {
 export function mapClientMenuToTab(
   dto: Pick<
   ClientMenuResponseDto,
-    "id" | "name" | "dayType" | "totalCalories"
+    "id" | "name" | "type" | "totalCalories"
   >
 ): UINutritionMenuTab {
+  const dayType = (dto.type ?? dto.type) as UIDayType;
   return {
     id: dto.id,
-    label: dto.name ?? (dto.dayType === "TRAINING" ? "יום אימון" : "יום מנוחה"),
-    dayType: dto.dayType as UIDayType,
+    label: dto.name ?? (dayType === "TRAINING" ? "יום אימון" : "יום מנוחה"),
+    dayType,
     totalCalories: dto.totalCalories,
   };
 }
@@ -36,12 +37,13 @@ export function mapClientMenuToTab(
 export function mapClientMenu(
   dto: ClientMenuResponseDto
 ): UINutritionPlan {
+  const dayType = (dto.type ?? dto.type) as UIDayType;
   return {
     id: dto.id,
     name: dto.name,
     source: "client",
-    dayType: dto.dayType as UIDayType,
-    totalCalories: 0, // ← not provided by API
+    dayType,
+    totalCalories: dto.totalCalories, 
     notes: dto.notes,
     vitamins: dto.vitamins.map(mapVitamin),
     meals: dto.meals.map(mapMeal),
@@ -71,10 +73,9 @@ function mapMeal(
     title: meal.name,
     timeRange: null,
     notes: null,
-    totalCalories: null, // ← not in API
+    totalCalories: meal.totalCalories ?? null,
     selectedOptionId: meal.selectedOptionId,
     options: meal.options.map(mapMealOption),
-    foods: meal.items.map(mapFoodItem),
   };
 }
 
@@ -82,7 +83,6 @@ function mapMealOption(
   option: ClientMenuResponseDto["meals"][number]["options"][number]
 ): UIMealOption {
   const mt = option.mealTemplate;
-
   return {
     id: option.id,
     title: option.name ?? mt.name,
@@ -91,21 +91,20 @@ function mapMealOption(
     mealTemplateId: mt.id,
     mealTemplateName: mt.name,
     mealTemplateKind: mt.kind,
-    foods: [],
-    totalCalories: null, // ← not in API
+    foods: mt.items.map(mapFoodItem),
   };
 }
 
 function mapFoodItem(
-  item: ClientMenuResponseDto["meals"][number]["items"][number]
+  item: ClientMenuResponseDto["meals"][number]["options"][number]["mealTemplate"]["items"][number]
 ): UIFoodItem {
   return {
     id: item.id,
     foodItemId: item.foodItem.id,
     name: item.foodItem.name,
-    role: "FREE",          // ← not provided by API
-    grams: item.quantity,
-    calories: item.calories ?? null,
+    role: item.role,          
+    grams: item.defaultGrams,
+    calories: item.foodItem.caloriesPer100g ?? null,
     color: "#E5E7EB",
     notes: item.notes,
   };

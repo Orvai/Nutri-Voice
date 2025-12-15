@@ -5,13 +5,13 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { ClientMenuResponseDtoMealsItemOptionsItem } from './clientMenuResponseDtoMealsItemOptionsItem';
-import type { ClientMenuResponseDtoMealsItemItemsItem } from './clientMenuResponseDtoMealsItemItemsItem';
 
 export type ClientMenuResponseDtoMealsItem = {
   id: string;
   name: string;
   /** @nullable */
+  totalCalories?: number | null;
+  /** @nullable */
   selectedOptionId: string | null;
   options: ClientMenuResponseDtoMealsItemOptionsItem[];
-  items: ClientMenuResponseDtoMealsItemItemsItem[];
 };

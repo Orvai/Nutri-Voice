@@ -1,4 +1,3 @@
-// src/services/clientMenu/clientMenu.service.js
 const prisma = require("../../db/prisma");
 const { Prisma } = require("@prisma/client");
 
@@ -11,63 +10,47 @@ const {
 } = require("./helpers/meals");
 
 const {
-  deleteMealItems,
-  updateMealItems,
-  addMealItems,
-} = require("./helpers/items");
-
-const {
   addClientMenuVitamins,
   updateClientMenuVitamins,
   deleteClientMenuVitamins,
 } = require("./helpers/vitamins");
 
-const {
-  recomputeMenuCalories,
-} = require("./helpers/recompute");
+const { recomputeMenuCalories } = require("./helpers/recompute");
 
 const withStatus = (error, status) => Object.assign(error, { status });
 
 const validateTemplateForClientMenu = (template, selectedOptions = []) => {
-  // Ensure every meal has options and the selected option belongs to that meal
   const mealsById = new Map(template.meals.map((meal) => [meal.id, meal]));
 
-  for (const selection of selectedOptions) {
-    const meal = mealsById.get(selection.templateMealId);
-    if (!meal) {
+  for (const sel of selectedOptions) {
+    const meal = mealsById.get(sel.templateMealId);
+    if (!meal)
       throw withStatus(
-        new Error(`Selected meal ${selection.templateMealId} is not part of the template`),
+        new Error(`Meal ${sel.templateMealId} not in template`),
         400
       );
-    }
 
-    const option = meal.options.find((opt) => opt.id === selection.optionId);
-    if (!option) {
+    const option = meal.options.find((o) => o.id === sel.optionId);
+    if (!option)
       throw withStatus(
-        new Error(`Selected option ${selection.optionId} does not belong to meal ${meal.id}`),
+        new Error(`Option ${sel.optionId} not in meal ${meal.id}`),
         400
       );
-    }
   }
 
-  // Guard against malformed template data (missing options / missing mealTemplate relation)
   for (const meal of template.meals) {
-    if (!meal.options?.length) {
+    if (!meal.options?.length)
       throw withStatus(
-        new Error(`Template meal ${meal.id} has no options defined`),
+        new Error(`Template meal ${meal.id} has no options`),
         400
       );
-    }
 
-    const validOptions = meal.options.filter((opt) => opt.mealTemplate);
-
-if (!validOptions.length) {
-  throw withStatus(
-    new Error(`Template meal ${meal.id} has no valid options with mealTemplate`),
-    400
-  );
-}
-
+    const valid = meal.options.some((o) => o.mealTemplate);
+    if (!valid)
+      throw withStatus(
+        new Error(`Template meal ${meal.id} has no valid mealTemplate`),
+        400
+      );
   }
 };
 
@@ -91,17 +74,14 @@ const createClientMenu = async (data, coachId, clientId) => {
 };
 
 // =========================================================
-// UPDATE ClientMenu (meals/items/vitamins)
+// UPDATE ClientMenu
 // =========================================================
 const updateClientMenu = async (id, data) => {
-
   await prisma.$transaction(async (tx) => {
     const existing = await tx.clientMenu.findUnique({ where: { id } });
-    if (!existing) {
-      throw Object.assign(new Error("Client menu not found"), { status: 404 });
-    }
+    if (!existing)
+      throw withStatus(new Error("Client menu not found"), 404);
 
-    // 1. Update metadata
     await tx.clientMenu.update({
       where: { id },
       data: {
@@ -111,60 +91,30 @@ const updateClientMenu = async (id, data) => {
         isActive: data.isActive ?? existing.isActive,
         startDate:
           data.startDate !== undefined
-            ? (data.startDate ? new Date(data.startDate) : null)
+            ? data.startDate
+              ? new Date(data.startDate)
+              : null
             : existing.startDate,
         endDate:
           data.endDate !== undefined
-            ? (data.endDate ? new Date(data.endDate) : null)
+            ? data.endDate
+              ? new Date(data.endDate)
+              : null
             : existing.endDate,
       },
     });
 
-    // 2. Map top-level item actions to the relevant meal (for generic UI payloads)
-    let mealsToUpdate = data.mealsToUpdate ?? [];
-
-    if (
-      (data.itemsToAdd?.length || data.itemsToUpdate?.length || data.itemsToDelete?.length) &&
-      (data.mealId || data.mealTemplateId)
-    ) {
-      const targetMeal = await tx.clientMenuMeal.findFirst({
-        where: {
-          clientMenuId: id,
-          ...(data.mealId ? { id: data.mealId } : {}),
-          ...(data.mealTemplateId ? { originalTemplateId: data.mealTemplateId } : {}),
-        },
-      });
-
-      if (!targetMeal) {
-        throw Object.assign(new Error("Target meal not found for update"), { status: 400 });
-      }
-
-      mealsToUpdate = [
-        ...mealsToUpdate,
-        {
-          id: targetMeal.id,
-          itemsToAdd: data.itemsToAdd,
-          itemsToUpdate: data.itemsToUpdate,
-          itemsToDelete: data.itemsToDelete,
-        },
-      ];
-    }
-
-    // 3. Meals CRUD
     await deleteMeals(tx, id, data.mealsToDelete);
-    await updateMeals(tx, id, mealsToUpdate);
+    await updateMeals(tx, id, data.mealsToUpdate);
     await addMealsFromTemplates(tx, id, data.mealsToAdd);
 
-    // 3b. Meal options CRUD
     await deleteMealOptions(tx, id, data.mealOptionsToDelete);
     await addMealOptions(tx, id, data.mealOptionsToAdd);
 
-    // 4. Vitamins CRUD
     await deleteClientMenuVitamins(tx, id, data.vitaminsToDelete);
     await updateClientMenuVitamins(tx, id, data.vitaminsToUpdate);
     await addClientMenuVitamins(tx, id, data.vitaminsToAdd);
 
-    // 5. Recompute calories
     await recomputeMenuCalories(tx, id);
   });
 
@@ -172,7 +122,7 @@ const updateClientMenu = async (id, data) => {
 };
 
 // =========================================================
-// LIST – lightweight for tabs
+// LIST (tabs)
 // =========================================================
 const listClientMenus = async (query) => {
   const includeInactive = query.includeInactive === "true";
@@ -197,7 +147,7 @@ const listClientMenus = async (query) => {
 };
 
 // =========================================================
-// GET — FULL DTO
+// GET FULL (DTO-aligned)
 // =========================================================
 const getClientMenu = async (id) => {
   const menu = await prisma.clientMenu.findUnique({
@@ -205,9 +155,6 @@ const getClientMenu = async (id) => {
     include: {
       meals: {
         include: {
-          items: {
-            include: { foodItem: true },
-          },
           options: {
             include: {
               mealTemplate: {
@@ -220,16 +167,13 @@ const getClientMenu = async (id) => {
         },
       },
       vitamins: {
-        include: {
-          vitamin: true,
-        },
+        include: { vitamin: true },
       },
     },
   });
 
-  if (!menu) {
-    throw Object.assign(new Error("Client menu not found"), { status: 404 });
-  }
+  if (!menu)
+    throw withStatus(new Error("Client menu not found"), 404);
 
   return menu;
 };
@@ -249,90 +193,57 @@ const deleteClientMenu = async (id) => {
 // =========================================================
 const createClientMenuFromTemplate = async (data) => {
   const { coachId, clientId } = data;
-  try {
-    const menu = await prisma.$transaction(async (tx) => {
-      console.log("====== 🟧 Loading templateMenu from DB ======");
-      const template = await tx.templateMenu.findUnique({
-        where: { id: data.templateMenuId },
-        include: {
-          meals: {
-            include: {
-              options: {
-                include: {
-                  mealTemplate: {
-                    include: { items: { include: { foodItem: true } } }
-                  }
-                }
-              }
-            }
+
+  const menu = await prisma.$transaction(async (tx) => {
+    const template = await tx.templateMenu.findUnique({
+      where: { id: data.templateMenuId },
+      include: {
+        meals: {
+          include: {
+            options: {
+              include: {
+                mealTemplate: {
+                  include: { items: { include: { foodItem: true } } },
+                },
+              },
+            },
           },
-          vitamins: true,
         },
-      });
-
-      console.log("🔎 templateMenu loaded:");
-      console.log(JSON.stringify(template, null, 2));
-
-      if (!template) {
-        throw Object.assign(new Error("Template menu not found"), { status: 404 });
-      }
-
-      console.log("====== 🟥 Validating template structure... ======");
-      validateTemplateForClientMenu(template, data.selectedOptions);
-      console.log("✅ Template validation passed!");
-
-      console.log("====== 🟩 Creating ClientMenu ======");
-      const clientMenu = await tx.clientMenu.create({
-        data: {
-          name: data.name ?? template.name,
-          clientId,
-          coachId,
-          type: template.dayType,
-          notes: template.notes ?? null,
-          originalTemplateMenuId: template.id,
-        },
-      });
-
-      const menuId = clientMenu.id;
-
-      console.log("====== 🟪 Creating meals from template... ======");
-      await addMealsFromTemplates(tx, menuId, template.meals, data.selectedOptions);
-
-      console.log("====== 🟪 Copying vitamins... ======");
-      await addClientMenuVitamins(tx, menuId, template.vitamins);
-
-      console.log("====== 🟪 Recomputing calories... ======");
-      await recomputeMenuCalories(tx, menuId);
-
-      console.log("====== ✅ ClientMenu created successfully ======");
-
-      return clientMenu;
+        vitamins: true,
+      },
     });
 
-    console.log("====== 🔵 Returning getClientMenu ======");
-    return await getClientMenu(menu.id);
+    if (!template)
+      throw withStatus(new Error("Template menu not found"), 404);
 
-  } catch (error) {
-    console.error("🔥🔥🔥 INTERNAL ERROR in createClientMenuFromTemplate 🔥🔥🔥");
-    console.error("message:", error.message);
-    console.error("status:", error.status);
-    console.error("code:", error.code);
-    console.error("meta:", error.meta);
-    console.error("stack:", error.stack);
+    validateTemplateForClientMenu(template, data.selectedOptions);
 
-    if (error?.status) throw error;
+    const clientMenu = await tx.clientMenu.create({
+      data: {
+        name: data.name ?? template.name,
+        clientId,
+        coachId,
+        type: template.dayType,
+        notes: template.notes ?? null,
+        originalTemplateMenuId: template.id,
+      },
+    });
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      const status = error.code === "P2025" ? 404 : 400;
-      throw Object.assign(new Error("Failed to create client menu from template"), {
-        status,
-        code: error.code,
-        details: error.meta,
-      });
-    }
+    await addMealsFromTemplates(
+      tx,
+      clientMenu.id,
+      template.meals,
+      data.selectedOptions
+    );
 
-    throw error;
-  }
+    await addClientMenuVitamins(tx, clientMenu.id, template.vitamins);
+
+    await recomputeMenuCalories(tx, clientMenu.id);
+
+    return clientMenu;
+  });
+
+  return getClientMenu(menu.id);
 };
 
 module.exports = {

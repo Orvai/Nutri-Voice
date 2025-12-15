@@ -14,8 +14,6 @@ export * from './clientMenuCreateFromTemplateRequestDtoSelectedOptionsItem';
 export * from './clientMenuCreateRequestDto';
 export * from './clientMenuResponseDto';
 export * from './clientMenuResponseDtoMealsItem';
-export * from './clientMenuResponseDtoMealsItemItemsItem';
-export * from './clientMenuResponseDtoMealsItemItemsItemFoodItem';
 export * from './clientMenuResponseDtoMealsItemOptionsItem';
 export * from './clientMenuResponseDtoMealsItemOptionsItemMealTemplate';
 export * from './clientMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItem';
