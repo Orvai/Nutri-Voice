@@ -10,10 +10,12 @@ import type { ClientMenuResponseDtoVitaminsItem } from './clientMenuResponseDtoV
 export interface ClientMenuResponseDto {
   id: string;
   name: string;
-  type: string;
+  coachId: string;
+  dayType: string;
   /** @nullable */
   notes: string | null;
-  isActive: boolean;
+  totalCalories: number;
   meals: ClientMenuResponseDtoMealsItem[];
   vitamins: ClientMenuResponseDtoVitaminsItem[];
 }
+

@@ -10,11 +10,28 @@ import {
   UIVitamin,
   UIFoodItem,
   UIDayType,
+  UINutritionMenuTab
 } from "@/types/ui/nutrition/nutrition.types";
 
 /* =========================================
    Public mapper
 ========================================= */
+
+
+export function mapClientMenuToTab(
+  dto: Pick<
+  ClientMenuResponseDto,
+    "id" | "name" | "dayType" | "totalCalories"
+  >
+): UINutritionMenuTab {
+  return {
+    id: dto.id,
+    label: dto.name ?? (dto.dayType === "TRAINING" ? "יום אימון" : "יום מנוחה"),
+    dayType: dto.dayType as UIDayType,
+    totalCalories: dto.totalCalories,
+  };
+}
+
 
 export function mapClientMenu(
   dto: ClientMenuResponseDto
@@ -23,7 +40,7 @@ export function mapClientMenu(
     id: dto.id,
     name: dto.name,
     source: "client",
-    dayType: dto.type as UIDayType,
+    dayType: dto.dayType as UIDayType,
     totalCalories: 0, // ← not provided by API
     notes: dto.notes,
     vitamins: dto.vitamins.map(mapVitamin),

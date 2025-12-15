@@ -167,20 +167,20 @@ r.post(
   authRequired,
   requireCoach,
   (req, res, next) => {
-    const { templateMenuId } = req.body ?? {};
-
-    if (!templateMenuId) {
-      return res.status(400).json({ message: "templateMenuId is required" });
-    }
-
-    const clientId = req.query.clientId || req.params.clientId;
+    const { clientId, templateMenuId } = req.body ?? {};
 
     if (!clientId) {
       return res.status(400).json({ message: "clientId is required (context)" });
     }
 
+    if (!templateMenuId) {
+      return res.status(400).json({ message: "templateMenuId is required" });
+    }
+
     req.headers["x-coach-id"] = req.user.id;
     req.headers["x-client-id"] = clientId;
+
+    delete req.body.clientId;
 
     return forward(
       BASE,
@@ -188,6 +188,5 @@ r.post(
     )(req, res, next);
   }
 );
-
 
 export default r;

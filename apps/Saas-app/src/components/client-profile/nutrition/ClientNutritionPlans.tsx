@@ -42,29 +42,39 @@ export default function ClientNutritionPlans({ clientId }: Props) {
 
   const createFromTemplate = useCreateClientMenuFromTemplate();
 
-
   /* ============================
      Local state
   ============================ */
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
-
   const didInitRef = useRef(false);
 
   /* ============================
-     Auto-create client menus
+     Auto-create client menus (SAFE)
   ============================ */
 
   useEffect(() => {
     if (didInitRef.current) return;
     if (loadingClientMenus || loadingTemplates) return;
     if (!clientMenus || !templates) return;
-    if (clientMenus.length > 0) return;
+    if (!clientId) return;
+
+    const hasAnyMenuType = clientMenus.some(
+      (m) => m.dayType === "REST" || m.dayType === "TRAINING"
+    );
+
+    if (hasAnyMenuType) {
+      didInitRef.current = true;
+      return;
+    }
 
     didInitRef.current = true;
 
+    console.log("🟡 AUTO-CREATING MENUS FROM TEMPLATE");
+
     templates.forEach((tmpl) => {
       createFromTemplate.mutate({
+        clientId,
         templateMenuId: tmpl.id,
       });
     });
@@ -74,7 +84,6 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     loadingTemplates,
     clientMenus,
     templates,
-    createFromTemplate,
   ]);
 
   /* ============================
@@ -88,7 +97,7 @@ export default function ClientNutritionPlans({ clientId }: Props) {
   }, [clientMenus, activeTab]);
 
   /* ============================
-     Load full menu (UI model)
+     Load full menu
   ============================ */
 
   const {
@@ -100,14 +109,7 @@ export default function ClientNutritionPlans({ clientId }: Props) {
      Loading / Error states
   ============================ */
 
-  if (
-    loadingClientMenus ||
-    loadingTemplates ||
-    loadingMenu ||
-    !clientMenus ||
-    !templates ||
-    !plan
-  ) {
+  if (loadingClientMenus || loadingTemplates || !clientMenus || !templates) {
     return (
       <View
         style={{
@@ -182,7 +184,13 @@ export default function ClientNutritionPlans({ clientId }: Props) {
         </Pressable>
       </View>
 
-      <NutritionDayCard plan={plan} />
+      {loadingMenu || !plan ? (
+        <View style={{ padding: 20 }}>
+          <ActivityIndicator />
+        </View>
+      ) : (
+        <NutritionDayCard plan={plan} />
+      )}
     </ScrollView>
   );
 }

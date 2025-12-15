@@ -370,13 +370,15 @@ const ClientMenuUpdateRequestDto = z.object({
 });
 
 
+
 // REAL FULL RESPONSE
 const ClientMenuResponseDto = z.object({
   id: z.string(),
   name: z.string(),
-  type: z.string(),
+  coachId: z.string(),
+  dayType: z.string(),
   notes: z.string().nullable(),
-  isActive: z.boolean(),
+  totalCalories: z.number(),
 
   meals: z.array(
     z.object({

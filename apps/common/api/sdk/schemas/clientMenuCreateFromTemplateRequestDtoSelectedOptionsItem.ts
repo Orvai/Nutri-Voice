@@ -6,6 +6,7 @@
  */
 
 export type ClientMenuCreateFromTemplateRequestDtoSelectedOptionsItem = {
+  clientId: string, 
   templateMealId: string;
   optionId: string;
 };

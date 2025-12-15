@@ -61,14 +61,25 @@ export function useUpdateClientMenu() {
 
 export function useCreateClientMenuFromTemplate() {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: ClientMenuCreateFromTemplateRequestDto) =>
-      postApiClientMenusFromTemplate(data),
 
-    onSuccess: () => {
+  return useMutation({
+    mutationFn: (data: ClientMenuCreateFromTemplateRequestDto) => {
+      console.log("🔥 MUTATION FN DATA:", data);
+      return postApiClientMenusFromTemplate(data);
+    },
+
+    onSuccess: (_data, variables) => {
+      console.log("✅ MUTATION SUCCESS", variables);
+
+      if (!variables?.clientId) return;
+
       queryClient.invalidateQueries({
-        queryKey: nutritionKeys.clientMenus(),
+        queryKey: nutritionKeys.clientMenus(variables.clientId),
       });
+    },
+
+    onError: (error) => {
+      console.error("❌ MUTATION ERROR", error);
     },
   });
 }
