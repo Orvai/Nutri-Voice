@@ -40,7 +40,7 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     isLoading: loadingTemplates,
   } = useTemplateMenus();
 
-  const createFromTemplate = useCreateClientMenuFromTemplate();
+  const createFromTemplate = useCreateClientMenuFromTemplate(clientId);
 
   /* ============================
      Local state
@@ -70,19 +70,20 @@ export default function ClientNutritionPlans({ clientId }: Props) {
 
     didInitRef.current = true;
 
-    console.log("🟡 AUTO-CREATING MENUS FROM TEMPLATE");
-
-    templates.forEach((tmpl) => {
-      createFromTemplate.mutate({
-        clientId,
-        templateMenuId: tmpl.id,
-      });
-    });
+    const createAll = async () => {
+      for (const tmpl of templates) {
+        await createFromTemplate.mutateAsync({
+          clientId,
+          templateMenuId: tmpl.id,
+        });
+      }
+    };
+  
+    createAll();
   }, [
     clientId,
     loadingClientMenus,
     loadingTemplates,
-    clientMenus,
     templates,
   ]);
 

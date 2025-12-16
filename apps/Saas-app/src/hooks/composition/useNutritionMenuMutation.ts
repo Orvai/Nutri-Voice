@@ -9,11 +9,15 @@ import type {
   MealTemplateUpdateRequestDto,
 } from "@common/api/sdk/schemas";
 
+/* ===============================
+   Local input types (UI-level)
+================================ */
+
 type VitaminInput = {
   vitaminId?: string | null;
   name: string;
   description?: string | null;
-  notes?: string | null; 
+  notes?: string | null;
 };
 
 type ClientItemInput = {
@@ -22,10 +26,15 @@ type ClientItemInput = {
   grams?: number;
 };
 
+type AddMealInput = {
+  name: string;
+  notes?: string | null;
+  totalCalories?: number;
+};
+
 export function useNutritionMenuMutation(source: UINutritionSource) {
   const templateMenuMutation = useUpdateTemplateMenu();
   const clientMenuMutation = useUpdateClientMenu();
-
   const mealTemplateMutation = useUpdateMealTemplate();
 
   const isPending =
@@ -43,15 +52,28 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
       ? clientMenuMutation.error
       : templateMenuMutation.error ?? mealTemplateMutation.error;
 
-  function mutateTemplateMenu(menuId: string, data: TemplateMenuUpdateRequestDto) {
+  /* ===============================
+     Low-level helpers
+  =============================== */
+
+  function mutateTemplateMenu(
+    menuId: string,
+    data: TemplateMenuUpdateRequestDto
+  ) {
     templateMenuMutation.mutate({ id: menuId, data });
   }
 
-  function mutateClientMenu(menuId: string, data: ClientMenuUpdateRequestDto) {
+  function mutateClientMenu(
+    menuId: string,
+    data: ClientMenuUpdateRequestDto
+  ) {
     clientMenuMutation.mutate({ id: menuId, data });
   }
 
-  function mutateMealTemplate(mealTemplateId: string, data: MealTemplateUpdateRequestDto) {
+  function mutateMealTemplate(
+    mealTemplateId: string,
+    data: MealTemplateUpdateRequestDto
+  ) {
     mealTemplateMutation.mutate({ id: mealTemplateId, data });
   }
 
@@ -106,47 +128,30 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
 
     removeVitamin(menuId: string, vitaminRelationId: string) {
       if (source === "client") {
-        const payload: ClientMenuUpdateRequestDto = {
+        mutateClientMenu(menuId, {
           vitaminsToDelete: [{ id: vitaminRelationId }],
-        };
-        mutateClientMenu(menuId, payload);
+        });
         return;
       }
 
-      const payload: TemplateMenuUpdateRequestDto = {
+      mutateTemplateMenu(menuId, {
         vitaminsToDelete: [{ id: vitaminRelationId }],
-      };
-      mutateTemplateMenu(menuId, payload);
+      });
     },
 
     /* ===============================
        Meals
     =============================== */
 
-    addMeal(
-      menuId: string,
-      args:
-        | {
-            source: "template";
-            name: string;
-            notes?: string | null;
-            totalCalories?: number;
-          }
-        | {
-            source: "client";
-            name: string;
-            notes?: string | null;
-            totalCalories: number;
-          }
-    ) {
+    addMeal(menuId: string, args: AddMealInput) {
       if (source === "client") {
-        // ClientMenuMealAddDto: { name, notes?, totalCalories }
+        // Client requires totalCalories → default here (UI does not know)
         const payload: ClientMenuUpdateRequestDto = {
           mealsToAdd: [
             {
               name: args.name,
               notes: args.notes ?? null,
-              totalCalories: args.totalCalories,
+              totalCalories: args.totalCalories ?? 0,
             },
           ],
         };
@@ -154,7 +159,6 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
         return;
       }
 
-      // TemplateMenuMealDto: { name, notes?, totalCalories?, options? }
       const payload: TemplateMenuUpdateRequestDto = {
         mealsToAdd: [
           {
@@ -173,7 +177,7 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
       data: { name?: string; notes?: string | null; totalCalories?: number }
     ) {
       if (source === "client") {
-        const payload: ClientMenuUpdateRequestDto = {
+        mutateClientMenu(menuId, {
           mealsToUpdate: [
             {
               id: mealId,
@@ -182,12 +186,11 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
               totalCalories: data.totalCalories,
             },
           ],
-        };
-        mutateClientMenu(menuId, payload);
+        });
         return;
       }
 
-      const payload: TemplateMenuUpdateRequestDto = {
+      mutateTemplateMenu(menuId, {
         mealsToUpdate: [
           {
             id: mealId,
@@ -196,130 +199,158 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
             totalCalories: data.totalCalories,
           },
         ],
-      };
-      mutateTemplateMenu(menuId, payload);
+      });
     },
 
     removeMeal(menuId: string, mealId: string) {
       if (source === "client") {
-        const payload: ClientMenuUpdateRequestDto = {
+        mutateClientMenu(menuId, {
           mealsToDelete: [{ id: mealId }],
-        };
-        mutateClientMenu(menuId, payload);
+        });
         return;
       }
 
-      const payload: TemplateMenuUpdateRequestDto = {
+      mutateTemplateMenu(menuId, {
         mealsToDelete: [{ id: mealId }],
-      };
-      mutateTemplateMenu(menuId, payload);
+      });
     },
 
     /* ===============================
-       Meal Options
-    =============================== */
+   Meal Options
+================================ */
 
-    addMealOption(
-      menuId: string,
-      args:
-        | {
-            source: "client";
-            mealId: string;
-            mealTemplateId?: string;
-            name?: string | null;
-            orderIndex?: number;
-            items: ClientItemInput[]; 
-          }
-        | {
-            source: "template";
-            mealId: string;
-            mealTemplateId?: string;
-            template?: {
-              name: string;
-              kind?: string;
-              items?: ClientItemInput[];
-            };
-            name?: string | null;
-            orderIndex?: number;
-          }
-    ) {
-      if (source === "client") {
-        if (args.source !== "client") return;
-
-        const payload: ClientMenuUpdateRequestDto = {
-          mealOptionsToAdd: [
-            {
-              mealId: args.mealId,
-              mealTemplateId: args.mealTemplateId,
-              name: args.name ?? null,
-              orderIndex: args.orderIndex,
-              items: args.items, 
-            },
-          ],
-        };
-        mutateClientMenu(menuId, payload);
-        return;
+addMealOption(
+  menuId: string,
+  args:
+    | {
+        mealId: string;
+        mealTemplateId?: string;
+        name?: string | null;
+        orderIndex?: number;
+        items: ClientItemInput[];
       }
-
-      if (args.source !== "template") return;
-
-      const payload: TemplateMenuUpdateRequestDto = {
-        mealOptionsToAdd: [
-          {
-            mealId: args.mealId,
-            mealTemplateId: args.mealTemplateId,
-            name: args.name ?? null,
-            orderIndex: args.orderIndex,
-            template: args.template
-              ? {
-                  name: args.template.name,
-                  kind: args.template.kind,
-                  items: args.template.items,
-                }
-              : undefined,
-          },
-        ],
-      };
-      mutateTemplateMenu(menuId, payload);
-    },
-
-    removeMealOption(menuId: string, optionId: string) {
-      if (source === "client") {
-        const payload: ClientMenuUpdateRequestDto = {
-          mealOptionsToDelete: [{ id: optionId }],
+    | {
+        mealId: string;
+        mealTemplateId?: string;
+        name?: string | null;
+        orderIndex?: number;
+        template?: {
+          name: string;
+          kind?: string;
+          items?: ClientItemInput[];
         };
-        mutateClientMenu(menuId, payload);
-        return;
       }
+) {
+  /* ======================
+     CLIENT MENU
+  ====================== */
+  if (source === "client") {
+    const clientArgs = args as {
+      mealId: string;
+      mealTemplateId?: string;
+      name?: string | null;
+      orderIndex?: number;
+      items?: ClientItemInput[];
+    };
 
-      const payload: TemplateMenuUpdateRequestDto = {
-        mealOptionsToDelete: [{ id: optionId }],
-      };
-      mutateTemplateMenu(menuId, payload);
-    },
+    // 🔒 Client menu currently supports ONLY items-based options
+    if (!clientArgs.items) {
+      throw new Error(
+        "Client menu requires items when adding meal option"
+      );
+    }
 
-    selectMealOption(menuId: string, mealId: string, optionId: string | null) {
-      if (source !== "client") return;
+    mutateClientMenu(menuId, {
+      mealOptionsToAdd: [
+        {
+          mealId: clientArgs.mealId,
+          mealTemplateId: clientArgs.mealTemplateId, // optional (future use)
+          name: clientArgs.name ?? null,
+          orderIndex: clientArgs.orderIndex,
+          items: clientArgs.items,
+        },
+      ],
+    });
+    return;
+  }
 
-      const payload: ClientMenuUpdateRequestDto = {
-        mealsToUpdate: [
-          {
-            id: mealId,
-            selectedOptionId: optionId,
-          },
-        ],
-      };
-      mutateClientMenu(menuId, payload);
-    },
+  /* ======================
+     TEMPLATE MENU
+  ====================== */
+
+  const templateArgs = args as {
+    mealId: string;
+    mealTemplateId?: string;
+    name?: string | null;
+    orderIndex?: number;
+    template?: {
+      name: string;
+      kind?: string;
+      items?: ClientItemInput[];
+    };
+  };
+
+
+  if (!templateArgs.mealTemplateId && !templateArgs.template) {
+    throw new Error(
+      "Template menu requires either mealTemplateId or template when adding meal option"
+    );
+  }
+
+  mutateTemplateMenu(menuId, {
+    mealOptionsToAdd: [
+      {
+        mealId: templateArgs.mealId,
+        mealTemplateId: templateArgs.mealTemplateId,
+        name: templateArgs.name ?? null,
+        orderIndex: templateArgs.orderIndex,
+        template: templateArgs.template
+          ? {
+              name: templateArgs.template.name,
+              kind: templateArgs.template.kind,
+              items: templateArgs.template.items,
+            }
+          : undefined,
+      },
+    ],
+  });
+},
+
+removeMealOption(menuId: string, optionId: string) {
+  if (source === "client") {
+    mutateClientMenu(menuId, {
+      mealOptionsToDelete: [{ id: optionId }],
+    });
+    return;
+  }
+
+  mutateTemplateMenu(menuId, {
+    mealOptionsToDelete: [{ id: optionId }],
+  });
+},
+
+selectMealOption(menuId: string, mealId: string, optionId: string | null) {
+  // 🔒 Only client menus support selection
+  if (source !== "client") return;
+
+  mutateClientMenu(menuId, {
+    mealsToUpdate: [
+      {
+        id: mealId,
+        selectedOptionId: optionId,
+      },
+    ],
+  });
+},
 
     /* ===============================
-       Client Items (add/update/delete)
+       Client Items
     =============================== */
 
     addClientItem(menuId: string, mealOptionId: string, item: ClientItemInput) {
       if (source !== "client") return;
 
-      const payload: ClientMenuUpdateRequestDto = {
+      mutateClientMenu(menuId, {
         mealOptionsToUpdate: [
           {
             id: mealOptionId,
@@ -332,8 +363,7 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
             ],
           },
         ],
-      };
-      mutateClientMenu(menuId, payload);
+      });
     },
 
     updateClientItem(
@@ -343,7 +373,7 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
     ) {
       if (source !== "client") return;
 
-      const payload: ClientMenuUpdateRequestDto = {
+      mutateClientMenu(menuId, {
         mealOptionsToUpdate: [
           {
             id: mealOptionId,
@@ -356,22 +386,20 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
             ],
           },
         ],
-      };
-      mutateClientMenu(menuId, payload);
+      });
     },
 
     removeClientItem(menuId: string, mealOptionId: string, itemId: string) {
       if (source !== "client") return;
 
-      const payload: ClientMenuUpdateRequestDto = {
+      mutateClientMenu(menuId, {
         mealOptionsToUpdate: [
           {
             id: mealOptionId,
             itemsToDelete: [{ id: itemId }],
           },
         ],
-      };
-      mutateClientMenu(menuId, payload);
+      });
     },
 
     /* ===============================

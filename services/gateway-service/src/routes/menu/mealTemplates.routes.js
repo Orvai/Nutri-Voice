@@ -35,7 +35,7 @@ const BASE = process.env.MENU_SERVICE_URL;
  *                 data:
  *                   $ref: "#/components/schemas/MealTemplateResponseDto"
  */
-r.post("/meal-templates",authRequired,requireCoach,forward(BASE, "/internal/meal-templates"));
+r.post("/meal-templates",authRequired,requireCoach,forward(BASE, "/internal/menu/meal-templates"));
 
 /**
  * @openapi
@@ -58,7 +58,7 @@ r.post("/meal-templates",authRequired,requireCoach,forward(BASE, "/internal/meal
  *                   items:
  *                     $ref: "#/components/schemas/MealTemplateResponseDto"
  */
-r.get("/meal-templates",authRequired,requireCoach,forward(BASE, "/internal/meal-templates"));
+r.get("/meal-templates",authRequired,requireCoach,forward(BASE, "/internal/menu/meal-templates"));
 
 /**
  * @openapi
@@ -87,7 +87,7 @@ r.get("/meal-templates",authRequired,requireCoach,forward(BASE, "/internal/meal-
  *       404:
  *         description: Meal template not found
  */
-r.get("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/meal-templates/:id"));
+r.get("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/menu/meal-templates/:id"));
 
 /**
  * @openapi
@@ -122,7 +122,7 @@ r.get("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/m
  *                 data:
  *                   $ref: "#/components/schemas/MealTemplateResponseDto"
  */
-r.put("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/meal-templates/:id"));
+r.put("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/menu/meal-templates/:id"));
 
 /**
  * @openapi
@@ -149,6 +149,6 @@ r.put("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/m
  *                 message:
  *                   type: string
  */
-r.delete("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/meal-templates/:id"));
+r.delete("/meal-templates/:id",authRequired,requireCoach,forward(BASE, "/internal/menu/meal-templates/:id"));
 
 export default r;

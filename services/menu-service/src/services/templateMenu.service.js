@@ -74,10 +74,10 @@ const createTemplateMenu = async (data, coachId) => {
 // =========================================================
 // LIST Template Menus
 // =========================================================
-const listTemplateMenus = async (query) => {
+const listTemplateMenus = async ({ coachId }) => {
   return prisma.templateMenu.findMany({
     where: {
-      ...(query.coachId && { coachId: query.coachId }),
+      ...(coachId && { coachId }),
     },
     select: {
       id: true,

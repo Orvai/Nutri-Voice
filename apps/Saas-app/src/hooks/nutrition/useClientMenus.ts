@@ -16,6 +16,7 @@ import {
 export function useClientMenus(clientId?: string) {
   return useQuery<UINutritionMenuTab[]>({
     queryKey: nutritionKeys.clientMenus(clientId),
+    enabled: !!clientId, 
     queryFn: async ({ signal }) => {
       const res = await getApiClientMenus(signal);
       return res.map(mapClientMenuToTab);
@@ -66,10 +67,11 @@ export function useCreateClientMenuFromTemplate(clientId: string) {
 
   return useMutation({
     mutationFn: (data: ClientMenuCreateFromTemplateRequestDto) => {
-      return postApiClientMenusFromTemplate(data);
+      return postApiClientMenusFromTemplate({...data});
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
+      queryClient.invalidateQueries({  
+        
         queryKey: nutritionKeys.clientMenus(clientId),
       });
     },

@@ -7,9 +7,8 @@ const {
 } = require("../services/templateMenu.service");
 
 const {
-  TemplateMenuCreateDto,
-  TemplateMenuUpdateDto,
-  TemplateMenuListQueryDto,
+  createTemplateMenuDTO,
+  updateTemplateMenuDTO,
 } = require("../dto/templateMenu.dto");
 
 /* =========================
@@ -31,7 +30,7 @@ const getCoachId = (req) => {
 const createTemplateMenuController = async (req, res, next) => {
   try {
     const coachId = getCoachId(req);
-    const dto = TemplateMenuCreateDto.parse(req.body);
+    const dto = createTemplateMenuDTO.parse(req.body);
 
     const result = await createTemplateMenu(dto, coachId);
 
@@ -49,11 +48,8 @@ const createTemplateMenuController = async (req, res, next) => {
 ========================= */
 const listTemplateMenusController = async (req, res, next) => {
   try {
-    const query = TemplateMenuListQueryDto.parse(req.query || {});
-    const coachId = query.coachId ?? req.identity?.coachId;
-
+    const coachId = req.headers["x-coach-id"];
     const result = await listTemplateMenus({ coachId });
-
     res.json({ data: result });
   } catch (e) {
     next(e);
@@ -77,7 +73,7 @@ const getTemplateMenuController = async (req, res, next) => {
 ========================= */
 const updateTemplateMenuController = async (req, res, next) => {
   try {
-    const dto = TemplateMenuUpdateDto.parse(req.body);
+    const dto = updateTemplateMenuDTO.parse(req.body);
 
     const result = await updateTemplateMenu(req.params.id, dto);
 

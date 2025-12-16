@@ -70,14 +70,13 @@ function calcTemplateCalories(template) {
 }
 
 /* ======================================================
-   FOOD ITEMS (מורחב כמו במקור)
+   FOOD ITEMS
 ====================================================== */
 
 async function seedFoodItems() {
   console.log("🥗 Seeding FoodItems...");
 
   const foods = [
-    // בשר / דגים
     { name: "חזה עוף", category: "בשר", caloriesPer100g: 160 },
     { name: "פרגיות", category: "בשר", caloriesPer100g: 200 },
     { name: "כבד עוף", category: "בשר", caloriesPer100g: 165 },
@@ -87,8 +86,6 @@ async function seedFoodItems() {
     { name: "סלמון אפוי", category: "דגים", caloriesPer100g: 200 },
     { name: "לברק אפוי", category: "דגים", caloriesPer100g: 190 },
     { name: "טונה בשמן", category: "דגים", caloriesPer100g: 180 },
-
-    // חלבון / חלב
     { name: "מעדן פרו", category: "מעדן חלבון", caloriesPer100g: 70 },
     { name: "קוטג 1%", category: "גבינה", caloriesPer100g: 80 },
     { name: "קוטג 5%", category: "גבינה", caloriesPer100g: 120 },
@@ -97,16 +94,12 @@ async function seedFoodItems() {
     { name: "ביצים", category: "ביצים", caloriesPer100g: 155 },
     { name: "חטיף חלבון", category: "חטיף", caloriesPer100g: 350 },
     { name: "משקה חלבון", category: "משקה חלבון", caloriesPer100g: 60 },
-
-    // פחמימות
     { name: "פיתה לבנה", category: "מאפה", caloriesPer100g: 260 },
     { name: "לחם פרוס", category: "מאפה", caloriesPer100g: 250 },
     { name: "אורז לבן מבושל", category: "דגנים", caloriesPer100g: 130 },
     { name: "פסטה מבושלת", category: "דגנים", caloriesPer100g: 160 },
     { name: "קוסקוס מבושל", category: "דגנים", caloriesPer100g: 112 },
     { name: "תפוח אדמה מבושל", category: "שורש", caloriesPer100g: 87 },
-
-    // חופש / נפשי
     { name: "משולש פיצה", category: "ג'אנק", caloriesPer100g: 280 },
     { name: "נאגטס", category: "ג'אנק", caloriesPer100g: 280 },
     { name: "המבורגר", category: "ג'אנק", caloriesPer100g: 250 },
@@ -125,13 +118,8 @@ async function seedFoodItems() {
   return new Map(all.map((f) => [f.name, f]));
 }
 
-/* ======================================================
-   VITAMINS (מורחב כמו במקור)
-====================================================== */
-
 async function seedVitamins() {
   console.log("💊 Seeding VitaminMaster...");
-
   const vitamins = [
     { name: "ויטמין A", description: "ראייה, עור וחיסון" },
     { name: "ויטמין C", description: "נוגד חמצון" },
@@ -141,80 +129,104 @@ async function seedVitamins() {
     { name: "אומגה 3", description: "בריאות הלב" },
     { name: "מולטי ויטמין", description: "תוסף יומי" },
   ];
-
-  await prisma.vitaminMaster.createMany({
-    data: vitamins,
-    skipDuplicates: true,
-  });
-
+  await prisma.vitaminMaster.createMany({ data: vitamins, skipDuplicates: true });
   console.log("✅ VitaminMaster ready");
 }
 
 /* ======================================================
-   TEMPLATE MENU
+   TEMPLATE MENUS
 ====================================================== */
 
-async function seedTemplateMenus(foodMap) {
-  console.log("📋 Seeding TemplateMenu...");
+async function seedTrainingMenu(foodMap) {
+  console.log("📋 Seeding Training Menu...");
 
   const menu = await prisma.templateMenu.create({
     data: {
       coachId: COACH_ID,
       name: "תפריט יום אימון",
       dayType: DayType.TRAINING,
-      notes: "תפריט לדוגמה עם חלבון ופחמימה",
+      notes: "תפריט מועשר בפחמימות לאנרגיה זמינה",
       totalCalories: 0,
-    },
-  });
-
-  await prisma.templateMenuVitamin.create({
-    data: {
-      templateMenuId: menu.id,
-      name: "אומגה 3",
-      description: "2 קפסולות אחרי ארוחה",
     },
   });
 
   const meal = await prisma.templateMenuMeal.create({
-    data: {
-      templateMenuId: menu.id,
-      name: "ארוחה 1",
-      totalCalories: 0,
-    },
+    data: { templateMenuId: menu.id, name: "ארוחת צהריים", totalCalories: 0 },
   });
 
   const proteinTemplate = await createMealTemplate({
-    name: "בחירת חלבון",
+    name: "חלבון לבחירה (אימון)",
     kind: MealTemplateKind.MEAT_MEAL,
     items: [
       { food: foodMap.get("חזה עוף"), grams: 200, role: MealItemRole.PROTEIN },
       { food: foodMap.get("פרגיות"), grams: 200, role: MealItemRole.PROTEIN },
-      { food: foodMap.get("סלמון אפוי"), grams: 180, role: MealItemRole.PROTEIN },
     ],
   });
 
   const proteinCalories = calcTemplateCalories(proteinTemplate);
+  await prisma.templateMenuMealOption.create({
+    data: { mealId: meal.id, mealTemplateId: proteinTemplate.id, name: "עיקרית", orderIndex: 0 },
+  });
+
+  await prisma.templateMenuMeal.update({ where: { id: meal.id }, data: { totalCalories: proteinCalories } });
+  await prisma.templateMenu.update({ where: { id: menu.id }, data: { totalCalories: proteinCalories } });
+}
+
+// --- הפונקציה החדשה עבור יום מנוחה ---
+async function seedRestDayMenu(foodMap) {
+  console.log("🛌 Seeding Rest Day Menu...");
+
+  const menu = await prisma.templateMenu.create({
+    data: {
+      coachId: COACH_ID,
+      name: "תפריט יום מנוחה",
+      dayType: DayType.REST,
+      notes: "תפריט דל פחמימה יחסית לשמירה על מאזן קלורי",
+      totalCalories: 0,
+    },
+  });
+
+  // ארוחה 1 - ארוחת בוקר קלילה
+  const meal = await prisma.templateMenuMeal.create({
+    data: {
+      templateMenuId: menu.id,
+      name: "ארוחת בוקר",
+      totalCalories: 0,
+    },
+  });
+
+  const dairyTemplate = await createMealTemplate({
+    name: "אופציות חלביות",
+    kind: MealTemplateKind.DAIRY_MEAL,
+    items: [
+      { food: foodMap.get("מעדן פרו"), grams: 150, role: MealItemRole.PROTEIN },
+      { food: foodMap.get("קוטג 5%"), grams: 125, role: MealItemRole.PROTEIN },
+    ],
+  });
+
+  const dairyCalories = calcTemplateCalories(dairyTemplate);
 
   await prisma.templateMenuMealOption.create({
     data: {
       mealId: meal.id,
-      mealTemplateId: proteinTemplate.id,
-      name: "אופציית חלבון",
+      mealTemplateId: dairyTemplate.id,
+      name: "חלבון בוקר",
       orderIndex: 0,
     },
   });
 
+  // עדכון קלוריות
   await prisma.templateMenuMeal.update({
     where: { id: meal.id },
-    data: { totalCalories: proteinCalories },
+    data: { totalCalories: dairyCalories },
   });
 
   await prisma.templateMenu.update({
     where: { id: menu.id },
-    data: { totalCalories: proteinCalories },
+    data: { totalCalories: dairyCalories },
   });
 
-  console.log("✅ TemplateMenu ready");
+  console.log("✅ Rest Day Menu ready");
 }
 
 /* ======================================================
@@ -226,7 +238,11 @@ async function main() {
     await clearDb();
     const foodMap = await seedFoodItems();
     await seedVitamins();
-    await seedTemplateMenus(foodMap);
+    
+    // יצירת שני סוגי התפריטים
+    await seedTrainingMenu(foodMap);
+    await seedRestDayMenu(foodMap);
+    
     console.log("🌱 Seed completed successfully");
   } catch (err) {
     console.error("❌ Seed failed:", err);

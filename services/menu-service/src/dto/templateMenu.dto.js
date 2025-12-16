@@ -1,111 +1,133 @@
-const {
-  createTemplateMenu,
-  listTemplateMenus,
-  getTemplateMenu,
-  updateTemplateMenu,
-  deleteTemplateMenu,
-} = require("../services/templateMenu.service");
+// src/dto/templateMenu.dto.js
+const { z } = require("zod");
 
-const {
-  TemplateMenuCreateDto,
-  TemplateMenuUpdateDto,
-  TemplateMenuListQueryDto,
-} = require("../dto/templateMenu.dto");
+/* =========================================================
+   Shared enums / primitives
+========================================================= */
 
-/* =========================
-   Helpers
-========================= */
-const getCoachId = (req) => {
-  const coachId = req.identity?.coachId;
-  if (!coachId) {
-    const err = new Error("Coach identity is required");
-    err.status = 400;
-    throw err;
-  }
-  return coachId;
-};
+const DayTypeEnum = z.enum(["TRAINING", "REST"]);
 
-/* =========================
-   CREATE
-========================= */
-const createTemplateMenuController = async (req, res, next) => {
-  try {
-    const coachId = getCoachId(req);
-    const dto = TemplateMenuCreateDto.parse(req.body);
+/* =========================================================
+   CREATE – Template Menu
+========================================================= */
 
-    const result = await createTemplateMenu(dto, coachId);
+const TemplateMenuMealOptionCreateDto = z.object({
+  mealTemplateId: z.string().optional(),
+  name: z.string().nullable().optional(),
+  orderIndex: z.number().int().nonnegative().optional(),
+});
 
-    res.status(201).json({
-      message: "Template menu created",
-      data: result,
-    });
-  } catch (e) {
-    next(e);
-  }
-};
+const TemplateMenuMealCreateDto = z.object({
+  name: z.string().min(1),
+  notes: z.string().nullable().optional(),
+  totalCalories: z.number().nonnegative().optional(),
+  options: z.array(TemplateMenuMealOptionCreateDto).optional(),
+});
 
-/* =========================
-   LIST
-========================= */
-const listTemplateMenusController = async (req, res, next) => {
-  try {
-    const query = TemplateMenuListQueryDto.parse(req.query || {});
-    const coachId = query.coachId ?? req.identity?.coachId;
+const TemplateMenuVitaminCreateDto = z.object({
+  vitaminId: z.string().nullable().optional(),
+  name: z.string().min(1),
+  description: z.string().nullable().optional(),
+});
 
-    const result = await listTemplateMenus({ coachId });
+const createTemplateMenuDTO = z
+  .object({
+    name: z.string().min(1),
+    dayType: DayTypeEnum,
+    notes: z.string().nullable().optional(),
+    meals: z.array(TemplateMenuMealCreateDto).optional(),
+    vitamins: z.array(TemplateMenuVitaminCreateDto).optional(),
+  })
+  .strict();
 
-    res.json({ data: result });
-  } catch (e) {
-    next(e);
-  }
-};
+/* =========================================================
+   UPDATE – Template Menu
+========================================================= */
 
-/* =========================
-   GET BY ID
-========================= */
-const getTemplateMenuController = async (req, res, next) => {
-  try {
-    const result = await getTemplateMenu(req.params.id);
-    res.json({ data: result });
-  } catch (e) {
-    next(e);
-  }
-};
+/* ---------- Vitamins ---------- */
 
-/* =========================
-   UPDATE
-========================= */
-const updateTemplateMenuController = async (req, res, next) => {
-  try {
-    const dto = TemplateMenuUpdateDto.parse(req.body);
+const TemplateMenuVitaminDeleteDto = z.object({
+  id: z.string(),
+});
 
-    const result = await updateTemplateMenu(req.params.id, dto);
+const TemplateMenuVitaminAddDto = TemplateMenuVitaminCreateDto;
 
-    res.json({
-      message: "Template menu updated",
-      data: result,
-    });
-  } catch (e) {
-    next(e);
-  }
-};
+/* ---------- Meals ---------- */
 
-/* =========================
-   DELETE
-========================= */
-const deleteTemplateMenuController = async (req, res, next) => {
-  try {
-    await deleteTemplateMenu(req.params.id);
-    res.json({ message: "Template menu deleted" });
-  } catch (e) {
-    next(e);
-  }
-};
+const TemplateMenuMealDeleteDto = z.object({
+  id: z.string(),
+});
+
+const TemplateMenuMealAddDto = z.object({
+  name: z.string().min(1),
+  notes: z.string().nullable().optional(),
+  totalCalories: z.number().nonnegative().optional(),
+});
+
+const TemplateMenuMealUpdateDto = z.object({
+  id: z.string(),
+  name: z.string().min(1).optional(),
+  notes: z.string().nullable().optional(),
+  totalCalories: z.number().nonnegative().optional(),
+});
+
+/* ---------- Meal Options ---------- */
+
+const MealTemplateInlineCreateDto = z.object({
+  name: z.string().min(1),
+  kind: z.string().optional(),
+  items: z.array(
+    z.object({
+      foodItemId: z.string(),
+      role: z.string(),
+      grams: z.number().positive().optional(),
+    })
+  ).optional(),
+});
+
+const TemplateMenuMealOptionDeleteDto = z.object({
+  id: z.string(),
+});
+
+const TemplateMenuMealOptionAddDto = z.object({
+  mealId: z.string(),
+  mealTemplateId: z.string().optional(),
+  name: z.string().nullable().optional(),
+  orderIndex: z.number().int().nonnegative().optional(),
+
+  // required ONLY when mealTemplateId is missing
+  template: MealTemplateInlineCreateDto.optional(),
+});
+
+/* ---------- Update Root ---------- */
+
+const updateTemplateMenuDTO = z
+  .object({
+    // basic fields
+    name: z.string().min(1).optional(),
+    dayType: DayTypeEnum.optional(),
+    notes: z.string().nullable().optional(),
+
+    // vitamins
+    vitaminsToDelete: z.array(TemplateMenuVitaminDeleteDto).optional(),
+    vitaminsToAdd: z.array(TemplateMenuVitaminAddDto).optional(),
+
+    // meals
+    mealsToDelete: z.array(TemplateMenuMealDeleteDto).optional(),
+    mealsToAdd: z.array(TemplateMenuMealAddDto).optional(),
+    mealsToUpdate: z.array(TemplateMenuMealUpdateDto).optional(),
+
+    // meal options
+    mealOptionsToDelete: z.array(TemplateMenuMealOptionDeleteDto).optional(),
+    mealOptionsToAdd: z.array(TemplateMenuMealOptionAddDto).optional(),
+  })
+  .strict();
+
+/* =========================================================
+   EXPORTS
+========================================================= */
 
 module.exports = {
-  createTemplateMenu: createTemplateMenuController,
-  listTemplateMenus: listTemplateMenusController,
-  getTemplateMenu: getTemplateMenuController,
-  updateTemplateMenu: updateTemplateMenuController,
-  deleteTemplateMenu: deleteTemplateMenuController,
+  createTemplateMenuDTO,
+  updateTemplateMenuDTO,
 };

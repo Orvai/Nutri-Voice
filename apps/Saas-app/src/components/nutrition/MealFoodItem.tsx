@@ -51,7 +51,7 @@ export default function MealFoodItem({ food, onRemove, removing }: Props) {
       <Text style={{ color: "#6b7280", fontSize: 12 }}>גרם</Text>
 
       <Text style={{ fontWeight: "600" }}>
-        {food.calories != null ? `${food.calories} קק״ל` : "-"}
+        {food.caloriesPer100g != null ? `${food.caloriesPer100g} קק״ל` : "-"}
       </Text>
 
       {onRemove && (

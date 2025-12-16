@@ -1,10 +1,8 @@
 import { View, Text, Pressable, Modal, TextInput } from "react-native";
 import { useMemo, useState } from "react";
-
 import NutritionNotes from "./NutritionNotes";
 import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
-
 import { UINutritionPlan } from "../../types/ui/nutrition/nutrition.types";
 import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
 
@@ -23,17 +21,12 @@ export default function NutritionDayCard({ plan }: Props) {
   const [addMealOpen, setAddMealOpen] = useState(false);
   const [newMealName, setNewMealName] = useState("");
 
-  const totalCalories = useMemo(
-    () => plan.meals.reduce((sum, meal) => sum + (meal.totalCalories ?? 0), 0),
-    [plan.meals]
-  );
+  const totalCalories = plan.totalCalories ?? 0;
 
   const handleAddMeal = () => {
     const trimmedName = newMealName.trim();
     if (!trimmedName) return;
 
-    //  Template: { name } | Client: { templateId }
-    // Here we are in UI => we always pass the semantic intent.
     menuActions.addMeal(plan.id, { name: trimmedName });
 
     setNewMealName("");

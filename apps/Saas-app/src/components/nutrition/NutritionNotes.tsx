@@ -1,6 +1,5 @@
 import { View, Text, TextInput } from "react-native";
 import { useEffect, useState } from "react";
-
 import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
 import { UINutritionSource } from "@/types/ui/nutrition/nutrition.types";
 

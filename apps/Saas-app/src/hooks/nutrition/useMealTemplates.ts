@@ -97,6 +97,16 @@ export function useUpdateMealTemplate() {
       queryClient.invalidateQueries({
         queryKey: nutritionKeys.mealTemplate(id),
       });
+
+      queryClient.invalidateQueries({
+        queryKey: nutritionKeys.templateMenus(),
+      });
+
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === "nutrition" &&
+          query.queryKey[1] === "templateMenu",
+      });
     },
   });
 }

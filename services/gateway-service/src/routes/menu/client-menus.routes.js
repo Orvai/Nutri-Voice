@@ -170,16 +170,22 @@ r.post(
     const { clientId, templateMenuId } = req.body ?? {};
 
     if (!clientId) {
-      return res.status(400).json({ message: "clientId is required (context)" });
+      return res
+        .status(400)
+        .json({ message: "clientId is required (context)" });
     }
 
     if (!templateMenuId) {
-      return res.status(400).json({ message: "templateMenuId is required" });
+      return res
+        .status(400)
+        .json({ message: "templateMenuId is required" });
     }
 
-    req.headers["x-coach-id"] = req.user.id;
-    req.headers["x-client-id"] = clientId;
+    // inject identity for internal service
+    req.headers["x-coach-id"] = String(req.user.id);
+    req.headers["x-client-id"] = String(clientId);
 
+    // never forward clientId to service
     delete req.body.clientId;
 
     return forward(
