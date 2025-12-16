@@ -1,30 +1,26 @@
-const {
-  addMealItems,
-  computeCalories,
-  deleteMealItems,
-  updateMealItems,
-} = require("./items");
-const { recomputeMealCalories } = require("./recompute");const withStatus = (e, s = 400) => Object.assign(e, { status: s });
+const withStatus = (e, s = 400) => Object.assign(e, { status: s });
 
-const validateOptionTemplate = (option, mealName) => {
-  if (!option.mealTemplate)
-    throw withStatus(
-      new Error(`Meal ${mealName} option missing mealTemplate`)
-    );
-
-  if (!option.mealTemplate.items?.length)
-    throw withStatus(
-      new Error(`MealTemplate ${option.mealTemplate.id} has no items`)
-    );
-};
-
-const deleteMeals = async (tx, menuId, meals = []) => {
+/**
+ * ===============================
+ * DELETE CLIENT MEALS
+ * ===============================
+ */
+const deleteMeals = async (tx, clientMenuId, meals = []) => {
   if (!meals?.length) return;
+
   await tx.clientMenuMeal.deleteMany({
-    where: { id: { in: meals.map((m) => m.id) }, clientMenuId: menuId },
+    where: {
+      id: { in: meals.map((m) => m.id) },
+      clientMenuId,
+    },
   });
 };
 
+/**
+ * ===============================
+ * UPDATE CLIENT MEALS (META ONLY)
+ * ===============================
+ */
 const updateMeals = async (tx, clientMenuId, mealsToUpdate = []) => {
   for (const meal of mealsToUpdate) {
     const existing = await tx.clientMenuMeal.findFirst({
@@ -35,175 +31,176 @@ const updateMeals = async (tx, clientMenuId, mealsToUpdate = []) => {
     });
 
     if (!existing) {
-      const e = new Error(`Client meal ${meal.id} not found`);
-      e.status = 404;
-      throw e;
+      throw withStatus(new Error(`Client meal ${meal.id} not found`), 404);
     }
-
-    /* ===============================
-       Update meal meta (NO calories)
-    =============================== */
 
     await tx.clientMenuMeal.update({
       where: { id: meal.id },
       data: {
         name: meal.name ?? undefined,
+        notes: meal.notes ?? undefined,
+        totalCalories:
+          meal.totalCalories !== undefined
+            ? meal.totalCalories
+            : undefined,
         selectedOptionId:
           meal.selectedOptionId !== undefined
             ? meal.selectedOptionId
             : undefined,
       },
     });
-
-    /* ===============================
-       Items (ACTUAL EXECUTION)
-    =============================== */
-
-    if (meal.itemsToDelete?.length) {
-      await deleteMealItems(tx, meal.id, meal.itemsToDelete);
-    }
-
-    if (meal.itemsToUpdate?.length) {
-      await updateMealItems(tx, meal.id, meal.itemsToUpdate);
-    }
-
-    if (meal.itemsToAdd?.length) {
-      await addMealItems(tx, meal.id, meal.itemsToAdd);
-    }
-
-    /* ===============================
-       Recompute calories (SOURCE OF TRUTH)
-    =============================== */
-
-    await recomputeMealCalories(tx, meal.id);
   }
 };
 
-// =========================================================
-// ADD meals from template (NO items copy)
-// =========================================================
+/**
+ * ===============================
+ * ADD CLIENT MEALS (FREE / CUSTOM)
+ * ===============================
+ */
+const addMeals = async (tx, clientMenuId, mealsToAdd = []) => {
+  for (const meal of mealsToAdd) {
+    await tx.clientMenuMeal.create({
+      data: {
+        clientMenuId,
+        name: meal.name,
+        notes: meal.notes ?? null,
+        totalCalories: meal.totalCalories,
+      },
+    });
+  }
+};
+
+/**
+ * =====================================================
+ * ADD CLIENT MEALS FROM TEMPLATE (DEEP COPY, DB-DRIVEN)
+ * =====================================================
+ */
 const addMealsFromTemplates = async (
   tx,
-  menuId,
+  clientMenuId,
   templateMeals,
   selectedOptions = []
 ) => {
-  for (const meal of templateMeals ?? []) {
-    if (meal.templateId) {
-      const template = await tx.mealTemplate.findUnique({
-        where: { id: meal.templateId },
-        select: { name: true },
+  for (const templateMeal of templateMeals) {
+    const clientMeal = await tx.clientMenuMeal.create({
+      data: {
+        clientMenuId,
+        name: templateMeal.name,
+        notes: templateMeal.notes ?? null,
+        totalCalories: templateMeal.totalCalories,
+      },
+    });
+
+    const createdOptions = [];
+
+    for (const opt of templateMeal.options) {
+      const createdOption = await tx.clientMenuMealOption.create({
+        data: {
+          clientMenuMealId: clientMeal.id,
+          mealTemplateId: opt.mealTemplateId,
+          name: opt.name ?? null,
+          orderIndex: opt.orderIndex ?? 0,
+        },
       });
 
-      if (!template) {
+      const template = opt.mealTemplate;
+      if (!template || !template.items?.length) {
         throw withStatus(
-          new Error(`Invalid mealTemplateId: ${meal.templateId}`),
+          new Error(`MealTemplate ${opt.mealTemplateId} has no items`),
           400
         );
       }
 
-      await tx.clientMenuMeal.create({
-        data: {
-          clientMenuId: menuId,
-          originalTemplateId: meal.templateId,
-          name: meal.name ?? template.name,
-        },
-      });
+      for (const item of template.items) {
+        await tx.clientMenuMealOptionItem.create({
+          data: {
+            optionId: createdOption.id,
+            foodItemId: item.foodItemId,
+            role: item.role,
+            grams: item.grams ?? 100,
+          },
+        });
+      }
 
-      continue;
+      createdOptions.push(createdOption);
     }
-    let chosen = null;
 
     const manual = selectedOptions.find(
-      (s) => s.templateMealId === meal.id
+      (s) => s.templateMealId === templateMeal.id
     );
-    if (manual)
-      chosen = meal.options.find((o) => o.id === manual.optionId);
 
-    if (!chosen) chosen = meal.options[0];
+    let selected = createdOptions[0];
 
-    validateOptionTemplate(chosen, meal.name);
-
-    const optionCalories =
-      chosen.mealTemplate.totalCalories ??
-      chosen.mealTemplate.items.reduce(
-        (sum, i) =>
-          sum +
-          computeCalories(
-            i.foodItem,
-            i.defaultGrams ?? 100
-          ),
-        0
+    if (manual) {
+      const match = createdOptions.find(
+        (o) => o.mealTemplateId === manual.optionId
       );
-
-    const createdMeal = await tx.clientMenuMeal.create({
-      data: {
-        clientMenuId: menuId,
-        originalTemplateId: chosen.mealTemplateId,
-        name: meal.name,
-        totalCalories: optionCalories,
-      },
-    });
-
-    const createdOptions = await Promise.all(
-      meal.options.map((opt) =>
-        tx.clientMenuMealOption.create({
-          data: {
-            clientMenuMealId: createdMeal.id,
-            mealTemplateId: opt.mealTemplateId,
-            name: opt.name ?? null,
-            orderIndex: opt.orderIndex ?? 0,
-          },
-        })
-      )
-    );
-
-    const selected = createdOptions.find(
-      (o) => o.mealTemplateId === chosen.mealTemplateId
-    );
+      if (match) selected = match;
+    }
 
     await tx.clientMenuMeal.update({
-      where: { id: createdMeal.id },
+      where: { id: clientMeal.id },
       data: { selectedOptionId: selected?.id ?? null },
     });
   }
 };
 
-const addMealOptions = async (tx, menuId, options = []) => {
-  if (!options?.length) return;
+/**
+ * ===============================
+ * ADD CLIENT MEAL OPTIONS (CUSTOM)
+ * ===============================
+ */
 
-for (const opt of options ?? []) {
-    const templateExists = await tx.mealTemplate.findUnique({
-      where: { id: opt.mealTemplateId },
-      select: { id: true },
-    });
-
-    if (!templateExists) {
-      throw withStatus(
-        new Error(`Invalid mealTemplateId: ${opt.mealTemplateId}`),
-        400
-      );
-    }    await tx.clientMenuMealOption.create({
+const addMealOptions = async (tx, mealId, options = []) => {
+  for (const opt of options) {
+    const createdOption = await tx.clientMenuMealOption.create({
       data: {
-        clientMenuMealId: opt.mealId,
-        mealTemplateId: opt.mealTemplateId,
+        clientMenuMealId: mealId,
+        mealTemplateId: opt.mealTemplateId ?? null,
         name: opt.name ?? null,
         orderIndex: opt.orderIndex ?? 0,
       },
     });
+
+    if (!opt.items?.length) {
+      throw withStatus(
+        new Error("ClientMenuMealOption must include items"),
+        400
+      );
+    }
+
+    for (const item of opt.items) {
+      await tx.clientMenuMealOptionItem.create({
+        data: {
+          optionId: createdOption.id,
+          foodItemId: item.foodItemId,
+          role: item.role,
+          grams: item.grams ?? 100,
+        },
+      });
+    }
   }
 };
 
-const deleteMealOptions = async (tx, menuId, options = []) => {
+/**
+ * ===============================
+ * DELETE CLIENT MEAL OPTIONS
+ * ===============================
+ */
+const deleteMealOptions = async (tx, options = []) => {
   if (!options?.length) return;
+
   await tx.clientMenuMealOption.deleteMany({
-    where: { id: { in: options.map((o) => o.id) } },
+    where: {
+      id: { in: options.map((o) => o.id) },
+    },
   });
 };
 
 module.exports = {
   deleteMeals,
   updateMeals,
+  addMeals,
   addMealsFromTemplates,
   addMealOptions,
   deleteMealOptions,

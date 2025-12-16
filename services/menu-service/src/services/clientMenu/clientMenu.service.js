@@ -1,9 +1,9 @@
 const prisma = require("../../db/prisma");
-const { Prisma } = require("@prisma/client");
 
 const {
   deleteMeals,
   updateMeals,
+  addMeals,
   addMealsFromTemplates,
   addMealOptions,
   deleteMealOptions,
@@ -18,41 +18,6 @@ const {
 const { recomputeMenuCalories } = require("./helpers/recompute");
 
 const withStatus = (error, status) => Object.assign(error, { status });
-
-const validateTemplateForClientMenu = (template, selectedOptions = []) => {
-  const mealsById = new Map(template.meals.map((meal) => [meal.id, meal]));
-
-  for (const sel of selectedOptions) {
-    const meal = mealsById.get(sel.templateMealId);
-    if (!meal)
-      throw withStatus(
-        new Error(`Meal ${sel.templateMealId} not in template`),
-        400
-      );
-
-    const option = meal.options.find((o) => o.id === sel.optionId);
-    if (!option)
-      throw withStatus(
-        new Error(`Option ${sel.optionId} not in meal ${meal.id}`),
-        400
-      );
-  }
-
-  for (const meal of template.meals) {
-    if (!meal.options?.length)
-      throw withStatus(
-        new Error(`Template meal ${meal.id} has no options`),
-        400
-      );
-
-    const valid = meal.options.some((o) => o.mealTemplate);
-    if (!valid)
-      throw withStatus(
-        new Error(`Template meal ${meal.id} has no valid mealTemplate`),
-        400
-      );
-  }
-};
 
 // =========================================================
 // CREATE empty ClientMenu
@@ -106,10 +71,10 @@ const updateClientMenu = async (id, data) => {
 
     await deleteMeals(tx, id, data.mealsToDelete);
     await updateMeals(tx, id, data.mealsToUpdate);
-    await addMealsFromTemplates(tx, id, data.mealsToAdd);
+    await addMeals(tx, id, data.mealsToAdd);
 
-    await deleteMealOptions(tx, id, data.mealOptionsToDelete);
-    await addMealOptions(tx, id, data.mealOptionsToAdd);
+    await deleteMealOptions(tx, data.mealOptionsToDelete);
+    await addMealOptions(tx, data.mealOptionsToAdd);
 
     await deleteClientMenuVitamins(tx, id, data.vitaminsToDelete);
     await updateClientMenuVitamins(tx, id, data.vitaminsToUpdate);
@@ -147,7 +112,7 @@ const listClientMenus = async (query) => {
 };
 
 // =========================================================
-// GET FULL (DTO-aligned)
+// GET FULL
 // =========================================================
 const getClientMenu = async (id) => {
   const menu = await prisma.clientMenu.findUnique({
@@ -157,9 +122,9 @@ const getClientMenu = async (id) => {
         include: {
           options: {
             include: {
-              mealTemplate: {
+              items: {
                 include: {
-                  items: { include: { foodItem: true } },
+                  foodItem: true,
                 },
               },
             },
@@ -203,7 +168,7 @@ const createClientMenuFromTemplate = async (data) => {
             options: {
               include: {
                 mealTemplate: {
-                  include: { items: { include: { foodItem: true } } },
+                  include: { items: true },
                 },
               },
             },
@@ -215,8 +180,6 @@ const createClientMenuFromTemplate = async (data) => {
 
     if (!template)
       throw withStatus(new Error("Template menu not found"), 404);
-
-    validateTemplateForClientMenu(template, data.selectedOptions);
 
     const clientMenu = await tx.clientMenu.create({
       data: {

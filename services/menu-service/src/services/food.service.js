@@ -1,7 +1,18 @@
 // src/services/food.service.js
+
 const prisma = require("../db/prisma");
+
 const createFoodItem = async (data) => {
-  return prisma.foodItem.create({ data });
+  const foodData = {
+    name: data.name,
+    description: data.description ?? null,
+    category: data.category,
+    caloriesPer100g: data.caloriesPer100g,
+  };
+
+  return prisma.foodItem.create({
+    data: foodData,
+  });
 };
 
 const listFoodItems = async (query) => {
@@ -21,7 +32,9 @@ const listFoodItems = async (query) => {
 };
 
 const getFoodItem = async (id) => {
-  const existing = await prisma.foodItem.findUnique({ where: { id } });
+  const existing = await prisma.foodItem.findUnique({
+    where: { id },
+  });
 
   if (!existing) {
     const err = new Error("Food item not found");
@@ -31,12 +44,20 @@ const getFoodItem = async (id) => {
 
   return existing;
 };
+
 const updateFoodItem = async (id, data) => {
   await getFoodItem(id);
 
+  const foodData = {
+    name: data.name ?? undefined,
+    description: data.description ?? undefined,
+    category: data.category ?? undefined,
+    caloriesPer100g: data.caloriesPer100g ?? undefined,
+  };
+
   return prisma.foodItem.update({
     where: { id },
-    data,
+    data: foodData,
   });
 };
 
@@ -48,12 +69,10 @@ const deleteFoodItem = async (id) => {
   });
 };
 
-
 module.exports = {
   createFoodItem,
   listFoodItems,
   getFoodItem,
   updateFoodItem,
   deleteFoodItem,
-
 };

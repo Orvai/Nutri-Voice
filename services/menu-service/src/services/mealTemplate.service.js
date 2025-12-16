@@ -1,4 +1,7 @@
+// src/services/mealTemplate.service.js
+
 const prisma = require("../db/prisma");
+
 // =========================================================
 // CREATE Meal Template
 // =========================================================
@@ -8,25 +11,21 @@ const createMealTemplate = async (data, coachId) => {
       coachId,
       name: data.name,
       kind: data.kind,
-      totalCalories: data.totalCalories ?? 0,
 
       items: data.items
         ? {
             create: data.items.map((item) => ({
               foodItemId: item.foodItemId,
               role: item.role,
-              defaultGrams: item.defaultGrams ?? 100,
-              defaultCalories: item.defaultCalories ?? null,
-              notes: item.notes ?? null,
+              grams: item.grams ?? 100,
             })),
           }
         : undefined,
     },
-
     include: {
-      items: { include: { foodItem: true } },
-      templateMealOptions: true,
-      clientMealOptions: true,
+      items: {
+        include: { foodItem: true },
+      },
     },
   });
 
@@ -57,14 +56,9 @@ const getMealTemplate = async (id) => {
   const template = await prisma.mealTemplate.findUnique({
     where: { id },
     include: {
-      items: { include: { foodItem: true } },
-
-      templateMealOptions: {
-        include: {
-          meal: true,
-        },
+      items: {
+        include: { foodItem: true },
       },
-      clientMealOptions: true,
     },
   });
 
@@ -78,10 +72,9 @@ const getMealTemplate = async (id) => {
 };
 
 // =========================================================
-// UPDATE Meal Template (Upsert style)
+// UPDATE Meal Template
 // =========================================================
 const updateMealTemplate = async (id, data) => {
-
   return prisma.$transaction(async (tx) => {
     const existing = await tx.mealTemplate.findUnique({
       where: { id },
@@ -93,17 +86,14 @@ const updateMealTemplate = async (id, data) => {
       throw e;
     }
 
-    // --- Update basic fields ---
     await tx.mealTemplate.update({
       where: { id },
       data: {
-        name: data.name ?? existing.name,
-        kind: data.kind ?? existing.kind,
-        totalCalories: data.totalCalories ?? existing.totalCalories,
+        name: data.name ?? undefined,
+        kind: data.kind ?? undefined,
       },
     });
 
-    // ========== DELETE items ==========
     if (data.itemsToDelete?.length) {
       await tx.mealTemplateItem.deleteMany({
         where: {
@@ -113,7 +103,6 @@ const updateMealTemplate = async (id, data) => {
       });
     }
 
-    // ========== UPDATE items ==========
     if (data.itemsToUpdate?.length) {
       for (const item of data.itemsToUpdate) {
         await tx.mealTemplateItem.update({
@@ -121,35 +110,29 @@ const updateMealTemplate = async (id, data) => {
           data: {
             foodItemId: item.foodItemId ?? undefined,
             role: item.role ?? undefined,
-            defaultGrams: item.defaultGrams ?? undefined,
-            defaultCalories: item.defaultCalories ?? undefined,
-            notes: item.notes ?? undefined,
+            grams: item.grams ?? undefined,
           },
         });
       }
     }
 
-    // ========== ADD items ==========
     if (data.itemsToAdd?.length) {
       await tx.mealTemplateItem.createMany({
         data: data.itemsToAdd.map((item) => ({
           mealTemplateId: id,
           foodItemId: item.foodItemId,
           role: item.role,
-          defaultGrams: item.defaultGrams ?? 100,
-          defaultCalories: item.defaultCalories ?? null,
-          notes: item.notes ?? null,
+          grams: item.grams ?? 100,
         })),
       });
     }
 
-    // Return updated template
     return getMealTemplate(id);
   });
 };
 
 // =========================================================
-// DELETE Template
+// DELETE Meal Template
 // =========================================================
 const deleteMealTemplate = async (id) => {
   return prisma.mealTemplate.delete({
@@ -164,3 +147,4 @@ module.exports = {
   updateMealTemplate,
   deleteMealTemplate,
 };
+ 

@@ -1,5 +1,3 @@
-// Prisma schema for menu-service
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,18 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ==================== ENUMS ====================
+//////////////////////////////////////////////////
+// ENUMS
+//////////////////////////////////////////////////
 
 enum DayType {
   TRAINING
   REST
-}
-
-enum MealSlot {
-  MEAL1
-  MEAL2
-  MEAL3
-  CARB_LOAD
 }
 
 enum MealTemplateKind {
@@ -38,35 +31,39 @@ enum MealItemRole {
   MENTAL_HEALTH
 }
 
-// ==================== Food master data ====================
+//////////////////////////////////////////////////
+// FOOD MASTER DATA
+//////////////////////////////////////////////////
 
 model FoodItem {
   id              String  @id @default(cuid())
   name            String
   description     String?
-  category        String?
-  caloriesPer100g Float?
-  proteinPer100g  Float?
+  category        String
+  caloriesPer100g Float
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  mealTemplateItem    MealTemplateItem[]
-  clientMenuMealItems ClientMenuMealItem[]
+  templateItems MealTemplateItem[]
+  optionItems   ClientMenuMealOptionItem[]
 }
 
 model VitaminMaster {
   id          String   @id @default(cuid())
   name        String
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  templateVitamins   TemplateMenuVitamin[] @relation("VitaminTemplateRelation")
-  clientMenuVitamins ClientMenuVitamin[]   @relation("VitaminClientRelation")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  templateVitamins TemplateMenuVitamin[]
+  clientVitamins   ClientMenuVitamin[]
 }
 
-// ==================== Meal templates ====================
+//////////////////////////////////////////////////
+// MEAL TEMPLATES (Reusable)
+//////////////////////////////////////////////////
 
 model MealTemplate {
   id      String           @id @default(cuid())
@@ -74,28 +71,22 @@ model MealTemplate {
   kind    MealTemplateKind
   coachId String
 
-  totalCalories Float @default(0)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items           MealTemplateItem[]
-  clientMenuMeals ClientMenuMeal[]
+  items MealTemplateItem[]
 
-  templateMealOptions TemplateMenuMealOption[] @relation("TemplateOptionsRelation")
-  clientMealOptions   ClientMenuMealOption[]   @relation("ClientOptionsRelation")
+  templateOptions TemplateMenuMealOption[]
+  clientOptions   ClientMenuMealOption[]
 }
 
 model MealTemplateItem {
-  id              String       @id @default(cuid())
-  foodItemId      String
-  mealTemplateId  String
-  role            MealItemRole
-  defaultGrams    Float        @default(100)
-  defaultCalories Float?
-  notes           String?
+  id             String       @id @default(cuid())
+  mealTemplateId String
+  foodItemId     String
 
-  createdAt DateTime @default(now())
+  role  MealItemRole
+  grams Float @default(100)
 
   foodItem     FoodItem     @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
   mealTemplate MealTemplate @relation(fields: [mealTemplateId], references: [id], onDelete: Cascade)
@@ -104,38 +95,37 @@ model MealTemplateItem {
   @@index([foodItemId])
 }
 
-// ==================== TEMPLATE MENUS ====================
+//////////////////////////////////////////////////
+// TEMPLATE MENUS
+//////////////////////////////////////////////////
 
 model TemplateMenu {
-  id            String  @id @default(cuid())
-  coachId       String
-  name          String
-  dayType       DayType
-  notes         String?
-  totalCalories Float   @default(0)
-
-  meals    TemplateMenuMeal[]
-  vitamins TemplateMenuVitamin[]
+  id      String  @id @default(cuid())
+  coachId String
+  name    String
+  dayType DayType
+  notes   String?
+  totalCalories Float @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clientMenus ClientMenu[]
+  meals    TemplateMenuMeal[]
+  vitamins TemplateMenuVitamin[]
+  clients  ClientMenu[]
 }
 
 model TemplateMenuMeal {
-  id               String  @id @default(cuid())
-  templateMenuId   String
-  name             String
-  selectedOptionId String?
-  totalCalories    Float?
+  id             String  @id @default(cuid())
+  templateMenuId String
+
+  name          String
+  notes         String?
+  totalCalories Float
 
   options TemplateMenuMealOption[]
 
   templateMenu TemplateMenu @relation(fields: [templateMenuId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([templateMenuId])
 }
@@ -144,15 +134,12 @@ model TemplateMenuMealOption {
   id             String  @id @default(cuid())
   mealId         String
   mealTemplateId String
-  name           String?
-  orderIndex     Int     @default(0)
 
-  meal TemplateMenuMeal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  name       String?
+  orderIndex Int @default(0)
 
-  mealTemplate MealTemplate @relation("TemplateOptionsRelation", fields: [mealTemplateId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  meal         TemplateMenuMeal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  mealTemplate MealTemplate     @relation(fields: [mealTemplateId], references: [id], onDelete: Restrict)
 
   @@index([mealId])
 }
@@ -166,114 +153,102 @@ model TemplateMenuVitamin {
   description String?
 
   templateMenu TemplateMenu   @relation(fields: [templateMenuId], references: [id], onDelete: Cascade)
-  vitamin      VitaminMaster? @relation("VitaminTemplateRelation", fields: [vitaminId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  vitamin      VitaminMaster? @relation(fields: [vitaminId], references: [id], onDelete: Restrict)
 
   @@index([templateMenuId])
   @@index([vitaminId])
 }
 
-// ==================== CLIENT MENUS ====================
+//////////////////////////////////////////////////
+// CLIENT MENUS
+//////////////////////////////////////////////////
 
 model ClientMenu {
-  id            String    @id @default(cuid())
-  clientId      String
-  coachId       String
-  name          String
-  type          DayType
-  totalCalories Float     @default(0)
-  notes         String?
-  isActive      Boolean   @default(true)
-  startDate     DateTime?
-  endDate       DateTime?
+  id       String  @id @default(cuid())
+  clientId String
+  coachId  String
+
+  name        String
+  type        DayType
+  notes       String?
+  isActive    Boolean @default(true)
+  totalCalories Float @default(0)
+
+  startDate   DateTime?
+  endDate     DateTime?
 
   originalTemplateMenuId String?
   originalTemplateMenu   TemplateMenu? @relation(fields: [originalTemplateMenuId], references: [id])
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   meals    ClientMenuMeal[]
   vitamins ClientMenuVitamin[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@index([clientId, isActive])
   @@index([coachId])
-  @@index([originalTemplateMenuId])
 }
 
 model ClientMenuMeal {
-  id                 String  @id @default(cuid())
-  clientMenuId       String
-  originalTemplateId String?
+  id           String @id @default(cuid())
+  clientMenuId String
 
-  name             String
-  totalCalories    Float   @default(0)
+  name          String
+  notes         String?
+  totalCalories Float
   selectedOptionId String?
 
-  clientMenu       ClientMenu    @relation(fields: [clientMenuId], references: [id], onDelete: Cascade)
-  originalTemplate MealTemplate? @relation(fields: [originalTemplateId], references: [id])
-
-  items   ClientMenuMealItem[]
-  options ClientMenuMealOption[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  clientMenu ClientMenu @relation(fields: [clientMenuId], references: [id], onDelete: Cascade)
+  options    ClientMenuMealOption[]
 
   @@index([clientMenuId])
-  @@index([originalTemplateId])
 }
 
 model ClientMenuMealOption {
   id               String  @id @default(cuid())
   clientMenuMealId String
-  mealTemplateId   String
-  name             String?
-  orderIndex       Int     @default(0)
+
+  // optional origin
+  mealTemplateId String?
+
+  name       String?
+  orderIndex Int @default(0)
+
+  items ClientMenuMealOptionItem[]
 
   clientMenuMeal ClientMenuMeal @relation(fields: [clientMenuMealId], references: [id], onDelete: Cascade)
-
-  mealTemplate MealTemplate @relation("ClientOptionsRelation", fields: [mealTemplateId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  mealTemplate   MealTemplate?  @relation(fields: [mealTemplateId], references: [id], onDelete: Restrict)
 
   @@index([clientMenuMealId])
 }
 
-model ClientMenuMealItem {
-  id               String @id @default(cuid())
-  clientMenuMealId String
-  foodItemId       String
+model ClientMenuMealOptionItem {
+  id        String @id @default(cuid())
+  optionId  String
+  foodItemId String
 
-  quantity Float
-  calories Float
-  notes    String?
+  role  MealItemRole
+  grams Float @default(100)
 
-  clientMenuMeal ClientMenuMeal @relation(fields: [clientMenuMealId], references: [id], onDelete: Cascade)
-  foodItem       FoodItem       @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
+  option   ClientMenuMealOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  foodItem FoodItem             @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([clientMenuMealId])
+  @@index([optionId])
   @@index([foodItemId])
 }
 
 model ClientMenuVitamin {
-  id           String  @id @default(cuid())
+  id           String @id @default(cuid())
   clientMenuId String
-  vitaminId    String?
 
+  vitaminId   String?
   name        String
   description String?
+  notes       String?
 
   clientMenu ClientMenu     @relation(fields: [clientMenuId], references: [id], onDelete: Cascade)
-  vitamin    VitaminMaster? @relation("VitaminClientRelation", fields: [vitaminId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  vitamin    VitaminMaster? @relation(fields: [vitaminId], references: [id], onDelete: Restrict)
 
   @@index([clientMenuId])
   @@index([vitaminId])

@@ -1,6 +1,10 @@
 // src/services/templateMenu.service.js
+
 const prisma = require("../db/prisma");
-const {createMealTemplate,updateMealTemplate,} = require("./mealTemplate.service");
+const { createMealTemplate } = require("./mealTemplate.service");
+
+const withStatus = (e, s = 400) => Object.assign(e, { status: s });
+
 // =========================================================
 // CREATE Template Menu
 // =========================================================
@@ -16,12 +20,13 @@ const createTemplateMenu = async (data, coachId) => {
         ? {
             create: data.meals.map((m) => ({
               name: m.name,
-              selectedOptionId: null,
+              notes: m.notes ?? null,
+              totalCalories: m.totalCalories ?? 0,
 
               options: m.options
                 ? {
                     create: m.options.map((opt, idx) => ({
-                      name: opt.name,
+                      name: opt.name ?? null,
                       orderIndex: opt.orderIndex ?? idx,
                       mealTemplateId: opt.mealTemplateId,
                     })),
@@ -35,13 +40,12 @@ const createTemplateMenu = async (data, coachId) => {
         ? {
             create: data.vitamins.map((v) => ({
               vitaminId: v.vitaminId ?? null,
-              name: v.name ?? "",
+              name: v.name,
               description: v.description ?? null,
             })),
           }
         : undefined,
     },
-
     include: {
       meals: {
         include: {
@@ -50,9 +54,7 @@ const createTemplateMenu = async (data, coachId) => {
               mealTemplate: {
                 include: {
                   items: {
-                    include: {
-                      foodItem: true,
-                    },
+                    include: { foodItem: true },
                   },
                 },
               },
@@ -61,9 +63,7 @@ const createTemplateMenu = async (data, coachId) => {
         },
       },
       vitamins: {
-        include: {
-          vitamin: true,
-        },
+        include: { vitamin: true },
       },
     },
   });
@@ -89,7 +89,6 @@ const listTemplateMenus = async (query) => {
   });
 };
 
-
 // =========================================================
 // GET Template Menu by ID
 // =========================================================
@@ -98,9 +97,7 @@ const getTemplateMenu = async (id) => {
     where: { id },
     include: {
       vitamins: {
-        include: {
-          vitamin: true
-        }
+        include: { vitamin: true },
       },
       meals: {
         include: {
@@ -109,23 +106,19 @@ const getTemplateMenu = async (id) => {
               mealTemplate: {
                 include: {
                   items: {
-                    include: {
-                      foodItem: true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                    include: { foodItem: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!menu) {
-    const e = new Error("Template menu not found");
-    e.status = 404;
-    throw e;
+    throw withStatus(new Error("Template menu not found"), 404);
   }
 
   return menu;
@@ -141,30 +134,20 @@ const updateTemplateMenu = async (id, data) => {
   });
 
   if (!existing) {
-    const e = new Error("Template menu not found");
-    e.status = 404;
-    throw e;
+    throw withStatus(new Error("Template menu not found"), 404);
   }
 
   await prisma.$transaction(async (tx) => {
-    /* ===============================
-       Menu meta
-    =============================== */
-
     await tx.templateMenu.update({
       where: { id },
       data: {
         name: data.name ?? undefined,
         dayType: data.dayType ?? undefined,
         notes: data.notes ?? undefined,
-        totalCalories: data.totalCalories ?? undefined,
       },
     });
 
-    /* ===============================
-       Vitamins
-    =============================== */
-
+    // Vitamins
     if (data.vitaminsToDelete?.length) {
       await tx.templateMenuVitamin.deleteMany({
         where: {
@@ -178,17 +161,14 @@ const updateTemplateMenu = async (id, data) => {
       await tx.templateMenuVitamin.createMany({
         data: data.vitaminsToAdd.map((v) => ({
           templateMenuId: id,
-          vitaminId: v.vitaminId,
+          vitaminId: v.vitaminId ?? null,
           name: v.name,
           description: v.description ?? null,
         })),
       });
     }
 
-    /* ===============================
-       Meals
-    =============================== */
-
+    // Meals
     if (data.mealsToDelete?.length) {
       await tx.templateMenuMeal.deleteMany({
         where: {
@@ -204,8 +184,8 @@ const updateTemplateMenu = async (id, data) => {
           data: {
             templateMenuId: id,
             name: meal.name,
-            totalCalories: meal.totalCalories ?? null,
-            selectedOptionId: null,
+            notes: meal.notes ?? null,
+            totalCalories: meal.totalCalories ?? 0,
           },
         });
       }
@@ -217,21 +197,18 @@ const updateTemplateMenu = async (id, data) => {
           where: { id: meal.id },
           data: {
             name: meal.name ?? undefined,
+            notes: meal.notes ?? undefined,
             totalCalories: meal.totalCalories ?? undefined,
-            selectedOptionId: meal.selectedOptionId ?? undefined,
           },
         });
       }
     }
 
-    /* ===============================
-       Meal Options
-    =============================== */
-
+    // Meal Options
     if (data.mealOptionsToDelete?.length) {
       await tx.templateMenuMealOption.deleteMany({
         where: {
-          id: { in: data.mealOptionsToDelete.map((opt) => opt.id) },
+          id: { in: data.mealOptionsToDelete.map((o) => o.id) },
         },
       });
     }
@@ -242,11 +219,10 @@ const updateTemplateMenu = async (id, data) => {
 
         if (!mealTemplateId) {
           if (!option.template) {
-            const e = new Error(
-              "template is required when mealTemplateId is missing"
+            throw withStatus(
+              new Error("template is required when mealTemplateId is missing"),
+              400
             );
-            e.status = 400;
-            throw e;
           }
 
           const createdTemplate = await createMealTemplate(
@@ -265,17 +241,14 @@ const updateTemplateMenu = async (id, data) => {
           data: {
             mealId: option.mealId,
             mealTemplateId,
-            name: option.template?.name ?? option.name ?? null,
+            name: option.name ?? null,
             orderIndex: option.orderIndex ?? 0,
           },
         });
       }
     }
 
-    /* ===============================
-       Recalculate total calories
-    =============================== */
-
+    // Recompute menu total calories
     const meals = await tx.templateMenuMeal.findMany({
       where: { templateMenuId: id },
       select: { totalCalories: true },
@@ -294,7 +267,6 @@ const updateTemplateMenu = async (id, data) => {
 
   return getTemplateMenu(id);
 };
-
 
 // =========================================================
 // DELETE Template Menu
