@@ -1,5 +1,3 @@
-// src/types/nutrition-ui.ts
-
 export type UINutritionSource = "template" | "client";
 
 export type UIDayType = "TRAINING" | "REST";
@@ -21,6 +19,10 @@ export type UIFoodRole =
   | "MENTAL_HEALTH"
   | string;
 
+/* =========================
+   ROOT PLAN
+========================= */
+
 export interface UINutritionPlan {
   id: string;
   name: string;
@@ -32,6 +34,10 @@ export interface UINutritionPlan {
   meals: UIMeal[];
 }
 
+/* =========================
+   VITAMINS
+========================= */
+
 export interface UIVitamin {
   id: string;
   vitaminId?: string | null;
@@ -39,40 +45,96 @@ export interface UIVitamin {
   description: string | null;
 }
 
+/* =========================
+   MEALS
+========================= */
+
 export interface UIMeal {
   id: string;
   title: string;
   timeRange: string | null;
   notes: string | null;
   totalCalories: number | null;
+  selectedOptionId?: string | null;
+
+  /** 
+   * Options:
+   * - template → planned options
+   * - client   → executed options
+   */
   options: UIMealOption[];
-  selectedOptionId: string | null;
-  foods?: UIFoodItem[];
-  meals?: undefined;
-  mealTemplateId?: string;
+
+  /** optional legacy / UI helpers */
+   /**
+   * @deprecated
+   * Prevents accidental recursive usage.
+   */
+   meals?: undefined;
+
+   /**
+    * @deprecated
+    * MealTemplate relation must live on MealOption only.
+    */
+   mealTemplateId?: string;
 }
 
-export interface UIMealOption {
+/* =========================
+   MEAL OPTIONS
+========================= */
+
+/**
+ * Base option – shared
+ */
+interface UIBaseMealOption {
   id: string;
   title: string;
   orderIndex: number;
   isSelected: boolean;
+  foods: UIFoodItem[];
+}
+
+/**
+ * Template option (planning)
+ */
+export interface UITemplateMealOption extends UIBaseMealOption {
   mealTemplateId: string;
   mealTemplateName: string;
   mealTemplateKind: UIMealTemplateKind;
-  foods: UIFoodItem[];
 }
+
+/**
+ * Client option (execution)
+ *  no template fields
+ */
+export interface UIClientMealOption extends UIBaseMealOption {}
+
+/**
+ * Union used by UI
+ */
+export type UIMealOption = UITemplateMealOption | UIClientMealOption;
+
+/* =========================
+   FOOD ITEM (UI)
+========================= */
 
 export interface UIFoodItem {
   id: string;
   foodItemId: string;
   name: string;
   role: UIFoodRole;
+
+  /** editable truth */
   grams: number;
-  calories: number | null;
+
+  /** UI only */
   color: string;
-  notes: string | null;
+  caloriesPer100g?: number | null; // UI-only, not domain
+
 }
+
+/* =========================
+   MENU TABS
+========================= */
 
 export type UINutritionMenuTab = {
   id: string;

@@ -9,8 +9,26 @@ const Food = require("./controllers/food.controller");
 const TemplateMenus = require("./controllers/templateMenu.controller");
 const ClientMenus = require("./controllers/clientMenu.controller");
 const VitaminController = require("./controllers/vitamin.controller.js");
+const MealTemplates = require("./controllers/mealTemplate.controller");
 
 const router = Router();
+
+
+
+/* ===========================
+   MEAL TEMPLATE ROUTES
+   =========================== */
+
+// Create MealTemplate
+router.post("/internal/menu/meal-templates",verifyInternalToken,MealTemplates.createMealTemplate);
+ // List MealTemplates (by coachId injected by gateway)
+ router.get("/internal/menu/meal-templates",verifyInternalToken,MealTemplates.listMealTemplates);
+ // Get MealTemplate by ID
+ router.get("/internal/menu/meal-templates/:id",verifyInternalToken, MealTemplates.getMealTemplate);
+ // Update MealTemplate
+ router.put("/internal/menu/meal-templates/:id",verifyInternalToken,MealTemplates.updateMealTemplate);
+ // Delete MealTemplate
+ router.delete("/internal/menu/meal-templates/:id",verifyInternalToken,MealTemplates.deleteMealTemplate);
 
 /* ===========================
    FOOD ROUTES

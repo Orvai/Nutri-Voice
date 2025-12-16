@@ -9,8 +9,6 @@ import type { TemplateMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItemFo
 export type TemplateMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItem = {
   id: string;
   role: string;
-  defaultGrams: number;
-  /** @nullable */
-  notes: string | null;
+  grams: number;
   foodItem: TemplateMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItemFoodItem;
 };

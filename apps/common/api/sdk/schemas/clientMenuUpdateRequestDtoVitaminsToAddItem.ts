@@ -11,4 +11,6 @@ export type ClientMenuUpdateRequestDtoVitaminsToAddItem = {
   name: string;
   /** @nullable */
   description?: string | null;
+  /** @nullable */
+  notes?: string | null;
 };

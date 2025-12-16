@@ -1,55 +1,83 @@
 const { z } = require("zod");
-const { MealItemCreateDto, MealItemUpdateDto, MealItemDeleteDto } = require("./items.dto");
 
-const MealTemplateCreateDto = z
+/**
+ * ENUMS
+ * אם כבר קיימים enums משותפים – אפשר לייבא במקום string
+ */
+const MealTemplateKindEnum = z.string();
+const MealItemRoleEnum = z.string();
+
+/**
+ * ============================
+ * Items
+ * ============================
+ */
+
+const MealTemplateItemCreateDto = z
   .object({
-    name: z.string().min(1),
-    kind: z.string(),
-    totalCalories: z.number().optional(),
-    items: z.array(MealItemCreateDto).optional(),
+    foodItemId: z.string(),
+    role: MealItemRoleEnum,
+    grams: z.number().positive().optional(),
   })
   .strict();
 
-const MealTemplateUpsertDto = z
-  .object({
-    name: z.string().optional(),
-    kind: z.string().optional(),
-    totalCalories: z.number().optional(),
-    itemsToAdd: z.array(MealItemCreateDto).optional(),
-    itemsToUpdate: z.array(MealItemUpdateDto).optional(),
-    itemsToDelete: z.array(MealItemDeleteDto).optional(),
-  })
-  .strict();
-
-const MealTemplateResponseDto = z
+const MealTemplateItemUpdateDto = z
   .object({
     id: z.string(),
-    name: z.string(),
-    kind: z.string(),
-    totalCalories: z.number(),
-    items: z.array(
-      z
-        .object({
-          id: z.string(),
-          role: z.string(),
-          defaultGrams: z.number(),
-          defaultCalories: z.number().nullable(),
-          notes: z.string().nullable(),
-          foodItem: z
-            .object({
-              id: z.string(),
-              name: z.string(),
-              caloriesPer100g: z.number().nullable(),
-            })
-            .strict(),
-        })
-        .strict()
-    ),
+    foodItemId: z.string().optional(),
+    role: MealItemRoleEnum.optional(),
+    grams: z.number().positive().optional(),
+  })
+  .strict();
+
+/**
+ * ============================
+ * Create MealTemplate
+ * (Gateway → menu-service)
+ * ============================
+ */
+const MealTemplateCreateDto = z
+  .object({
+    coachId: z.string(), // injected by gateway
+
+    name: z.string().min(1),
+    kind: MealTemplateKindEnum,
+
+    items: z.array(MealTemplateItemCreateDto).optional(),
+  })
+  .strict();
+
+/**
+ * ============================
+ * Update MealTemplate
+ * ============================
+ */
+const MealTemplateUpdateDto = z
+  .object({
+    name: z.string().min(1).optional(),
+    kind: MealTemplateKindEnum.optional(),
+
+    itemsToAdd: z.array(MealTemplateItemCreateDto).optional(),
+    itemsToUpdate: z.array(MealTemplateItemUpdateDto).optional(),
+    itemsToDelete: z
+      .array(z.object({ id: z.string() }).strict())
+      .optional(),
+  })
+  .strict();
+
+/**
+ * ============================
+ * List Query
+ * ============================
+ */
+const MealTemplateListQueryDto = z
+  .object({
+    coachId: z.string().optional(),
   })
   .strict();
 
 module.exports = {
   MealTemplateCreateDto,
-  MealTemplateUpsertDto,
-  MealTemplateResponseDto,
+  MealTemplateUpdateDto,
+  MealTemplateListQueryDto,
 };

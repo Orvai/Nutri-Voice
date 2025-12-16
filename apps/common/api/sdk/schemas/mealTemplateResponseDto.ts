@@ -10,6 +10,5 @@ export interface MealTemplateResponseDto {
   id: string;
   name: string;
   kind: string;
-  totalCalories: number;
   items: MealTemplateResponseDtoItemsItem[];
 }

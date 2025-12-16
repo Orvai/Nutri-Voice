@@ -15,7 +15,6 @@ export function useTemplateMenus() {
     queryKey: nutritionKeys.templateMenus(),
     queryFn: async ({ signal }) => {
       const res = await getApiTemplateMenus(signal);
-      console.log("RAW TEMPLATE MENUS:", res);
       return res.map(mapTemplateMenuToTab);
     },
   });

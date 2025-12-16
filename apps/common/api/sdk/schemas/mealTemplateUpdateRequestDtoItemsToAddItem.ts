@@ -8,9 +8,5 @@
 export type MealTemplateUpdateRequestDtoItemsToAddItem = {
   foodItemId: string;
   role: string;
-  defaultGrams?: number;
-  /** @nullable */
-  defaultCalories?: number | null;
-  /** @nullable */
-  notes?: string | null;
+  grams?: number;
 };

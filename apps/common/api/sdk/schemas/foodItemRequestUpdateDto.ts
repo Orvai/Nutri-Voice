@@ -9,10 +9,6 @@ export interface FoodItemRequestUpdateDto {
   name?: string;
   /** @nullable */
   description?: string | null;
-  /** @nullable */
-  category?: string | null;
-  /** @nullable */
-  caloriesPer100g?: number | null;
-  /** @nullable */
-  proteinPer100g?: number | null;
+  category?: string;
+  caloriesPer100g?: number;
 }

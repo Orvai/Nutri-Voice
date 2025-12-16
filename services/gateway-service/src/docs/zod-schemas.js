@@ -1,6 +1,6 @@
 // ===== Import all DTOs (CommonJS → ES) =====
 import * as Idm from "../dto/idm.dto.js";
-import * as Menu from "../dto/menu.dto.js";
+import * as Menu from "../dto/menu/index.js";
 import * as Tracking from "../dto/tracking.dto.js";
 import * as Workout from "../dto/workout.dto.js";
 

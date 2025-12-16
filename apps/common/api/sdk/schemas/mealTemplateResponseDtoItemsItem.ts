@@ -8,11 +8,8 @@ import type { MealTemplateResponseDtoItemsItemFoodItem } from './mealTemplateRes
 
 export type MealTemplateResponseDtoItemsItem = {
   id: string;
+  foodItemId: string;
   role: string;
-  defaultGrams: number;
-  /** @nullable */
-  defaultCalories: number | null;
-  /** @nullable */
-  notes: string | null;
+  grams: number;
   foodItem: MealTemplateResponseDtoItemsItemFoodItem;
 };

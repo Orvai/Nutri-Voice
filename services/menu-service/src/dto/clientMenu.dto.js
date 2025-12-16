@@ -1,118 +1,122 @@
 const { z } = require("zod");
-const {
-  ClientMealDeleteDto,
-  ClientMealFromTemplateDto,
-  ClientMealUpdateDto,
-} = require("./meals.dto.js");
-const { MealItemCreateDto, MealItemUpdateDto, MealItemDeleteDto } = require("./items.dto");
-const {
-  TemplateMealOptionUpsertDto,
-  MealOptionDeleteDto,
-  MealOptionSelectionDto,
-} = require("./options.dto");
-const { ClientMenuVitaminDto, VitaminCreateDto, VitaminUpdateDto } = require("./vitamin.dto");
 
-const dateString = z.string().datetime({ offset: true }).or(z.string());
+const isoDateString = z.string();
 
-const ClientMenuCreateRequestDto = z
+/* =========================
+   CREATE
+========================= */
+const ClientMenuCreateDto = z
   .object({
-    name: z.string(),
+    name: z.string().min(1),
     type: z.string(),
     notes: z.string().nullable().optional(),
-    startDate: dateString.optional(),
-    endDate: dateString.optional(),
+    startDate: isoDateString.optional(),
+    endDate: isoDateString.optional(),
   })
   .strict();
 
-const ClientMenuUpdateRequestDto = z
+/* =========================
+   MEALS
+========================= */
+const ClientMenuMealAddDto = z
   .object({
-    name: z.string().optional(),
+    name: z.string().min(1),
+    notes: z.string().nullable().optional(),
+    totalCalories: z.number(),
+  })
+  .strict();
+
+const ClientMenuMealUpdateDto = z
+  .object({
+    id: z.string(),
+    name: z.string().min(1).optional(),
+    notes: z.string().nullable().optional(),
+    totalCalories: z.number().optional(),
+    selectedOptionId: z.string().nullable().optional(),
+  })
+  .strict();
+
+const ClientMenuMealDeleteDto = z.object({ id: z.string() }).strict();
+
+/* =========================
+   MEAL OPTIONS
+========================= */
+const ClientMenuMealOptionItemDto = z
+  .object({
+    foodItemId: z.string(),
+    role: z.string(),
+    grams: z.number().positive().optional(),
+  })
+  .strict();
+
+const ClientMenuMealOptionDto = z
+  .object({
+    mealId: z.string(),
+    mealTemplateId: z.string().optional(),
+    name: z.string().nullable().optional(),
+    orderIndex: z.number().int().nonnegative().optional(),
+    items: z.array(ClientMenuMealOptionItemDto).min(1),
+  })
+  .strict();
+
+const ClientMenuMealOptionDeleteDto = z
+  .object({ id: z.string() })
+  .strict();
+
+/* =========================
+   VITAMINS
+========================= */
+const ClientMenuVitaminAddDto = z
+  .object({
+    vitaminId: z.string().nullable().optional(),
+    name: z.string().min(1),
+    description: z.string().nullable().optional(),
+    notes: z.string().nullable().optional(),
+  })
+  .strict();
+
+const ClientMenuVitaminUpdateDto = z
+  .object({
+    id: z.string(),
+    vitaminId: z.string().nullable().optional(),
+    name: z.string().min(1).optional(),
+    description: z.string().nullable().optional(),
+    notes: z.string().nullable().optional(),
+  })
+  .strict();
+
+const ClientMenuVitaminDeleteDto = z
+  .object({ id: z.string() })
+  .strict();
+
+/* =========================
+   UPDATE
+========================= */
+const ClientMenuUpdateDto = z
+  .object({
+    name: z.string().min(1).optional(),
     type: z.string().optional(),
     notes: z.string().nullable().optional(),
     isActive: z.boolean().optional(),
-    startDate: dateString.optional(),
-    endDate: dateString.optional(),
-    mealId: z.string().optional(),
-    mealTemplateId: z.string().optional(),
-    mealsToAdd: z.array(ClientMealFromTemplateDto).optional(),
-    mealsToUpdate: z.array(ClientMealUpdateDto).optional(),
-    mealsToDelete: z.array(ClientMealDeleteDto).optional(),
-    mealOptionsToAdd: z.array(TemplateMealOptionUpsertDto).optional(),
-    mealOptionsToDelete: z.array(MealOptionDeleteDto).optional(),
-    vitaminsToAdd: z.array(VitaminCreateDto.extend({ vitaminId: z.string().nullable().optional() }).strict()).optional(),
-    vitaminsToUpdate: z
-      .array(
-        VitaminUpdateDto.extend({ id: z.string(), vitaminId: z.string().nullable().optional() })
-          .strict()
-      )
-      .optional(),
-    vitaminsToDelete: z.array(ClientMenuVitaminDto.pick({ id: true })).optional(),
+    startDate: isoDateString.nullable().optional(),
+    endDate: isoDateString.nullable().optional(),
+
+    mealsToAdd: z.array(ClientMenuMealAddDto).optional(),
+    mealsToUpdate: z.array(ClientMenuMealUpdateDto).optional(),
+    mealsToDelete: z.array(ClientMenuMealDeleteDto).optional(),
+
+    mealOptionsToAdd: z.array(ClientMenuMealOptionDto).optional(),
+    mealOptionsToDelete: z.array(ClientMenuMealOptionDeleteDto).optional(),
+
+    vitaminsToAdd: z.array(ClientMenuVitaminAddDto).optional(),
+    vitaminsToUpdate: z.array(ClientMenuVitaminUpdateDto).optional(),
+    vitaminsToDelete: z.array(ClientMenuVitaminDeleteDto).optional(),
   })
   .strict();
 
-const ClientMenuCreateFromTemplateDto = z
-  .object({
-    templateMenuId: z.string(),
-    name: z.string().optional(),
-    selectedOptions: z.array(MealOptionSelectionDto).optional(),
-  })
-  .strict();
-
-const ClientMenuResponseDto = z
-  .object({
-    id: z.string(),
-    name: z.string(),
-    type: z.string(),
-    notes: z.string().nullable(),
-    isActive: z.boolean(),
-    meals: z.array(
-      z
-        .object({
-          id: z.string(),
-          name: z.string(),
-          totalCalories: z.number().nullable().optional(),
-          selectedOptionId: z.string().nullable(),
-          options: z.array(
-            z
-              .object({
-                id: z.string(),
-                name: z.string().nullable(),
-                orderIndex: z.number(),
-                mealTemplate: z
-                  .object({
-                    id: z.string(),
-                    name: z.string(),
-                    kind: z.string(),
-                    totalCalories: z.number().nullable().optional(),
-                    items: z.array(
-                      z
-                        .object({
-                          id: z.string(),
-                          role: z.string(),
-                          defaultGrams: z.number(),
-                          notes: z.string().nullable(),
-                          foodItem: z
-                            .object({
-                              id: z.string(),
-                              name: z.string(),
-                              caloriesPer100g: z.number().nullable(),
-                            })
-                            .strict(),
-                        })
-                        .strict()
-                    ),
-                  })
-                  .strict(),
-              })
-              .strict()
-          ),
-        })
-        .strict()
-    ),
-    vitamins: z.array(ClientMenuVitaminDto),
-  })
-  .strict();
-
+/* =========================
+   LIST
+========================= */
 const ClientMenuListQueryDto = z
   .object({
     includeInactive: z.string().optional(),
@@ -121,10 +125,29 @@ const ClientMenuListQueryDto = z
   })
   .strict();
 
+/* =========================
+   CREATE FROM TEMPLATE
+========================= */
+const ClientMenuCreateFromTemplateDto = z
+  .object({
+    templateMenuId: z.string(),
+    name: z.string().optional(),
+    selectedOptions: z
+      .array(
+        z
+          .object({
+            templateMealId: z.string(),
+            optionId: z.string(),
+          })
+          .strict()
+      )
+      .optional(),
+  })
+  .strict();
+
 module.exports = {
-  ClientMenuCreateRequestDto,
-  ClientMenuUpdateRequestDto,
-  ClientMenuCreateFromTemplateDto,
-  ClientMenuResponseDto,
+  ClientMenuCreateDto,
+  ClientMenuUpdateDto,
   ClientMenuListQueryDto,
+  ClientMenuCreateFromTemplateDto,
 };

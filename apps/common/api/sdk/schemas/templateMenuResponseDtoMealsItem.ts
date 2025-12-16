@@ -10,8 +10,7 @@ export type TemplateMenuResponseDtoMealsItem = {
   id: string;
   name: string;
   /** @nullable */
-  totalCalories?: number | null;
-  /** @nullable */
-  selectedOptionId: string | null;
+  notes: string | null;
+  totalCalories: number;
   options: TemplateMenuResponseDtoMealsItemOptionsItem[];
 };

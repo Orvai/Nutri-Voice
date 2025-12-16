@@ -10,7 +10,5 @@ export type TemplateMenuResponseDtoMealsItemOptionsItemMealTemplate = {
   id: string;
   name: string;
   kind: string;
-  /** @nullable */
-  totalCalories?: number | null;
   items: TemplateMenuResponseDtoMealsItemOptionsItemMealTemplateItemsItem[];
 };

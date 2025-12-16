@@ -1,42 +1,20 @@
 const { z } = require("zod");
 
-//
-// CREATE
-//
-const FoodItemCreateRequestDto = z
+const FoodItemCreateDto = z
   .object({
     name: z.string().min(1),
     description: z.string().nullable().optional(),
-    category: z.string().nullable().optional(),
-    caloriesPer100g: z.number().nullable().optional(),
-    proteinPer100g: z.number().nullable().optional(),
+    category: z.string().min(1),
+    caloriesPer100g: z.number(),
   })
   .strict();
 
-//
-// UPDATE
-//
-const FoodItemUpdateRequestDto = z
+const FoodItemUpdateDto = z
   .object({
     name: z.string().min(1).optional(),
     description: z.string().nullable().optional(),
-    category: z.string().nullable().optional(),
-    caloriesPer100g: z.number().nullable().optional(),
-    proteinPer100g: z.number().nullable().optional(),
-  })
-  .strict();
-
-//
-// RESPONSE
-//
-const FoodItemResponseDto = z
-  .object({
-    id: z.string(),
-    name: z.string(),
-    description: z.string().nullable(),
-    category: z.string().nullable(),
-    caloriesPer100g: z.number().nullable(),
-    proteinPer100g: z.number().nullable(),
+    category: z.string().min(1).optional(),
+    caloriesPer100g: z.number().optional(),
   })
   .strict();
 
@@ -47,8 +25,7 @@ const FoodListQueryDto = z
   .strict();
 
 module.exports = {
-  FoodItemCreateRequestDto,
-  FoodItemUpdateRequestDto,
-  FoodItemResponseDto,
+  FoodItemCreateDto,
+  FoodItemUpdateDto,
   FoodListQueryDto,
 };

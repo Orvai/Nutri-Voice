@@ -9,7 +9,6 @@ export type TemplateMenuUpdateRequestDtoMealsToUpdateItem = {
   id: string;
   name?: string;
   /** @nullable */
-  selectedOptionId?: string | null;
-  /** @nullable */
-  totalCalories?: number | null;
+  notes?: string | null;
+  totalCalories?: number;
 };

@@ -4,17 +4,13 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
-import type { ClientMenuUpdateRequestDtoMealsToUpdateItemItemsToAddItem } from './clientMenuUpdateRequestDtoMealsToUpdateItemItemsToAddItem';
-import type { ClientMenuUpdateRequestDtoMealsToUpdateItemItemsToUpdateItem } from './clientMenuUpdateRequestDtoMealsToUpdateItemItemsToUpdateItem';
-import type { ClientMenuUpdateRequestDtoMealsToUpdateItemItemsToDeleteItem } from './clientMenuUpdateRequestDtoMealsToUpdateItemItemsToDeleteItem';
 
 export type ClientMenuUpdateRequestDtoMealsToUpdateItem = {
   id: string;
   name?: string;
   /** @nullable */
-  selectedOptionId?: string | null;
+  notes?: string | null;
   totalCalories?: number;
-  itemsToAdd?: ClientMenuUpdateRequestDtoMealsToUpdateItemItemsToAddItem[];
-  itemsToUpdate?: ClientMenuUpdateRequestDtoMealsToUpdateItemItemsToUpdateItem[];
-  itemsToDelete?: ClientMenuUpdateRequestDtoMealsToUpdateItemItemsToDeleteItem[];
+  /** @nullable */
+  selectedOptionId?: string | null;
 };

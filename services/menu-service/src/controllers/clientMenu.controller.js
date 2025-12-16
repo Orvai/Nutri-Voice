@@ -6,13 +6,17 @@ const {
   deleteClientMenu,
   createClientMenuFromTemplate,
 } = require("../services/clientMenu/clientMenu.service");
+
 const {
-  ClientMenuCreateRequestDto,
-  ClientMenuUpdateRequestDto,
+  ClientMenuCreateDto,
+  ClientMenuUpdateDto,
   ClientMenuCreateFromTemplateDto,
   ClientMenuListQueryDto,
 } = require("../dto/clientMenu.dto");
 
+/* =========================
+   Helpers
+========================= */
 const requireIdentity = (req, keys) => {
   const missing = keys.filter((key) => !req.identity?.[key]);
   if (missing.length) {
@@ -22,11 +26,19 @@ const requireIdentity = (req, keys) => {
   }
 };
 
+/* =========================
+   CREATE
+========================= */
 const createClientMenuController = async (req, res, next) => {
   try {
     requireIdentity(req, ["coachId", "clientId"]);
-    const dto = ClientMenuCreateRequestDto.parse(req.body);
-    const result = await createClientMenu(dto, req.identity.coachId, req.identity.clientId);
+    const dto = ClientMenuCreateDto.parse(req.body);
+
+    const result = await createClientMenu(
+      dto,
+      req.identity.coachId,
+      req.identity.clientId
+    );
 
     res.status(201).json({
       message: "Client menu created successfully",
@@ -36,6 +48,10 @@ const createClientMenuController = async (req, res, next) => {
     next(e);
   }
 };
+
+/* =========================
+   LIST
+========================= */
 const listClientMenusController = async (req, res, next) => {
   try {
     const query = ClientMenuListQueryDto.parse(req.query || {});
@@ -44,12 +60,17 @@ const listClientMenusController = async (req, res, next) => {
       coachId: query.coachId ?? req.identity?.coachId,
       clientId: query.clientId ?? req.identity?.clientId,
     };
+
     const result = await listClientMenus(enrichedQuery);
     res.json({ data: result });
   } catch (e) {
     next(e);
   }
 };
+
+/* =========================
+   GET
+========================= */
 const getClientMenuController = async (req, res, next) => {
   try {
     const result = await getClientMenu(req.params.id);
@@ -58,10 +79,15 @@ const getClientMenuController = async (req, res, next) => {
     next(e);
   }
 };
+
+/* =========================
+   UPDATE
+========================= */
 const updateClientMenuController = async (req, res, next) => {
   try {
-    const dto = ClientMenuUpdateRequestDto.parse(req.body);
+    const dto = ClientMenuUpdateDto.parse(req.body);
     const result = await updateClientMenu(req.params.id, dto);
+
     res.json({
       message: "Client menu updated successfully",
       data: result,
@@ -71,6 +97,9 @@ const updateClientMenuController = async (req, res, next) => {
   }
 };
 
+/* =========================
+   DELETE (deactivate)
+========================= */
 const deleteClientMenuController = async (req, res, next) => {
   try {
     await deleteClientMenu(req.params.id);
@@ -79,16 +108,22 @@ const deleteClientMenuController = async (req, res, next) => {
     next(e);
   }
 };
+
+/* =========================
+   CREATE FROM TEMPLATE
+========================= */
 const createClientMenuFromTemplateController = async (req, res, next) => {
   try {
     requireIdentity(req, ["coachId", "clientId"]);
     const dto = ClientMenuCreateFromTemplateDto.parse(req.body);
+
     const result = await createClientMenuFromTemplate({
       ...dto,
       coachId: req.identity.coachId,
       clientId: req.identity.clientId,
     });
-      res.status(201).json({
+
+    res.status(201).json({
       message: "Client menu created from template successfully",
       data: result,
     });
@@ -103,5 +138,5 @@ module.exports = {
   getClientMenu: getClientMenuController,
   updateClientMenu: updateClientMenuController,
   deleteClientMenu: deleteClientMenuController,
-  createClientMenuFromTemplate: createClientMenuFromTemplateController, 
+  createClientMenuFromTemplate: createClientMenuFromTemplateController,
 };

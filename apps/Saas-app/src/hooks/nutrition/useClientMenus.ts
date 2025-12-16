@@ -1,21 +1,9 @@
 // src/hooks/nutrition/useClientMenus.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  getApiClientMenusId,
-  putApiClientMenusId,
-  postApiClientMenusFromTemplate,
-} from "@common/api/sdk/nutri-api";
-import { customFetcher } from "@common/api/sdk/fetcher";
-import { ClientMenuResponseDto } from "@common/api/sdk/schemas/clientMenuResponseDto";
-import {
-  ClientMenuUpdateRequestDto,
-  ClientMenuCreateFromTemplateRequestDto,
-} from "@common/api/sdk/schemas";
+import {getApiClientMenusId,putApiClientMenusId,getApiClientMenus,postApiClientMenusFromTemplate,} from "@common/api/sdk/nutri-api";
+import {ClientMenuUpdateRequestDto,ClientMenuCreateFromTemplateRequestDto,} from "@common/api/sdk/schemas";
 import { nutritionKeys } from "@/queryKeys/nutritionKeys";
-import {
-  mapClientMenu,
-  mapClientMenuToTab,
-} from "@/mappers/nutrition/clientMenu.mapper";
+import {mapClientMenu,mapClientMenuToTab,} from "@/mappers/nutrition/clientMenu.mapper";
 import {
   UINutritionPlan,
   UINutritionMenuTab,
@@ -28,15 +16,8 @@ import {
 export function useClientMenus(clientId?: string) {
   return useQuery<UINutritionMenuTab[]>({
     queryKey: nutritionKeys.clientMenus(clientId),
-    enabled: !!clientId,
     queryFn: async ({ signal }) => {
-      const res = await customFetcher<ClientMenuResponseDto[]>({
-        url: "/api/client-menus",
-        method: "GET",
-        params: { clientId },
-        signal,
-      });
-
+      const res = await getApiClientMenus(signal);
       return res.map(mapClientMenuToTab);
     },
   });
@@ -80,22 +61,16 @@ export function useUpdateClientMenu() {
   });
 }
 
-export function useCreateClientMenuFromTemplate() {
+export function useCreateClientMenuFromTemplate(clientId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: ClientMenuCreateFromTemplateRequestDto) => {
-      console.log("🔥 MUTATION FN DATA:", data);
       return postApiClientMenusFromTemplate(data);
     },
-
     onSuccess: (_data, variables) => {
-      console.log("✅ MUTATION SUCCESS", variables);
-
-      if (!variables?.clientId) return;
-
       queryClient.invalidateQueries({
-        queryKey: nutritionKeys.clientMenus(variables.clientId),
+        queryKey: nutritionKeys.clientMenus(clientId),
       });
     },
 

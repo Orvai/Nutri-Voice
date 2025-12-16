@@ -182,6 +182,85 @@ const addMealOptions = async (tx, mealId, options = []) => {
   }
 };
 
+
+/**
+ * ===============================
+ * UPDATE CLIENT MEAL OPTIONS
+ * ===============================
+ */
+const updateMealOptions = async (tx, options = []) => {
+  for (const opt of options) {
+    const existingOption = await tx.clientMenuMealOption.findUnique({
+      where: { id: opt.id },
+    });
+
+    if (!existingOption) {
+      throw withStatus(
+        new Error(`ClientMenuMealOption not found: ${opt.id}`),
+        404
+      );
+    }
+
+    // ---------------------------
+    // Update option fields
+    // ---------------------------
+    await tx.clientMenuMealOption.update({
+      where: { id: opt.id },
+      data: {
+        name:
+          opt.name !== undefined ? opt.name : existingOption.name,
+        orderIndex:
+          opt.orderIndex !== undefined
+            ? opt.orderIndex
+            : existingOption.orderIndex,
+      },
+    });
+
+    // ---------------------------
+    // Delete items
+    // ---------------------------
+    if (opt.itemsToDelete?.length) {
+      await tx.clientMenuMealOptionItem.deleteMany({
+        where: {
+          id: { in: opt.itemsToDelete.map((i) => i.id) },
+          optionId: opt.id,
+        },
+      });
+    }
+
+    // ---------------------------
+    // Update items
+    // ---------------------------
+    if (opt.itemsToUpdate?.length) {
+      for (const item of opt.itemsToUpdate) {
+        await tx.clientMenuMealOptionItem.update({
+          where: { id: item.id },
+          data: {
+            role: item.role,
+            grams: item.grams,
+          },
+        });
+      }
+    }
+
+    // ---------------------------
+    // Add new items
+    // ---------------------------
+    if (opt.itemsToAdd?.length) {
+      for (const item of opt.itemsToAdd) {
+        await tx.clientMenuMealOptionItem.create({
+          data: {
+            optionId: opt.id,
+            foodItemId: item.foodItemId,
+            role: item.role,
+            grams: item.grams ?? 100,
+          },
+        });
+      }
+    }
+  }
+};
+
 /**
  * ===============================
  * DELETE CLIENT MEAL OPTIONS
@@ -204,4 +283,5 @@ module.exports = {
   addMealsFromTemplates,
   addMealOptions,
   deleteMealOptions,
+  updateMealOptions,
 };

@@ -7,7 +7,11 @@
 
 export type ClientMenuUpdateRequestDtoVitaminsToUpdateItem = {
   id: string;
+  /** @nullable */
+  vitaminId?: string | null;
   name?: string;
   /** @nullable */
   description?: string | null;
+  /** @nullable */
+  notes?: string | null;
 };

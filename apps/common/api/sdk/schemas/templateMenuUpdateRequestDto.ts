@@ -17,7 +17,6 @@ export interface TemplateMenuUpdateRequestDto {
   dayType?: string;
   /** @nullable */
   notes?: string | null;
-  totalCalories?: number;
   mealsToAdd?: TemplateMenuUpdateRequestDtoMealsToAddItem[];
   mealsToUpdate?: TemplateMenuUpdateRequestDtoMealsToUpdateItem[];
   mealsToDelete?: TemplateMenuUpdateRequestDtoMealsToDeleteItem[];

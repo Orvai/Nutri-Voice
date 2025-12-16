@@ -6,6 +6,8 @@
  */
 
 export type ClientMenuUpdateRequestDtoMealsToAddItem = {
-  originalTemplateId: string;
-  name?: string;
+  name: string;
+  /** @nullable */
+  notes?: string | null;
+  totalCalories: number;
 };

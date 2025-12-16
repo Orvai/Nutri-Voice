@@ -8,5 +8,8 @@ import type { TemplateMenuCreateRequestDtoMealsItemOptionsItem } from './templat
 
 export type TemplateMenuCreateRequestDtoMealsItem = {
   name: string;
+  /** @nullable */
+  notes?: string | null;
+  totalCalories?: number;
   options?: TemplateMenuCreateRequestDtoMealsItemOptionsItem[];
 };

@@ -7,6 +7,7 @@ const {
   addMealsFromTemplates,
   addMealOptions,
   deleteMealOptions,
+  updateMealOptions,
 } = require("./helpers/meals");
 
 const {
@@ -75,6 +76,7 @@ const updateClientMenu = async (id, data) => {
 
     await deleteMealOptions(tx, data.mealOptionsToDelete);
     await addMealOptions(tx, data.mealOptionsToAdd);
+    await updateMealOptions(tx, data.mealOptionsToUpdate);
 
     await deleteClientMenuVitamins(tx, id, data.vitaminsToDelete);
     await updateClientMenuVitamins(tx, id, data.vitaminsToUpdate);

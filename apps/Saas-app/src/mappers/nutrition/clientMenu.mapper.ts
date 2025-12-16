@@ -1,8 +1,4 @@
-// src/mappers/nutrition/clientMenu.mapper.ts
-
-import { ClientMenuResponseDto }
-  from "@common/api/sdk/schemas/clientMenuResponseDto";
-
+import { ClientMenuResponseDto } from "@common/api/sdk/schemas/clientMenuResponseDto";
 import {
   UINutritionPlan,
   UIMeal,
@@ -10,40 +6,39 @@ import {
   UIVitamin,
   UIFoodItem,
   UIDayType,
-  UINutritionMenuTab
+  UINutritionMenuTab,
 } from "@/types/ui/nutrition/nutrition.types";
 
 /* =========================================
-   Public mapper
+   Tabs (list)
 ========================================= */
-
-
 export function mapClientMenuToTab(
-  dto: Pick<
-  ClientMenuResponseDto,
-    "id" | "name" | "type" | "totalCalories"
-  >
+  dto: Pick<ClientMenuResponseDto, "id" | "name" | "type" | "totalCalories">
 ): UINutritionMenuTab {
-  const dayType = (dto.type ?? dto.type) as UIDayType;
+  const dayType = dto.type as UIDayType;
+
   return {
     id: dto.id,
-    label: dto.name ?? (dayType === "TRAINING" ? "יום אימון" : "יום מנוחה"),
+    label: dto.name,
     dayType,
     totalCalories: dto.totalCalories,
   };
 }
 
-
+/* =========================================
+   Full menu
+========================================= */
 export function mapClientMenu(
   dto: ClientMenuResponseDto
 ): UINutritionPlan {
-  const dayType = (dto.type ?? dto.type) as UIDayType;
+  const dayType = dto.type as UIDayType;
+
   return {
     id: dto.id,
     name: dto.name,
     source: "client",
     dayType,
-    totalCalories: dto.totalCalories, 
+    totalCalories: dto.totalCalories,
     notes: dto.notes,
     vitamins: dto.vitamins.map(mapVitamin),
     meals: dto.meals.map(mapMeal),
@@ -72,40 +67,38 @@ function mapMeal(
     id: meal.id,
     title: meal.name,
     timeRange: null,
-    notes: null,
-    totalCalories: meal.totalCalories ?? null,
-    selectedOptionId: meal.selectedOptionId,
-    options: meal.options.map(mapMealOption),
+    notes: meal.notes,
+    totalCalories: meal.totalCalories,
+    selectedOptionId: meal.selectedOptionId ?? null,
+    options: meal.options.map((option) =>
+      mapMealOption(option, meal.selectedOptionId)
+    ),
   };
 }
 
 function mapMealOption(
-  option: ClientMenuResponseDto["meals"][number]["options"][number]
+  option: ClientMenuResponseDto["meals"][number]["options"][number],
+  selectedOptionId: string | null
 ): UIMealOption {
-  const mt = option.mealTemplate;
   return {
     id: option.id,
-    title: option.name ?? mt.name,
+    title: option.name ?? "",
     orderIndex: option.orderIndex,
-    isSelected: false,
-    mealTemplateId: mt.id,
-    mealTemplateName: mt.name,
-    mealTemplateKind: mt.kind,
-    foods: mt.items.map(mapFoodItem),
+    isSelected: option.id === selectedOptionId,
+    foods: option.items.map(mapFoodItem),
   };
 }
 
 function mapFoodItem(
-  item: ClientMenuResponseDto["meals"][number]["options"][number]["mealTemplate"]["items"][number]
+  item: ClientMenuResponseDto["meals"][number]["options"][number]["items"][number]
 ): UIFoodItem {
   return {
     id: item.id,
     foodItemId: item.foodItem.id,
     name: item.foodItem.name,
-    role: item.role,          
-    grams: item.defaultGrams,
-    calories: item.foodItem.caloriesPer100g ?? null,
+    role: item.role,
+    grams: item.grams,
+    caloriesPer100g: item.foodItem.caloriesPer100g ?? null,
     color: "#E5E7EB",
-    notes: item.notes,
   };
 }

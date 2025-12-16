@@ -4,12 +4,12 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
-import type { ClientMenuResponseDtoMealsItemOptionsItemMealTemplate } from './clientMenuResponseDtoMealsItemOptionsItemMealTemplate';
+import type { ClientMenuResponseDtoMealsItemOptionsItemItemsItem } from './clientMenuResponseDtoMealsItemOptionsItemItemsItem';
 
 export type ClientMenuResponseDtoMealsItemOptionsItem = {
   id: string;
   /** @nullable */
   name: string | null;
   orderIndex: number;
-  mealTemplate: ClientMenuResponseDtoMealsItemOptionsItemMealTemplate;
+  items: ClientMenuResponseDtoMealsItemOptionsItemItemsItem[];
 };

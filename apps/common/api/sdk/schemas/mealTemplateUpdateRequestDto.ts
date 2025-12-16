@@ -11,7 +11,6 @@ import type { MealTemplateUpdateRequestDtoItemsToDeleteItem } from './mealTempla
 export interface MealTemplateUpdateRequestDto {
   name?: string;
   kind?: string;
-  totalCalories?: number;
   itemsToAdd?: MealTemplateUpdateRequestDtoItemsToAddItem[];
   itemsToUpdate?: MealTemplateUpdateRequestDtoItemsToUpdateItem[];
   itemsToDelete?: MealTemplateUpdateRequestDtoItemsToDeleteItem[];

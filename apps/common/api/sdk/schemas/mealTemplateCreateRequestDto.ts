@@ -9,6 +9,5 @@ import type { MealTemplateCreateRequestDtoItemsItem } from './mealTemplateCreate
 export interface MealTemplateCreateRequestDto {
   name: string;
   kind: string;
-  totalCalories?: number;
   items?: MealTemplateCreateRequestDtoItemsItem[];
 }

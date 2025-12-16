@@ -1,8 +1,6 @@
 // src/mappers/nutrition/templateMenu.mapper.ts
 
-import { TemplateMenuResponseDto }
-  from "@common/api/sdk/schemas/templateMenuResponseDto";
-
+import { TemplateMenuResponseDto } from "@common/api/sdk/schemas/templateMenuResponseDto";
 import {
   UINutritionPlan,
   UIMeal,
@@ -18,10 +16,7 @@ import {
 ========================================= */
 
 export function mapTemplateMenuToTab(
-  dto: Pick<
-    TemplateMenuResponseDto,
-    "id" | "name" | "dayType" | "totalCalories"
-  >
+  dto: Pick<TemplateMenuResponseDto, "id" | "name" | "dayType" | "totalCalories">
 ): UINutritionMenuTab {
   return {
     id: dto.id,
@@ -31,9 +26,7 @@ export function mapTemplateMenuToTab(
   };
 }
 
-export function mapTemplateMenu(
-  dto: TemplateMenuResponseDto
-): UINutritionPlan {
+export function mapTemplateMenu(dto: TemplateMenuResponseDto): UINutritionPlan {
   return {
     id: dto.id,
     name: dto.name,
@@ -47,7 +40,7 @@ export function mapTemplateMenu(
 }
 
 /* =========================================
-   Internal mappers (inline DTOs)
+   Internal mappers
 ========================================= */
 
 function mapVitamin(
@@ -61,16 +54,14 @@ function mapVitamin(
   };
 }
 
-function mapMeal(
-  meal: TemplateMenuResponseDto["meals"][number]
-): UIMeal {
+function mapMeal(meal: TemplateMenuResponseDto["meals"][number]): UIMeal {
   return {
     id: meal.id,
     title: meal.name,
     timeRange: null,
-    notes: null,
+    notes: meal.notes ?? null,
     totalCalories: meal.totalCalories ?? null,
-    selectedOptionId: meal.selectedOptionId,
+    selectedOptionId: null,
     options: meal.options.map(mapMealOption),
   };
 }
@@ -100,9 +91,8 @@ function mapFoodItem(
     foodItemId: item.foodItem.id,
     name: item.foodItem.name,
     role: item.role,
-    grams: item.defaultGrams,
-    calories: item.foodItem.caloriesPer100g ?? null,
+    grams: item.grams, 
+    caloriesPer100g: item.foodItem.caloriesPer100g ?? null,
     color: "#E5E7EB",
-    notes: item.notes,
   };
 }

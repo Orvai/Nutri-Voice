@@ -12,4 +12,6 @@ export type ClientMenuResponseDtoVitaminsItem = {
   name: string;
   /** @nullable */
   description: string | null;
+  /** @nullable */
+  notes: string | null;
 };

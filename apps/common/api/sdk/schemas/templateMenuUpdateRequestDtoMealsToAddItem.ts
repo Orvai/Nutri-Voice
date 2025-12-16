@@ -4,10 +4,12 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { TemplateMenuUpdateRequestDtoMealsToAddItemOptionsItem } from './templateMenuUpdateRequestDtoMealsToAddItemOptionsItem';
 
 export type TemplateMenuUpdateRequestDtoMealsToAddItem = {
   name: string;
   /** @nullable */
-  totalCalories?: number | null;
-  orderIndex?: number;
+  notes?: string | null;
+  totalCalories?: number;
+  options?: TemplateMenuUpdateRequestDtoMealsToAddItemOptionsItem[];
 };

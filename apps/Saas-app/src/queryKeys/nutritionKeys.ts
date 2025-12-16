@@ -18,5 +18,10 @@ export const nutritionKeys = {
       [...nutritionKeys.root, "clientMenus", clientId] as const,
     clientMenu: (id: string) =>
       [...nutritionKeys.root, "clientMenus", id] as const,
+    mealTemplates: () =>
+      [...nutritionKeys.root, "meal-templates"] as const,
+  
+    mealTemplate: (id: string) =>
+      [...nutritionKeys.mealTemplates(), id] as const,
 
   };

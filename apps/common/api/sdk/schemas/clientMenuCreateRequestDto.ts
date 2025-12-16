@@ -4,12 +4,10 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
-import type { ClientMenuCreateRequestDtoType } from './clientMenuCreateRequestDtoType';
 
 export interface ClientMenuCreateRequestDto {
-  clientId: string;
   name: string;
-  type: ClientMenuCreateRequestDtoType;
+  type: string;
   /** @nullable */
   notes?: string | null;
   startDate?: string;

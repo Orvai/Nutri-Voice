@@ -9,8 +9,8 @@ import type { TemplateMenuResponseDtoVitaminsItem } from './templateMenuResponse
 
 export interface TemplateMenuResponseDto {
   id: string;
-  name: string;
   coachId: string;
+  name: string;
   dayType: string;
   /** @nullable */
   notes: string | null;
