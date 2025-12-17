@@ -31,24 +31,89 @@ const updateMeals = async (tx, clientMenuId, mealsToUpdate = []) => {
     });
 
     if (!existing) {
-      throw withStatus(new Error(`Client meal ${meal.id} not found`), 404);
+      throw withStatus(
+        new Error(`Client meal ${meal.id} not found`),
+        404
+      );
     }
 
+    // ---------------------------
+    // Split DB fields vs nested ops
+    // ---------------------------
+    const {
+      optionsToAdd,
+      optionsToUpdate,
+      optionsToDelete,
+      ...mealData
+    } = meal;
+
+    // ---------------------------
+    // Update meal fields
+    // ---------------------------
     await tx.clientMenuMeal.update({
       where: { id: meal.id },
       data: {
-        name: meal.name ?? undefined,
-        notes: meal.notes ?? undefined,
+        name: mealData.name ?? undefined,
+        notes: mealData.notes ?? undefined,
         totalCalories:
-          meal.totalCalories !== undefined
-            ? meal.totalCalories
+          mealData.totalCalories !== undefined
+            ? mealData.totalCalories
             : undefined,
         selectedOptionId:
-          meal.selectedOptionId !== undefined
-            ? meal.selectedOptionId
+          mealData.selectedOptionId !== undefined
+            ? mealData.selectedOptionId
             : undefined,
       },
     });
+
+    // ---------------------------
+    // Add options to meal
+    // ---------------------------
+    if (optionsToAdd?.length) {
+      for (const opt of optionsToAdd) {
+        const created = await tx.clientMenuMealOption.create({
+          data: {
+            name: opt.name ?? null,
+            orderIndex: opt.orderIndex ?? 0,
+        
+            clientMenuMeal: {
+              connect: { id: meal.id },
+            },
+          },
+        });
+
+        // add items if provided
+        if (opt.items?.length) {
+          await tx.clientMenuMealOptionItem.createMany({
+            data: opt.items.map((item) => ({
+              optionId: created.id,
+              foodItemId: item.foodItemId,
+              role: item.role,
+              grams: item.grams ?? 100,
+            })),
+          });
+        }
+      }
+    }
+
+    // ---------------------------
+    // Update options
+    // ---------------------------
+    if (optionsToUpdate?.length) {
+      await updateMealOptions(tx, optionsToUpdate);
+    }
+
+    // ---------------------------
+    // Delete options
+    // ---------------------------
+    if (optionsToDelete?.length) {
+      await tx.clientMenuMealOption.deleteMany({
+        where: {
+          id: { in: optionsToDelete.map((o) => o.id) },
+          clientMenuMealId: meal.id,
+        },
+      });
+    }
   }
 };
 

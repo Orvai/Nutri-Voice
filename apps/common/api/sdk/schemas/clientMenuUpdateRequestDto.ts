@@ -7,9 +7,6 @@
 import type { ClientMenuUpdateRequestDtoMealsToAddItem } from './clientMenuUpdateRequestDtoMealsToAddItem';
 import type { ClientMenuUpdateRequestDtoMealsToUpdateItem } from './clientMenuUpdateRequestDtoMealsToUpdateItem';
 import type { ClientMenuUpdateRequestDtoMealsToDeleteItem } from './clientMenuUpdateRequestDtoMealsToDeleteItem';
-import type { ClientMenuUpdateRequestDtoMealOptionsToAddItem } from './clientMenuUpdateRequestDtoMealOptionsToAddItem';
-import type { ClientMenuUpdateRequestDtoMealOptionsToUpdateItem } from './clientMenuUpdateRequestDtoMealOptionsToUpdateItem';
-import type { ClientMenuUpdateRequestDtoMealOptionsToDeleteItem } from './clientMenuUpdateRequestDtoMealOptionsToDeleteItem';
 import type { ClientMenuUpdateRequestDtoVitaminsToAddItem } from './clientMenuUpdateRequestDtoVitaminsToAddItem';
 import type { ClientMenuUpdateRequestDtoVitaminsToUpdateItem } from './clientMenuUpdateRequestDtoVitaminsToUpdateItem';
 import type { ClientMenuUpdateRequestDtoVitaminsToDeleteItem } from './clientMenuUpdateRequestDtoVitaminsToDeleteItem';
@@ -27,9 +24,6 @@ export interface ClientMenuUpdateRequestDto {
   mealsToAdd?: ClientMenuUpdateRequestDtoMealsToAddItem[];
   mealsToUpdate?: ClientMenuUpdateRequestDtoMealsToUpdateItem[];
   mealsToDelete?: ClientMenuUpdateRequestDtoMealsToDeleteItem[];
-  mealOptionsToAdd?: ClientMenuUpdateRequestDtoMealOptionsToAddItem[];
-  mealOptionsToUpdate?: ClientMenuUpdateRequestDtoMealOptionsToUpdateItem[];
-  mealOptionsToDelete?: ClientMenuUpdateRequestDtoMealOptionsToDeleteItem[];
   vitaminsToAdd?: ClientMenuUpdateRequestDtoVitaminsToAddItem[];
   vitaminsToUpdate?: ClientMenuUpdateRequestDtoVitaminsToUpdateItem[];
   vitaminsToDelete?: ClientMenuUpdateRequestDtoVitaminsToDeleteItem[];

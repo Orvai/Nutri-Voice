@@ -25,7 +25,9 @@ const BASE = process.env.IDM_SERVICE_URL;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/ClientsListResponseDto"
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/ClientListItemDto"
  */
 r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
   try {

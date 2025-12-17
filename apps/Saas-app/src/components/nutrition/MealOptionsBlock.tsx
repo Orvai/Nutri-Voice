@@ -27,6 +27,7 @@ type Props = {
 export default function MealOptionsBlock({
   option,
   isSelected,
+  mealId,
   onSelect,
   onRemove,
   menuId,
@@ -55,7 +56,7 @@ export default function MealOptionsBlock({
     caloriesPer100g?: number | null;
   }) => {
     if (menuSource === "client") {
-      menuActions.addClientItem(menuId, option.id, {
+      menuActions.addClientItem(menuId,mealId, option.id, {
         foodItemId: food.id,
         role: "FREE",
         grams: 100,
@@ -76,14 +77,31 @@ export default function MealOptionsBlock({
   const handleUpdateItem = (item: UIFoodItem, grams: number) => {
     if (!canEditItems) return;
 
-    menuActions.updateClientItem(menuId, option.id, {
-      id: item.id,
-      grams,
-    });
+    if (menuSource === "client") {
+      menuActions.updateClientItem(menuId,option.id,mealId, {
+        id: item.id,
+        grams,
+      });
+      return;
+    }
+
+    if (menuSource === "template" && isTemplateMealOption(option)) {
+      menuActions.updateTemplateItem(option.mealTemplateId, {
+        id: item.id,
+        grams,
+      });
+    }
   };
 
   const handleRemoveItem = (itemId: string) => {
-    menuActions.removeClientItem(menuId, option.id, itemId);
+    if (menuSource === "client") {
+      menuActions.removeClientItem(menuId,mealId, option.id, itemId);
+      return;
+    }
+
+    if (menuSource === "template" && isTemplateMealOption(option)) {
+      menuActions.removeTemplateItem(option.mealTemplateId, itemId);
+    }
   };
 
   /* =========================

@@ -24,11 +24,11 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ClientListItemDto,
   ClientMenuCreateFromTemplateRequestDto,
   ClientMenuCreateRequestDto,
   ClientMenuResponseDto,
   ClientMenuUpdateRequestDto,
-  ClientsListResponseDto,
   DaySelectionCreateRequestDto,
   DaySelectionResponseDto,
   DaySelectionTodayResponseDto,
@@ -488,7 +488,7 @@ export const getApiClients = (
 ) => {
       
       
-      return customFetcher<ClientsListResponseDto>(
+      return customFetcher<ClientListItemDto[]>(
       {url: `/api/clients`, method: 'GET', signal
     },
       );

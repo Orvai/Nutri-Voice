@@ -29,9 +29,7 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
 
   const [optionModalOpen, setOptionModalOpen] = useState(false);
   const [newOptionName, setNewOptionName] = useState("");
-  const [selectedTemplateId, setSelectedTemplateId] =
-  useState<string | null>(null);
-  console.log("selectedTemplateId:", selectedTemplateId);
+
 
 
 
@@ -111,8 +109,8 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
     setOptionModalOpen(false);
   };
 
-  const handleRemoveOption = (optionId: string) => {
-    menuActions.removeMealOption(menuId, optionId);
+  const handleRemoveOption = (optionId: string,mealID:string) => {
+    menuActions.removeMealOption(menuId,mealID ,optionId);
   };
 
   if (removed) return null;
@@ -202,7 +200,7 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
           mealId={meal.id}
           isSelected={opt.id === selectedOptionId}
           onSelect={() => handleSelectOption(opt.id)}
-          onRemove={() => handleRemoveOption(opt.id)}
+          onRemove={() => handleRemoveOption(opt.id,meal.id)}
           menuId={menuId}
           menuSource={menuSource}
         />

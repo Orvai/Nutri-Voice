@@ -4,6 +4,9 @@
  * Nutri-App Gateway API
  * OpenAPI spec version: 1.0.0
  */
+import type { ClientMenuUpdateRequestDtoMealsToUpdateItemOptionsToAddItem } from './clientMenuUpdateRequestDtoMealsToUpdateItemOptionsToAddItem';
+import type { ClientMenuUpdateRequestDtoMealsToUpdateItemOptionsToUpdateItem } from './clientMenuUpdateRequestDtoMealsToUpdateItemOptionsToUpdateItem';
+import type { ClientMenuUpdateRequestDtoMealsToUpdateItemOptionsToDeleteItem } from './clientMenuUpdateRequestDtoMealsToUpdateItemOptionsToDeleteItem';
 
 export type ClientMenuUpdateRequestDtoMealsToUpdateItem = {
   id: string;
@@ -13,4 +16,7 @@ export type ClientMenuUpdateRequestDtoMealsToUpdateItem = {
   totalCalories?: number;
   /** @nullable */
   selectedOptionId?: string | null;
+  optionsToAdd?: ClientMenuUpdateRequestDtoMealsToUpdateItemOptionsToAddItem[];
+  optionsToUpdate?: ClientMenuUpdateRequestDtoMealsToUpdateItemOptionsToUpdateItem[];
+  optionsToDelete?: ClientMenuUpdateRequestDtoMealsToUpdateItemOptionsToDeleteItem[];
 };

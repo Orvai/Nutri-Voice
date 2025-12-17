@@ -261,13 +261,15 @@ addMealOption(
     }
 
     mutateClientMenu(menuId, {
-      mealOptionsToAdd: [
+      mealsToUpdate: [
         {
-          mealId: clientArgs.mealId,
-          mealTemplateId: clientArgs.mealTemplateId, // optional (future use)
-          name: clientArgs.name ?? null,
-          orderIndex: clientArgs.orderIndex,
-          items: clientArgs.items,
+          id: clientArgs.mealId,
+          optionsToAdd: [
+            {
+              name: clientArgs.name ?? null,
+              orderIndex: clientArgs.orderIndex,
+            },
+          ],
         },
       ],
     });
@@ -316,10 +318,15 @@ addMealOption(
   });
 },
 
-removeMealOption(menuId: string, optionId: string) {
+removeMealOption(menuId: string,mealId: string, optionId: string) {
   if (source === "client") {
     mutateClientMenu(menuId, {
-      mealOptionsToDelete: [{ id: optionId }],
+      mealsToUpdate: [
+        {
+          id: mealId,
+          optionsToDelete: [{ id: optionId }],
+        },
+      ],
     });
     return;
   }
@@ -347,56 +354,73 @@ selectMealOption(menuId: string, mealId: string, optionId: string | null) {
        Client Items
     =============================== */
 
-    addClientItem(menuId: string, mealOptionId: string, item: ClientItemInput) {
+    addClientItem(menuId: string,mealId: string, mealOptionId: string, item: ClientItemInput) {
       if (source !== "client") return;
-
       mutateClientMenu(menuId, {
-        mealOptionsToUpdate: [
+        mealsToUpdate: [
           {
-            id: mealOptionId,
-            itemsToAdd: [
+            id: mealId,
+            optionsToUpdate: [
               {
-                foodItemId: item.foodItemId,
-                role: item.role,
-                grams: item.grams,
+                id: mealOptionId,
+                itemsToAdd: [
+                  {
+                    foodItemId: item.foodItemId,
+                    role: item.role,
+                    grams: item.grams,
+                  },
+                ],
               },
             ],
           },
         ],
       });
-    },
+    }
+    ,
 
     updateClientItem(
       menuId: string,
       mealOptionId: string,
+      mealId: string,
       item: { id: string; role?: string; grams?: number }
     ) {
       if (source !== "client") return;
 
       mutateClientMenu(menuId, {
-        mealOptionsToUpdate: [
+        mealsToUpdate: [
           {
-            id: mealOptionId,
-            itemsToUpdate: [
+            id: mealId,
+            optionsToUpdate: [
               {
-                id: item.id,
-                role: item.role,
-                grams: item.grams,
+                id: mealOptionId,
+                itemsToUpdate: [
+                  {
+                    id: item.id,
+                    role: item.role,
+                    grams: item.grams,
+                  },
+                ],
               },
             ],
           },
         ],
       });
-    },
+    }
+    ,
 
-    removeClientItem(menuId: string, mealOptionId: string, itemId: string) {
+    removeClientItem(menuId: string,mealId: string, mealOptionId: string, itemId: string) {
       if (source !== "client") return;
-
+      
       mutateClientMenu(menuId, {
-        mealOptionsToUpdate: [
+        mealsToUpdate: [
           {
-            id: mealOptionId,
-            itemsToDelete: [{ id: itemId }],
+            id: mealId,
+            optionsToUpdate: [
+              {
+                id: mealOptionId,
+                itemsToDelete: [{ id: itemId }],
+              },
+            ],
           },
         ],
       });

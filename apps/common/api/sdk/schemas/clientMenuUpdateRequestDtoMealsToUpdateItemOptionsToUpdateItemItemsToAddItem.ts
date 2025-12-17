@@ -5,8 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type ClientMenuUpdateRequestDtoMealOptionsToUpdateItemItemsToUpdateItem = {
-  id: string;
-  role?: string;
+export type ClientMenuUpdateRequestDtoMealsToUpdateItemOptionsToUpdateItemItemsToAddItem = {
+  foodItemId: string;
+  role: string;
   grams?: number;
 };

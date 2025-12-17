@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { UIFoodItem } from "../../types/ui/nutrition/nutrition.types";
 
@@ -20,6 +21,13 @@ export default function MealOptionItem({
     item.grams.toString()
   );
 
+  const totalCalories = useMemo(() => {
+    if (item.caloriesPer100g == null) return null;
+
+    const calories = (item.grams / 100) * item.caloriesPer100g;
+    return Math.round(calories);
+  }, [item.caloriesPer100g, item.grams]);
+
   useEffect(() => {
     setGramsInput(item.grams.toString());
   }, [item.grams]);
@@ -36,61 +44,66 @@ export default function MealOptionItem({
       style={{
         flexDirection: "row-reverse",
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: 6,
+        gap: 10,
+        marginBottom: 10,
+        backgroundColor: "white",
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#99f6e4",
+        padding: 10,
       }}
     >
-      {/* Name */}
-      <Text style={{ fontSize: 14, fontWeight: "500" }}>
-        {item.name}
-      </Text>
-
-      {/* Controls */}
       <View
         style={{
-          flexDirection: "row-reverse",
-          alignItems: "center",
-          gap: 8,
+          width: 10,
+          height: 10,
+          backgroundColor: item.color,
+          borderRadius: 5,
         }}
-      >
-        {/* Grams */}
-        <TextInput
-          value={gramsInput}
-          onChangeText={setGramsInput}
-          onBlur={handleBlur}
-          editable={editable}
-          keyboardType="numeric"
+      />
+
+      <Text style={{ flex: 1 }}>{item.name}</Text>
+
+      <TextInput
+        value={gramsInput}
+        onChangeText={setGramsInput}
+        onBlur={handleBlur}
+        editable={editable}
+        keyboardType="numeric"
+        style={{
+          width: 60,
+          borderWidth: 1,
+          borderColor: "#d1d5db",
+          borderRadius: 6,
+          textAlign: "center",
+          paddingVertical: 4,
+          backgroundColor: editable ? "#fff" : "#f3f4f6",
+        }}
+      />
+
+      <Text style={{ color: "#6b7280", fontSize: 12 }}>גרם</Text>
+
+      <Text style={{ fontWeight: "600" }}>
+        {totalCalories != null ? `${totalCalories} קק״ל` : "-"}
+      </Text>
+
+      {editable && (
+        <Pressable
+          onPress={onRemove}
           style={{
-            width: 70,
+            width: 28,
+            height: 28,
+            borderRadius: 14,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#fee2e2",
             borderWidth: 1,
-            borderColor: "#d1d5db",
-            borderRadius: 8,
-            paddingHorizontal: 6,
-            paddingVertical: 4,
-            textAlign: "center",
-            backgroundColor: editable ? "#fff" : "#f3f4f6",
+            borderColor: "#fecaca",
           }}
-        />
-
-        <Text style={{ fontSize: 12, color: "#6b7280" }}>
-          גרם
-        </Text>
-
-        {/* Remove */}
-        {editable && (
-          <Pressable onPress={onRemove}>
-            <Text
-              style={{
-                color: "#ef4444",
-                fontWeight: "700",
-                fontSize: 12,
-              }}
-            >
-              הסר
-            </Text>
-          </Pressable>
-        )}
-      </View>
+        >
+          <Ionicons name="close" size={16} color="#dc2626" />
+        </Pressable>
+      )}
     </View>
   );
 }

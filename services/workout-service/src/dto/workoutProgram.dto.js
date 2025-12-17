@@ -63,7 +63,6 @@ const WorkoutProgramCreateRequestDto = z
 const WorkoutProgramUpdateRequestDto = z
   .object({
     name: z.string().optional(),
-
     exercisesToAdd: z.array(WorkoutExerciseItemCreateDto).optional(),
     exercisesToUpdate: z.array(WorkoutExerciseItemUpdateDto).optional(),
     exercisesToDelete: z.array(WorkoutExerciseItemDeleteDto).optional(),
