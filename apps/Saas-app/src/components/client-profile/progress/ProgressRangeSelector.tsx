@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
+import { styles } from "./ProgressRangeSelector.styles";
 
 export default function ProgressRangeSelector() {
   const { range, setRange } = useClientProgress();
@@ -13,42 +14,29 @@ export default function ProgressRangeSelector() {
   ];
 
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        padding: 16,
-        marginBottom: 20,
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 12 }}>
-        התקדמות לטווח ארוך
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>התקדמות לטווח ארוך</Text>
 
-      <View style={{ flexDirection: "row-reverse", flexWrap: "wrap", gap: 8 }}>
-        {ranges.map((r) => (
-          <Pressable
-            key={r.value}
-            onPress={() => setRange(r.value)}
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 8,
-              backgroundColor: range === r.value ? "#2563eb" : "#f3f4f6",
-            }}
-          >
-            <Text
-              style={{
-                color: range === r.value ? "#fff" : "#374151",
-                fontWeight: "600",
-              }}
+      <View style={styles.row}>
+        {ranges.map((r) => {
+          const isActive = range === r.value;
+          return (
+            <Pressable
+              key={r.value}
+              onPress={() => setRange(r.value)}
+              style={[
+                styles.button,
+                isActive ? styles.buttonActive : styles.buttonInactive,
+              ]}
             >
-              {r.label}
-            </Text>
-          </Pressable>
-        ))}
+              <Text
+                style={isActive ? styles.textActive : styles.textInactive}
+              >
+                {r.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );

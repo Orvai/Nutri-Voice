@@ -1,34 +1,23 @@
 import { View, Text } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
+import { styles } from "./MeasurementsTable.styles";
 
 export default function MeasurementsTable() {
   const { data } = useClientProgress();
 
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 40,
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 16 }}>
-        מדידות גוף
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>מדידות גוף</Text>
 
       {data.measurements.map((row, idx) => (
         <View
           key={idx}
-          style={{
-            paddingVertical: 12,
-            borderBottomWidth: idx !== data.measurements.length - 1 ? 1 : 0,
-            borderColor: "#e5e7eb",
-          }}
+          style={[
+            styles.row,
+            idx !== data.measurements.length - 1 && styles.rowBorder,
+          ]}
         >
-          <Text style={{ fontWeight: "700" }}>{row.date}</Text>
+          <Text style={styles.strong}>{row.date}</Text>
           <Text>משקל: {row.weight} ק״ג</Text>
           <Text>אחוז שומן: {row.fat}</Text>
           <Text>מסת שריר: {row.muscle} ק״ג</Text>

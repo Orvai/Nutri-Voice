@@ -1,8 +1,9 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Link, usePathname } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useLogout } from "@/hooks/auth/useLogout";
+import { styles } from "./styles/Sidebar.styles";
 
 const menuItems = [
   { label: "דשבורד",        icon: "grid-outline",        href: "/(dashboard)/dashboard" },
@@ -21,56 +22,37 @@ export default function Sidebar() {
   const { signOut } = useLogout();
 
   return (
-    <View
-      style={{
-        width: 240,
-        backgroundColor: "#ffffff",
-        borderLeftWidth: 1,
-        borderLeftColor: "#e5e7eb",
-        paddingTop: 40,
-      }}
-    >
+    <View style={styles.container}>
       <View>
-        <Text
-          style={{
-            textAlign: "right",
-            fontSize: 22,
-            fontWeight: "700",
-            paddingHorizontal: 20,
-            marginBottom: 30,
-          }}
-        >
+        <Text style={styles.title}>
           Nutri-Voice
         </Text>
 
-        <View style={{ gap: 8 }}>
+        <View style={styles.menuContainer}>
           {menuItems.map((item: MenuItem) => {
             const active = pathname.startsWith(item.href);
 
             return (
               <Link key={item.href} href={item.href as any} asChild>
                 <Pressable
-                  style={{
-                    flexDirection: "row-reverse",
-                    alignItems: "center",
-                    paddingVertical: 14,
-                    paddingHorizontal: 20,
-                    backgroundColor: active ? "#2563eb" : "transparent",
-                  }}
+                  // StyleSheet.flatten הופך את המערך לאובייקט אחד ומונע קריסה ב-Web
+                  style={StyleSheet.flatten([
+                    styles.button,
+                    active && styles.buttonActive
+                  ])}
                 >
                   <Ionicons
                     name={item.icon as keyof typeof Ionicons.glyphMap}
                     size={22}
                     color={active ? "#ffffff" : "#374151"}
-                    style={{ marginLeft: 12 }}
+                    style={styles.icon}
                   />
 
                   <Text
-                    style={{
-                      color: active ? "#ffffff" : "#374151",
-                      fontSize: 16,
-                      fontWeight: active ? "700" : "500",
-                    }}
+                    style={StyleSheet.flatten([
+                      styles.text,
+                      active && styles.textActive
+                    ])}
                   >
                     {item.label}
                   </Text>
@@ -83,28 +65,16 @@ export default function Sidebar() {
 
       <Pressable
         onPress={signOut}
-        style={{
-          flexDirection: "row-reverse",
-          alignItems: "center",
-          paddingVertical: 16,
-          paddingHorizontal: 20,
-          borderTopWidth: 1,
-          borderTopColor: "#e5e7eb",
-          marginTop: "auto",
-        }}
+        style={styles.logoutButton}
       >
         <Ionicons
           name="log-out-outline"
           size={22}
           color="#dc2626"
-          style={{ marginLeft: 12 }}
+          style={styles.logoutIcon}
         />
         <Text
-          style={{
-            color: "#dc2626",
-            fontSize: 16,
-            fontWeight: "600",
-          }}
+          style={styles.logoutText}
         >
           התנתקות
         </Text>

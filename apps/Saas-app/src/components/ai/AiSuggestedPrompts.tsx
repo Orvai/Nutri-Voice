@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from "react-native";
+import { styles } from "./styles/AiSuggestedPrompts.styles";
 
 export default function AiSuggestedPrompts({ onChoose }) {
   const prompts = [
@@ -9,19 +10,14 @@ export default function AiSuggestedPrompts({ onChoose }) {
   ];
 
   return (
-    <View style={{ flexDirection: "row-reverse", flexWrap: "wrap", gap: 10, padding: 12 }}>
+    <View style={styles.container}>
       {prompts.map((p, i) => (
         <Pressable
           key={i}
           onPress={() => onChoose(p)}
-          style={{
-            backgroundColor: "#f1f5f9",
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            borderRadius: 20,
-          }}
+          style={styles.button}
         >
-          <Text style={{ fontSize: 13, color: "#374151" }}>{p}</Text>
+          <Text style={styles.text}>{p}</Text>
         </Pressable>
       ))}
     </View>

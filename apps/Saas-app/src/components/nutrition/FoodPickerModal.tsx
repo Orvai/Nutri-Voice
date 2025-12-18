@@ -1,17 +1,11 @@
 import React, { useMemo, useState } from "react";
-import {
-  Modal,
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { Modal, View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useFood } from "@/hooks/nutrition/useFood";
 import { Food } from "@/types/ui/nutrition/food.ui";
 import PickerItemCard from "../shared/PickerItemCard";
+import { styles } from "./styles/FoodPickerModal.styles";
 
 type Props = {
   visible: boolean;
@@ -53,32 +47,11 @@ export default function FoodPickerModal({
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(0,0,0,0.35)",
-          justifyContent: "center",
-          padding: 20,
-        }}
-      >
-        <View
-          style={{
-            backgroundColor: "white",
-            borderRadius: 18,
-            padding: 16,
-            maxHeight: "85%",
-            gap: 12,
-          }}
-        >
+      <View style={styles.container}>
+        <View style={styles.content}>
           {/* Header */}
-          <View
-            style={{
-              flexDirection: "row-reverse",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontWeight: "800", fontSize: 18 }}>
+          <View style={styles.header}>
+            <Text style={styles.title}>
               בחירת מוצר מזון
             </Text>
             <Pressable onPress={onClose}>
@@ -91,34 +64,28 @@ export default function FoodPickerModal({
             placeholder="חיפוש מוצר..."
             value={search}
             onChangeText={setSearch}
-            style={{
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              borderRadius: 12,
-              paddingHorizontal: 12,
-              paddingVertical: 10,
-              textAlign: "right",
-            }}
+            style={styles.input}
           />
 
           {/* Categories */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ flexDirection: "row-reverse", gap: 8 }}
+            contentContainerStyle={styles.row}
           >
             <Pressable
               onPress={() => setCategory(null)}
-              style={{
-                paddingHorizontal: 14,
-                paddingVertical: 8,
-                borderRadius: 20,
-                backgroundColor: category === null ? "#0f766e" : "#f1f5f9",
-                borderWidth: 1,
-                borderColor: category === null ? "#0f766e" : "#e5e7eb",
-              }}
+              style={[
+                styles.button,
+                category === null ? styles.buttonActive : styles.buttonInactive,
+              ]}
             >
-              <Text style={{ color: category === null ? "white" : "#0f172a" }}>
+              <Text
+                style={[
+                  styles.text,
+                  category === null ? styles.textActive : styles.textInactive,
+                ]}
+              >
                 הכל
               </Text>
             </Pressable>
@@ -127,16 +94,17 @@ export default function FoodPickerModal({
               <Pressable
                 key={cat}
                 onPress={() => setCategory(cat)}
-                style={{
-                  paddingHorizontal: 14,
-                  paddingVertical: 8,
-                  borderRadius: 20,
-                  backgroundColor: category === cat ? "#0f766e" : "#f1f5f9",
-                  borderWidth: 1,
-                  borderColor: category === cat ? "#0f766e" : "#e5e7eb",
-                }}
+                style={[
+                  styles.button,
+                  category === cat ? styles.buttonActive : styles.buttonInactive,
+                ]}
               >
-                <Text style={{ color: category === cat ? "white" : "#0f172a" }}>
+                <Text
+                  style={[
+                    styles.text,
+                    category === cat ? styles.textActive : styles.textInactive,
+                  ]}
+                >
                   {cat}
                 </Text>
               </Pressable>
@@ -146,13 +114,13 @@ export default function FoodPickerModal({
           {/* List */}
           <ScrollView>
             {isLoading && (
-              <Text style={{ textAlign: "center", color: "#6b7280", padding: 10 }}>
+              <Text style={styles.message}>
                 טוען מוצרים...
               </Text>
             )}
 
             {!isLoading && filteredFood.length === 0 && (
-              <Text style={{ textAlign: "center", color: "#6b7280", padding: 10 }}>
+              <Text style={styles.message}>
                 לא נמצאו מוצרים
               </Text>
             )}

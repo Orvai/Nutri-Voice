@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { View, Text, ViewStyle } from "react-native";
 import { theme } from "../../../theme";
+import { styles } from "../styles/SectionHeader.styles";
 
 type Props = {
   title: string;
@@ -13,33 +14,28 @@ export function SectionHeader({ title, subtitle, action, style }: Props) {
   return (
     <View style={[styles.container, style]}>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        <Text
+          style={[
+            styles.title,
+            { color: theme.text.title },
+          ]}
+        >
+          {title}
+        </Text>
+
+        {subtitle ? (
+          <Text
+            style={[
+              styles.subtitle,
+              { color: theme.text.subtitle },
+            ]}
+          >
+            {subtitle}
+          </Text>
+        ) : null}
       </View>
+
       {action}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  textContainer: {
-    alignItems: "flex-end",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: theme.text.title,
-    textAlign: "right",
-  },
-  subtitle: {
-    fontSize: 12,
-    color: theme.text.subtitle,
-    textAlign: "right",
-  },
-});

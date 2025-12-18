@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 import { Card } from "./common/Card";
@@ -8,6 +8,7 @@ import { theme } from "../../theme";
 
 import ExerciseVideoPlayer from "./ExerciseVideoPlayer";
 import ExerciseVideoUploader from "./ExerciseVideoUploader";
+import { styles } from "./styles/WorkoutExerciseCard.styles";
 
 type Props = {
   item: UIExercise;
@@ -33,7 +34,9 @@ export default function WorkoutExerciseCard({ item, onPress }: Props) {
         <Card style={styles.card}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>{item.name}</Text>
+            <Text style={[styles.title, { color: theme.text.title }]}>
+              {item.name}
+            </Text>
             {item.muscleGroup ? <Tag label={item.muscleGroup} /> : null}
           </View>
 
@@ -44,7 +47,9 @@ export default function WorkoutExerciseCard({ item, onPress }: Props) {
                 <Text style={styles.videoBtnText}>▶ צפה בסרטון</Text>
               </Pressable>
             ) : (
-              <Text style={styles.noVideoText}>אין סרטון</Text>
+              <Text style={[styles.noVideoText, { color: theme.text.subtitle }]}>
+                אין סרטון
+              </Text>
             )}
           </View>
         </Card>
@@ -56,7 +61,6 @@ export default function WorkoutExerciseCard({ item, onPress }: Props) {
           <ExerciseVideoUploader
             exerciseId={item.id}
             onUploaded={() => {
-              // כאן אפשר בעתיד לעשות invalidateQueries / refetch
             }}
           />
         </View>
@@ -70,53 +74,3 @@ export default function WorkoutExerciseCard({ item, onPress }: Props) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    gap: 10,
-  },
-
-  header: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  title: {
-    fontWeight: "800",
-    fontSize: 15,
-    color: theme.text.title,
-    textAlign: "right",
-  },
-
-  actionsRow: {
-    flexDirection: "row-reverse",
-    justifyContent: "flex-start",
-    marginTop: 6,
-    alignItems: "center",
-    gap: 10,
-  },
-
-  videoBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    backgroundColor: "#2563eb",
-  },
-
-  videoBtnText: {
-    color: "#fff",
-    fontWeight: "800",
-    fontSize: 13,
-  },
-
-  noVideoText: {
-    fontSize: 12,
-    color: theme.text.subtitle,
-    textAlign: "right",
-  },
-
-  uploaderWrap: {
-    marginTop: 8,
-  },
-});

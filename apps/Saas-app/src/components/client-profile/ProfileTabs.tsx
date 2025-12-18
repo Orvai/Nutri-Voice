@@ -1,4 +1,5 @@
 import { View, Pressable, Text } from "react-native";
+import { styles } from "./styles/ProfileTabs.styles";
 
 const tabs = [
   { id: "today", label: "היום" },
@@ -10,34 +11,17 @@ const tabs = [
 
 export default function ProfileTabs({ active, onChange }) {
   return (
-    <View
-      style={{
-        flexDirection: "row-reverse",
-        borderBottomWidth: 1,
-        borderColor: "#e5e7eb",
-        backgroundColor: "#fff",
-        paddingHorizontal: 20,
-      }}
-    >
+    <View style={styles.container}>
       {tabs.map((t) => {
         const isActive = active === t.id;
         return (
           <Pressable
             key={t.id}
             onPress={() => onChange(t.id)}
-            style={{
-              paddingVertical: 14,
-              marginLeft: 20,
-              borderBottomWidth: isActive ? 2 : 0,
-              borderColor: "#2563eb",
-            }}
+            style={[styles.tab, isActive && styles.tabActive]}
           >
             <Text
-              style={{
-                fontSize: 14,
-                fontWeight: isActive ? "700" : "500",
-                color: isActive ? "#2563eb" : "#6b7280",
-              }}
+              style={isActive ? styles.labelActive : styles.labelInactive}
             >
               {t.label}
             </Text>

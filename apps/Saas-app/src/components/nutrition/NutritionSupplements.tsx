@@ -3,6 +3,7 @@ import { View, Text, Pressable, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import VitaminPickerModal from "./VitaminPickerModal";
+import { styles } from "./styles/NutritionSupplements.styles";
 
 import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
 import {
@@ -46,97 +47,44 @@ export default function NutritionSupplements({
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: "#ecfdf5",
-        borderColor: "#a7f3d0",
-        borderWidth: 1,
-        padding: 12,
-        borderRadius: 12,
-        marginBottom: 16,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          marginBottom: 12,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row-reverse",
-            alignItems: "center",
-            gap: 6,
-          }}
-        >
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.row}>
           <Ionicons name="medical-outline" size={18} color="#0f766e" />
-          <Text style={{ fontWeight: "700", color: "#0f766e" }}>
+          <Text style={styles.title}>
             ויטמינים ותוספים נלווים
           </Text>
         </View>
 
         <Pressable
           onPress={() => setPickerOpen(true)}
-          style={{
-            flexDirection: "row-reverse",
-            gap: 6,
-            backgroundColor: "#cffafe",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 8,
-          }}
+          style={styles.button}
         >
           <Ionicons name="add" size={16} color="#0f766e" />
-          <Text style={{ color: "#0f766e", fontSize: 12, fontWeight: "600" }}>
+          <Text style={styles.buttonText}>
             הוסף תוסף
           </Text>
         </Pressable>
       </View>
 
       {visibleVitamins.map((v) => (
-        <View
-          key={v.id}
-          style={{
-            backgroundColor: "white",
-            padding: 10,
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: "#99f6e4",
-            marginBottom: 10,
-            gap: 8,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row-reverse",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ fontWeight: "600" }}>{v.name}</Text>
+        <View key={v.id} style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>{v.name}</Text>
 
             <Pressable
               onPress={() => handleRemoveVitamin(v.id)}
               disabled={removingIds.includes(v.id)}
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 14,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#fee2e2",
-                borderWidth: 1,
-                borderColor: "#fecaca",
-              }}
+              style={styles.removeButton}
             >
               <Ionicons
                 name="close"
                 size={16}
                 color="#dc2626"
-                style={{
-                  opacity: removingIds.includes(v.id) ? 0.4 : 1,
-                }}
+                style={[
+                  styles.removeIcon,
+                  removingIds.includes(v.id) && styles.removeIconDisabled,
+                ]}
               />
             </Pressable>
           </View>
@@ -146,17 +94,7 @@ export default function NutritionSupplements({
             value={v.description ?? ""}
             placeholder="Description..."
             editable={false}
-            style={{
-              backgroundColor: "#f9fafb",
-              borderRadius: 6,
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              paddingHorizontal: 8,
-              paddingVertical: 6,
-              fontSize: 12,
-              textAlignVertical: "top",
-              minHeight: 40,
-            }}
+            style={styles.input}
           />
         </View>
       ))}

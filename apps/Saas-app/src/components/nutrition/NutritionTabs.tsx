@@ -1,5 +1,6 @@
 // src/components/nutrition/NutritionTabs.tsx
 import { View, Pressable, Text } from "react-native";
+import { styles } from "./styles/NutritionTabs.styles";
 type Tab = {
 id: string;
   label: string;
@@ -13,7 +14,7 @@ type Props = {
 
 export default function NutritionTabs({ tabs, active, onChange }: Props) {
   return (
-    <View style={{ flexDirection: "row-reverse", gap: 8, marginBottom: 16 }}>
+    <View style={styles.container}>
       {tabs.map((tab) => {
         const isActive = active === tab.id;
 
@@ -21,21 +22,16 @@ export default function NutritionTabs({ tabs, active, onChange }: Props) {
           <Pressable
             key={tab.id}
             onPress={() => onChange(tab.id)}
-            style={{
-              paddingVertical: 10,
-              paddingHorizontal: 20,
-              backgroundColor: isActive ? "#e0f2fe" : "transparent",
-              borderBottomWidth: isActive ? 3 : 1,
-              borderBottomColor: isActive ? "#0284c7" : "#e5e7eb",
-              borderTopLeftRadius: 6,
-              borderTopRightRadius: 6,
-            }}
+            style={[
+              styles.button,
+              isActive ? styles.buttonActive : styles.buttonInactive,
+            ]}
           >
             <Text
-              style={{
-                fontWeight: isActive ? "700" : "500",
-                color: isActive ? "#0284c7" : "#6b7280",
-              }}
+              style={[
+                styles.text,
+                isActive ? styles.textActive : styles.textInactive,
+              ]}
             >
               {tab.label}
             </Text>

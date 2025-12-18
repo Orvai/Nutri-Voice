@@ -1,20 +1,18 @@
 import { useMemo, useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable } from "react-native";
 
 import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 
-import type {
-  WorkoutTemplateCreateRequestDto,
-} from "@common/api/sdk/schemas";
+import type { WorkoutTemplateCreateRequestDto } from "@common/api/sdk/schemas";
 
-import { useCreateWorkoutTemplate } from
-  "@/hooks/workout/workoutTemplate/useCreateWorkoutTemplate";
+import { useCreateWorkoutTemplate } from "@/hooks/workout/workoutTemplate/useCreateWorkoutTemplate";
 
 import WorkoutTemplateCard from "./WorkoutTemplateCard";
 import WorkoutTemplateModal from "./WorkoutTemplateModal";
 import { SectionHeader } from "./common/SectionHeader";
 import { theme } from "../../theme";
+import { styles } from "./styles/WorkoutTemplatesList.styles";
 
 type Props = {
   templates: UIWorkoutTemplate[];
@@ -70,9 +68,7 @@ export default function WorkoutTemplatesList({
     if (isError) {
       return (
         <View style={styles.errorBox}>
-          <Text style={styles.errorText}>
-            לא הצלחנו לטעון תבניות אימון
-          </Text>
+          <Text style={styles.errorText}>לא הצלחנו לטעון תבניות אימון</Text>
 
           {onRetry && (
             <Pressable onPress={onRetry} style={styles.retryButton}>
@@ -86,12 +82,12 @@ export default function WorkoutTemplatesList({
     if (templates.length === 0 && !modalOpen) {
       return (
         <View style={styles.emptyBox}>
-          <Text style={styles.emptyText}>אין עדיין תבניות אימון</Text>
+          <Text style={[styles.emptyText, { color: theme.text.subtitle }]}>
+            אין עדיין תבניות אימון
+          </Text>
 
           <Pressable onPress={startCreate} style={styles.primaryCta}>
-            <Text style={styles.primaryCtaText}>
-              צור תבנית ראשונה
-            </Text>
+            <Text style={styles.primaryCtaText}>צור תבנית ראשונה</Text>
           </Pressable>
         </View>
       );
@@ -111,7 +107,15 @@ export default function WorkoutTemplatesList({
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.card.bg,
+          borderColor: theme.card.border,
+        },
+      ]}
+    >
       <SectionHeader
         title="תבניות אימון"
         subtitle="Workout Templates"
@@ -139,113 +143,3 @@ export default function WorkoutTemplatesList({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: theme.card.bg,
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    marginBottom: 28,
-    gap: 14,
-  },
-
-  grid: {
-    flexDirection: "row-reverse",
-    flexWrap: "wrap",
-    gap: 14,
-  },
-
-  addCard: {
-    width: "48%",
-    minHeight: 120,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    borderStyle: "dashed",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f8fafc",
-    gap: 6,
-  },
-
-  addIcon: {
-    fontSize: 32,
-    color: "#64748b",
-  },
-
-  addText: {
-    fontSize: 13,
-    color: theme.text.subtitle,
-  },
-
-  skeleton: {
-    width: "48%",
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: "#f1f5f9",
-  },
-
-  emptyBox: {
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 24,
-  },
-
-  emptyText: {
-    color: theme.text.subtitle,
-    fontSize: 14,
-  },
-
-  primaryCta: {
-    backgroundColor: "#2563eb",
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 999,
-  },
-
-  primaryCtaText: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-
-  errorBox: {
-    backgroundColor: "#fff1f2",
-    borderRadius: 14,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: "#fecdd3",
-    gap: 8,
-  },
-
-  errorText: {
-    textAlign: "right",
-    color: "#b91c1c",
-  },
-
-  retryButton: {
-    alignSelf: "flex-start",
-    backgroundColor: "#ef4444",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-
-  retryText: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-
-  headerCta: {
-    backgroundColor: "#2563eb",
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-
-  headerCtaText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-});

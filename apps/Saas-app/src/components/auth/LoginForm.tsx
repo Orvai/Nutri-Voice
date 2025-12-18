@@ -2,6 +2,7 @@ import { View, Text, TextInput, Pressable, ActivityIndicator } from "react-nativ
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useLogin } from "../../hooks/auth/useLogin";
+import { styles } from "./styles/LoginForm.styles";
 
 export default function LoginForm() {
   const { login, loading, error } = useLogin();
@@ -20,15 +21,14 @@ export default function LoginForm() {
   }
 
   return (
-    <View style={{ width: "100%", maxWidth: 380 }}>
-
-      <Text style={{ fontWeight: "600", textAlign: "right" }}>אימייל</Text>
-      <View style={{ position: "relative", marginBottom: 16 }}>
+    <View style={styles.container}>
+      <Text style={styles.labelText}>אימייל</Text>
+      <View style={styles.inputContainer}>
         <Ionicons
           name="mail-outline"
           size={20}
           color="#6b7280"
-          style={{ position: "absolute", right: 12, top: 14 }}
+          style={styles.icon}
         />
         <TextInput
           value={email}
@@ -36,69 +36,47 @@ export default function LoginForm() {
           placeholder="name@company.com"
           autoCapitalize="none"
           keyboardType="email-address"
-          style={{
-            paddingVertical: 14,
-            paddingRight: 40,
-            paddingLeft: 14,
-            borderRadius: 12,
-            borderWidth: 1,
-            borderColor: "#e5e7eb",
-            fontSize: 16,
-          }}
+          style={styles.input}
         />
       </View>
 
-      <Text style={{ fontWeight: "600", textAlign: "right" }}>סיסמה</Text>
-      <View style={{ position: "relative", marginBottom: 6 }}>
+      <Text style={styles.labelText}>סיסמה</Text>
+      <View style={styles.passwordContainer}>
         <Ionicons
           name="lock-closed-outline"
           size={20}
           color="#6b7280"
-          style={{ position: "absolute", right: 12, top: 14 }}
+          style={styles.icon}
         />
         <TextInput
           secureTextEntry
           value={password}
           onChangeText={setPassword}
           placeholder="•••••••••"
-          style={{
-            paddingVertical: 14,
-            paddingRight: 40,
-            paddingLeft: 14,
-            borderRadius: 12,
-            borderWidth: 1,
-            borderColor: "#e5e7eb",
-            fontSize: 16,
-          }}
+          style={styles.input}
         />
       </View>
 
       {error ? (
-        <Text style={{ color: "red", marginBottom: 10, textAlign: "right" }}>
-          {error}
-        </Text>
+        <Text style={styles.errorText}>{error}</Text>
       ) : null}
 
-      <Pressable style={{ marginBottom: 16 }}>
-        <Text style={{ color: "#2563eb", textAlign: "left" }}>שכחת סיסמה?</Text>
+      <Pressable style={styles.forgotPassword}>
+        <Text style={styles.forgotPasswordText}>שכחת סיסמה?</Text>
       </Pressable>
 
       <Pressable
         onPress={handleSubmit}
         disabled={loading}
-        style={{
-          backgroundColor: loading ? "#93c5fd" : "#2563eb",
-          paddingVertical: 16,
-          borderRadius: 12,
-          alignItems: "center",
-        }}
+        style={[
+          styles.submitButton,
+          { backgroundColor: loading ? "#93c5fd" : "#2563eb" },
+        ]}
       >
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-            התחבר
-          </Text>
+          <Text style={styles.submitButtonText}>התחבר</Text>
         )}
       </Pressable>
     </View>

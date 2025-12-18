@@ -1,11 +1,19 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Modal, View, Text, Pressable, ScrollView, TextInput } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  Pressable,
+  ScrollView,
+  TextInput,
+} from "react-native";
 
 import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
 
 import WorkoutSearchBar from "../../workout/WorkoutSearchBar";
 import WorkoutFilters from "../../workout/WorkoutFilters";
 import WorkoutExerciseGrid from "../../workout/WorkoutExerciseGrid";
+import { styles } from "../styles/AddExerciseModal.styles";
 
 const MUSCLE_MAP: Record<string, string> = {
   חזה: "CHEST",
@@ -23,13 +31,11 @@ const MUSCLE_LABELS: Record<string, string> = Object.fromEntries(
   Object.entries(MUSCLE_MAP).map(([label, value]) => [value, label])
 );
 
-
-
 type Props = {
   visible: boolean;
   onClose: () => void;
   exercises: UIExercise[];
-  muscleGroup?: string; // באנגלית: CHEST, BACK...
+  muscleGroup?: string;
   onSelect: (exercise: UIExercise, meta: { sets: number; reps: string }) => void;
 };
 
@@ -45,7 +51,6 @@ export default function AddExerciseModal({
     muscleGroup ? MUSCLE_LABELS[muscleGroup] ?? muscleGroup : "הכל"
   );
 
-  // דו-שלבי
   const [pickedExercise, setPickedExercise] = useState<UIExercise | null>(null);
   const [setsInput, setSetsInput] = useState("3");
   const [repsInput, setRepsInput] = useState("10");
@@ -56,7 +61,6 @@ export default function AddExerciseModal({
     );
   }, [muscleGroup]);
 
-  // כשפותחים מחדש מודאל – לאפס את שלב 2
   useEffect(() => {
     if (!visible) return;
     setPickedExercise(null);
@@ -65,7 +69,6 @@ export default function AddExerciseModal({
     setQuery("");
   }, [visible]);
 
-  // סינון לפי שריר
   const filteredByMuscle = useMemo(() => {
     if (muscleGroup) {
       return exercises.filter((ex) => ex.muscleGroup === muscleGroup);
@@ -78,7 +81,6 @@ export default function AddExerciseModal({
       : exercises;
   }, [exercises, muscleGroup, selectedMuscle]);
 
-  // סינון לפי טקסט
   const finalFiltered = useMemo(() => {
     return filteredByMuscle.filter((ex) =>
       ex.name.toLowerCase().includes(query.toLowerCase())
@@ -98,122 +100,69 @@ export default function AddExerciseModal({
 
   return (
     <Modal visible={visible} animationType="slide">
-      <View style={{ flex: 1, padding: 20, backgroundColor: "white" }}>
-        {/* כפתור סגירה */}
-        <Pressable onPress={onClose} style={{ marginBottom: 10 }}>
-          <Text style={{ textAlign: "right", color: "#2563eb", fontSize: 16 }}>
-            ✕ סגור
-          </Text>
+      <View style={styles.container}>
+        <Pressable onPress={onClose} style={styles.close}>
+          <Text style={styles.closeText}>✕ סגור</Text>
         </Pressable>
 
-        {/* כותרת */}
-        <Text
-          style={{
-            fontSize: 22,
-            fontWeight: "700",
-            marginBottom: 16,
-            textAlign: "right",
-          }}
-        >
-          {pickedExercise ? "הגדר סטים וחזרות" : `בחר תרגיל עבור ${selectedMuscle}`}
+        <Text style={styles.title}>
+          {pickedExercise
+            ? "הגדר סטים וחזרות"
+            : `בחר תרגיל עבור ${selectedMuscle}`}
         </Text>
 
-        {/* שלב 2: סטים/חזרות */}
         {pickedExercise ? (
           <View style={{ gap: 12 }}>
-            <View
-              style={{
-                padding: 12,
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: "#e5e7eb",
-                backgroundColor: "#f9fafb",
-              }}
-            >
-              <Text style={{ textAlign: "right", fontWeight: "800", color: "#111827" }}>
-                {pickedExercise.name}
-              </Text>
-              <Text style={{ textAlign: "right", color: "#6b7280", marginTop: 2, fontSize: 12 }}>
-                {MUSCLE_LABELS[pickedExercise.muscleGroup] ?? pickedExercise.muscleGroup}
+            <View style={styles.pickedCard}>
+              <Text style={styles.pickedName}>{pickedExercise.name}</Text>
+              <Text style={styles.pickedMuscle}>
+                {MUSCLE_LABELS[pickedExercise.muscleGroup] ??
+                  pickedExercise.muscleGroup}
               </Text>
             </View>
 
-            <View style={{ flexDirection: "row-reverse", gap: 10 }}>
-              <View style={{ flex: 1 }}>
-                <Text style={{ textAlign: "right", color: "#111827", marginBottom: 6 }}>
-                  סטים
-                </Text>
+            <View style={styles.inputsRow}>
+              <View style={styles.inputBlock}>
+                <Text style={styles.label}>סטים</Text>
                 <TextInput
                   value={setsInput}
                   onChangeText={setSetsInput}
                   keyboardType="number-pad"
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#e5e7eb",
-                    borderRadius: 12,
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    textAlign: "right",
-                  }}
+                  style={styles.input}
                 />
               </View>
 
-              <View style={{ flex: 1 }}>
-                <Text style={{ textAlign: "right", color: "#111827", marginBottom: 6 }}>
-                  חזרות
-                </Text>
+              <View style={styles.inputBlock}>
+                <Text style={styles.label}>חזרות</Text>
                 <TextInput
                   value={repsInput}
                   onChangeText={setRepsInput}
                   placeholder="למשל 10 או 8-12"
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#e5e7eb",
-                    borderRadius: 12,
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    textAlign: "right",
-                  }}
+                  style={styles.input}
                 />
               </View>
             </View>
 
-            <View style={{ flexDirection: "row-reverse", gap: 10, marginTop: 8 }}>
+            <View style={styles.actions}>
               <Pressable
                 onPress={() => setPickedExercise(null)}
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 14,
-                  borderRadius: 999,
-                  borderWidth: 1,
-                  borderColor: "#e5e7eb",
-                  backgroundColor: "#ffffff",
-                }}
+                style={styles.backButton}
               >
-                <Text style={{ color: "#111827", fontWeight: "700" }}>חזור לבחירה</Text>
+                <Text style={styles.backButtonText}>חזור לבחירה</Text>
               </Pressable>
 
               <Pressable
                 onPress={handleConfirm}
-                style={{
-                  flex: 1,
-                  paddingVertical: 10,
-                  paddingHorizontal: 14,
-                  borderRadius: 999,
-                  backgroundColor: "#2563eb",
-                  alignItems: "center",
-                }}
+                style={styles.confirmButton}
               >
-                <Text style={{ color: "#ffffff", fontWeight: "800" }}>הוסף</Text>
+                <Text style={styles.confirmButtonText}>הוסף</Text>
               </Pressable>
             </View>
           </View>
         ) : (
           <>
-            {/* חיפוש */}
             <WorkoutSearchBar query={query} onChange={setQuery} />
 
-            {/* פילטרים */}
             <WorkoutFilters
               selectedMuscle={selectedMuscle}
               muscleOptions={
@@ -225,7 +174,6 @@ export default function AddExerciseModal({
               totalCount={finalFiltered.length}
             />
 
-            {/* גריד התרגילים */}
             <ScrollView>
               <WorkoutExerciseGrid
                 exercises={finalFiltered}

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
@@ -21,6 +20,7 @@ import { MUSCLE_LABEL_TO_ENUM } from "@/mappers/workout/workoutEnumMapper";
 
 import { theme } from "../../theme";
 import { Chip } from "./common/Chip";
+import { styles } from "./styles/WorkoutTemplateForm.styles";
 
 /* ======================
    Constants
@@ -182,7 +182,10 @@ export default function WorkoutTemplateForm({
         <TextInput
           value={name ?? ""}
           onChangeText={(v) => setName(v || null)}
-          style={styles.input}
+          style={[
+            styles.input,
+            { borderColor: theme.card.border },
+          ]}
         />
       </Field>
 
@@ -207,7 +210,10 @@ export default function WorkoutTemplateForm({
           value={level}
           onChangeText={setLevel}
           keyboardType="numeric"
-          style={styles.input}
+          style={[
+            styles.input,
+            { borderColor: theme.card.border },
+          ]}
         />
       </Field>
 
@@ -258,7 +264,11 @@ export default function WorkoutTemplateForm({
           value={notes ?? ""}
           onChangeText={(v) => setNotes(v || null)}
           multiline
-          style={[styles.input, styles.textArea]}
+          style={[
+            styles.input,
+            styles.textArea,
+            { borderColor: theme.card.border },
+          ]}
         />
       </Field>
 
@@ -294,58 +304,9 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <View style={{ gap: 6 }}>
+    <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
       {children}
     </View>
   );
 }
-
-/* ======================
-   Styles
-====================== */
-
-const styles = StyleSheet.create({
-  container: { padding: 16 },
-  label: { fontWeight: "700", textAlign: "right" },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    borderRadius: 12,
-    padding: 10,
-    backgroundColor: "#fff",
-    textAlign: "right",
-  },
-  textArea: { minHeight: 80 },
-  musclesWrap: {
-    flexDirection: "row-reverse",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  optionsWrap: {
-    flexDirection: "row-reverse",
-    gap: 8,
-    flexWrap: "wrap",
-  },
-  actions: {
-    flexDirection: "row-reverse",
-    gap: 10,
-    marginTop: 12,
-  },
-  primaryBtn: {
-    flex: 1,
-    backgroundColor: "#22c55e",
-    padding: 12,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  primaryBtnDisabled: { opacity: 0.4 },
-  primaryText: { color: "#fff", fontWeight: "800" },
-  secondaryBtn: {
-    flex: 1,
-    backgroundColor: "#e5e7eb",
-    padding: 12,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-});

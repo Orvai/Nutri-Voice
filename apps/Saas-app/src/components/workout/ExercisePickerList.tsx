@@ -1,8 +1,9 @@
 import React from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 import { Tag } from "./common/Tag";
 import { theme } from "../../theme";
+import { styles } from "./styles/ExercisePickerList.styles";
 
 type Props = {
   exercises: UIExercise[];
@@ -40,20 +41,24 @@ export default function ExercisePickerList({
             onPress={() => onSelect(item)}
             style={[
               styles.card,
+              {
+                borderColor: theme.card.border,
+                backgroundColor: theme.card.bg,
+              },
               isSelected && styles.cardSelected,
             ]}
           >
             <View style={styles.headerRow}>
-              <Text style={styles.title}>{item.name}</Text>
-              <Text style={styles.subtitle}>
+              <Text style={[styles.title, { color: theme.text.title }]}>
+                {item.name}
+              </Text>
+              <Text style={[styles.subtitle, { color: theme.text.subtitle }]}>
                 {item.muscleGroup || "ללא שריר"}
               </Text>
             </View>
 
             <View style={styles.tagsRow}>
-              {item.equipment ? (
-                <Tag label={item.equipment} tone="info" />
-              ) : null}
+              {item.equipment ? <Tag label={item.equipment} tone="info" /> : null}
             </View>
           </Pressable>
         );
@@ -61,58 +66,3 @@ export default function ExercisePickerList({
     />
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    gap: 10,
-  },
-
-  card: {
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    backgroundColor: theme.card.bg,
-  },
-
-  cardSelected: {
-    borderColor: "#22c55e",
-    backgroundColor: "#dcfce7",
-  },
-
-  headerRow: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-
-  title: {
-    fontWeight: "700",
-    fontSize: 16,
-    textAlign: "right",
-    color: theme.text.title,
-    flex: 1,
-  },
-
-  subtitle: {
-    color: theme.text.subtitle,
-    textAlign: "right",
-  },
-
-  tagsRow: {
-    flexDirection: "row-reverse",
-    gap: 6,
-    flexWrap: "wrap",
-    marginTop: 6,
-  },
-
-  skeletonContainer: {
-    gap: 10,
-  },
-
-  skeleton: {
-    height: 64,
-    borderRadius: 12,
-    backgroundColor: "#e5e7eb",
-  },
-});

@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, Text, View } from "react-native";
 
 import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
@@ -10,6 +10,7 @@ import type {
 
 import WorkoutTemplateForm from "./WorkoutTemplateForm";
 import { theme } from "../../theme";
+import { styles } from "./styles/WorkoutTemplateModal.styles";
 
 type Props = {
   visible: boolean;
@@ -31,14 +32,43 @@ export default function WorkoutTemplateModal({
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.card} onPress={() => {}}>
-          <View style={styles.header}>
-            <Text style={styles.title}>
+        <Pressable
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.card.bg,
+              borderColor: theme.card.border,
+            },
+          ]}
+          onPress={() => {}}
+        >
+          <View
+            style={[
+              styles.header,
+              {
+                borderBottomColor: theme.card.border,
+                backgroundColor: theme.card.bg,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.title,
+                { color: theme.text.title },
+              ]}
+            >
               {initialTemplate ? "עריכת תבנית" : "תבנית חדשה"}
             </Text>
 
             <Pressable onPress={onClose} hitSlop={12}>
-              <Text style={styles.close}>✕</Text>
+              <Text
+                style={[
+                  styles.close,
+                  { color: theme.text.subtitle },
+                ]}
+              >
+                ✕
+              </Text>
             </Pressable>
           </View>
 
@@ -56,45 +86,3 @@ export default function WorkoutTemplateModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
-    justifyContent: "flex-end",
-    padding: 14,
-  },
-
-  card: {
-    backgroundColor: theme.card.bg,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    overflow: "hidden",
-    maxHeight: "92%",
-  },
-
-  header: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.card.border,
-    backgroundColor: theme.card.bg,
-  },
-
-  title: {
-    fontWeight: "900",
-    fontSize: 16,
-    color: theme.text.title,
-    textAlign: "right",
-  },
-
-  close: {
-    fontSize: 18,
-    fontWeight: "900",
-    color: theme.text.subtitle,
-  },
-});

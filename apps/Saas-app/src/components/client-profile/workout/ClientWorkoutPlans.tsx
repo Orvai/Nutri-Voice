@@ -13,6 +13,8 @@ import { useExercises } from "@/hooks/workout/exercise/useExercises";
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
 
+import { styles } from "../styles/ClientWorkoutPlans.styles";
+
 type Props = {
   clientId: string;
 };
@@ -129,8 +131,6 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
   };
 
   const handleUpdateProgramNotes = async (programId: string, notes: string) => {
-    // ⚠️ זה מניח שה-DTO של update תומך בשדה notes ברמת program
-    // אם השרת עדיין לא תומך – ה-TS יעבור, אבל השרת יחזיר 400/500 עד שתוסיף שדה.
     await updateProgramMutation.mutateAsync({
       programId,
       dto: {
@@ -143,12 +143,15 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
      Loading / Error UI
   ========================= */
 
-  const isLoading = programsLoading || templatesLoading || exercisesLoading;
-  const hasError = programsError || templatesError || exercisesError;
+  const isLoading =
+    programsLoading || templatesLoading || exercisesLoading;
+
+  const hasError =
+    programsError || templatesError || exercisesError;
 
   if (isLoading) {
     return (
-      <View style={{ padding: 16 }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator />
       </View>
     );
@@ -156,14 +159,8 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
 
   if (hasError) {
     return (
-      <View style={{ padding: 16, gap: 8 }}>
-        <Text
-          style={{
-            textAlign: "right",
-            color: "#dc2626",
-            fontWeight: "700",
-          }}
-        >
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
           שגיאה בטעינת נתוני אימונים
         </Text>
 
@@ -173,9 +170,9 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
             refetchTemplates();
             refetchExercises();
           }}
-          style={{ alignSelf: "flex-end" }}
+          style={styles.retryButton}
         >
-          <Text style={{ color: "#2563eb" }}>נסה שוב</Text>
+          <Text style={styles.retryText}>נסה שוב</Text>
         </Pressable>
       </View>
     );

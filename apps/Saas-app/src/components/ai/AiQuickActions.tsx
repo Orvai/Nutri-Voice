@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { styles } from "./styles/AiQuickActions.styles";
 
 export default function AiQuickActions() {
     const actions = [
@@ -10,49 +11,23 @@ export default function AiQuickActions() {
     ]as const;
 
   return (
-    <View
-      style={{
-        flexDirection: "row-reverse",
-        flexWrap: "wrap",
-        gap: 16,
-        marginBottom: 30,
-        justifyContent: "center",
-      }}
-    >
+    <View style={styles.container}>
       {actions.map((a, i) => (
         <Pressable
           key={i}
-          style={{
-            width: "45%",
-            backgroundColor: "#fff",
-            borderWidth: 1,
-            borderColor: "#e5e7eb",
-            borderRadius: 14,
-            padding: 16,
-          }}
+          style={styles.button}
         >
-          <View style={{ flexDirection: "row-reverse", alignItems: "center", gap: 10 }}>
-            <View
-              style={{
-                backgroundColor: "#eff6ff",
-                padding: 8,
-                borderRadius: 10,
-              }}
-            >
+          <View style={styles.row}>
+            <View style={styles.icon}>
               <Ionicons name={a.icon} size={24} color="#2563eb" />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: "600", color: "#111827" }}>
+            <Text style={styles.title}>
               {a.title}
             </Text>
           </View>
 
           <Text
-            style={{
-              textAlign: "right",
-              fontSize: 13,
-              color: "#6b7280",
-              marginTop: 8,
-            }}
+            style={styles.text}
           >
             לחץ להתחלה
           </Text>

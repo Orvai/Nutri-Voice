@@ -1,5 +1,6 @@
 import { View, ScrollView } from "react-native";
 import ChatListItem from "./ChatListItem";
+import { styles } from "./styles/ChatList.styles";
 
 interface Props {
   conversations: any[];
@@ -9,15 +10,7 @@ interface Props {
 
 export default function ChatList({ conversations, activeId, onSelect }: Props) {
   return (
-    <View
-      style={{
-        width: 300,
-        backgroundColor: "#fff",
-        borderLeftWidth: 1,
-        borderLeftColor: "#e5e7eb",
-        paddingVertical: 12,
-      }}
-    >
+    <View style={styles.container}>
       <ScrollView>
         {conversations.map((conv) => (
           <ChatListItem

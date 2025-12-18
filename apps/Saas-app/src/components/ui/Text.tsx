@@ -1,4 +1,5 @@
 import { Text as RNText, TextProps } from 'react-native';
+import { styles } from './styles/Text.styles';
 
 interface Props extends TextProps {
   weight?: 'light' | 'regular' | 'medium' | 'bold';
@@ -16,6 +17,7 @@ export default function Text({
   return (
     <RNText
       style={[
+        styles.text,
         {
           fontSize: size,
           color,

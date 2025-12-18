@@ -1,6 +1,7 @@
 import { View, Image, Pressable } from 'react-native';
 import Card from '../ui/Card';
 import Text from '../ui/Text';
+import { styles } from './styles/AttentionMessages.styles';
 
 interface Message {
   name: string;
@@ -23,36 +24,29 @@ const colors = {
 export default function AttentionMessages({ data }: Props) {
   return (
     <Card>
-      <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
+      <View style={styles.header}>
         <Text weight="bold" size={18}>הודעות הדורשות מענה</Text>
         <Text size={12} color="#dc2626">{data.length}</Text>
       </View>
 
-      <View style={{ marginTop: 12, gap: 12 }}>
+      <View style={styles.listContainer}>
         {data.map((item, i) => (
           <View
             key={i}
-            style={{
-              padding: 12,
-              borderRadius: 10,
-              backgroundColor: colors[item.severity],
-              flexDirection: 'row-reverse',
-              gap: 12,
-              alignItems: 'flex-start',
-            }}
+            style={[styles.messageContainer, { backgroundColor: colors[item.severity] }]}
           >
             <Image
               source={{ uri: item.avatar }}
-              style={{ width: 40, height: 40, borderRadius: 20 }}
+              style={styles.image}
             />
 
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
+            <View style={styles.content}>
+              <View style={styles.contentHeader}>
                 <Text weight="medium" size={14}>{item.name}</Text>
                 <Text size={12} color="#6b7280">{item.time}</Text>
               </View>
 
-              <Text size={12} color="#6b7280" style={{ marginVertical: 4 }}>
+              <Text size={12} color="#6b7280" style={styles.messageText}>
                 {item.message}
               </Text>
 

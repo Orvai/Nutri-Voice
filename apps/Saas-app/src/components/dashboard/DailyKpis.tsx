@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import Card from '../ui/Card';
 import Text from '../ui/Text';
+import { styles } from './styles/DailyKpis.styles';
 
 interface Props {
   data: {
@@ -20,20 +21,16 @@ export default function DailyKpis({ data }: Props) {
   ];
 
   return (
-    <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 12 }}>
+    <View style={styles.container}>
       {items.map((item, i) => (
         <Card
           key={i}
-          style={{
-            width: '47%',
-            borderRightWidth: 4,
-            borderRightColor: item.color,
-          }}
+          style={{ ...styles.card, borderRightColor: item.color }}
         >
           <Text weight="bold" size={22}>
             {item.value}
           </Text>
-          <Text size={14} color="#6b7280" style={{ marginTop: 4 }}>
+          <Text size={14} color="#6b7280" style={styles.label}>
             {item.label}
           </Text>
         </Card>

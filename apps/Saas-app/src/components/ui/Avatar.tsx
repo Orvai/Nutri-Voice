@@ -1,7 +1,8 @@
-import { View, StyleSheet, Image } from 'react-native';
+import { View, Image } from 'react-native';
 import { colors } from '../../styles/colors';
 import Text from './Text';
 import { useState } from 'react';
+import { styles } from './styles/Avatar.styles';
 
 interface AvatarProps {
   name: string;
@@ -31,18 +32,19 @@ export default function Avatar({ name, size = 40, image }: AvatarProps) {
   return (
     <View
       style={[
-        styles.wrapper,
+        styles.container,
         { width: size, height: size, borderRadius: size / 2 },
       ]}
     >
       {isImageValid ? (
         <Image
           source={{ uri: currentImage }}
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: size / 2,
-          }}
+          style={[
+            styles.image,
+            {
+              borderRadius: size / 2,
+            },
+          ]}
           onError={() => setCurrentImage(null)}
         />
       ) : (
@@ -55,19 +57,3 @@ export default function Avatar({ name, size = 40, image }: AvatarProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    overflow: 'hidden',
-    backgroundColor: colors.neutral700,
-    borderWidth: 1,
-    borderColor: colors.neutral200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fallback: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

@@ -2,6 +2,7 @@ import { View, Image } from "react-native";
 import { usePathname } from "expo-router";
 import Text from "../ui/Text";
 import { useAuth } from "../../context/AuthContext";
+import { styles } from "./styles/Header.styles";
 
 const titles: Record<string, string> = {
   "/(dashboard)/dashboard": "דשבורד",
@@ -20,18 +21,7 @@ export default function Header() {
   const { user } = useAuth();
 
   return (
-    <View
-      style={{
-        height: 70,
-        backgroundColor: "#ffffff",
-        borderBottomWidth: 1,
-        borderBottomColor: "#e5e7eb",
-        flexDirection: "row-reverse",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        justifyContent: "space-between",   // 👈 זה המפתח!
-      }}
-    >
+    <View style={styles.container}>
       {/* RIGHT SIDE → שלום + שם */}
       <Text weight="medium" size={18}>
         שלום, {user?.firstName} {user?.lastName}
@@ -44,7 +34,7 @@ export default function Header() {
             ? user.imageUrl
             : "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg",
         }}
-        style={{ width: 40, height: 40, borderRadius: 20 }}
+        style={styles.image}
       />
     </View>
   );

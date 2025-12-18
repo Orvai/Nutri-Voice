@@ -1,6 +1,7 @@
 import { View, Image, Pressable } from 'react-native';
 import Card from '../ui/Card';
 import Text from '../ui/Text';
+import { styles } from './styles/NutritionDeviations.styles';
 
 interface Deviation {
   name: string;
@@ -23,26 +24,22 @@ const colors = {
 export default function NutritionDeviations({ data }: Props) {
   return (
     <Card>
-      <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
+      <View style={styles.header}>
         <Text weight="bold" size={18}>חריגות תזונה</Text>
         <Text size={12} color="#f97316">{data.length}</Text>
       </View>
 
-      <View style={{ marginTop: 12, gap: 12 }}>
+      <View style={styles.listContainer}>
         {data.map((item, i) => (
           <View
             key={i}
-            style={{
-              backgroundColor: colors[item.color],
-              borderRadius: 10,
-              padding: 12,
-            }}
+            style={[styles.itemContainer, { backgroundColor: colors[item.color] }]}
           >
-            <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row-reverse', gap: 8 }}>
+            <View style={styles.itemHeader}>
+              <View style={styles.itemRow}>
                 <Image
                   source={{ uri: item.avatar }}
-                  style={{ width: 32, height: 32, borderRadius: 16 }}
+                  style={styles.image}
                 />
                 <View>
                   <Text weight="medium">{item.name}</Text>
@@ -66,7 +63,7 @@ export default function NutritionDeviations({ data }: Props) {
               </Text>
             </View>
 
-            <View style={{ marginTop: 6, flexDirection: 'row-reverse', gap: 12 }}>
+            <View style={styles.actionsRow}>
               <Pressable>
                 <Text size={12} color="#2563eb">תוכנית תזונה</Text>
               </Pressable>

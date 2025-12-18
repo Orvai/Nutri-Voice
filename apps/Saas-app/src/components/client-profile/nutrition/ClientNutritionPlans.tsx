@@ -1,5 +1,3 @@
-// src/components/client-profile/nutrition/ClientNutritionPlans.tsx
-
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -19,16 +17,13 @@ import {
 } from "../../../hooks/nutrition/useClientMenus";
 
 import { useTemplateMenus } from "../../../hooks/nutrition/useTemplateMenus";
+import { styles } from "../styles/ClientNutritionPlans.styles";
 
 type Props = {
   clientId: string;
 };
 
 export default function ClientNutritionPlans({ clientId }: Props) {
-  /* ============================
-     Queries
-  ============================ */
-
   const {
     data: clientMenus,
     isLoading: loadingClientMenus,
@@ -42,16 +37,8 @@ export default function ClientNutritionPlans({ clientId }: Props) {
 
   const createFromTemplate = useCreateClientMenuFromTemplate(clientId);
 
-  /* ============================
-     Local state
-  ============================ */
-
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const didInitRef = useRef(false);
-
-  /* ============================
-     Auto-create client menus (SAFE)
-  ============================ */
 
   useEffect(() => {
     if (didInitRef.current) return;
@@ -73,23 +60,20 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     const createAll = async () => {
       for (const tmpl of templates) {
         await createFromTemplate.mutateAsync({
-          clientId,
           templateMenuId: tmpl.id,
         });
       }
     };
-  
+
     createAll();
   }, [
     clientId,
     loadingClientMenus,
     loadingTemplates,
+    clientMenus,
     templates,
+    createFromTemplate,
   ]);
-
-  /* ============================
-     Select first tab
-  ============================ */
 
   useEffect(() => {
     if (clientMenus && clientMenus.length > 0 && !activeTab) {
@@ -97,34 +81,20 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     }
   }, [clientMenus, activeTab]);
 
-  /* ============================
-     Load full menu
-  ============================ */
-
   const {
     data: plan,
     isLoading: loadingMenu,
   } = useClientMenu(activeTab ?? undefined);
 
-  /* ============================
-     Loading / Error states
-  ============================ */
-
   const initializingMenus =
-  loadingClientMenus ||
-  loadingTemplates ||
-  !clientMenus ||
-  (clientMenus.length === 0 && !!templates?.length);
+    loadingClientMenus ||
+    loadingTemplates ||
+    !clientMenus ||
+    (clientMenus.length === 0 && !!templates?.length);
 
-  if (initializingMenus) {    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 20,
-        }}
-      >
+  if (initializingMenus) {
+    return (
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -132,9 +102,11 @@ export default function ClientNutritionPlans({ clientId }: Props) {
 
   if (error) {
     return (
-      <View style={{ padding: 20 }}>
-        <Text style={{ color: "red" }}>
-          {error instanceof Error ? error.message : "Error loading menus"}
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          {error instanceof Error
+            ? error.message
+            : "Error loading menus"}
         </Text>
       </View>
     );
@@ -142,63 +114,36 @@ export default function ClientNutritionPlans({ clientId }: Props) {
 
   if (!clientMenus?.length) {
     return (
-      <View style={{ padding: 20 }}>
+      <View style={styles.emptyContainer}>
         <Text>לא נמצאו תפריטי תזונה ללקוח</Text>
       </View>
     );
   }
-  /* ============================
-     Tabs
-  ============================ */
 
   const tabs = clientMenus.map((menu) => ({
     id: menu.id,
     label: menu.label,
   }));
 
-  /* ============================
-     Render
-  ============================ */
-
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: "#f3f4f6" }}
-      contentContainerStyle={{ padding: 20 }}
+      style={styles.scroll}
+      contentContainerStyle={styles.scrollContent}
     >
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
+      <View style={styles.header}>
         <NutritionTabs
           tabs={tabs}
           active={activeTab}
           onChange={setActiveTab}
         />
 
-        <Pressable
-          disabled
-          style={{
-            backgroundColor: "#e5e7eb",
-            paddingHorizontal: 14,
-            paddingVertical: 8,
-            borderRadius: 999,
-            opacity: 0.8,
-          }}
-        >
-          <Text
-            style={{ color: "#374151", fontWeight: "700", fontSize: 13 }}
-          >
-            תפריט לקוח
-          </Text>
+        <Pressable disabled style={styles.badge}>
+          <Text style={styles.badgeText}>תפריט לקוח</Text>
         </Pressable>
       </View>
 
       {loadingMenu || !plan ? (
-        <View style={{ padding: 20 }}>
+        <View style={styles.loaderContainer}>
           <ActivityIndicator />
         </View>
       ) : (

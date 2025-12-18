@@ -1,8 +1,9 @@
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, Text, View } from "react-native";
 import { Video, ResizeMode } from "expo-av";
 
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 import { theme } from "../../theme";
+import { styles } from "./styles/ExerciseVideoPlayer.styles";
 
 type Props = {
   exercise: UIExercise;
@@ -22,13 +23,36 @@ export default function ExerciseVideoPlayer({
       {/* Overlay – click anywhere to close */}
       <Pressable style={styles.overlay} onPress={onClose}>
         {/* Card – stop propagation */}
-        <Pressable style={styles.modalCard} onPress={() => {}}>
+        <Pressable
+          style={[
+            styles.modalCard,
+            {
+              backgroundColor: theme.card.bg,
+              borderRadius: theme.card.radius,
+            },
+          ]}
+          onPress={() => {}}
+        >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>{exercise.name}</Text>
+            <Text
+              style={[
+                styles.title,
+                { color: theme.text.title },
+              ]}
+            >
+              {exercise.name}
+            </Text>
 
             <Pressable onPress={onClose} hitSlop={14}>
-              <Text style={styles.close}>✕</Text>
+              <Text
+                style={[
+                  styles.close,
+                  { color: theme.text.subtitle },
+                ]}
+              >
+                ✕
+              </Text>
             </Pressable>
           </View>
 
@@ -47,56 +71,3 @@ export default function ExerciseVideoPlayer({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    justifyContent: "center",
-    padding: 16,
-  },
-
-  modalCard: {
-    backgroundColor: theme.card.bg,
-    borderRadius: theme.card.radius,
-    padding: 16,
-    gap: 12,
-    width: "100%",
-    maxWidth: 520,
-    alignSelf: "center",
-  },
-
-  header: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  title: {
-    fontWeight: "800",
-    fontSize: 16,
-    color: theme.text.title,
-    textAlign: "right",
-    flex: 1,
-    marginLeft: 12,
-  },
-
-  close: {
-    fontSize: 18,
-    fontWeight: "900",
-    color: theme.text.subtitle,
-  },
-
-  videoWrapper: {
-    width: "100%",
-    aspectRatio: 16 / 9,
-    borderRadius: 14,
-    overflow: "hidden",
-    backgroundColor: "#000",
-  },
-
-  video: {
-    width: "100%",
-    height: "100%",
-  },
-});

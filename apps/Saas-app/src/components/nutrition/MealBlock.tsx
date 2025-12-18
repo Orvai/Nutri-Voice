@@ -6,6 +6,7 @@ import MealOptionsBlock from "./MealOptionsBlock";
 
 import { UIMeal, UINutritionSource } from "../../types/ui/nutrition/nutrition.types";
 import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
+import { styles } from "./styles/MealBlock.styles";
 
 type Props = {
   meal: UIMeal;
@@ -120,34 +121,19 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
   ========================= */
 
   return (
-    <View
-      style={{
-        backgroundColor: "#f9fafb",
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 20,
-        padding: 16,
-      }}
-    >
+    <View style={styles.container}>
       {/* Header */}
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          marginBottom: 12,
-        }}
-      >
+      <View style={styles.header}>
         <View>
-          <Text style={{ fontSize: 18, fontWeight: "700" }}>{meal.title}</Text>
+          <Text style={styles.title}>{meal.title}</Text>
           {meal.timeRange && (
-            <Text style={{ fontSize: 13, color: "#6b7280" }}>
+            <Text style={styles.subtitle}>
               {meal.timeRange}
             </Text>
           )}
         </View>
 
-        <View style={{ flexDirection: "row-reverse", gap: 12 }}>
+        <View style={styles.row}>
           {/* Calories input (editable) */}
           <TextInput
             value={caloriesInput}
@@ -155,37 +141,16 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
             onBlur={handleCaloriesBlur}
             keyboardType="numeric"
             placeholder="קלוריות"
-            style={{
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              borderRadius: 10,
-              paddingHorizontal: 8,
-              minWidth: 90,
-              textAlign: "center",
-              fontWeight: "600",
-            }}
+            style={styles.input}
           />
 
           {/* Remove meal */}
           <Pressable
             onPress={handleRemoveMeal}
             disabled={removing}
-            style={{
-              backgroundColor: "#fee2e2",
-              borderColor: "#fecaca",
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              borderRadius: 8,
-            }}
+            style={styles.removeButton}
           >
-            <Text
-              style={{
-                color: "#b91c1c",
-                fontWeight: "700",
-                opacity: removing ? 0.5 : 1,
-              }}
-            >
+            <Text style={[styles.removeText, removing && styles.removeTextDisabled]}>
               הסר ארוחה
             </Text>
           </Pressable>
@@ -209,17 +174,9 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
       {/* Add option */}
       <Pressable
         onPress={() => setOptionModalOpen(true)}
-        style={{
-          backgroundColor: "#eef2ff",
-          borderColor: "#c7d2fe",
-          borderWidth: 1,
-          paddingVertical: 10,
-          borderRadius: 10,
-          alignItems: "center",
-          marginTop: 12,
-        }}
+        style={styles.addButton}
       >
-        <Text style={{ color: "#4338ca", fontWeight: "700" }}>
+        <Text style={styles.addButtonText}>
           הוסף אופציה
         </Text>
       </Pressable>
@@ -227,23 +184,9 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
       {/* Add option modal */}
       {optionModalOpen && (
         <Modal transparent animationType="fade" visible>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "rgba(0,0,0,0.35)",
-              justifyContent: "center",
-              padding: 20,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                borderRadius: 16,
-                padding: 16,
-                gap: 12,
-              }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: "800" }}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>
                 שם האופציה
               </Text>
 
@@ -251,37 +194,20 @@ export default function MealBlock({ meal, menuId, menuSource }: Props) {
                 value={newOptionName}
                 onChangeText={setNewOptionName}
                 placeholder="לדוגמה: אופציה 1"
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#d1d5db",
-                  borderRadius: 10,
-                  paddingHorizontal: 12,
-                  paddingVertical: 10,
-                  textAlign: "right",
-                }}
+                style={styles.modalInput}
               />
 
               <Pressable
                 onPress={handleAddOption}
-                style={{
-                  backgroundColor: "#22c55e",
-                  paddingVertical: 12,
-                  borderRadius: 10,
-                }}
+                style={styles.modalSubmitButton}
               >
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "700",
-                    textAlign: "center",
-                  }}
-                >
+                <Text style={styles.modalSubmitText}>
                   הוסף אופציה
                 </Text>
               </Pressable>
 
               <Pressable onPress={() => setOptionModalOpen(false)}>
-                <Text style={{ textAlign: "center", color: "#ef4444", fontWeight: "700" }}>
+                <Text style={styles.modalCancelText}>
                   ביטול
                 </Text>
               </Pressable>

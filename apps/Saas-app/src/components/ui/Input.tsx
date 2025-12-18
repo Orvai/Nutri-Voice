@@ -1,6 +1,6 @@
-import { TextInput, TextInputProps, StyleSheet } from 'react-native';
+import { TextInput, TextInputProps } from 'react-native';
 import { colors } from '../../styles/colors';
-import { theme } from '../../styles/theme';
+import { styles } from './styles/Input.styles';
 
 export default function Input(props: TextInputProps) {
   return (
@@ -11,15 +11,3 @@ export default function Input(props: TextInputProps) {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    borderWidth: 1,
-    borderColor: colors.neutral200,
-    borderRadius: theme.radius.md,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    backgroundColor: colors.white,
-    textAlign: 'right',
-  },
-});

@@ -1,6 +1,7 @@
 import { View, Image, Pressable } from 'react-native';
 import Card from '../ui/Card';
 import Text from '../ui/Text';
+import { styles } from './styles/AtRiskClients.styles';
 
 interface RiskClient {
   name: string;
@@ -17,28 +18,24 @@ interface Props {
 export default function AtRiskClients({ data }: Props) {
   return (
     <Card>
-      <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
+      <View style={styles.header}>
         <Text weight="bold" size={18}>לקוחות למעקב</Text>
         <Text size={12} color="#dc2626">{data.length}</Text>
       </View>
 
-      <View style={{ marginTop: 12, gap: 14 }}>
+      <View style={styles.listContainer}>
         {data.map((item, i) => (
           <View
             key={i}
-            style={{
-              padding: 12,
-              backgroundColor: '#fee2e2',
-              borderRadius: 10,
-            }}
+            style={styles.itemContainer}
           >
-            <View style={{ flexDirection: 'row-reverse', gap: 12 }}>
+            <View style={styles.row}>
               <Image
                 source={{ uri: item.avatar }}
-                style={{ width: 48, height: 48, borderRadius: 24 }}
+                style={styles.image}
               />
 
-              <View style={{ flex: 1 }}>
+              <View style={styles.infoContainer}>
                 <Text weight="medium">{item.name}</Text>
                 <Text size={12} color="#6b7280">
                   {item.lastReportDays} ימים מאז דיווח אחרון
@@ -46,8 +43,8 @@ export default function AtRiskClients({ data }: Props) {
               </View>
             </View>
 
-            <View style={{ marginTop: 8 }}>
-              <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
+            <View style={styles.detailsContainer}>
+              <View style={styles.detailsRow}>
                 <Text size={12} color="#6b7280">מצב קלורי יומי:</Text>
                 <Text
                   weight="bold"
@@ -58,7 +55,7 @@ export default function AtRiskClients({ data }: Props) {
                 </Text>
               </View>
 
-              <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', marginTop: 4 }}>
+              <View style={styles.secondaryRow}>
                 <Text size={12} color="#6b7280">אימון אחרון:</Text>
                 <Text weight="bold" size={12}>
                   {item.lastWorkout}
@@ -66,11 +63,11 @@ export default function AtRiskClients({ data }: Props) {
               </View>
             </View>
 
-            <View style={{ flexDirection: 'row-reverse', gap: 12, marginTop: 12 }}>
-              <Pressable style={{ flex: 1 }}>
+            <View style={styles.actionsRow}>
+              <Pressable style={styles.button}>
                 <Text size={12} color="#2563eb" weight="medium">צ'אט</Text>
               </Pressable>
-              <Pressable style={{ flex: 1 }}>
+              <Pressable style={styles.button}>
                 <Text size={12} color="#6b7280">פרופיל</Text>
               </Pressable>
             </View>

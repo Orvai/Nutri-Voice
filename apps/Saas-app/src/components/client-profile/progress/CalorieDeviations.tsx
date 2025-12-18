@@ -1,26 +1,15 @@
-import { View, Text } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
+import { styles } from "./CalorieDeviations.styles";
 
 export default function CalorieDeviations() {
   const { data } = useClientProgress();
   const width = Dimensions.get("window").width - 40;
 
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 20,
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 16 }}>
-        חריגות קלוריות
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>חריגות קלוריות</Text>
 
       <BarChart
         data={{
@@ -30,7 +19,7 @@ export default function CalorieDeviations() {
         width={width}
         height={220}
         yAxisLabel=""
-         yAxisSuffix=""
+        yAxisSuffix=""
         chartConfig={{
           backgroundGradientFrom: "#ffffff",
           backgroundGradientTo: "#ffffff",
@@ -39,7 +28,7 @@ export default function CalorieDeviations() {
         }}
         fromZero
         showValuesOnTopOfBars
-        style={{ borderRadius: 12 }}
+        style={styles.chart}
       />
     </View>
   );

@@ -11,7 +11,7 @@ import {
 
 import MealOptionItem from "./MealOptionItem";
 import FoodPickerModal from "./FoodPickerModal";
-
+import { styles } from "./styles/MealOptionsBlock.styles";
 import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
 
 type Props = {
@@ -110,31 +110,22 @@ export default function MealOptionsBlock({
 
   return (
     <View
-      style={{
-        borderWidth: 1,
-        borderColor: isSelected ? "#4f46e5" : "#e5e7eb",
-        borderRadius: 10,
-        padding: 12,
-        marginBottom: 12,
-        backgroundColor: isSelected ? "#eef2ff" : "#fff",
-      }}
+      style={[
+        styles.container,
+        isSelected ? styles.containerActive : styles.containerInactive,
+      ]}
     >
       {/* Header */}
       <Pressable
         onPress={onSelect}
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 8,
-        }}
+        style={styles.header}
       >
-        <Text style={{ fontWeight: "700", fontSize: 15 }}>
+        <Text style={styles.title}>
           {option.title}
         </Text>
 
         <Pressable onPress={onRemove}>
-          <Text style={{ color: "#ef4444", fontWeight: "700" }}>
+          <Text style={styles.removeText}>
             הסר
           </Text>
         </Pressable>
@@ -156,9 +147,9 @@ export default function MealOptionsBlock({
         <>
           <Pressable
             onPress={() => setPickerOpen(true)}
-            style={{ marginTop: 8 }}
+            style={styles.addButton}
           >
-            <Text style={{ color: "#2563eb", fontSize: 13 }}>
+            <Text style={styles.addButtonText}>
               + הוסף מוצר
             </Text>
           </Pressable>

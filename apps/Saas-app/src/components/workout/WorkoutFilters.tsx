@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from "react-native";
+import { styles } from "./styles/WorkoutFilters.styles";
 
 type Props = {
   selectedMuscle: string;
@@ -7,7 +8,15 @@ type Props = {
   muscleOptions?: string[];
 };
 
-const MUSCLE_OPTIONS = ["הכל", "חזה", "גב", "רגליים", "כתפיים", "יד קדמית", "יד אחורית"];
+const MUSCLE_OPTIONS = [
+  "הכל",
+  "חזה",
+  "גב",
+  "רגליים",
+  "כתפיים",
+  "יד קדמית",
+  "יד אחורית",
+];
 
 export default function WorkoutFilters({
   selectedMuscle,
@@ -18,43 +27,29 @@ export default function WorkoutFilters({
   const options = muscleOptions?.length ? muscleOptions : MUSCLE_OPTIONS;
 
   return (
-    <View
-      style={{
-        flexDirection: "row-reverse",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: 16,
-        flexWrap: "wrap",
-        gap: 8,
-      }}
-    >
-      {/* פילטרים */}
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          flexWrap: "wrap",
-          gap: 6,
-        }}
-      >
+    <View style={styles.container}>
+      <View style={styles.filtersWrap}>
         {options.map((m) => {
           const active = selectedMuscle === m;
           return (
             <Pressable
               key={m}
               onPress={() => onChangeMuscle(m)}
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                borderRadius: 999,
-                backgroundColor: active ? "#2563eb" : "#e5e7eb",
-              }}
+              style={[
+                styles.filterButton,
+                {
+                  backgroundColor: active ? "#2563eb" : "#e5e7eb",
+                },
+              ]}
             >
               <Text
-                style={{
-                  fontSize: 12,
-                  color: active ? "#fff" : "#374151",
-                  fontWeight: active ? "700" : "500",
-                }}
+                style={[
+                  styles.filterText,
+                  {
+                    color: active ? "#fff" : "#374151",
+                    fontWeight: active ? "700" : "500",
+                  },
+                ]}
               >
                 {m}
               </Text>
@@ -63,10 +58,7 @@ export default function WorkoutFilters({
         })}
       </View>
 
-      {/* מונה תרגילים */}
-      <Text style={{ fontSize: 12, color: "#6b7280" }}>
-        נמצאו {totalCount} תרגילים
-      </Text>
+      <Text style={styles.countText}>נמצאו {totalCount} תרגילים</Text>
     </View>
   );
 }

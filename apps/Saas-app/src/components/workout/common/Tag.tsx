@@ -1,5 +1,6 @@
-import { Text, View, StyleSheet, TextStyle, ViewStyle } from "react-native";
+import { Text, View, TextStyle, ViewStyle } from "react-native";
 import { theme } from "../../../theme";
+import { styles } from "../styles/Tag.styles";
 
 type Props = {
   label: string;
@@ -19,20 +20,22 @@ export function Tag({ label, tone = "muted", style, textStyle }: Props) {
   const colors = palette[tone];
 
   return (
-    <View style={[styles.tag, { backgroundColor: colors.bg }, style]}>
-      <Text style={[styles.text, { color: colors.color }, textStyle]}>{label}</Text>
+    <View
+      style={[
+        styles.tag,
+        { backgroundColor: colors.bg },
+        style,
+      ]}
+    >
+      <Text
+        style={[
+          styles.text,
+          { color: colors.color },
+          textStyle,
+        ]}
+      >
+        {label}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  tag: {
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  text: {
-    fontSize: 12,
-    textAlign: "right",
-  },
-});

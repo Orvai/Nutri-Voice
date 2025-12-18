@@ -1,39 +1,20 @@
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { styles } from "../styles/TodayStats.styles";
 
 export default function TodayStats({ stats }) {
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        padding: 16,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 16,
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 12 }}>
-        מדדים יומיים
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>מדדים יומיים</Text>
 
-      <View style={{ gap: 10 }}>
+      <View style={styles.list}>
         {stats.map((s) => (
-          <View
-            key={s.label}
-            style={{
-              flexDirection: "row-reverse",
-              justifyContent: "space-between",
-              padding: 10,
-              backgroundColor: "#f9fafb",
-              borderRadius: 10,
-            }}
-          >
-            <View style={{ flexDirection: "row-reverse", gap: 10, alignItems: "center" }}>
+          <View key={s.label} style={styles.row}>
+            <View style={styles.rowLeft}>
               <Ionicons name={s.icon} size={18} color="#2563eb" />
               <Text>{s.label}</Text>
             </View>
-            <Text style={{ fontWeight: "700" }}>{s.value}</Text>
+            <Text style={styles.value}>{s.value}</Text>
           </View>
         ))}
       </View>

@@ -1,6 +1,7 @@
 import { View, Image, Pressable } from 'react-native';
 import Card from '../ui/Card';
 import Text from '../ui/Text';
+import { styles } from './styles/MissingReports.styles';
 
 interface Report {
   name: string;
@@ -24,27 +25,21 @@ const riskColors = {
 export default function MissingReports({ data }: Props) {
   return (
     <Card>
-      <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
+      <View style={styles.header}>
         <Text weight="bold" size={18}>לקוחות שלא דיווחו</Text>
         <Text size={12} color="#f59e0b">{data.length}</Text>
       </View>
 
-      <View style={{ marginTop: 12, gap: 12 }}>
+      <View style={styles.listContainer}>
         {data.map((item, i) => (
           <View
             key={i}
-            style={{
-              flexDirection: 'row-reverse',
-              justifyContent: 'space-between',
-              backgroundColor: '#f9fafb',
-              padding: 12,
-              borderRadius: 10,
-            }}
+            style={styles.itemContainer}
           >
-            <View style={{ flexDirection: 'row-reverse', gap: 8 }}>
+            <View style={styles.itemRow}>
               <Image
                 source={{ uri: item.avatar }}
-                style={{ width: 32, height: 32, borderRadius: 16 }}
+                style={styles.image}
               />
 
               <View>
@@ -55,7 +50,7 @@ export default function MissingReports({ data }: Props) {
               </View>
             </View>
 
-            <View style={{ flexDirection: 'row-reverse', gap: 8 }}>
+            <View style={styles.itemRow}>
               <Pressable>
                 <Text size={12} color="#2563eb">תזכורת</Text>
               </Pressable>

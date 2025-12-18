@@ -1,26 +1,15 @@
-import { View, Text } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
+import { styles } from "./BodyCompositionChart.styles";
 
 export default function BodyCompositionChart() {
   const { data } = useClientProgress();
   const width = Dimensions.get("window").width - 40;
 
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 20,
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 16 }}>
-        אחוז שומן ומסת שריר
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>אחוז שומן ומסת שריר</Text>
 
       <LineChart
         data={{
@@ -40,7 +29,7 @@ export default function BodyCompositionChart() {
           labelColor: () => "#6b7280",
         }}
         bezier
-        style={{ borderRadius: 12 }}
+        style={styles.chart}
       />
     </View>
   );

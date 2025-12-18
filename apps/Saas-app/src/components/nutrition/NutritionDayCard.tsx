@@ -5,6 +5,7 @@ import NutritionSupplements from "./NutritionSupplements";
 import MealBlock from "./MealBlock";
 import { UINutritionPlan } from "../../types/ui/nutrition/nutrition.types";
 import { useNutritionMenuMutation } from "@/hooks/composition/useNutritionMenuMutation";
+import { styles } from "./styles/NutritionDayCard.styles";
 
 type Props = {
   plan: UINutritionPlan;
@@ -34,83 +35,26 @@ export default function NutritionDayCard({ plan }: Props) {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        borderRadius: 16,
-        padding: 16,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
-          borderBottomWidth: 1,
-          paddingBottom: 12,
-          borderBottomColor: "#f1f5f9",
-        }}
-      >
-        <Text style={{ fontSize: 20, fontWeight: "700" }}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>
           {isTraining ? "תפריט יום אימון" : "תפריט יום ללא אימון"}
         </Text>
 
-        <View
-          style={{
-            flexDirection: "row-reverse",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
+        <View style={styles.row}>
           <Pressable
             onPress={() => setAddMealOpen(true)}
-            style={{
-              backgroundColor: "#eef2ff",
-              borderColor: "#c7d2fe",
-              borderWidth: 1,
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 10,
-            }}
+            style={styles.button}
           >
-            <Text style={{ color: "#4338ca", fontWeight: "700" }}>
-              הוסף ארוחה
-            </Text>
+            <Text style={styles.buttonText}>הוסף ארוחה</Text>
           </Pressable>
 
-          <View
-            style={{
-              flexDirection: "row-reverse",
-              alignItems: "center",
-              gap: 8,
-              backgroundColor: "#f8fafc",
-              borderRadius: 10,
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              borderWidth: 1,
-              borderColor: "#e2e8f0",
-            }}
-          >
-            <Text style={{ fontSize: 14 }}>סה״כ קלוריות:</Text>
-            <Text
-              style={{
-                minWidth: 70,
-                textAlign: "center",
-                borderRadius: 8,
-                paddingVertical: 4,
-                paddingHorizontal: 6,
-                fontWeight: "600",
-                backgroundColor: "#fff",
-                borderWidth: 1,
-                borderColor: "#d1d5db",
-              }}
-            >
+          <View style={styles.caloriesContainer}>
+            <Text style={styles.caloriesLabel}>סה״כ קלוריות:</Text>
+            <Text style={styles.caloriesValue}>
               {totalCalories}
             </Text>
-            <Text style={{ fontWeight: "600" }}>קק״ל</Text>
+            <Text style={styles.caloriesUnit}>קק״ל</Text>
           </View>
         </View>
       </View>
@@ -134,35 +78,15 @@ export default function NutritionDayCard({ plan }: Props) {
 
       {addMealOpen && (
         <Modal transparent animationType="fade" visible={addMealOpen}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "rgba(0,0,0,0.35)",
-              justifyContent: "center",
-              padding: 20,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                borderRadius: 16,
-                padding: 16,
-                gap: 12,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row-reverse",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 18, fontWeight: "800" }}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
                   שם הארוחה
                 </Text>
 
                 <Pressable onPress={() => setAddMealOpen(false)}>
-                  <Text style={{ color: "#ef4444", fontWeight: "700" }}>
+                  <Text style={styles.modalCloseText}>
                     סגור
                   </Text>
                 </Pressable>
@@ -172,31 +96,14 @@ export default function NutritionDayCard({ plan }: Props) {
                 placeholder="לדוגמה: ארוחת צהריים"
                 value={newMealName}
                 onChangeText={setNewMealName}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#d1d5db",
-                  borderRadius: 10,
-                  paddingHorizontal: 12,
-                  paddingVertical: 10,
-                  textAlign: "right",
-                }}
+                style={styles.modalInput}
               />
 
               <Pressable
                 onPress={handleAddMeal}
-                style={{
-                  backgroundColor: "#22c55e",
-                  paddingVertical: 12,
-                  borderRadius: 10,
-                }}
+                style={styles.modalSubmitButton}
               >
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "700",
-                    textAlign: "center",
-                  }}
-                >
+                <Text style={styles.modalSubmitText}>
                   הוסף ארוחה
                 </Text>
               </Pressable>

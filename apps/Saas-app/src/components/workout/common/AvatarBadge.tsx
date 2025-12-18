@@ -1,5 +1,5 @@
-import { Text, View, StyleSheet, ViewStyle } from "react-native";
-import { theme } from "../../../theme";
+import { Text, View, ViewStyle } from "react-native";
+import { styles } from "../styles/AvatarBadge.styles";
 
 type Props = {
   label: string;
@@ -14,21 +14,3 @@ export function AvatarBadge({ label, style }: Props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: "#eef2ff",
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 12,
-  },
-  text: {
-    color: "#4338ca",
-    fontWeight: "800",
-    fontSize: 16,
-    textAlign: "center",
-  },
-});

@@ -1,5 +1,6 @@
-import { Text, View, StyleSheet, ViewStyle } from "react-native";
+import { Text, View, ViewStyle } from "react-native";
 import { theme } from "../../../theme";
+import { styles } from "../styles/Chip.styles";
 
 type Props = {
   label: string;
@@ -9,12 +10,25 @@ type Props = {
 
 export function Chip({ label, tone = "gray", style }: Props) {
   const palette = {
-    gray: { bg: "#f8fafc", border: theme.card.border, color: theme.text.subtitle },
-    primary: { bg: "#e0f2fe", border: "#bae6fd", color: "#075985" },
-    accent: { bg: "#eef2ff", border: "#c7d2fe", color: "#312e81" },
+    gray: {
+      bg: "#f8fafc",
+      border: theme.card.border,
+      color: theme.text.subtitle,
+    },
+    primary: {
+      bg: "#e0f2fe",
+      border: "#bae6fd",
+      color: "#075985",
+    },
+    accent: {
+      bg: "#eef2ff",
+      border: "#c7d2fe",
+      color: "#312e81",
+    },
   } as const;
 
   const colors = palette[tone];
+
   return (
     <View
       style={[
@@ -26,20 +40,9 @@ export function Chip({ label, tone = "gray", style }: Props) {
         style,
       ]}
     >
-      <Text style={[styles.text, { color: colors.color }]}>{label}</Text>
+      <Text style={[styles.text, { color: colors.color }]}>
+        {label}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  chip: {
-    borderRadius: 10,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  text: {
-    fontSize: 12,
-    textAlign: "right",
-  },
-});

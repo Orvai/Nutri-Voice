@@ -1,17 +1,11 @@
 import React, { useMemo, useState } from "react";
-import {
-  Modal,
-  View,
-  Text,
-  Pressable,
-  TextInput,
-  ScrollView,
-} from "react-native";
+import { Modal, View, Text, Pressable, TextInput, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import PickerItemCard from "../shared/PickerItemCard";
 import { useVitamins } from "@/hooks/nutrition/useVitamins";
 import { Vitamin } from "@/types/ui/nutrition/vitamin.ui";
+import { styles } from "./styles/VitaminPickerModal.styles";
 
 type Props = {
   visible: boolean;
@@ -46,32 +40,11 @@ export default function VitaminPickerModal({
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(0,0,0,0.35)",
-          justifyContent: "center",
-          padding: 20,
-        }}
-      >
-        <View
-          style={{
-            backgroundColor: "white",
-            borderRadius: 18,
-            padding: 16,
-            maxHeight: "80%",
-            gap: 12,
-          }}
-        >
+      <View style={styles.container}>
+        <View style={styles.content}>
           {/* Header */}
-          <View
-            style={{
-              flexDirection: "row-reverse",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontWeight: "800", fontSize: 18 }}>
+          <View style={styles.header}>
+            <Text style={styles.title}>
               בחר תוסף להוספה
             </Text>
             <Pressable onPress={onClose}>
@@ -84,14 +57,7 @@ export default function VitaminPickerModal({
             value={search}
             onChangeText={setSearch}
             placeholder="חיפוש תוסף..."
-            style={{
-              borderWidth: 1,
-              borderColor: "#d1d5db",
-              borderRadius: 12,
-              paddingHorizontal: 12,
-              paddingVertical: 10,
-              textAlign: "right",
-            }}
+            style={styles.input}
           />
 
           {/* List */}
@@ -106,13 +72,7 @@ export default function VitaminPickerModal({
             ))}
 
             {filteredVitamins.length === 0 && (
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: "#6b7280",
-                  padding: 10,
-                }}
-              >
+              <Text style={styles.message}>
                 לא נמצאו תוספים
               </Text>
             )}

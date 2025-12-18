@@ -1,26 +1,15 @@
-import { View, Text } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
+import { styles } from "./WeightTrendChart.styles";
 
 export default function WeightTrendChart() {
   const { data } = useClientProgress();
   const screenWidth = Dimensions.get("window").width - 40;
 
   return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        marginBottom: 20,
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 16 }}>
-        מגמת ירידה במשקל
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>מגמת ירידה במשקל</Text>
 
       <LineChart
         data={{
@@ -29,8 +18,6 @@ export default function WeightTrendChart() {
         }}
         width={screenWidth}
         height={220}
-        yAxisLabel=""
-        yAxisSuffix=""
         chartConfig={{
           backgroundGradientFrom: "#ffffff",
           backgroundGradientTo: "#ffffff",
@@ -43,9 +30,7 @@ export default function WeightTrendChart() {
           },
         }}
         bezier
-        style={{
-          borderRadius: 12,
-        }}
+        style={styles.chart}
       />
     </View>
   );

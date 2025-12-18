@@ -1,5 +1,3 @@
-// apps/Saas-app/src/components/client-profile/workout/WorkoutPlansList.tsx
-
 import React, { useState } from "react";
 import {
   View,
@@ -10,15 +8,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import type { UIWorkoutProgram }
-  from "../../../types/ui/workout/workoutProgram.ui";
-import type { UIWorkoutTemplate }
-  from "../../../types/ui/workout/workoutTemplate.ui";
-import type { UIExercise }
-  from "../../../types/ui/workout/exercise.ui";
+import type { UIWorkoutProgram } from "../../../types/ui/workout/workoutProgram.ui";
+import type { UIWorkoutTemplate } from "../../../types/ui/workout/workoutTemplate.ui";
+import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
 
 import WorkoutPlanCard from "./WorkoutPlanCard";
 import WorkoutTemplateCard from "../../workout/WorkoutTemplateCard";
+import { styles } from "../styles/WorkoutPlansList.styles";
 
 type Props = {
   plans: UIWorkoutProgram[];
@@ -46,8 +42,10 @@ type Props = {
 
   onDeleteProgram: (programId: string) => void | Promise<void>;
 
-  // Notes
-  onUpdateProgramNotes?: (programId: string, notes: string) => void | Promise<void>;
+  onUpdateProgramNotes?: (
+    programId: string,
+    notes: string
+  ) => void | Promise<void>;
 };
 
 export default function WorkoutPlansList({
@@ -115,68 +113,29 @@ export default function WorkoutPlansList({
   };
 
   const renderEmptyState = () => (
-    <View
-      style={{
-        marginTop: 16,
-        padding: 16,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        backgroundColor: "#f9fafb",
-      }}
-    >
-      <Text
-        style={{
-          textAlign: "right",
-          color: "#6b7280",
-          marginBottom: 8,
-        }}
-      >
+    <View style={styles.emptyState}>
+      <Text style={styles.emptyText}>
         אין עדיין תוכניות אימון ללקוח.
       </Text>
       <Pressable
         onPress={() => setTemplatesModalOpen(true)}
-        style={{
-          alignSelf: "flex-end",
-          paddingHorizontal: 14,
-          paddingVertical: 10,
-          borderRadius: 999,
-          backgroundColor: "#2563eb",
-        }}
+        style={styles.addButton}
       >
-        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 13 }}>
-          + צור תוכנית מתבנית
-        </Text>
+        <Text style={styles.addButtonText}>+ צור תוכנית מתבנית</Text>
       </Pressable>
     </View>
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: "row-reverse",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 12,
-        }}
-      >
-        <Text style={{ fontSize: 22, fontWeight: "700", color: "#111827" }}>
-          תוכניות אימון של הלקוח
-        </Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>תוכניות אימון של הלקוח</Text>
 
         <Pressable
           onPress={() => setTemplatesModalOpen(true)}
-          style={{
-            backgroundColor: "#2563eb",
-            paddingVertical: 8,
-            paddingHorizontal: 14,
-            borderRadius: 999,
-          }}
+          style={styles.addButton}
         >
-          <Text style={{ color: "#ffffff", fontWeight: "700", fontSize: 13 }}>
-            + תוכנית מתבנית
-          </Text>
+          <Text style={styles.addButtonText}>+ תוכנית מתבנית</Text>
         </Pressable>
       </View>
 
@@ -196,7 +155,9 @@ export default function WorkoutPlansList({
               onRemoveExercise(activePlan.id, workoutExerciseId)
             }
             onDelete={() => onDeleteProgram(activePlan.id)}
-            onUpdateNotes={(notes) => onUpdateProgramNotes?.(activePlan.id, notes)}
+            onUpdateNotes={(notes) =>
+              onUpdateProgramNotes?.(activePlan.id, notes)
+            }
           />
         </ScrollView>
       ) : null}
@@ -206,13 +167,7 @@ export default function WorkoutPlansList({
         animationType="slide"
         onRequestClose={() => setTemplatesModalOpen(false)}
       >
-        <View
-          style={{
-            flex: 1,
-            padding: 20,
-            backgroundColor: "#f3f4f6",
-          }}
-        >
+        <View style={{ flex: 1, padding: 20, backgroundColor: "#f3f4f6" }}>
           <View
             style={{
               flexDirection: "row-reverse",
@@ -260,7 +215,9 @@ export default function WorkoutPlansList({
                 />
               ))}
 
-              {!templatesLoading && templates.length === 0 && !templatesError ? (
+              {!templatesLoading &&
+              templates.length === 0 &&
+              !templatesError ? (
                 <View style={{ paddingVertical: 20 }}>
                   <Text style={{ textAlign: "right", color: "#6b7280" }}>
                     אין תבניות זמינות.
