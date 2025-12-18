@@ -1,10 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import {
-  mapTemplateLevel,
-  type UIWorkoutProgram,
-  type UIWorkoutTemplate,
-} from "../../types/ui/workout-ui";
-import { Chip } from "./common/Chip";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+
+import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
 import { AvatarBadge } from "./common/AvatarBadge";
 import { theme } from "../../theme";
 
@@ -12,62 +8,43 @@ const palette = ["#4f46e5", "#0ea5e9", "#16a34a", "#f97316", "#06b6d4"];
 
 type Props = {
   program: UIWorkoutTemplate;
-  onSelect?: (program: UIWorkoutTemplate) => void;
+  onSelect?: (template: UIWorkoutTemplate) => void;
 };
 
 export default function WorkoutTemplateCard({ program, onSelect }: Props) {
-  const badge = program.name?.slice(0, 2) || "W";
+  const badge = program.name?.slice(0, 2) || "WT";
   const accent = palette[Math.abs(hashString(program.id)) % palette.length];
-  const muscleTags = Array.from(new Set(program.muscleGroups ?? [])).slice(0, 6);
 
   return (
     <Pressable onPress={() => onSelect?.(program)} style={styles.card}>
       <View style={[styles.accent, { backgroundColor: accent }]} />
-      <View style={styles.cardContent}>
+
+      <View style={styles.content}>
         <View style={styles.header}>
-          <AvatarBadge label={badge} />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title}>{program.name}</Text>
-            <Text style={styles.subtitle}>{program.workoutType || "תוכנית אימון"}</Text>
-          </View>
-          <View style={styles.iconStack}>
-            <Text style={styles.iconText}>⚧ {program.gender}</Text>
-            {program.bodyType ? <Text style={styles.iconText}>🏋️‍♂️ {program.bodyType}</Text> : null}
-            <Text style={styles.iconText}>
-              ⭐ {translateLevel(mapTemplateLevel(program.level))}
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{program.name || "תבנית אימון"}</Text>
+            <Text style={styles.subtitle}>
+              {program.workoutType || "Workout Template"}
             </Text>
           </View>
+
+          <AvatarBadge label={badge} />
         </View>
 
-        <View style={styles.thumbnailRow}>
-          <View style={styles.thumbnail}>
-            <Text style={styles.thumbnailNumber}>{muscleTags.length || 0}</Text>
-            <Text style={styles.thumbnailLabel}>תרגילים</Text>
-          </View>
-          <View style={styles.tagsRow}>
-            {muscleTags.length === 0 ? (
-              <Chip label="ללא שיוך שריר" />
-            ) : (
-              muscleTags.map((muscle) => <Chip key={muscle} label={muscle} />)
-            )}
-          </View>
+        <View style={styles.metaRow}>
+          {program.gender && <Text style={styles.metaText}>⚧ {program.gender}</Text>}
+          {program.bodyType && <Text style={styles.metaText}>🏋️ {program.bodyType}</Text>}
+          <Text style={styles.metaText}>⭐ {translateLevel(program.level)}</Text>
         </View>
       </View>
     </Pressable>
   );
 }
 
-function translateLevel(level: UIWorkoutProgram["level"]) {
-  switch (level) {
-    case "beginner":
-      return "מתחיל";
-    case "intermediate":
-      return "ביניים";
-    case "advanced":
-      return "מתקדם";
-    default:
-      return "";
-  }
+function translateLevel(level: number) {
+  if (level <= 1) return "מתחיל";
+  if (level === 2) return "ביניים";
+  return "מתקדם";
 }
 
 function hashString(value: string) {
@@ -82,74 +59,58 @@ function hashString(value: string) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.card.bg,
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1,
     borderColor: theme.card.border,
     overflow: "hidden",
     flexDirection: "row",
     ...theme.shadow.base,
   },
+
   accent: {
     width: 6,
   },
-  cardContent: {
+
+  content: {
     padding: 14,
     flex: 1,
     gap: 10,
   },
+
   header: {
     flexDirection: "row-reverse",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: 10,
   },
+
+  headerText: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+
   title: {
     fontSize: 16,
     fontWeight: "800",
-    textAlign: "right",
     color: theme.text.title,
+    textAlign: "right",
   },
+
   subtitle: {
     fontSize: 12,
     color: theme.text.subtitle,
     textAlign: "right",
   },
-  iconStack: {
-    alignItems: "flex-end",
-    gap: 4,
+
+  metaRow: {
+    flexDirection: "row-reverse",
+    gap: 12,
+    flexWrap: "wrap",
   },
-  iconText: {
+
+  metaText: {
     fontSize: 12,
     color: theme.text.subtitle,
     textAlign: "right",
-  },
-  thumbnailRow: {
-    flexDirection: "row-reverse",
-    gap: 10,
-    alignItems: "center",
-  },
-  thumbnail: {
-    width: 72,
-    height: 72,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f8fafc",
-  },
-  thumbnailNumber: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: theme.text.title,
-  },
-  thumbnailLabel: {
-    fontSize: 12,
-    color: theme.text.subtitle,
-  },
-  tagsRow: {
-    flex: 1,
-    flexDirection: "row-reverse",
-    flexWrap: "wrap",
-    gap: 6,
   },
 });

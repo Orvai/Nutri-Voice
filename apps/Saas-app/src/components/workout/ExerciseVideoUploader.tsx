@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import {
   Alert,
   Platform,
@@ -7,114 +7,148 @@ import {
   Text,
   View,
 } from "react-native";
-import { uploadExerciseVideo } from "../../api/workout-api/exercises.api";
+import * as DocumentPicker from "expo-document-picker";
+
 import { theme } from "../../theme";
+import { useUploadExerciseVideo } from "@/hooks/workout/exercise/useUploadExerciseVideo";
 
 type Props = {
   exerciseId: string;
-  onUploaded?: (url: string) => void;
+  onUploaded?: () => void;
 };
 
-export default function ExerciseVideoUploader({ exerciseId, onUploaded }: Props) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const [fileName, setFileName] = useState<string>("");
-  const [uploading, setUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
+type NativeFileLike = {
+  uri: string;
+  name: string;
+  type: string;
+};
 
-  const handlePick = () => {
+export default function ExerciseVideoUploader({
+  exerciseId,
+  onUploaded,
+}: Props) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [fileName, setFileName] = useState("");
+  const [nativeFile, setNativeFile] = useState<NativeFileLike | null>(null);
+
+  const uploadMutation = useUploadExerciseVideo();
+
+  /* =========================
+     Pick file
+  ========================= */
+
+  const handlePick = async () => {
+    try {
+      if (Platform.OS === "web") {
+        inputRef.current?.click();
+        return;
+      }
+
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "video/*",
+        multiple: false,
+        copyToCacheDirectory: true,
+      });
+
+      if (result.canceled) return;
+
+      const asset = result.assets?.[0];
+      if (!asset?.uri) return;
+
+      setNativeFile({
+        uri: asset.uri,
+        name: asset.name ?? "video.mp4",
+        type: asset.mimeType ?? "video/mp4",
+      });
+
+      setFileName(asset.name ?? "video.mp4");
+    } catch {
+      Alert.alert("שגיאה", "לא הצלחנו לבחור קובץ וידאו");
+    }
+  };
+
+  const handleWebFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFileName(file.name);
+  };
+
+  /* =========================
+     Upload
+  ========================= */
+
+  const handleUpload = () => {
     if (Platform.OS === "web") {
-      inputRef.current?.click();
+      const file = inputRef.current?.files?.[0];
+      if (!file) return;
+
+      uploadMutation.mutate(
+        { id: exerciseId, file },
+        {
+          onSuccess: () => {
+            setFileName("");
+            if (inputRef.current) inputRef.current.value = "";
+            onUploaded?.();
+          },
+          onError: () =>
+            Alert.alert("שגיאה", "העלאת הווידאו נכשלה"),
+        }
+      );
+
       return;
     }
 
-    Alert.alert("העלאת וידאו", "בחירת וידאו נתמכת כרגע בגרסת web בלבד.");
-  };
+    if (!nativeFile) return;
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selected = event.target.files?.[0];
-    if (!selected) return;
-    setFileName(selected.name);
-
-    // Create a local preview for instant feedback on web
-    if (Platform.OS === "web") {
-      const objectUrl = URL.createObjectURL(selected);
-      setPreviewUrl((prev) => {
-        if (prev && prev.startsWith("blob:")) {
-          URL.revokeObjectURL(prev);
-        }
-        return objectUrl;
-      });
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!inputRef.current?.files?.length) return;
-    const selected = inputRef.current.files[0];
-    setUploading(true);
-    try {
-      const url = await uploadExerciseVideo(exerciseId, selected);
-      setFileName("");
-      if (inputRef.current) {
-        inputRef.current.value = "";
+    uploadMutation.mutate(
+      { id: exerciseId, file: nativeFile as any },
+      {
+        onSuccess: () => {
+          setNativeFile(null);
+          setFileName("");
+          onUploaded?.();
+        },
+        onError: () =>
+          Alert.alert("שגיאה", "העלאת הווידאו נכשלה"),
       }
-      setPreviewUrl(url);
-      onUploaded?.(url);
-    } catch (error) {
-      Alert.alert("שגיאה", "לא הצלחנו להעלות את הוידאו.");
-    } finally {
-      setUploading(false);
-    }
+    );
   };
 
-  useEffect(() => {
-    return () => {
-      if (previewUrl && previewUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
+  /* =========================
+     Render
+  ========================= */
 
   return (
     <View style={styles.container}>
       <Pressable onPress={handlePick} style={styles.pickButton}>
-        <Text style={styles.pickText}>{fileName || "בחרו וידאו"}</Text>
+        <Text style={styles.pickText}>
+          {fileName || "בחר קובץ וידאו"}
+        </Text>
       </Pressable>
 
       <Pressable
         onPress={handleUpload}
-        disabled={!fileName || uploading}
+        disabled={!fileName || uploadMutation.isPending}
         style={[
           styles.uploadButton,
-          { backgroundColor: !fileName ? "#cbd5e1" : "#22c55e" },
+          (!fileName || uploadMutation.isPending) &&
+            styles.uploadDisabled,
         ]}
       >
         <Text style={styles.uploadText}>
-          {uploading ? "מעלה..." : "העלה וידאו"}
+          {uploadMutation.isPending ? "מעלה…" : "העלה"}
         </Text>
       </Pressable>
 
-      {Platform.OS === "web" ? (
+      {Platform.OS === "web" && (
         <input
           ref={inputRef}
           type="file"
           accept="video/*"
           style={{ display: "none" }}
-          onChange={handleFileChange}
+          onChange={handleWebFileChange}
         />
-      ) : null}
-
-      {previewUrl ? (
-        <View style={styles.previewWrapper}>
-          {Platform.OS === "web" ? (
-            <video
-              src={previewUrl}
-              controls
-              style={{ width: "100%", borderRadius: 12 }}
-              playsInline
-            />
-          ) : null}
-        </View>
-      ) : null}
+      )}
     </View>
   );
 }
@@ -122,11 +156,10 @@ export default function ExerciseVideoUploader({ exerciseId, onUploaded }: Props)
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row-reverse",
-    alignItems: "center",
-    flexWrap: "wrap",
     gap: 8,
-    marginTop: 8,
+    marginTop: 10,
   },
+
   pickButton: {
     flex: 1,
     backgroundColor: theme.card.bg,
@@ -135,22 +168,25 @@ const styles = StyleSheet.create({
     borderRadius: theme.card.radius,
     padding: 12,
   },
+
   pickText: {
     textAlign: "right",
     color: theme.text.title,
   },
+
   uploadButton: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: theme.card.radius,
+    backgroundColor: "#22c55e",
   },
+
+  uploadDisabled: {
+    backgroundColor: "#cbd5e1",
+  },
+
   uploadText: {
     color: "#fff",
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  previewWrapper: {
-    marginTop: 12,
-    width: "100%",
+    fontWeight: "800",
   },
 });

@@ -1,33 +1,34 @@
-// apps/Saas-app/src/components/client-profile/workout/ClientWorkoutPlans.tsx
-
 import { useEffect, useMemo, useState } from "react";
-import { View, ActivityIndicator, Text } from "react-native";
-import { useAuth } from "../../../context/AuthContext";
-import { useClientWorkoutPrograms } from "../../../hooks/workout/useClientWorkoutPrograms";
-import { useWorkoutTemplates } from "../../../hooks/workout/useWorkoutTemplates";
-import { useExercises } from "../../../hooks/workout/useExercises";
-import type {
-  UIWorkoutProgram,
-  UIWorkoutTemplate,
-  UIExercise,
-} from "../../../types/ui/workout-ui";
+import { View, Text, ActivityIndicator, Pressable } from "react-native";
+
 import WorkoutPlansList from "./WorkoutPlansList";
+
+import { useClientWorkoutPrograms } from "@/hooks/workout/workoutProgram/useClientWorkoutPrograms";
+import { useCreateWorkoutProgram } from "@/hooks/workout/workoutProgram/useClientCreateWorkoutProgram";
+import { useUpdateWorkoutProgram } from "@/hooks/workout/workoutProgram/useClientUpdateWorkoutProgram";
+import { useClientDeleteWorkoutProgram } from "@/hooks/workout/workoutProgram/useClientDeleteWorkoutProgram";
+import { useWorkoutTemplates } from "@/hooks/workout/workoutTemplate/useWorkoutTemplates";
+import { useExercises } from "@/hooks/workout/exercise/useExercises";
+
+import type { UIExercise } from "@/types/ui/workout/exercise.ui";
+import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
 
 type Props = {
   clientId: string;
 };
 
 export default function ClientWorkoutPlans({ clientId }: Props) {
-  const { user } = useAuth();
-  const coachId = user?.id ?? "coach-placeholder";
+  const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
+
+  /* =========================
+     Queries
+  ========================= */
 
   const {
     programs,
     isLoading: programsLoading,
-    isFetching: programsFetching,
-    createProgram,
-    updateProgram,
-    deleteProgram,
+    isError: programsError,
+    refetch: refetchPrograms,
   } = useClientWorkoutPrograms(clientId);
 
   const {
@@ -38,134 +39,151 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
   } = useWorkoutTemplates();
 
   const {
-    data: exercises = [],
+    exercises: allExercises,
     isLoading: exercisesLoading,
+    isError: exercisesError,
+    refetch: refetchExercises,
   } = useExercises();
 
-  const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
+  /* =========================
+     Mutations 
+  ========================= */
 
-  // ניהול התוכנית האקטיבית
+  const createProgramMutation = useCreateWorkoutProgram(clientId);
+  const updateProgramMutation = useUpdateWorkoutProgram(clientId);
+  const deleteProgramMutation = useClientDeleteWorkoutProgram(clientId);
+
+  /* =========================
+     Derived
+  ========================= */
+
+  const plans = programs ?? [];
+
+  const activePlan = useMemo(
+    () => plans.find((p) => p.id === activeProgramId) ?? null,
+    [plans, activeProgramId]
+  );
+
+  /* =========================
+     Effects
+  ========================= */
+
   useEffect(() => {
-    if (programs.length && !activeProgramId) {
-      setActiveProgramId(programs[0].id);
-    }
-    if (
-      activeProgramId &&
-      programs.length &&
-      !programs.find((p) => p.id === activeProgramId)
-    ) {
-      setActiveProgramId(programs[0].id);
-    }
-    if (!programs.length) {
+    if (!plans.length) {
       setActiveProgramId(null);
+      return;
     }
-  }, [activeProgramId, programs]);
+    setActiveProgramId((prev) => prev ?? plans[0].id);
+  }, [plans]);
 
-  const activeProgram = useMemo<UIWorkoutProgram | null>(() => {
-    if (!programs.length) return null;
-    return programs.find((p) => p.id === activeProgramId) ?? programs[0];
-  }, [activeProgramId, programs]);
+  /* =========================
+     Handlers
+  ========================= */
 
-  const isLoadingAll =
-    programsLoading || programsFetching || templatesLoading || exercisesLoading;
-
-  // יצירת תוכנית חדשה מתבנית
   const handleCreateFromTemplate = async (template: UIWorkoutTemplate) => {
-    const created = await createProgram.mutateAsync({
-      name: template.name ?? template.workoutType,
-      clientId,
-      coachId,
+    await createProgramMutation.mutateAsync({
+      name: template.name ?? "תוכנית אימון",
       templateId: template.id,
     });
-
-    if (created) {
-      setActiveProgramId(created.id);
-    }
   };
 
-  // הוספת תרגיל לתוכנית
   const handleAddExercise = async (
     programId: string,
     exercise: UIExercise,
     orderHint?: number
   ) => {
-    const program = programs.find((p) => p.id === programId);
-    if (!program) return;
+    const order  = (orderHint ?? 0) ;
 
-    const maxOrder = (program.exercises ?? []).reduce(
-      (acc, ex) => Math.max(acc, ex.order ?? 0),
-      orderHint ?? 0
-    );
-
-    await updateProgram.mutateAsync({
+    await updateProgramMutation.mutateAsync({
       programId,
-      payload: {
+      dto: {
         exercisesToAdd: [
           {
             exerciseId: exercise.id,
-            sets: 4,
-            reps: "10-12",
-            weight: null,
-            rest: null,
-            order: maxOrder + 1,
+            sets: 3,
+            reps: "10",
+            order,
           },
         ],
       },
     });
   };
 
-  // מחיקת תרגיל
-  const handleRemoveExercise = async (
-    programId: string,
-    workoutExerciseId: string
-  ) => {
-    await updateProgram.mutateAsync({
+  const handleRemoveExercise = async (programId: string, workoutExerciseId: string) => {
+    await updateProgramMutation.mutateAsync({
       programId,
-      payload: {
+      dto: {
         exercisesToDelete: [{ id: workoutExerciseId }],
       },
     });
   };
 
-  // מחיקת תוכנית
   const handleDeleteProgram = async (programId: string) => {
-    await deleteProgram.mutateAsync(programId);
+    await deleteProgramMutation.mutateAsync(programId);
+
+    setActiveProgramId((prev) => (prev === programId ? null : prev));
   };
 
-  if (isLoadingAll && !programs.length) {
+  /* =========================
+     Loading / Error UI
+  ========================= */
+
+  const isLoading = programsLoading || templatesLoading || exercisesLoading;
+  const hasError = programsError || templatesError || exercisesError;
+
+  if (isLoading) {
     return (
-      <View style={{ padding: 20 }}>
+      <View style={{ padding: 16 }}>
         <ActivityIndicator />
       </View>
     );
   }
 
-  if (!programs.length && templatesError) {
+  if (hasError) {
     return (
-      <View style={{ padding: 20 }}>
-        <Text style={{ textAlign: "right", color: "#dc2626" }}>
-          לא הצלחנו לטעון תוכניות או תבניות.
+      <View style={{ padding: 16, gap: 8 }}>
+        <Text
+          style={{
+            textAlign: "right",
+            color: "#dc2626",
+            fontWeight: "700",
+          }}
+        >
+          שגיאה בטעינת נתוני אימונים
         </Text>
+
+        <Pressable
+          onPress={() => {
+            refetchPrograms();
+            refetchTemplates();
+            refetchExercises();
+          }}
+          style={{ alignSelf: "flex-end" }}
+        >
+          <Text style={{ color: "#2563eb" }}>נסה שוב</Text>
+        </Pressable>
       </View>
     );
   }
 
+  /* =========================
+     Render
+  ========================= */
+
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <WorkoutPlansList
-        plans={programs}
-        activeProgramId={activeProgram?.id ?? null}
-        onSelectPlan={setActiveProgramId}
-        templates={templates}
-        templatesLoading={templatesLoading}
-        templatesError={templatesError}
-        onReloadTemplates={refetchTemplates}
-        onCreateFromTemplate={handleCreateFromTemplate}
-        allExercises={exercises}
-        onAddExercise={handleAddExercise}
-        onRemoveExercise={handleRemoveExercise}
-        onDeleteProgram={handleDeleteProgram}
-      />
-    </View>
+    <WorkoutPlansList
+      plans={plans}
+      activeProgramId={activeProgramId}
+      onSelectPlan={setActiveProgramId}
+      templates={templates}
+      templatesLoading={templatesLoading}
+      templatesError={templatesError}
+      onReloadTemplates={refetchTemplates}
+      onCreateFromTemplate={handleCreateFromTemplate}
+      allExercises={allExercises}
+      onAddExercise={handleAddExercise}
+      onRemoveExercise={handleRemoveExercise}
+      onDeleteProgram={handleDeleteProgram}
+    />
   );
 }

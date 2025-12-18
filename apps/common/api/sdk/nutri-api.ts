@@ -32,12 +32,12 @@ import type {
   DaySelectionCreateRequestDto,
   DaySelectionResponseDto,
   DaySelectionTodayResponseDto,
-  DeleteApiClientIdWorkoutProgramsProgramId200,
   DeleteApiClientMenusId200,
   DeleteApiFoodId200,
   DeleteApiMealTemplatesId200,
   DeleteApiTemplateMenusId200,
-  DeleteApiTemplatesId200,
+  DeleteApiWorkoutClientIdWorkoutProgramsProgramId200,
+  DeleteApiWorkoutTemplatesId200,
   ExerciseCreateRequestDto,
   ExerciseResponseDto,
   ExerciseUpdateRequestDto,
@@ -59,6 +59,7 @@ import type {
   MfaVerifyResponseDto,
   PostApiExercisesIdVideoBody,
   PostApiMealTemplates201,
+  PostApiWorkoutClientIdWorkoutProgramsBody,
   PutApiMealTemplatesId200,
   RefreshTokenResponseDto,
   RegisterRequestDto,
@@ -79,7 +80,6 @@ import type {
   WorkoutLogHistoryResponseDto,
   WorkoutLogResponseDto,
   WorkoutLogUpdateRequestDto,
-  WorkoutProgramCreateRequestDto,
   WorkoutProgramResponseDto,
   WorkoutProgramUpdateRequestDto,
   WorkoutTemplateCreateRequestDto,
@@ -3292,14 +3292,14 @@ export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<Retur
 /**
  * @summary Get all exercises
  */
-export const getApiExercises = (
+export const getApiWorkoutExercises = (
     
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<ExerciseResponseDto[]>(
-      {url: `/api/exercises`, method: 'GET', signal
+      {url: `/api/workout/exercises`, method: 'GET', signal
     },
       );
     }
@@ -3307,69 +3307,69 @@ export const getApiExercises = (
 
 
 
-export const getGetApiExercisesQueryKey = () => {
+export const getGetApiWorkoutExercisesQueryKey = () => {
     return [
-    `/api/exercises`
+    `/api/workout/exercises`
     ] as const;
     }
 
     
-export const getGetApiExercisesQueryOptions = <TData = Awaited<ReturnType<typeof getApiExercises>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercises>>, TError, TData>>, }
+export const getGetApiWorkoutExercisesQueryOptions = <TData = Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiExercisesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiWorkoutExercisesQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiExercises>>> = ({ signal }) => getApiExercises(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiWorkoutExercises>>> = ({ signal }) => getApiWorkoutExercises(signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiExercises>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiExercisesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiExercises>>>
-export type GetApiExercisesQueryError = unknown
+export type GetApiWorkoutExercisesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiWorkoutExercises>>>
+export type GetApiWorkoutExercisesQueryError = unknown
 
 
-export function useGetApiExercises<TData = Awaited<ReturnType<typeof getApiExercises>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercises>>, TError, TData>> & Pick<
+export function useGetApiWorkoutExercises<TData = Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiExercises>>,
+          Awaited<ReturnType<typeof getApiWorkoutExercises>>,
           TError,
-          Awaited<ReturnType<typeof getApiExercises>>
+          Awaited<ReturnType<typeof getApiWorkoutExercises>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiExercises<TData = Awaited<ReturnType<typeof getApiExercises>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercises>>, TError, TData>> & Pick<
+export function useGetApiWorkoutExercises<TData = Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiExercises>>,
+          Awaited<ReturnType<typeof getApiWorkoutExercises>>,
           TError,
-          Awaited<ReturnType<typeof getApiExercises>>
+          Awaited<ReturnType<typeof getApiWorkoutExercises>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiExercises<TData = Awaited<ReturnType<typeof getApiExercises>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercises>>, TError, TData>>, }
+export function useGetApiWorkoutExercises<TData = Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get all exercises
  */
 
-export function useGetApiExercises<TData = Awaited<ReturnType<typeof getApiExercises>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiExercises>>, TError, TData>>, }
+export function useGetApiWorkoutExercises<TData = Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutExercises>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiExercisesQueryOptions(options)
+  const queryOptions = getGetApiWorkoutExercisesQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3382,71 +3382,6 @@ export function useGetApiExercises<TData = Awaited<ReturnType<typeof getApiExerc
 
 
 
-/**
- * @summary Create new exercise
- */
-export const postApiExercises = (
-    exerciseCreateRequestDto: ExerciseCreateRequestDto,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<ExerciseResponseDto>(
-      {url: `/api/exercises`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: exerciseCreateRequestDto, signal
-    },
-      );
-    }
-  
-
-
-export const getPostApiExercisesMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext> => {
-
-const mutationKey = ['postApiExercises'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiExercises>>, {data: ExerciseCreateRequestDto}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiExercises(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiExercisesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiExercises>>>
-    export type PostApiExercisesMutationBody = ExerciseCreateRequestDto
-    export type PostApiExercisesMutationError = void
-
-    /**
- * @summary Create new exercise
- */
-export const usePostApiExercises = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiExercises>>,
-        TError,
-        {data: ExerciseCreateRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getPostApiExercisesMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
 /**
  * @summary Get exercise by ID
  */
@@ -3668,6 +3603,71 @@ export const useDeleteApiExercisesId = <TError = void,
     }
     
 /**
+ * @summary Create new exercise
+ */
+export const postApiExercises = (
+    exerciseCreateRequestDto: ExerciseCreateRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<ExerciseResponseDto>(
+      {url: `/api/exercises`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: exerciseCreateRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiExercisesMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext> => {
+
+const mutationKey = ['postApiExercises'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiExercises>>, {data: ExerciseCreateRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiExercises(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiExercisesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiExercises>>>
+    export type PostApiExercisesMutationBody = ExerciseCreateRequestDto
+    export type PostApiExercisesMutationError = void
+
+    /**
+ * @summary Create new exercise
+ */
+export const usePostApiExercises = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiExercises>>, TError,{data: ExerciseCreateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiExercises>>,
+        TError,
+        {data: ExerciseCreateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiExercisesMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
  * @summary Upload or update exercise video
  */
 export const postApiExercisesIdVideo = (
@@ -3833,14 +3833,14 @@ export function useGetApiExercisesUploadsPath<TData = Awaited<ReturnType<typeof 
 /**
  * @summary Coach fetches all workout programs
  */
-export const getApiPrograms = (
+export const getApiWorkoutPrograms = (
     
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WorkoutProgramResponseDto[]>(
-      {url: `/api/programs`, method: 'GET', signal
+      {url: `/api/workout/programs`, method: 'GET', signal
     },
       );
     }
@@ -3848,69 +3848,69 @@ export const getApiPrograms = (
 
 
 
-export const getGetApiProgramsQueryKey = () => {
+export const getGetApiWorkoutProgramsQueryKey = () => {
     return [
-    `/api/programs`
+    `/api/workout/programs`
     ] as const;
     }
 
     
-export const getGetApiProgramsQueryOptions = <TData = Awaited<ReturnType<typeof getApiPrograms>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiPrograms>>, TError, TData>>, }
+export const getGetApiWorkoutProgramsQueryOptions = <TData = Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiProgramsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiWorkoutProgramsQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiPrograms>>> = ({ signal }) => getApiPrograms(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiWorkoutPrograms>>> = ({ signal }) => getApiWorkoutPrograms(signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiPrograms>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiProgramsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiPrograms>>>
-export type GetApiProgramsQueryError = unknown
+export type GetApiWorkoutProgramsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiWorkoutPrograms>>>
+export type GetApiWorkoutProgramsQueryError = unknown
 
 
-export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiPrograms>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiPrograms>>, TError, TData>> & Pick<
+export function useGetApiWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiPrograms>>,
+          Awaited<ReturnType<typeof getApiWorkoutPrograms>>,
           TError,
-          Awaited<ReturnType<typeof getApiPrograms>>
+          Awaited<ReturnType<typeof getApiWorkoutPrograms>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiPrograms>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiPrograms>>, TError, TData>> & Pick<
+export function useGetApiWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiPrograms>>,
+          Awaited<ReturnType<typeof getApiWorkoutPrograms>>,
           TError,
-          Awaited<ReturnType<typeof getApiPrograms>>
+          Awaited<ReturnType<typeof getApiWorkoutPrograms>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiPrograms>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiPrograms>>, TError, TData>>, }
+export function useGetApiWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Coach fetches all workout programs
  */
 
-export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiPrograms>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiPrograms>>, TError, TData>>, }
+export function useGetApiWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutPrograms>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiProgramsQueryOptions(options)
+  const queryOptions = getGetApiWorkoutProgramsQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3926,14 +3926,14 @@ export function useGetApiPrograms<TData = Awaited<ReturnType<typeof getApiProgra
 /**
  * @summary Coach fetches a workout program by ID
  */
-export const getApiProgramsProgramId = (
+export const getApiWorkoutProgramsProgramId = (
     programId: string,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WorkoutProgramResponseDto>(
-      {url: `/api/programs/${programId}`, method: 'GET', signal
+      {url: `/api/workout/programs/${programId}`, method: 'GET', signal
     },
       );
     }
@@ -3941,69 +3941,69 @@ export const getApiProgramsProgramId = (
 
 
 
-export const getGetApiProgramsProgramIdQueryKey = (programId?: string,) => {
+export const getGetApiWorkoutProgramsProgramIdQueryKey = (programId?: string,) => {
     return [
-    `/api/programs/${programId}`
+    `/api/workout/programs/${programId}`
     ] as const;
     }
 
     
-export const getGetApiProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>>, }
+export const getGetApiWorkoutProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError = void>(programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiProgramsProgramIdQueryKey(programId);
+  const queryKey =  queryOptions?.queryKey ?? getGetApiWorkoutProgramsProgramIdQueryKey(programId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiProgramsProgramId>>> = ({ signal }) => getApiProgramsProgramId(programId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>> = ({ signal }) => getApiWorkoutProgramsProgramId(programId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(programId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(programId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiProgramsProgramIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiProgramsProgramId>>>
-export type GetApiProgramsProgramIdQueryError = void
+export type GetApiWorkoutProgramsProgramIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>>
+export type GetApiWorkoutProgramsProgramIdQueryError = void
 
 
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
- programId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>> & Pick<
+export function useGetApiWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError = void>(
+ programId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiProgramsProgramId>>,
+          Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>,
           TError,
-          Awaited<ReturnType<typeof getApiProgramsProgramId>>
+          Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
- programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>> & Pick<
+export function useGetApiWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError = void>(
+ programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiProgramsProgramId>>,
+          Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>,
           TError,
-          Awaited<ReturnType<typeof getApiProgramsProgramId>>
+          Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
- programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>>, }
+export function useGetApiWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError = void>(
+ programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Coach fetches a workout program by ID
  */
 
-export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError = void>(
- programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProgramsProgramId>>, TError, TData>>, }
+export function useGetApiWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError = void>(
+ programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiProgramsProgramIdQueryOptions(programId,options)
+  const queryOptions = getGetApiWorkoutProgramsProgramIdQueryOptions(programId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -4019,14 +4019,14 @@ export function useGetApiProgramsProgramId<TData = Awaited<ReturnType<typeof get
 /**
  * @summary Fetch workout programs for a specific client
  */
-export const getApiClientIdWorkoutPrograms = (
+export const getApiWorkoutClientIdWorkoutPrograms = (
     clientId: string,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WorkoutProgramResponseDto[]>(
-      {url: `/api/${clientId}/workout-programs`, method: 'GET', signal
+      {url: `/api/workout/${clientId}/workout-programs`, method: 'GET', signal
     },
       );
     }
@@ -4034,69 +4034,69 @@ export const getApiClientIdWorkoutPrograms = (
 
 
 
-export const getGetApiClientIdWorkoutProgramsQueryKey = (clientId?: string,) => {
+export const getGetApiWorkoutClientIdWorkoutProgramsQueryKey = (clientId?: string,) => {
     return [
-    `/api/${clientId}/workout-programs`
+    `/api/workout/${clientId}/workout-programs`
     ] as const;
     }
 
     
-export const getGetApiClientIdWorkoutProgramsQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError, TData>>, }
+export const getGetApiWorkoutClientIdWorkoutProgramsQueryOptions = <TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiClientIdWorkoutProgramsQueryKey(clientId);
+  const queryKey =  queryOptions?.queryKey ?? getGetApiWorkoutClientIdWorkoutProgramsQueryKey(clientId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>> = ({ signal }) => getApiClientIdWorkoutPrograms(clientId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>> = ({ signal }) => getApiWorkoutClientIdWorkoutPrograms(clientId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiClientIdWorkoutProgramsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>>
-export type GetApiClientIdWorkoutProgramsQueryError = unknown
+export type GetApiWorkoutClientIdWorkoutProgramsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>>
+export type GetApiWorkoutClientIdWorkoutProgramsQueryError = unknown
 
 
-export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError = unknown>(
- clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError, TData>> & Pick<
+export function useGetApiWorkoutClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError = unknown>(
+ clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>,
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>,
           TError,
-          Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError, TData>> & Pick<
+export function useGetApiWorkoutClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>,
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>,
           TError,
-          Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError, TData>>, }
+export function useGetApiWorkoutClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Fetch workout programs for a specific client
  */
 
-export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError = unknown>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutPrograms>>, TError, TData>>, }
+export function useGetApiWorkoutClientIdWorkoutPrograms<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutPrograms>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiClientIdWorkoutProgramsQueryOptions(clientId,options)
+  const queryOptions = getGetApiWorkoutClientIdWorkoutProgramsQueryOptions(clientId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -4112,28 +4112,28 @@ export function useGetApiClientIdWorkoutPrograms<TData = Awaited<ReturnType<type
 /**
  * @summary Coach creates a workout program for a client
  */
-export const postApiClientIdWorkoutPrograms = (
+export const postApiWorkoutClientIdWorkoutPrograms = (
     clientId: string,
-    workoutProgramCreateRequestDto: WorkoutProgramCreateRequestDto,
+    postApiWorkoutClientIdWorkoutProgramsBody: PostApiWorkoutClientIdWorkoutProgramsBody,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WorkoutProgramResponseDto>(
-      {url: `/api/${clientId}/workout-programs`, method: 'POST',
+      {url: `/api/workout/${clientId}/workout-programs`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: workoutProgramCreateRequestDto, signal
+      data: postApiWorkoutClientIdWorkoutProgramsBody, signal
     },
       );
     }
   
 
 
-export const getPostApiClientIdWorkoutProgramsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>, TError,{clientId: string;data: WorkoutProgramCreateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>, TError,{clientId: string;data: WorkoutProgramCreateRequestDto}, TContext> => {
+export const getPostApiWorkoutClientIdWorkoutProgramsMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWorkoutClientIdWorkoutPrograms>>, TError,{clientId: string;data: PostApiWorkoutClientIdWorkoutProgramsBody}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiWorkoutClientIdWorkoutPrograms>>, TError,{clientId: string;data: PostApiWorkoutClientIdWorkoutProgramsBody}, TContext> => {
 
-const mutationKey = ['postApiClientIdWorkoutPrograms'];
+const mutationKey = ['postApiWorkoutClientIdWorkoutPrograms'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -4143,10 +4143,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>, {clientId: string;data: WorkoutProgramCreateRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiWorkoutClientIdWorkoutPrograms>>, {clientId: string;data: PostApiWorkoutClientIdWorkoutProgramsBody}> = (props) => {
           const {clientId,data} = props ?? {};
 
-          return  postApiClientIdWorkoutPrograms(clientId,data,)
+          return  postApiWorkoutClientIdWorkoutPrograms(clientId,data,)
         }
 
         
@@ -4154,23 +4154,23 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiClientIdWorkoutProgramsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>>
-    export type PostApiClientIdWorkoutProgramsMutationBody = WorkoutProgramCreateRequestDto
-    export type PostApiClientIdWorkoutProgramsMutationError = void
+    export type PostApiWorkoutClientIdWorkoutProgramsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiWorkoutClientIdWorkoutPrograms>>>
+    export type PostApiWorkoutClientIdWorkoutProgramsMutationBody = PostApiWorkoutClientIdWorkoutProgramsBody
+    export type PostApiWorkoutClientIdWorkoutProgramsMutationError = void
 
     /**
  * @summary Coach creates a workout program for a client
  */
-export const usePostApiClientIdWorkoutPrograms = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>, TError,{clientId: string;data: WorkoutProgramCreateRequestDto}, TContext>, }
+export const usePostApiWorkoutClientIdWorkoutPrograms = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWorkoutClientIdWorkoutPrograms>>, TError,{clientId: string;data: PostApiWorkoutClientIdWorkoutProgramsBody}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiClientIdWorkoutPrograms>>,
+        Awaited<ReturnType<typeof postApiWorkoutClientIdWorkoutPrograms>>,
         TError,
-        {clientId: string;data: WorkoutProgramCreateRequestDto},
+        {clientId: string;data: PostApiWorkoutClientIdWorkoutProgramsBody},
         TContext
       > => {
 
-      const mutationOptions = getPostApiClientIdWorkoutProgramsMutationOptions(options);
+      const mutationOptions = getPostApiWorkoutClientIdWorkoutProgramsMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -4178,7 +4178,7 @@ export const usePostApiClientIdWorkoutPrograms = <TError = void,
 /**
  * @summary Fetch a specific workout program for a client
  */
-export const getApiClientIdWorkoutProgramsProgramId = (
+export const getApiWorkoutClientIdWorkoutProgramsProgramId = (
     clientId: string,
     programId: string,
  signal?: AbortSignal
@@ -4186,7 +4186,7 @@ export const getApiClientIdWorkoutProgramsProgramId = (
       
       
       return customFetcher<WorkoutProgramResponseDto>(
-      {url: `/api/${clientId}/workout-programs/${programId}`, method: 'GET', signal
+      {url: `/api/workout/${clientId}/workout-programs/${programId}`, method: 'GET', signal
     },
       );
     }
@@ -4194,75 +4194,75 @@ export const getApiClientIdWorkoutProgramsProgramId = (
 
 
 
-export const getGetApiClientIdWorkoutProgramsProgramIdQueryKey = (clientId?: string,
+export const getGetApiWorkoutClientIdWorkoutProgramsProgramIdQueryKey = (clientId?: string,
     programId?: string,) => {
     return [
-    `/api/${clientId}/workout-programs/${programId}`
+    `/api/workout/${clientId}/workout-programs/${programId}`
     ] as const;
     }
 
     
-export const getGetApiClientIdWorkoutProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(clientId: string,
-    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
+export const getGetApiWorkoutClientIdWorkoutProgramsProgramIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError = void>(clientId: string,
+    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiClientIdWorkoutProgramsProgramIdQueryKey(clientId,programId);
+  const queryKey =  queryOptions?.queryKey ?? getGetApiWorkoutClientIdWorkoutProgramsProgramIdQueryKey(clientId,programId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>> = ({ signal }) => getApiClientIdWorkoutProgramsProgramId(clientId,programId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>> = ({ signal }) => getApiWorkoutClientIdWorkoutProgramsProgramId(clientId,programId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(clientId && programId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(clientId && programId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiClientIdWorkoutProgramsProgramIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>>
-export type GetApiClientIdWorkoutProgramsProgramIdQueryError = void
+export type GetApiWorkoutClientIdWorkoutProgramsProgramIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>>
+export type GetApiWorkoutClientIdWorkoutProgramsProgramIdQueryError = void
 
 
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
+export function useGetApiWorkoutClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
-    programId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>> & Pick<
+    programId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>,
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>,
           TError,
-          Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
+export function useGetApiWorkoutClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
-    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>> & Pick<
+    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>,
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>,
           TError,
-          Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>
+          Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
+export function useGetApiWorkoutClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
-    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
+    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Fetch a specific workout program for a client
  */
 
-export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError = void>(
+export function useGetApiWorkoutClientIdWorkoutProgramsProgramId<TData = Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError = void>(
  clientId: string,
-    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
+    programId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutClientIdWorkoutProgramsProgramId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiClientIdWorkoutProgramsProgramIdQueryOptions(clientId,programId,options)
+  const queryOptions = getGetApiWorkoutClientIdWorkoutProgramsProgramIdQueryOptions(clientId,programId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -4278,7 +4278,7 @@ export function useGetApiClientIdWorkoutProgramsProgramId<TData = Awaited<Return
 /**
  * @summary Coach updates a client's workout program
  */
-export const putApiClientIdWorkoutProgramsProgramId = (
+export const putApiWorkoutClientIdWorkoutProgramsProgramId = (
     clientId: string,
     programId: string,
     workoutProgramUpdateRequestDto: WorkoutProgramUpdateRequestDto,
@@ -4286,7 +4286,7 @@ export const putApiClientIdWorkoutProgramsProgramId = (
       
       
       return customFetcher<WorkoutProgramResponseDto>(
-      {url: `/api/${clientId}/workout-programs/${programId}`, method: 'PUT',
+      {url: `/api/workout/${clientId}/workout-programs/${programId}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: workoutProgramUpdateRequestDto
     },
@@ -4295,11 +4295,11 @@ export const putApiClientIdWorkoutProgramsProgramId = (
   
 
 
-export const getPutApiClientIdWorkoutProgramsProgramIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext> => {
+export const getPutApiWorkoutClientIdWorkoutProgramsProgramIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiWorkoutClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiWorkoutClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext> => {
 
-const mutationKey = ['putApiClientIdWorkoutProgramsProgramId'];
+const mutationKey = ['putApiWorkoutClientIdWorkoutProgramsProgramId'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -4309,10 +4309,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>, {clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiWorkoutClientIdWorkoutProgramsProgramId>>, {clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}> = (props) => {
           const {clientId,programId,data} = props ?? {};
 
-          return  putApiClientIdWorkoutProgramsProgramId(clientId,programId,data,)
+          return  putApiWorkoutClientIdWorkoutProgramsProgramId(clientId,programId,data,)
         }
 
         
@@ -4320,23 +4320,23 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PutApiClientIdWorkoutProgramsProgramIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>>
-    export type PutApiClientIdWorkoutProgramsProgramIdMutationBody = WorkoutProgramUpdateRequestDto
-    export type PutApiClientIdWorkoutProgramsProgramIdMutationError = void
+    export type PutApiWorkoutClientIdWorkoutProgramsProgramIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiWorkoutClientIdWorkoutProgramsProgramId>>>
+    export type PutApiWorkoutClientIdWorkoutProgramsProgramIdMutationBody = WorkoutProgramUpdateRequestDto
+    export type PutApiWorkoutClientIdWorkoutProgramsProgramIdMutationError = void
 
     /**
  * @summary Coach updates a client's workout program
  */
-export const usePutApiClientIdWorkoutProgramsProgramId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext>, }
+export const usePutApiWorkoutClientIdWorkoutProgramsProgramId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiWorkoutClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putApiClientIdWorkoutProgramsProgramId>>,
+        Awaited<ReturnType<typeof putApiWorkoutClientIdWorkoutProgramsProgramId>>,
         TError,
         {clientId: string;programId: string;data: WorkoutProgramUpdateRequestDto},
         TContext
       > => {
 
-      const mutationOptions = getPutApiClientIdWorkoutProgramsProgramIdMutationOptions(options);
+      const mutationOptions = getPutApiWorkoutClientIdWorkoutProgramsProgramIdMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -4344,25 +4344,25 @@ export const usePutApiClientIdWorkoutProgramsProgramId = <TError = void,
 /**
  * @summary Coach deletes a workout program
  */
-export const deleteApiClientIdWorkoutProgramsProgramId = (
+export const deleteApiWorkoutClientIdWorkoutProgramsProgramId = (
     clientId: string,
     programId: string,
  ) => {
       
       
-      return customFetcher<DeleteApiClientIdWorkoutProgramsProgramId200>(
-      {url: `/api/${clientId}/workout-programs/${programId}`, method: 'DELETE'
+      return customFetcher<DeleteApiWorkoutClientIdWorkoutProgramsProgramId200>(
+      {url: `/api/workout/${clientId}/workout-programs/${programId}`, method: 'DELETE'
     },
       );
     }
   
 
 
-export const getDeleteApiClientIdWorkoutProgramsProgramIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext> => {
+export const getDeleteApiWorkoutClientIdWorkoutProgramsProgramIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiWorkoutClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiWorkoutClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext> => {
 
-const mutationKey = ['deleteApiClientIdWorkoutProgramsProgramId'];
+const mutationKey = ['deleteApiWorkoutClientIdWorkoutProgramsProgramId'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -4372,10 +4372,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>, {clientId: string;programId: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiWorkoutClientIdWorkoutProgramsProgramId>>, {clientId: string;programId: string}> = (props) => {
           const {clientId,programId} = props ?? {};
 
-          return  deleteApiClientIdWorkoutProgramsProgramId(clientId,programId,)
+          return  deleteApiWorkoutClientIdWorkoutProgramsProgramId(clientId,programId,)
         }
 
         
@@ -4383,23 +4383,23 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteApiClientIdWorkoutProgramsProgramIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>>
+    export type DeleteApiWorkoutClientIdWorkoutProgramsProgramIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiWorkoutClientIdWorkoutProgramsProgramId>>>
     
-    export type DeleteApiClientIdWorkoutProgramsProgramIdMutationError = void
+    export type DeleteApiWorkoutClientIdWorkoutProgramsProgramIdMutationError = void
 
     /**
  * @summary Coach deletes a workout program
  */
-export const useDeleteApiClientIdWorkoutProgramsProgramId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext>, }
+export const useDeleteApiWorkoutClientIdWorkoutProgramsProgramId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiWorkoutClientIdWorkoutProgramsProgramId>>, TError,{clientId: string;programId: string}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteApiClientIdWorkoutProgramsProgramId>>,
+        Awaited<ReturnType<typeof deleteApiWorkoutClientIdWorkoutProgramsProgramId>>,
         TError,
         {clientId: string;programId: string},
         TContext
       > => {
 
-      const mutationOptions = getDeleteApiClientIdWorkoutProgramsProgramIdMutationOptions(options);
+      const mutationOptions = getDeleteApiWorkoutClientIdWorkoutProgramsProgramIdMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -4407,14 +4407,14 @@ export const useDeleteApiClientIdWorkoutProgramsProgramId = <TError = void,
 /**
  * @summary Get all workout templates
  */
-export const getApiTemplates = (
+export const getApiWorkoutTemplates = (
     
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WorkoutTemplateResponseDto[]>(
-      {url: `/api/templates`, method: 'GET', signal
+      {url: `/api/workout/templates`, method: 'GET', signal
     },
       );
     }
@@ -4422,69 +4422,69 @@ export const getApiTemplates = (
 
 
 
-export const getGetApiTemplatesQueryKey = () => {
+export const getGetApiWorkoutTemplatesQueryKey = () => {
     return [
-    `/api/templates`
+    `/api/workout/templates`
     ] as const;
     }
 
     
-export const getGetApiTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+export const getGetApiWorkoutTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiWorkoutTemplatesQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplates>>> = ({ signal }) => getApiTemplates(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiWorkoutTemplates>>> = ({ signal }) => getApiWorkoutTemplates(signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplates>>>
-export type GetApiTemplatesQueryError = unknown
+export type GetApiWorkoutTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiWorkoutTemplates>>>
+export type GetApiWorkoutTemplatesQueryError = unknown
 
 
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+export function useGetApiWorkoutTemplates<TData = Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplates>>,
+          Awaited<ReturnType<typeof getApiWorkoutTemplates>>,
           TError,
-          Awaited<ReturnType<typeof getApiTemplates>>
+          Awaited<ReturnType<typeof getApiWorkoutTemplates>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+export function useGetApiWorkoutTemplates<TData = Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplates>>,
+          Awaited<ReturnType<typeof getApiWorkoutTemplates>>,
           TError,
-          Awaited<ReturnType<typeof getApiTemplates>>
+          Awaited<ReturnType<typeof getApiWorkoutTemplates>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+export function useGetApiWorkoutTemplates<TData = Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get all workout templates
  */
 
-export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+export function useGetApiWorkoutTemplates<TData = Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplates>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiTemplatesQueryOptions(options)
+  const queryOptions = getGetApiWorkoutTemplatesQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -4500,14 +4500,14 @@ export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTempl
 /**
  * @summary Create workout template
  */
-export const postApiTemplates = (
+export const postApiWorkoutTemplates = (
     workoutTemplateCreateRequestDto: WorkoutTemplateCreateRequestDto,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WorkoutTemplateResponseDto>(
-      {url: `/api/templates`, method: 'POST',
+      {url: `/api/workout/templates`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: workoutTemplateCreateRequestDto, signal
     },
@@ -4516,11 +4516,11 @@ export const postApiTemplates = (
   
 
 
-export const getPostApiTemplatesMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext> => {
+export const getPostApiWorkoutTemplatesMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWorkoutTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiWorkoutTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext> => {
 
-const mutationKey = ['postApiTemplates'];
+const mutationKey = ['postApiWorkoutTemplates'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -4530,10 +4530,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiTemplates>>, {data: WorkoutTemplateCreateRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiWorkoutTemplates>>, {data: WorkoutTemplateCreateRequestDto}> = (props) => {
           const {data} = props ?? {};
 
-          return  postApiTemplates(data,)
+          return  postApiWorkoutTemplates(data,)
         }
 
         
@@ -4541,23 +4541,23 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiTemplatesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTemplates>>>
-    export type PostApiTemplatesMutationBody = WorkoutTemplateCreateRequestDto
-    export type PostApiTemplatesMutationError = void
+    export type PostApiWorkoutTemplatesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiWorkoutTemplates>>>
+    export type PostApiWorkoutTemplatesMutationBody = WorkoutTemplateCreateRequestDto
+    export type PostApiWorkoutTemplatesMutationError = void
 
     /**
  * @summary Create workout template
  */
-export const usePostApiTemplates = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
+export const usePostApiWorkoutTemplates = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWorkoutTemplates>>, TError,{data: WorkoutTemplateCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiTemplates>>,
+        Awaited<ReturnType<typeof postApiWorkoutTemplates>>,
         TError,
         {data: WorkoutTemplateCreateRequestDto},
         TContext
       > => {
 
-      const mutationOptions = getPostApiTemplatesMutationOptions(options);
+      const mutationOptions = getPostApiWorkoutTemplatesMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -4565,14 +4565,14 @@ export const usePostApiTemplates = <TError = void,
 /**
  * @summary Get workout template by ID
  */
-export const getApiTemplatesId = (
+export const getApiWorkoutTemplatesId = (
     id: string,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WorkoutTemplateResponseDto>(
-      {url: `/api/templates/${id}`, method: 'GET', signal
+      {url: `/api/workout/templates/${id}`, method: 'GET', signal
     },
       );
     }
@@ -4580,69 +4580,69 @@ export const getApiTemplatesId = (
 
 
 
-export const getGetApiTemplatesIdQueryKey = (id?: string,) => {
+export const getGetApiWorkoutTemplatesIdQueryKey = (id?: string,) => {
     return [
-    `/api/templates/${id}`
+    `/api/workout/templates/${id}`
     ] as const;
     }
 
     
-export const getGetApiTemplatesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+export const getGetApiWorkoutTemplatesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesIdQueryKey(id);
+  const queryKey =  queryOptions?.queryKey ?? getGetApiWorkoutTemplatesIdQueryKey(id);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplatesId>>> = ({ signal }) => getApiTemplatesId(id, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>> = ({ signal }) => getApiWorkoutTemplatesId(id, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiTemplatesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplatesId>>>
-export type GetApiTemplatesIdQueryError = void
+export type GetApiWorkoutTemplatesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>>
+export type GetApiWorkoutTemplatesIdQueryError = void
 
 
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+export function useGetApiWorkoutTemplatesId<TData = Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError = void>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>,
           TError,
-          Awaited<ReturnType<typeof getApiTemplatesId>>
+          Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+export function useGetApiWorkoutTemplatesId<TData = Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>,
           TError,
-          Awaited<ReturnType<typeof getApiTemplatesId>>
+          Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+export function useGetApiWorkoutTemplatesId<TData = Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get workout template by ID
  */
 
-export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+export function useGetApiWorkoutTemplatesId<TData = Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiWorkoutTemplatesId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiTemplatesIdQueryOptions(id,options)
+  const queryOptions = getGetApiWorkoutTemplatesIdQueryOptions(id,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -4658,14 +4658,14 @@ export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTem
 /**
  * @summary Update workout template
  */
-export const putApiTemplatesId = (
+export const putApiWorkoutTemplatesId = (
     id: string,
     workoutTemplateUpdateRequestDto: WorkoutTemplateUpdateRequestDto,
  ) => {
       
       
       return customFetcher<WorkoutTemplateResponseDto>(
-      {url: `/api/templates/${id}`, method: 'PUT',
+      {url: `/api/workout/templates/${id}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: workoutTemplateUpdateRequestDto
     },
@@ -4674,11 +4674,11 @@ export const putApiTemplatesId = (
   
 
 
-export const getPutApiTemplatesIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext> => {
+export const getPutApiWorkoutTemplatesIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiWorkoutTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiWorkoutTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext> => {
 
-const mutationKey = ['putApiTemplatesId'];
+const mutationKey = ['putApiWorkoutTemplatesId'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -4688,10 +4688,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTemplatesId>>, {id: string;data: WorkoutTemplateUpdateRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiWorkoutTemplatesId>>, {id: string;data: WorkoutTemplateUpdateRequestDto}> = (props) => {
           const {id,data} = props ?? {};
 
-          return  putApiTemplatesId(id,data,)
+          return  putApiWorkoutTemplatesId(id,data,)
         }
 
         
@@ -4699,23 +4699,23 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PutApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTemplatesId>>>
-    export type PutApiTemplatesIdMutationBody = WorkoutTemplateUpdateRequestDto
-    export type PutApiTemplatesIdMutationError = void
+    export type PutApiWorkoutTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiWorkoutTemplatesId>>>
+    export type PutApiWorkoutTemplatesIdMutationBody = WorkoutTemplateUpdateRequestDto
+    export type PutApiWorkoutTemplatesIdMutationError = void
 
     /**
  * @summary Update workout template
  */
-export const usePutApiTemplatesId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
+export const usePutApiWorkoutTemplatesId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiWorkoutTemplatesId>>, TError,{id: string;data: WorkoutTemplateUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putApiTemplatesId>>,
+        Awaited<ReturnType<typeof putApiWorkoutTemplatesId>>,
         TError,
         {id: string;data: WorkoutTemplateUpdateRequestDto},
         TContext
       > => {
 
-      const mutationOptions = getPutApiTemplatesIdMutationOptions(options);
+      const mutationOptions = getPutApiWorkoutTemplatesIdMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -4723,24 +4723,24 @@ export const usePutApiTemplatesId = <TError = void,
 /**
  * @summary Delete workout template
  */
-export const deleteApiTemplatesId = (
+export const deleteApiWorkoutTemplatesId = (
     id: string,
  ) => {
       
       
-      return customFetcher<DeleteApiTemplatesId200>(
-      {url: `/api/templates/${id}`, method: 'DELETE'
+      return customFetcher<DeleteApiWorkoutTemplatesId200>(
+      {url: `/api/workout/templates/${id}`, method: 'DELETE'
     },
       );
     }
   
 
 
-export const getDeleteApiTemplatesIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext> => {
+export const getDeleteApiWorkoutTemplatesIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiWorkoutTemplatesId>>, TError,{id: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiWorkoutTemplatesId>>, TError,{id: string}, TContext> => {
 
-const mutationKey = ['deleteApiTemplatesId'];
+const mutationKey = ['deleteApiWorkoutTemplatesId'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -4750,10 +4750,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiTemplatesId>>, {id: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiWorkoutTemplatesId>>, {id: string}> = (props) => {
           const {id} = props ?? {};
 
-          return  deleteApiTemplatesId(id,)
+          return  deleteApiWorkoutTemplatesId(id,)
         }
 
         
@@ -4761,23 +4761,23 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiTemplatesId>>>
+    export type DeleteApiWorkoutTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiWorkoutTemplatesId>>>
     
-    export type DeleteApiTemplatesIdMutationError = void
+    export type DeleteApiWorkoutTemplatesIdMutationError = void
 
     /**
  * @summary Delete workout template
  */
-export const useDeleteApiTemplatesId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: string}, TContext>, }
+export const useDeleteApiWorkoutTemplatesId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiWorkoutTemplatesId>>, TError,{id: string}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteApiTemplatesId>>,
+        Awaited<ReturnType<typeof deleteApiWorkoutTemplatesId>>,
         TError,
         {id: string},
         TContext
       > => {
 
-      const mutationOptions = getDeleteApiTemplatesIdMutationOptions(options);
+      const mutationOptions = getDeleteApiWorkoutTemplatesIdMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

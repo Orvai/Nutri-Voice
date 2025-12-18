@@ -38,7 +38,8 @@ const getTemplateController = async (req, res, next) => {
 // POST /internal/workout/templates
 const createTemplateController = async (req, res, next) => {
   try {
-    const payload = WorkoutTemplateCreateDto.parse(req.body);
+    const { coachId, ...cleanBody } = req.body;
+    const payload = WorkoutTemplateCreateDto.parse(cleanBody);
     const result = await createTemplate(payload, req.user?.id);
     res.status(201).json({ data: result });
   } catch (e) {

@@ -9,11 +9,14 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import type {
-  UIWorkoutProgram,
-  UIWorkoutTemplate,
-  UIExercise,
-} from "../../../types/ui/workout-ui";
+
+import type { UIWorkoutProgram } 
+  from "../../../types/ui/workout/workoutProgram.ui";
+import type { UIWorkoutTemplate } 
+  from "../../../types/ui/workout/workoutTemplate.ui";
+import type { UIExercise } 
+  from "../../../types/ui/workout/exercise.ui";
+
 import WorkoutPlanCard from "./WorkoutPlanCard";
 import WorkoutTemplateCard from "../../workout/WorkoutTemplateCard";
 
@@ -21,11 +24,13 @@ type Props = {
   plans: UIWorkoutProgram[];
   activeProgramId: string | null;
   onSelectPlan: (programId: string) => void;
+
   templates: UIWorkoutTemplate[];
   templatesLoading: boolean;
   templatesError: boolean;
   onReloadTemplates: () => void;
   onCreateFromTemplate: (template: UIWorkoutTemplate) => void | Promise<void>;
+
   allExercises: UIExercise[];
   onAddExercise: (
     programId: string,
@@ -36,6 +41,7 @@ type Props = {
     programId: string,
     workoutExerciseId: string
   ) => void | Promise<void>;
+
   onDeleteProgram: (programId: string) => void | Promise<void>;
 };
 
@@ -141,7 +147,6 @@ export default function WorkoutPlansList({
 
   return (
     <View style={{ flex: 1 }}>
-      {/* כותרת + כפתור ראשי */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -187,7 +192,6 @@ export default function WorkoutPlansList({
         />
       ) : null}
 
-      {/* מודל תבניות */}
       <Modal
         visible={templatesModalOpen}
         animationType="slide"

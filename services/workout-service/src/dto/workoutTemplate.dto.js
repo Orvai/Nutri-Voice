@@ -27,7 +27,7 @@ const WorkoutTemplateCreateDto = z
     workoutType: WorkoutTypeEnum,
     muscleGroups: z.array(MuscleGroupEnum),
     name: z.string().optional(),
-    notes: z.string().optional(),
+    notes: z.string().nullable().optional(),
   })
   .strict();
 

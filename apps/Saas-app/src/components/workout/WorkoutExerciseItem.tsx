@@ -1,56 +1,61 @@
-import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import type { UIWorkoutExercise } from "../../types/ui/workout-ui";
+import type { UIWorkoutExercise } from "@/types/ui/workout/workoutExercise.ui";
 import { Tag } from "./common/Tag";
-import ExerciseVideoPlayer from "./ExerciseVideoPlayer";
 import { theme } from "../../theme";
 
 type Props = {
   item: UIWorkoutExercise;
+  onPlayVideo?: () => void;
 };
 
-export default function WorkoutExerciseItem({ item }: Props) {
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoUrl, setVideoUrl] = useState<string | null>(item.exercise.videoUrl ?? null);
-
-  useEffect(() => {
-    setVideoUrl(item.exercise.videoUrl ?? null);
-  }, [item.exercise.videoUrl]);
+export default function WorkoutExerciseItem({
+  item,
+  onPlayVideo,
+}: Props) {
+  const { exercise } = item;
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>
-          {item.order}. {item.exercise.name}
+          {item.order}. {exercise.name}
         </Text>
         <Text style={styles.subtitle}>
-          {item.exercise.muscleGroup || "ללא שריר"}
+          {exercise.muscleGroup || "ללא שריר"}
         </Text>
       </View>
 
+      {/* Tags */}
       <View style={styles.tagsRow}>
         <Tag label={`${item.sets} סטים`} tone="info" />
-        {item.reps ? <Tag label={`${item.reps} חזרות`} tone="success" /> : null}
+        {item.reps ? (
+          <Tag label={`${item.reps} חזרות`} tone="success" />
+        ) : null}
         {item.durationSeconds ? (
           <Tag label={`${item.durationSeconds} שניות`} tone="warning" />
         ) : null}
-        {item.restSeconds ? <Tag label={`מנוחה ${item.restSeconds}s`} /> : null}
-        {item.exercise.equipment ? <Tag label={item.exercise.equipment} /> : null}
-        {videoUrl ? (
-          <Pressable onPress={() => setShowVideo(true)} style={styles.videoButton}>
-            <Text style={styles.videoButtonText}>▶ וידאו</Text>
+        {item.restSeconds ? (
+          <Tag label={`מנוחה ${item.restSeconds}s`} />
+        ) : null}
+        {exercise.equipment ? (
+          <Tag label={exercise.equipment} />
+        ) : null}
+
+        {exercise.videoUrl && onPlayVideo ? (
+          <Pressable
+            onPress={onPlayVideo}
+            style={styles.videoButton}
+          >
+            <Text style={styles.videoButtonText}>וידאו</Text>
           </Pressable>
         ) : null}
       </View>
 
-      {item.notes ? <Text style={styles.notes}>{item.notes}</Text> : null}
-
-      <ExerciseVideoPlayer
-        exercise={{ ...item.exercise, videoUrl }}
-        visible={showVideo}
-        onClose={() => setShowVideo(false)}
-        onUpdated={(url) => setVideoUrl(url)}
-      />
+      {/* Notes */}
+      {item.notes ? (
+        <Text style={styles.notes}>{item.notes}</Text>
+      ) : null}
     </View>
   );
 }
@@ -64,40 +69,51 @@ const styles = StyleSheet.create({
     borderColor: theme.card.border,
     marginBottom: 8,
   },
+
   header: {
     flexDirection: "row-reverse",
     justifyContent: "space-between",
+    gap: 8,
   },
+
   title: {
     fontWeight: "700",
     fontSize: 16,
     textAlign: "right",
     color: theme.text.title,
   },
+
   subtitle: {
     color: theme.text.subtitle,
     textAlign: "right",
   },
+
   tagsRow: {
     flexDirection: "row-reverse",
     gap: 8,
     flexWrap: "wrap",
     marginTop: 6,
   },
+
   notes: {
-    color: "#4b5563",
+    color: theme.text.subtitle,
     marginTop: 6,
     textAlign: "right",
+    fontSize: 13,
   },
+
   videoButton: {
-    backgroundColor: "#0ea5e9",
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 8,
+    backgroundColor: theme.card.bg,
+    borderWidth: 1,
+    borderColor: theme.card.border,
   },
+
   videoButtonText: {
-    color: "#fff",
-    fontWeight: "700",
+    fontWeight: "600",
     fontSize: 12,
+    color: theme.text.title,
   },
 });

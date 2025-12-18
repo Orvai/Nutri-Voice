@@ -2,18 +2,25 @@
 
 import { useMemo, useState } from "react";
 import { View, Text, Pressable, ScrollView } from "react-native";
-import type {
-  UIWorkoutProgram,
-  UIExercise,
-} from "../../../types/ui/workout-ui";
+
+import type { UIWorkoutProgram } 
+  from "../../../types/ui/workout/workoutProgram.ui";
+import type { UIExercise } 
+  from "../../../types/ui/workout/exercise.ui";
+
 import WorkoutCategory from "./WorkoutCategory";
 import AddExerciseModal from "./AddExerciseModal";
 
 type Props = {
   plan: UIWorkoutProgram;
   allExercises: UIExercise[];
-  onAddExercise: (exercise: UIExercise, orderHint?: number) => void | Promise<void>;
-  onRemoveExercise: (workoutExerciseId: string) => void | Promise<void>;
+  onAddExercise: (
+    exercise: UIExercise,
+    orderHint?: number
+  ) => void | Promise<void>;
+  onRemoveExercise: (
+    workoutExerciseId: string
+  ) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
 };
 
@@ -39,13 +46,13 @@ export default function WorkoutPlanCard({
   const categories = useMemo(() => {
     const map = new Map<string, CategoryExercise[]>();
 
-    (plan.exercises ?? []).forEach((ex) => {
-      const muscle = ex.exercise.muscleGroup ?? "ללא שיוך שריר";
+    plan.exercises.forEach((ex) => {
+      const muscle = ex.muscleGroup ?? "ללא שיוך שריר";
       const list = map.get(muscle) ?? [];
       list.push({
         id: ex.id,
-        name: ex.exercise.name,
-        muscleGroup: ex.exercise.muscleGroup,
+        name: ex.name,
+        muscleGroup: ex.muscleGroup,
         sets: ex.sets,
         reps: ex.reps,
         weight: ex.weight,
@@ -74,8 +81,8 @@ export default function WorkoutPlanCard({
   };
 
   const handleSelectExercise = async (exercise: UIExercise) => {
-    const maxOrder = (plan.exercises ?? []).reduce(
-      (acc, ex) => Math.max(acc, ex.order ?? 0),
+    const maxOrder = plan.exercises.reduce(
+      (acc, ex) => Math.max(acc, ex.order),
       0
     );
     await onAddExercise(exercise, maxOrder);
@@ -97,7 +104,6 @@ export default function WorkoutPlanCard({
         elevation: 2,
       }}
     >
-      {/* כותרת התוכנית */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -147,7 +153,6 @@ export default function WorkoutPlanCard({
         </View>
       </View>
 
-      {/* קטגוריות תרגילים */}
       <ScrollView
         style={{ maxHeight: 420 }}
         contentContainerStyle={{ paddingBottom: 8 }}
@@ -158,14 +163,15 @@ export default function WorkoutPlanCard({
             group={cat.muscle}
             exercises={cat.exercises}
             onAdd={() =>
-              handleOpenAddForMuscle(cat.muscle === "ללא שיוך שריר" ? null : cat.muscle)
+              handleOpenAddForMuscle(
+                cat.muscle === "ללא שיוך שריר" ? null : cat.muscle
+              )
             }
             onRemove={(id) => onRemoveExercise(id)}
           />
         ))}
       </ScrollView>
 
-      {/* פעולות תחתונות */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -195,7 +201,6 @@ export default function WorkoutPlanCard({
         </Pressable>
       </View>
 
-      {/* מודל הוספת תרגיל */}
       <AddExerciseModal
         visible={addModalOpen}
         onClose={() => setAddModalOpen(false)}

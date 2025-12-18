@@ -12,7 +12,7 @@ const BASE = process.env.WORKOUT_SERVICE_URL;
 
 /**
  * @openapi
- * /api/exercises:
+ * /api/workout/exercises:
  *   get:
  *     tags: [Exercises]
  *     summary: Get all exercises

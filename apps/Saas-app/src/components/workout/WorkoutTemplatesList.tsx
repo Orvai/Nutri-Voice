@@ -1,17 +1,28 @@
 import { useMemo, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import type { UIExercise, UIWorkoutTemplate } from "../../types/ui/workout-ui";
+
+import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
+import type { UIExercise } from "@/types/ui/workout/exercise.ui";
+
+import type {
+  WorkoutTemplateCreateRequestDto,
+} from "@common/api/sdk/schemas";
+
+import { useCreateWorkoutTemplate } from
+  "@/hooks/workout/workoutTemplate/useCreateWorkoutTemplate";
+
 import WorkoutTemplateCard from "./WorkoutTemplateCard";
-import WorkoutTemplateForm from "./WorkoutTemplateForm";
+import WorkoutTemplateModal from "./WorkoutTemplateModal";
 import { SectionHeader } from "./common/SectionHeader";
 import { theme } from "../../theme";
 
 type Props = {
   templates: UIWorkoutTemplate[];
   exercises?: UIExercise[];
+
   onCreateNew?: () => void;
   onSelectTemplate?: (template: UIWorkoutTemplate) => void;
-  onSubmitTemplate?: (payload: any) => void;
+
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
@@ -22,34 +33,35 @@ export default function WorkoutTemplatesList({
   exercises = [],
   onCreateNew,
   onSelectTemplate,
-  onSubmitTemplate,
   isLoading = false,
   isError = false,
   onRetry,
 }: Props) {
-  const [isCreatingTemplate, setIsCreatingTemplate] = useState(false);
-  const [editingTemplate, setEditingTemplate] = useState<UIWorkoutTemplate | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] =
+    useState<UIWorkoutTemplate | null>(null);
 
   const skeletons = useMemo(() => Array.from({ length: 2 }), []);
+  const createTemplate = useCreateWorkoutTemplate();
 
-  const handleStartCreate = () => {
-    setIsCreatingTemplate(true);
+  const startCreate = () => {
     setEditingTemplate(null);
+    setModalOpen(true);
     onCreateNew?.();
   };
 
-  const handleSelectTemplate = (template: UIWorkoutTemplate) => {
-    onSelectTemplate?.(template);
+  const selectTemplate = (template: UIWorkoutTemplate) => {
     setEditingTemplate(template);
-    setIsCreatingTemplate(true);
+    setModalOpen(true);
+    onSelectTemplate?.(template);
   };
 
-  const renderState = () => {
+  const renderContent = () => {
     if (isLoading) {
       return (
-        <View style={styles.skeletonRow}>
-          {skeletons.map((_, index) => (
-            <View key={index} style={styles.skeleton} />
+        <View style={styles.grid}>
+          {skeletons.map((_, i) => (
+            <View key={i} style={styles.skeleton} />
           ))}
         </View>
       );
@@ -58,36 +70,41 @@ export default function WorkoutTemplatesList({
     if (isError) {
       return (
         <View style={styles.errorBox}>
-          <Text style={styles.errorText}>לא הצלחנו לטעון תבניות אימון.</Text>
-          <Pressable onPress={onRetry} style={styles.retryButton}>
-            <Text style={styles.retryText}>נסה שוב</Text>
-          </Pressable>
+          <Text style={styles.errorText}>
+            לא הצלחנו לטעון תבניות אימון
+          </Text>
+
+          {onRetry && (
+            <Pressable onPress={onRetry} style={styles.retryButton}>
+              <Text style={styles.retryText}>נסה שוב</Text>
+            </Pressable>
+          )}
         </View>
       );
     }
 
-    if (templates.length === 0 && !isCreatingTemplate) {
+    if (templates.length === 0 && !modalOpen) {
       return (
         <View style={styles.emptyBox}>
-          <Text style={styles.emptyText}>אין עדיין תבניות אימון.</Text>
+          <Text style={styles.emptyText}>אין עדיין תבניות אימון</Text>
+
+          <Pressable onPress={startCreate} style={styles.primaryCta}>
+            <Text style={styles.primaryCtaText}>
+              צור תבנית ראשונה
+            </Text>
+          </Pressable>
         </View>
       );
     }
 
     return (
       <View style={styles.grid}>
-        <Pressable onPress={handleStartCreate} style={styles.addCard}>
-          <Text style={styles.addIcon}>+</Text>
-          <Text style={styles.addText}>צור תבנית חדשה</Text>
-        </Pressable>
-
         {templates.map((template) => (
-          <View key={template.id} style={styles.gridItem}>
-            <WorkoutTemplateCard
-              program={template}
-              onSelect={handleSelectTemplate}
-            />
-          </View>
+          <WorkoutTemplateCard
+            key={template.id}
+            program={template}
+            onSelect={selectTemplate}
+          />
         ))}
       </View>
     );
@@ -97,27 +114,28 @@ export default function WorkoutTemplatesList({
     <View style={styles.container}>
       <SectionHeader
         title="תבניות אימון"
-        subtitle="(Workout Templates)"
+        subtitle="Workout Templates"
         action={
-          <Pressable onPress={handleStartCreate} style={styles.ctaButton}>
-            <Text style={styles.ctaText}>+ צור תבנית חדשה</Text>
-          </Pressable>
+          !modalOpen && (
+            <Pressable onPress={startCreate} style={styles.headerCta}>
+              <Text style={styles.headerCtaText}>＋ חדש</Text>
+            </Pressable>
+          )
         }
       />
 
-      {isCreatingTemplate ? (
-        <WorkoutTemplateForm
-          initialTemplate={editingTemplate}
-          exercises={exercises}
-          onCancel={() => setIsCreatingTemplate(false)}
-          onSubmit={(payload) => {
-            onSubmitTemplate?.(payload);
-            setIsCreatingTemplate(false);
-          }}
-        />
-      ) : null}
+      <WorkoutTemplateModal
+        visible={modalOpen}
+        initialTemplate={editingTemplate}
+        exercises={exercises}
+        onClose={() => setModalOpen(false)}
+        onSubmit={async (payload: WorkoutTemplateCreateRequestDto) => {
+          await createTemplate.mutateAsync(payload);
+          setModalOpen(false);
+        }}
+      />
 
-      {renderState()}
+      {renderContent()}
     </View>
   );
 }
@@ -125,96 +143,109 @@ export default function WorkoutTemplatesList({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.card.bg,
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 16,
     borderWidth: 1,
     borderColor: theme.card.border,
-    marginBottom: 24,
-    gap: 12,
+    marginBottom: 28,
+    gap: 14,
   },
+
   grid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 14,
   },
-  gridItem: {
-    width: "48%",
-  },
+
   addCard: {
     width: "48%",
-    minHeight: 100,
-    borderRadius: 14,
+    minHeight: 120,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: theme.card.border,
     borderStyle: "dashed",
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f9fafb",
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+    gap: 6,
   },
+
   addIcon: {
-    fontSize: 30,
-    color: "#9ca3af",
+    fontSize: 32,
+    color: "#64748b",
   },
+
   addText: {
-    color: theme.text.subtitle,
     fontSize: 13,
+    color: theme.text.subtitle,
   },
-  skeletonRow: {
-    flexDirection: "row-reverse",
-    gap: 12,
-    marginTop: 8,
-  },
+
   skeleton: {
     width: "48%",
     height: 120,
-    borderRadius: 14,
-    backgroundColor: "#f3f4f6",
+    borderRadius: 16,
+    backgroundColor: "#f1f5f9",
   },
+
+  emptyBox: {
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 24,
+  },
+
+  emptyText: {
+    color: theme.text.subtitle,
+    fontSize: 14,
+  },
+
+  primaryCta: {
+    backgroundColor: "#2563eb",
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 999,
+  },
+
+  primaryCtaText: {
+    color: "#fff",
+    fontWeight: "700",
+  },
+
   errorBox: {
+    backgroundColor: "#fff1f2",
+    borderRadius: 14,
+    padding: 14,
     borderWidth: 1,
     borderColor: "#fecdd3",
-    backgroundColor: "#fff1f2",
-    padding: 12,
-    borderRadius: 12,
     gap: 8,
   },
+
   errorText: {
     textAlign: "right",
     color: "#b91c1c",
   },
+
   retryButton: {
     alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
     backgroundColor: "#ef4444",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 8,
   },
+
   retryText: {
-    color: "white",
+    color: "#fff",
     fontWeight: "700",
   },
-  emptyBox: {
-    backgroundColor: "#f9fafb",
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-  },
-  emptyText: {
-    textAlign: "right",
-    color: theme.text.subtitle,
-  },
-  ctaButton: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+
+  headerCta: {
     backgroundColor: "#2563eb",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     borderRadius: 999,
   },
-  ctaText: {
+
+  headerCtaText: {
     color: "#fff",
-    fontSize: 14,
     fontWeight: "600",
   },
 });

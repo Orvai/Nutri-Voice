@@ -1,30 +1,94 @@
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import type { UIExercise, UIWorkoutTemplate } from "../../types/ui/workout-ui";
-import ExerciseList from "./ExerciseList";
-import { theme } from "../../theme";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
-type ExerciseConfig = {
-  exercise: UIExercise;
-  sets: string;
-  reps: string;
-  rest: string;
-};
+import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
+import type { UIExercise } from "@/types/ui/workout/exercise.ui";
+
+import {
+  WorkoutTemplateCreateRequestDto,
+  WorkoutTemplateCreateRequestDtoGender,
+  WorkoutTemplateCreateRequestDtoBodyType,
+} from "@common/api/sdk/schemas";
+
+import { MUSCLE_LABEL_TO_ENUM } from "@/mappers/workout/workoutEnumMapper";
+
+import { theme } from "../../theme";
+import { Chip } from "./common/Chip";
+
+/* ======================
+   Constants
+====================== */
+
+const DEFAULT_MUSCLE_GROUPS = [
+  "חזה",
+  "גב",
+  "כתפיים",
+  "רגליים",
+  "ישבן",
+  "יד_קדמית",
+  "יד_אחורית",
+  "בטן",
+];
+
+const GENDER_OPTIONS: WorkoutTemplateCreateRequestDtoGender[] = [
+  "MALE",
+  "FEMALE",
+];
+
+const BODY_TYPE_OPTIONS: WorkoutTemplateCreateRequestDtoBodyType[] = [
+  "ECTO",
+  "ENDO",
+];
+
+const WORKOUT_TYPE_OPTIONS: {
+  value: WorkoutTemplateCreateRequestDto["workoutType"];
+  label: string;
+}[] = [
+  { value: "A", label: "A – כללי" },
+  { value: "B", label: "B – כללי" },
+  { value: "FBW", label: "אימון גוף מלא" },
+  { value: "UPPER", label: "פלג גוף עליון" },
+  { value: "LOWER", label: "פלג גוף תחתון" },
+  { value: "GLUTES", label: "ישבן" },
+  { value: "HIIT", label: "HIIT" },
+  { value: "PUSH", label: "Push – דחיפה" },
+  { value: "PULL", label: "Pull – משיכה" },
+  { value: "LEGS", label: "רגליים" },
+];
+
+/* ======================
+   Helpers
+====================== */
+
+function uniq<T>(arr: T[]) {
+  return Array.from(new Set(arr));
+}
+
+function normalizeMuscle(value?: string | null) {
+  return (value ?? "").trim();
+}
+
+/* ======================
+   Props
+====================== */
 
 type Props = {
   initialTemplate?: UIWorkoutTemplate | null;
   exercises?: UIExercise[];
-  onSubmit?: (payload: {
-    name: string;
-    workoutType: string;
-    level: string;
-    bodyType: string;
-    gender: string;
-    notes: string;
-    exercises: ExerciseConfig[];
-  }) => void;
+  onSubmit: (payload: WorkoutTemplateCreateRequestDto) => void;
   onCancel?: () => void;
 };
+
+/* ======================
+   Component
+====================== */
 
 export default function WorkoutTemplateForm({
   initialTemplate,
@@ -32,276 +96,256 @@ export default function WorkoutTemplateForm({
   onSubmit,
   onCancel,
 }: Props) {
-  const [name, setName] = useState(initialTemplate?.name ?? "");
-  const [workoutType, setWorkoutType] = useState(initialTemplate?.workoutType ?? "");
-  const [level, setLevel] = useState(String(initialTemplate?.level ?? ""));
-  const [bodyType, setBodyType] = useState(initialTemplate?.bodyType ?? "");
-  const [gender, setGender] = useState(initialTemplate?.gender ?? "");
-  const [notes, setNotes] = useState(initialTemplate?.notes ?? "");
-  const [selectedExercises, setSelectedExercises] = useState<ExerciseConfig[]>([]);
+  const [name, setName] = useState<string | null>(null);
+  const [workoutType, setWorkoutType] =
+    useState<WorkoutTemplateCreateRequestDto["workoutType"] | "">("");
+  const [level, setLevel] = useState("");
+
+  const [gender, setGender] =
+    useState<WorkoutTemplateCreateRequestDtoGender | null>(null);
+
+  const [bodyType, setBodyType] =
+    useState<WorkoutTemplateCreateRequestDtoBodyType | null>(null);
+
+  const [notes, setNotes] = useState<string | null>(null);
+  const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>([]);
+
+  /* ======================
+     Init edit
+  ====================== */
 
   useEffect(() => {
     if (!initialTemplate) return;
-    setName(initialTemplate.name ?? "");
+
+    setName(initialTemplate.name ?? null);
     setWorkoutType(initialTemplate.workoutType ?? "");
     setLevel(String(initialTemplate.level ?? ""));
-    setBodyType(initialTemplate.bodyType ?? "");
-    setGender(initialTemplate.gender ?? "");
-    setNotes(initialTemplate.notes ?? "");
+    setGender(initialTemplate.gender as WorkoutTemplateCreateRequestDtoGender);
+    setBodyType(
+      initialTemplate.bodyType as WorkoutTemplateCreateRequestDtoBodyType
+    );
+    setNotes(initialTemplate.notes ?? null);
+    setSelectedMuscleGroups(uniq(initialTemplate.muscleGroups ?? []));
   }, [initialTemplate]);
 
-  const exerciseIds = useMemo(() => selectedExercises.map((ex) => ex.exercise.id), [
-    selectedExercises,
-  ]);
+  /* ======================
+     Derived
+  ====================== */
 
-  const handleSelectExercise = (exercise: UIExercise) => {
-    setSelectedExercises((prev) => {
-      const exists = prev.find((item) => item.exercise.id === exercise.id);
-      if (exists) {
-        return prev.filter((item) => item.exercise.id !== exercise.id);
-      }
-      return [...prev, { exercise, sets: "3", reps: "10", rest: "60" }];
-    });
-  };
+  const allMuscleOptions = useMemo(() => {
+    const fromLib = exercises
+      .map((e) => normalizeMuscle(e.muscleGroup))
+      .filter(Boolean);
 
-  const updateExerciseField = (
-    id: string,
-    field: keyof Omit<ExerciseConfig, "exercise">,
-    value: string
-  ) => {
-    setSelectedExercises((prev) =>
-      prev.map((item) =>
-        item.exercise.id === id
-          ? {
-              ...item,
-              [field]: value,
-            }
-          : item
-      )
-    );
-  };
+    return uniq(fromLib.length ? fromLib : DEFAULT_MUSCLE_GROUPS);
+  }, [exercises]);
+
+  const isValid =
+    gender !== null &&
+    workoutType !== "" &&
+    Number(level) > 0 &&
+    selectedMuscleGroups.length > 0;
+
+  /* ======================
+     Submit
+  ====================== */
 
   const handleSubmit = () => {
-    onSubmit?.({
-      name,
-      workoutType,
-      level,
-      bodyType,
+    if (!isValid || !gender || workoutType === "") return;
+
+    const mappedMuscles = uniq(selectedMuscleGroups).map((label) => {
+      const mapped = MUSCLE_LABEL_TO_ENUM[label];
+      if (!mapped) {
+        throw new Error(`Unknown muscle label: ${label}`);
+      }
+      return mapped;
+    });
+
+    onSubmit({
       gender,
-      notes,
-      exercises: selectedExercises,
+      workoutType,
+      level: Number(level),
+      muscleGroups: mappedMuscles,
+      bodyType: bodyType ?? undefined,
+      name: name ?? undefined,
+      notes: notes ?? null,
     });
   };
 
+  /* ======================
+     Render
+  ====================== */
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ gap: 12 }}>
-      <Text style={styles.heading}>יצירת תבנית אימון</Text>
-      <Field label="שם התבנית">
+    <ScrollView style={styles.container} contentContainerStyle={{ gap: 16 }}>
+      <Field label="שם התבנית (רשות)">
         <TextInput
-          value={name}
-          onChangeText={setName}
-          placeholder="למשל: תוכנית A"
+          value={name ?? ""}
+          onChangeText={(v) => setName(v || null)}
           style={styles.input}
         />
       </Field>
 
-      <View style={styles.row}>
-        <Field label="סוג אימון" style={{ flex: 1 }}>
-          <TextInput
-            value={workoutType}
-            onChangeText={setWorkoutType}
-            placeholder="A / FBW / PUSH"
-            style={styles.input}
-          />
-        </Field>
-        <Field label="רמה" style={{ flex: 1 }}>
-          <TextInput
-            value={level}
-            onChangeText={setLevel}
-            placeholder="1-3"
-            style={styles.input}
-            keyboardType="numeric"
-          />
-        </Field>
-      </View>
-
-      <View style={styles.row}>
-        <Field label="מבנה גוף" style={{ flex: 1 }}>
-          <TextInput
-            value={bodyType}
-            onChangeText={setBodyType}
-            placeholder="ECTO / ENDO"
-            style={styles.input}
-          />
-        </Field>
-        <Field label="מין" style={{ flex: 1 }}>
-          <TextInput
-            value={gender}
-            onChangeText={setGender}
-            placeholder="MALE / FEMALE"
-            style={styles.input}
-          />
-        </Field>
-      </View>
-
-      <Field label="הערות">
-        <TextInput
-          value={notes}
-          onChangeText={setNotes}
-          placeholder="הערות למתאמן"
-          style={[styles.input, styles.textArea]}
-          multiline
-          numberOfLines={3}
-        />
-      </Field>
-
-      <Field label="בחרו תרגילים">
-        <ExerciseList
-          exercises={exercises}
-          selectedIds={exerciseIds}
-          onSelect={handleSelectExercise}
-        />
-      </Field>
-
-      {selectedExercises.length ? (
-        <View style={styles.selectedList}>
-          {selectedExercises.map((item) => (
-            <View key={item.exercise.id} style={styles.selectedCard}>
-              <Text style={styles.selectedTitle}>{item.exercise.name}</Text>
-              <View style={styles.row}>
-                <TextInput
-                  value={item.sets}
-                  onChangeText={(value) => updateExerciseField(item.exercise.id, "sets", value)}
-                  placeholder="סטים"
-                  style={[styles.input, styles.smallInput]}
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  value={item.reps}
-                  onChangeText={(value) => updateExerciseField(item.exercise.id, "reps", value)}
-                  placeholder="חזרות"
-                  style={[styles.input, styles.smallInput]}
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  value={item.rest}
-                  onChangeText={(value) => updateExerciseField(item.exercise.id, "rest", value)}
-                  placeholder="מנוחה"
-                  style={[styles.input, styles.smallInput]}
-                  keyboardType="numeric"
-                />
-              </View>
-            </View>
+      <Field label="סוג אימון *">
+        <View style={styles.optionsWrap}>
+          {WORKOUT_TYPE_OPTIONS.map((opt) => (
+            <Pressable
+              key={opt.value}
+              onPress={() => setWorkoutType(opt.value)}
+            >
+              <Chip
+                label={opt.label}
+                tone={workoutType === opt.value ? "accent" : "gray"}
+              />
+            </Pressable>
           ))}
         </View>
-      ) : null}
+      </Field>
+
+      <Field label="רמה *">
+        <TextInput
+          value={level}
+          onChangeText={setLevel}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+      </Field>
+
+      <Field label="מין *">
+        <View style={styles.optionsWrap}>
+          {GENDER_OPTIONS.map((g) => (
+            <Pressable key={g} onPress={() => setGender(g)}>
+              <Chip label={g} tone={gender === g ? "accent" : "gray"} />
+            </Pressable>
+          ))}
+        </View>
+      </Field>
+
+      <Field label="מבנה גוף (רשות)">
+        <View style={styles.optionsWrap}>
+          {BODY_TYPE_OPTIONS.map((b) => (
+            <Pressable key={b} onPress={() => setBodyType(b)}>
+              <Chip label={b} tone={bodyType === b ? "accent" : "gray"} />
+            </Pressable>
+          ))}
+        </View>
+      </Field>
+
+      <Field label="קבוצות שרירים *">
+        <View style={styles.musclesWrap}>
+          {allMuscleOptions.map((m) => {
+            const active = selectedMuscleGroups.includes(m);
+            return (
+              <Pressable
+                key={m}
+                onPress={() =>
+                  setSelectedMuscleGroups((prev) =>
+                    prev.includes(m)
+                      ? prev.filter((x) => x !== m)
+                      : [...prev, m]
+                  )
+                }
+              >
+                <Chip label={m} tone={active ? "accent" : "gray"} />
+              </Pressable>
+            );
+          })}
+        </View>
+      </Field>
+
+      <Field label="הערות (רשות)">
+        <TextInput
+          value={notes ?? ""}
+          onChangeText={(v) => setNotes(v || null)}
+          multiline
+          style={[styles.input, styles.textArea]}
+        />
+      </Field>
 
       <View style={styles.actions}>
-        <Pressable onPress={onCancel} style={[styles.button, styles.secondaryButton]}>
-          <Text style={styles.buttonTextSecondary}>ביטול</Text>
+        <Pressable onPress={onCancel} style={styles.secondaryBtn}>
+          <Text>ביטול</Text>
         </Pressable>
-        <Pressable onPress={handleSubmit} style={styles.button}>
-          <Text style={styles.buttonText}>שמור תבנית</Text>
+
+        <Pressable
+          onPress={handleSubmit}
+          disabled={!isValid}
+          style={[
+            styles.primaryBtn,
+            !isValid && styles.primaryBtnDisabled,
+          ]}
+        >
+          <Text style={styles.primaryText}>שמור תבנית</Text>
         </Pressable>
       </View>
     </ScrollView>
   );
 }
 
+/* ======================
+   UI Helpers
+====================== */
+
 function Field({
   label,
   children,
-  style,
 }: {
   label: string;
   children: React.ReactNode;
-  style?: any;
 }) {
   return (
-    <View style={[styles.field, style]}>
-      <Text style={styles.fieldLabel}>{label}</Text>
+    <View style={{ gap: 6 }}>
+      <Text style={styles.label}>{label}</Text>
       {children}
     </View>
   );
 }
 
+/* ======================
+   Styles
+====================== */
+
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: theme.card.bg,
-    borderRadius: theme.card.radius,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    padding: 16,
-  },
-  heading: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: theme.text.title,
-    textAlign: "right",
-  },
-  row: {
-    flexDirection: "row-reverse",
-    gap: 12,
-  },
-  field: {
-    gap: 6,
-  },
-  fieldLabel: {
-    fontWeight: "700",
-    color: theme.text.title,
-    textAlign: "right",
-  },
+  container: { padding: 16 },
+  label: { fontWeight: "700", textAlign: "right" },
   input: {
     borderWidth: 1,
     borderColor: theme.card.border,
     borderRadius: 12,
     padding: 10,
+    backgroundColor: "#fff",
     textAlign: "right",
   },
-  textArea: {
-    minHeight: 80,
-    textAlignVertical: "top",
-  },
-  selectedList: {
+  textArea: { minHeight: 80 },
+  musclesWrap: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
     gap: 8,
   },
-  selectedCard: {
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    borderRadius: 12,
-    padding: 10,
-    backgroundColor: "#f8fafc",
-  },
-  selectedTitle: {
-    fontWeight: "700",
-    textAlign: "right",
-    marginBottom: 8,
-  },
-  smallInput: {
-    flex: 1,
+  optionsWrap: {
+    flexDirection: "row-reverse",
+    gap: 8,
+    flexWrap: "wrap",
   },
   actions: {
     flexDirection: "row-reverse",
     gap: 10,
-    marginTop: 8,
+    marginTop: 12,
   },
-  button: {
+  primaryBtn: {
     flex: 1,
     backgroundColor: "#22c55e",
-    paddingVertical: 12,
+    padding: 12,
     borderRadius: 12,
+    alignItems: "center",
   },
-  secondaryButton: {
-    backgroundColor: "#e2e8f0",
-  },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "800",
-  },
-  buttonTextSecondary: {
-    color: theme.text.title,
-    textAlign: "center",
-    fontWeight: "700",
+  primaryBtnDisabled: { opacity: 0.4 },
+  primaryText: { color: "#fff", fontWeight: "800" },
+  secondaryBtn: {
+    flex: 1,
+    backgroundColor: "#e5e7eb",
+    padding: 12,
+    borderRadius: 12,
+    alignItems: "center",
   },
 });

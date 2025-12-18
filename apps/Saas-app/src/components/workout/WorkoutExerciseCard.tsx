@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import type { UIExercise } from "../../types/ui/workout-ui";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+
+import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 import { Card } from "./common/Card";
-import { AvatarBadge } from "./common/AvatarBadge";
-import { Chip } from "./common/Chip";
 import { Tag } from "./common/Tag";
-import ExerciseVideoPlayer from "./ExerciseVideoPlayer";
 import { theme } from "../../theme";
+
+import ExerciseVideoPlayer from "./ExerciseVideoPlayer";
+import ExerciseVideoUploader from "./ExerciseVideoUploader";
 
 type Props = {
   item: UIExercise;
@@ -14,130 +15,108 @@ type Props = {
 };
 
 export default function WorkoutExerciseCard({ item, onPress }: Props) {
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoUrl, setVideoUrl] = useState<string | null>(item.videoUrl ?? null);
+  const [videoOpen, setVideoOpen] = useState(false);
+  const hasVideo = Boolean(item.videoUrl);
 
-  useEffect(() => {
-    setVideoUrl(item.videoUrl ?? null);
-  }, [item.videoUrl]);
+  // Wrapper only for the CARD (Uploader will be outside to avoid nested Pressables)
+  const Wrapper: any = onPress ? Pressable : View;
+
+  const openVideo = (e?: any) => {
+    // helps on web to prevent bubbling
+    e?.stopPropagation?.();
+    setVideoOpen(true);
+  };
 
   return (
     <>
-      <Pressable onPress={onPress} disabled={!onPress}>
+      <Wrapper onPress={onPress}>
         <Card style={styles.card}>
-          {videoUrl ? (
-            <Pressable onPress={() => setShowVideo(true)} style={styles.videoThumb}>
-              <View style={styles.playBadge}>
-                <Text style={styles.playText}>▶</Text>
-              </View>
-              <Text style={styles.videoLabel}>צפה בוידאו</Text>
-            </Pressable>
-          ) : null}
-
+          {/* Header */}
           <View style={styles.header}>
-            <AvatarBadge label={item.name} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.title}>{item.name}</Text>
-              <Text style={styles.subtitle}>
-            {item.muscleGroup || "ללא שריר ראשי"}
-              </Text>
-            </View>
-            <Chip label={translateDifficulty(item.difficulty)} tone="accent" />
+            <Text style={styles.title}>{item.name}</Text>
+            {item.muscleGroup ? <Tag label={item.muscleGroup} /> : null}
           </View>
 
-          <View style={styles.tagsRow}>
-            {(item.secondaryMuscles ?? []).map((muscle) => (
-              <Tag key={muscle} label={muscle} />
-            ))}
-            {item.equipment ? <Tag label={item.equipment} tone="info" /> : null}
+          {/* Actions */}
+          <View style={styles.actionsRow}>
+            {hasVideo ? (
+              <Pressable onPress={openVideo} style={styles.videoBtn}>
+                <Text style={styles.videoBtnText}>▶ צפה בסרטון</Text>
+              </Pressable>
+            ) : (
+              <Text style={styles.noVideoText}>אין סרטון</Text>
+            )}
           </View>
-
-          {item.instructions ? (
-            <Text style={styles.instructions} numberOfLines={2}>
-              {item.instructions}
-            </Text>
-          ) : null}
         </Card>
-      </Pressable>
+      </Wrapper>
+
+      {/* ✅ Upload is OUTSIDE wrapper to ensure it appears & works */}
+      {!hasVideo ? (
+        <View style={styles.uploaderWrap}>
+          <ExerciseVideoUploader
+            exerciseId={item.id}
+            onUploaded={() => {
+              // כאן אפשר בעתיד לעשות invalidateQueries / refetch
+            }}
+          />
+        </View>
+      ) : null}
 
       <ExerciseVideoPlayer
-        exercise={{ ...item, videoUrl }}
-        visible={showVideo}
-        onClose={() => setShowVideo(false)}
-        onUpdated={(url) => setVideoUrl(url)}
+        exercise={item}
+        visible={videoOpen}
+        onClose={() => setVideoOpen(false)}
       />
     </>
   );
-}
-
-function translateDifficulty(value: UIExercise["difficulty"]) {
-  switch (value) {
-    case "beginner":
-      return "מתחיל";
-    case "intermediate":
-      return "ביניים";
-    case "advanced":
-      return "מתקדם";
-    default:
-      return value;
-  }
 }
 
 const styles = StyleSheet.create({
   card: {
     gap: 10,
   },
+
   header: {
     flexDirection: "row-reverse",
     alignItems: "center",
+    justifyContent: "space-between",
   },
+
   title: {
     fontWeight: "800",
-    fontSize: 16,
-    textAlign: "right",
+    fontSize: 15,
     color: theme.text.title,
-  },
-  subtitle: {
-    fontSize: 13,
-    color: theme.text.subtitle,
-    marginTop: 2,
     textAlign: "right",
   },
-  tagsRow: {
+
+  actionsRow: {
     flexDirection: "row-reverse",
-    flexWrap: "wrap",
-    gap: 6,
+    justifyContent: "flex-start",
+    marginTop: 6,
+    alignItems: "center",
+    gap: 10,
   },
-  instructions: {
+
+  videoBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: "#2563eb",
+  },
+
+  videoBtnText: {
+    color: "#fff",
+    fontWeight: "800",
     fontSize: 13,
-    color: "#4b5563",
+  },
+
+  noVideoText: {
+    fontSize: 12,
+    color: theme.text.subtitle,
     textAlign: "right",
   },
-  videoThumb: {
-    height: 140,
-    borderRadius: theme.card.radius,
-    borderWidth: 1,
-    borderColor: theme.card.border,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-    backgroundColor: "#0f172a",
-  },
-  playBadge: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-  },
-  playText: {
-    fontSize: 20,
-    color: theme.text.title,
-  },
-  videoLabel: {
-    color: "#fff",
-    fontWeight: "700",
+
+  uploaderWrap: {
+    marginTop: 8,
   },
 });

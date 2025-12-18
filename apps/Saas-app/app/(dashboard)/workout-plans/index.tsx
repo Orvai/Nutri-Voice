@@ -1,15 +1,19 @@
 import { ScrollView, View, Text, Pressable } from "react-native";
 import { useState, useMemo } from "react";
 
-import { useWorkoutTemplates } from "../../../src/hooks/workout/useWorkoutTemplates";
-import { useExercises as useWorkoutExercises } from "../../../src/hooks/workout/useExercises";
+import { useWorkoutTemplates } from "@/hooks/workout/workoutTemplate/useWorkoutTemplates";
+import { useExercises } from "@/hooks/workout/exercise/useExercises";
 
-import WorkoutTemplatesList from "../../../src/components/workout/WorkoutTemplatesList";
-import WorkoutExerciseGrid from "../../../src/components/workout/WorkoutExerciseGrid";
-import WorkoutSearchBar from "../../../src/components/workout/WorkoutSearchBar";
-import WorkoutFilters from "../../../src/components/workout/WorkoutFilters";
+import WorkoutTemplatesList from "@/components/workout/WorkoutTemplatesList";
+import WorkoutExerciseGrid from "@/components/workout/WorkoutExerciseGrid";
+import WorkoutSearchBar from "@/components/workout/WorkoutSearchBar";
+import WorkoutFilters from "@/components/workout/WorkoutFilters";
 
 export default function WorkoutPlansScreen() {
+  /* =========================
+     DATA
+  ========================= */
+
   const {
     templates,
     isLoading: isLoadingTemplates,
@@ -19,21 +23,33 @@ export default function WorkoutPlansScreen() {
   } = useWorkoutTemplates();
 
   const {
-    data: exercises = [],
+    exercises,
     isLoading: isLoadingExercises,
     isFetching: isFetchingExercises,
     isError: isExercisesError,
     refetch: refetchExercises,
-  } = useWorkoutExercises();
+  } = useExercises();
+
+  /* =========================
+     UI STATE
+  ========================= */
 
   const [query, setQuery] = useState("");
   const [selectedMuscle, setSelectedMuscle] = useState("הכל");
 
+  /* =========================
+     DERIVED DATA
+  ========================= */
+
   const muscleOptions = useMemo(() => {
     const options = new Set<string>(["הכל"]);
+
     exercises.forEach((ex) => {
-    if (ex.muscleGroup) options.add(ex.muscleGroup);
+      if (ex.muscleGroup) {
+        options.add(ex.muscleGroup);
+      }
     });
+
     return Array.from(options);
   }, [exercises]);
 
@@ -44,13 +60,16 @@ export default function WorkoutPlansScreen() {
       const name = (ex.name ?? "").toLowerCase();
 
       const matchQuery = !query || name.includes(lowerQuery);
-
       const matchMuscle =
-      selectedMuscle === "הכל" || ex.muscleGroup === selectedMuscle;
+        selectedMuscle === "הכל" || ex.muscleGroup === selectedMuscle;
 
       return matchQuery && matchMuscle;
     });
   }, [exercises, query, selectedMuscle]);
+
+  /* =========================
+     RENDER
+  ========================= */
 
   return (
     <ScrollView
@@ -81,6 +100,7 @@ export default function WorkoutPlansScreen() {
             fontSize: 18,
             fontWeight: "700",
             marginBottom: 8,
+            textAlign: "right",
           }}
         >
           ספריית תרגילים (Exercise Library)
@@ -108,6 +128,9 @@ export default function WorkoutPlansScreen() {
     </ScrollView>
   );
 }
+/* =========================
+   STATES
+========================= */
 
 function LoadingGridPlaceholder() {
   return (
@@ -152,18 +175,23 @@ function ErrorState({ onRetry }: { onRetry?: () => void }) {
       <Text style={{ textAlign: "right", color: "#b91c1c" }}>
         לא הצלחנו לטעון את ספריית התרגילים.
       </Text>
-      <Pressable
-        onPress={onRetry}
-        style={{
-          alignSelf: "flex-start",
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-          backgroundColor: "#ef4444",
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: "white", fontWeight: "700" }}>נסה שוב</Text>
-      </Pressable>
+
+      {onRetry && (
+        <Pressable
+          onPress={onRetry}
+          style={{
+            alignSelf: "flex-start",
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            backgroundColor: "#ef4444",
+            borderRadius: 8,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>
+            נסה שוב
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 }

@@ -12,7 +12,7 @@ const BASE = process.env.WORKOUT_SERVICE_URL;
 
 /**
  * @openapi
- * /api/templates:
+ * /api/workout/templates:
  *   get:
  *     tags: [Workout Templates]
  *     summary: Get all workout templates
@@ -32,7 +32,7 @@ r.get("/templates",authRequired,forward(BASE, "/internal/workout/templates"));
 
 /**
  * @openapi
- * /api/templates/{id}:
+ * /api/workout/templates/{id}:
  *   get:
  *     tags: [Workout Templates]
  *     summary: Get workout template by ID
@@ -58,7 +58,7 @@ r.get("/templates/:id",authRequired,forward(BASE, "/internal/workout/templates/:
 
 /**
  * @openapi
- * /api/templates:
+ * /api/workout/templates:
  *   post:
  *     tags: [Workout Templates]
  *     summary: Create workout template
@@ -87,7 +87,7 @@ r.post("/templates",authRequired,requireCoach,(req, res, next) => {
 
 /**
  * @openapi
- * /api/templates/{id}:
+ * /api/workout/templates/{id}:
  *   put:
  *     tags: [Workout Templates]
  *     summary: Update workout template
@@ -124,7 +124,7 @@ r.put("/templates/:id",authRequired,requireCoach,(req, res, next) => {
 
 /**
  * @openapi
- * /api/templates/{id}:
+ * /api/workout/templates/{id}:
  *   delete:
  *     tags: [Workout Templates]
  *     summary: Delete workout template

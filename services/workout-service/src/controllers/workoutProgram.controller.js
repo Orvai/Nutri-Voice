@@ -44,6 +44,8 @@ const getProgramController = async (req, res, next) => {
 
 const updateProgramController = async (req, res, next) => {
   try {
+    console.log("🔥 UPDATE PROGRAM PAYLOAD");
+    console.log(JSON.stringify(req.body, null, 2));
     const { id } = WorkoutProgramIdParamDto.parse(req.params);
     const payload = WorkoutProgramUpdateRequestDto.parse(req.body);
     const result = await updateProgram(id, payload);

@@ -144,7 +144,6 @@ const WorkoutProgramCreateRequestDto = z.object({
   clientId: z.string(),
   coachId: z.string(),
   templateId: z.string().optional(),
-  exercises: z.array(WorkoutProgramExerciseCreateDto).optional().default([]),
 });
 
 /** FULL update DTO */

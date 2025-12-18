@@ -12,7 +12,7 @@ const BASE = process.env.WORKOUT_SERVICE_URL;
 
 /**
  * @openapi
- * /api/programs:
+ * /api/workout/programs:
  *   get:
  *     tags: [Workout Programs]
  *     summary: Coach fetches all workout programs
@@ -32,7 +32,7 @@ r.get("/programs",authRequired,requireCoach,forward(BASE, "/internal/workout/pro
 
 /**
  * @openapi
- * /api/programs/{programId}:
+ * /api/workout/programs/{programId}:
  *   get:
  *     tags: [Workout Programs]
  *     summary: Coach fetches a workout program by ID
@@ -58,7 +58,7 @@ r.get("/programs/:programId",authRequired,requireCoach,forward(BASE, "/internal/
 
 /**
  * @openapi
- * /api/{clientId}/workout-programs:
+ * /api/workout/{clientId}/workout-programs:
  *   get:
  *     tags: [Workout Programs]
  *     summary: Fetch workout programs for a specific client
@@ -84,7 +84,7 @@ r.get("/:clientId/workout-programs",authRequired,forward(BASE, "/internal/workou
 
 /**
  * @openapi
- * /api/{clientId}/workout-programs/{programId}:
+ * /api/workout/{clientId}/workout-programs/{programId}:
  *   get:
  *     tags: [Workout Programs]
  *     summary: Fetch a specific workout program for a client
@@ -115,7 +115,7 @@ r.get("/:clientId/workout-programs/:programId",authRequired,forward(BASE, "/inte
 
 /**
  * @openapi
- * /api/{clientId}/workout-programs:
+ * /api/workout/{clientId}/workout-programs:
  *   post:
  *     tags: [Workout Programs]
  *     summary: Coach creates a workout program for a client
@@ -132,7 +132,16 @@ r.get("/:clientId/workout-programs/:programId",authRequired,forward(BASE, "/inte
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/WorkoutProgramCreateRequestDto"
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 2
+ *               templateId:
+ *                 type: string
+ *                 nullable: true
  *     responses:
  *       201:
  *         description: Workout program created
@@ -154,7 +163,7 @@ r.post("/:clientId/workout-programs",authRequired,requireCoach,(req, res, next) 
 
 /**
  * @openapi
- * /api/{clientId}/workout-programs/{programId}:
+ * /api/workout/{clientId}/workout-programs/{programId}:
  *   put:
  *     tags: [Workout Programs]
  *     summary: Coach updates a client's workout program
@@ -189,18 +198,11 @@ r.post("/:clientId/workout-programs",authRequired,requireCoach,(req, res, next) 
  *       404:
  *         description: Workout program not found
  */
-r.put("/:clientId/workout-programs/:programId",authRequired,requireCoach,
-  (req, res, next) => {
-    req.body = {
-      ...req.body,
-      clientId: req.params.clientId,
-      coachId: req.user.id,
-    }; next();},
-  forward(BASE, "/internal/workout/programs/:programId"));
+r.put("/:clientId/workout-programs/:programId",authRequired,requireCoach,forward(BASE, "/internal/workout/programs/:programId"));
 
 /**
  * @openapi
- * /api/{clientId}/workout-programs/{programId}:
+ * /api/workout/{clientId}/workout-programs/{programId}:
  *   delete:
  *     tags: [Workout Programs]
  *     summary: Coach deletes a workout program
