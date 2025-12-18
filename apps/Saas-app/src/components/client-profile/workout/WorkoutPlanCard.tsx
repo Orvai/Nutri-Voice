@@ -1,11 +1,11 @@
 // apps/Saas-app/src/components/client-profile/workout/WorkoutPlanCard.tsx
 
-import { useMemo, useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import React, { useMemo, useState } from "react";
+import { View, Text, Pressable, TextInput } from "react-native";
 
-import type { UIWorkoutProgram } 
+import type { UIWorkoutProgram }
   from "../../../types/ui/workout/workoutProgram.ui";
-import type { UIExercise } 
+import type { UIExercise }
   from "../../../types/ui/workout/exercise.ui";
 
 import WorkoutCategory from "./WorkoutCategory";
@@ -14,14 +14,20 @@ import AddExerciseModal from "./AddExerciseModal";
 type Props = {
   plan: UIWorkoutProgram;
   allExercises: UIExercise[];
+
   onAddExercise: (
     exercise: UIExercise,
-    orderHint?: number
+    orderHint?: number,
+    meta?: { sets: number; reps: string }
   ) => void | Promise<void>;
+
   onRemoveExercise: (
     workoutExerciseId: string
   ) => void | Promise<void>;
+
   onDelete: () => void | Promise<void>;
+
+  onUpdateNotes?: (notes: string) => void | Promise<void>;
 };
 
 type CategoryExercise = {
@@ -39,6 +45,7 @@ export default function WorkoutPlanCard({
   onAddExercise,
   onRemoveExercise,
   onDelete,
+  onUpdateNotes,
 }: Props) {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null);
@@ -75,19 +82,6 @@ export default function WorkoutPlanCard({
     }));
   }, [plan.exercises]);
 
-  const handleOpenAddForMuscle = (muscle: string | null) => {
-    setSelectedMuscle(muscle);
-    setAddModalOpen(true);
-  };
-
-  const handleSelectExercise = async (exercise: UIExercise) => {
-    const maxOrder = plan.exercises.reduce(
-      (acc, ex) => Math.max(acc, ex.order),
-      0
-    );
-    await onAddExercise(exercise, maxOrder);
-  };
-
   return (
     <View
       style={{
@@ -104,6 +98,7 @@ export default function WorkoutPlanCard({
         elevation: 2,
       }}
     >
+      {/* Header */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -153,25 +148,41 @@ export default function WorkoutPlanCard({
         </View>
       </View>
 
-      <ScrollView
-        style={{ maxHeight: 420 }}
-        contentContainerStyle={{ paddingBottom: 8 }}
-      >
-        {categories.map((cat) => (
-          <WorkoutCategory
-            key={cat.muscle}
-            group={cat.muscle}
-            exercises={cat.exercises}
-            onAdd={() =>
-              handleOpenAddForMuscle(
-                cat.muscle === "ללא שיוך שריר" ? null : cat.muscle
-              )
-            }
-            onRemove={(id) => onRemoveExercise(id)}
-          />
-        ))}
-      </ScrollView>
+      {/* Notes */}
+      <TextInput
+        value={plan.notes ?? ""}
+        onChangeText={(t) => onUpdateNotes?.(t)}
+        placeholder="הערות לתוכנית אימון"
+        multiline
+        style={{
+          borderWidth: 1,
+          borderColor: "#e5e7eb",
+          borderRadius: 14,
+          padding: 12,
+          backgroundColor: "#ffffff",
+          textAlign: "right",
+          marginBottom: 12,
+          minHeight: 46,
+        }}
+      />
 
+      {/* Categories – ADD BUTTON WORKS */}
+      {categories.map((cat) => (
+        <WorkoutCategory
+          key={cat.muscle}
+          group={cat.muscle}
+          exercises={cat.exercises}
+          onAdd={() => {
+            setSelectedMuscle(
+              cat.muscle === "ללא שיוך שריר" ? null : cat.muscle
+            );
+            setAddModalOpen(true);
+          }}
+          onRemove={(id) => onRemoveExercise(id)}
+        />
+      ))}
+
+      {/* Footer */}
       <View
         style={{
           flexDirection: "row-reverse",
@@ -180,20 +191,7 @@ export default function WorkoutPlanCard({
           marginTop: 12,
         }}
       >
-        <Pressable
-          onPress={() => handleOpenAddForMuscle(null)}
-          style={{
-            paddingVertical: 8,
-            paddingHorizontal: 14,
-            borderRadius: 999,
-            backgroundColor: "#eff6ff",
-          }}
-        >
-          <Text style={{ color: "#2563eb", fontWeight: "700", fontSize: 13 }}>
-            + הוסף תרגיל
-          </Text>
-        </Pressable>
-
+        <View />
         <Pressable onPress={onDelete}>
           <Text style={{ color: "#dc2626", fontSize: 13, fontWeight: "600" }}>
             מחק תוכנית
@@ -201,12 +199,25 @@ export default function WorkoutPlanCard({
         </Pressable>
       </View>
 
+      {/* Add Exercise Modal – CONNECTED */}
       <AddExerciseModal
         visible={addModalOpen}
-        onClose={() => setAddModalOpen(false)}
         exercises={allExercises}
         muscleGroup={selectedMuscle ?? undefined}
-        onSelect={handleSelectExercise}
+        onClose={() => {
+          setAddModalOpen(false);
+          setSelectedMuscle(null);
+        }}
+        onSelect={(exercise, meta) => {
+          const maxOrder = plan.exercises.reduce(
+            (acc, ex) => Math.max(acc, ex.order),
+            0
+          );
+
+          onAddExercise(exercise, maxOrder, meta);
+          setAddModalOpen(false);
+          setSelectedMuscle(null);
+        }}
       />
     </View>
   );

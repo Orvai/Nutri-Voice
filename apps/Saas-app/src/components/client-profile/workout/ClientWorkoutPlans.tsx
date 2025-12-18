@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, ActivityIndicator, Pressable } from "react-native";
 
 import WorkoutPlansList from "./WorkoutPlansList";
@@ -46,7 +46,7 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
   } = useExercises();
 
   /* =========================
-     Mutations 
+     Mutations
   ========================= */
 
   const createProgramMutation = useCreateWorkoutProgram(clientId);
@@ -90,9 +90,11 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
   const handleAddExercise = async (
     programId: string,
     exercise: UIExercise,
-    orderHint?: number
+    orderHint?: number,
+    meta?: { sets: number; reps: string }
   ) => {
-    const order  = (orderHint ?? 0) ;
+    const maxOrder = orderHint ?? 0;
+    const order = maxOrder + 1;
 
     await updateProgramMutation.mutateAsync({
       programId,
@@ -100,8 +102,8 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
         exercisesToAdd: [
           {
             exerciseId: exercise.id,
-            sets: 3,
-            reps: "10",
+            sets: meta?.sets ?? 3,
+            reps: meta?.reps ?? "10",
             order,
           },
         ],
@@ -109,7 +111,10 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
     });
   };
 
-  const handleRemoveExercise = async (programId: string, workoutExerciseId: string) => {
+  const handleRemoveExercise = async (
+    programId: string,
+    workoutExerciseId: string
+  ) => {
     await updateProgramMutation.mutateAsync({
       programId,
       dto: {
@@ -120,8 +125,18 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
 
   const handleDeleteProgram = async (programId: string) => {
     await deleteProgramMutation.mutateAsync(programId);
-
     setActiveProgramId((prev) => (prev === programId ? null : prev));
+  };
+
+  const handleUpdateProgramNotes = async (programId: string, notes: string) => {
+    // ⚠️ זה מניח שה-DTO של update תומך בשדה notes ברמת program
+    // אם השרת עדיין לא תומך – ה-TS יעבור, אבל השרת יחזיר 400/500 עד שתוסיף שדה.
+    await updateProgramMutation.mutateAsync({
+      programId,
+      dto: {
+        notes,
+      } as any,
+    });
   };
 
   /* =========================
@@ -184,6 +199,7 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
       onAddExercise={handleAddExercise}
       onRemoveExercise={handleRemoveExercise}
       onDeleteProgram={handleDeleteProgram}
+      onUpdateProgramNotes={handleUpdateProgramNotes}
     />
   );
 }

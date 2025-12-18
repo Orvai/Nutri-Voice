@@ -17,6 +17,7 @@ export interface UIWorkoutExercise {
     clientId: string;
     coachId: string;
     templateId?: string | null;
+    notes?: string | null;
     exercises: UIWorkoutExercise[];
     createdAt: string;
     updatedAt: string;

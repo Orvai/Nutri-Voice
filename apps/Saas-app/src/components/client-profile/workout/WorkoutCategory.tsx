@@ -1,5 +1,4 @@
-// apps/Saas-app/src/components/client-profile/workout/WorkoutCategory.tsx
-
+import React from "react";
 import { View, Text, Pressable } from "react-native";
 import WorkoutExerciseItem from "./WorkoutExerciseItem";
 
@@ -15,7 +14,7 @@ type ExerciseViewModel = {
 type Props = {
   group: string;
   exercises: ExerciseViewModel[];
-  onAdd: () => void;
+  onAdd?: () => void;          // אם קיים → יש כפתור
   onRemove: (id: string) => void;
 };
 
@@ -57,26 +56,28 @@ export default function WorkoutCategory({
           {group}
         </Text>
 
-        <Pressable
-          onPress={onAdd}
-          style={{
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 999,
-            backgroundColor: "#eff6ff",
-          }}
-        >
-          <Text
+        {onAdd ? (
+          <Pressable
+            onPress={onAdd}
             style={{
-              color: "#2563eb",
-              fontSize: 12,
-              fontWeight: "600",
-              textAlign: "center",
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 999,
+              backgroundColor: "#eff6ff",
             }}
           >
-            + הוסף תרגיל
-          </Text>
-        </Pressable>
+            <Text
+              style={{
+                color: "#2563eb",
+                fontSize: 12,
+                fontWeight: "600",
+                textAlign: "center",
+              }}
+            >
+              + הוסף תרגיל
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
 
       {isEmptyCategory ? (

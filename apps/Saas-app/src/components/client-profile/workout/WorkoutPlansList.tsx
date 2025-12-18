@@ -1,6 +1,6 @@
 // apps/Saas-app/src/components/client-profile/workout/WorkoutPlansList.tsx
 
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,11 +10,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import type { UIWorkoutProgram } 
+import type { UIWorkoutProgram }
   from "../../../types/ui/workout/workoutProgram.ui";
-import type { UIWorkoutTemplate } 
+import type { UIWorkoutTemplate }
   from "../../../types/ui/workout/workoutTemplate.ui";
-import type { UIExercise } 
+import type { UIExercise }
   from "../../../types/ui/workout/exercise.ui";
 
 import WorkoutPlanCard from "./WorkoutPlanCard";
@@ -35,14 +35,19 @@ type Props = {
   onAddExercise: (
     programId: string,
     exercise: UIExercise,
-    orderHint?: number
+    orderHint?: number,
+    meta?: { sets: number; reps: string }
   ) => void | Promise<void>;
+
   onRemoveExercise: (
     programId: string,
     workoutExerciseId: string
   ) => void | Promise<void>;
 
   onDeleteProgram: (programId: string) => void | Promise<void>;
+
+  // Notes
+  onUpdateProgramNotes?: (programId: string, notes: string) => void | Promise<void>;
 };
 
 export default function WorkoutPlansList({
@@ -58,6 +63,7 @@ export default function WorkoutPlansList({
   onAddExercise,
   onRemoveExercise,
   onDeleteProgram,
+  onUpdateProgramNotes,
 }: Props) {
   const [templatesModalOpen, setTemplatesModalOpen] = useState(false);
 
@@ -179,17 +185,20 @@ export default function WorkoutPlansList({
       {!plans.length ? (
         renderEmptyState()
       ) : activePlan ? (
-        <WorkoutPlanCard
-          plan={activePlan}
-          allExercises={allExercises}
-          onAddExercise={(exercise, orderHint) =>
-            onAddExercise(activePlan.id, exercise, orderHint)
-          }
-          onRemoveExercise={(workoutExerciseId) =>
-            onRemoveExercise(activePlan.id, workoutExerciseId)
-          }
-          onDelete={() => onDeleteProgram(activePlan.id)}
-        />
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          <WorkoutPlanCard
+            plan={activePlan}
+            allExercises={allExercises}
+            onAddExercise={(exercise, orderHint, meta) =>
+              onAddExercise(activePlan.id, exercise, orderHint, meta)
+            }
+            onRemoveExercise={(workoutExerciseId) =>
+              onRemoveExercise(activePlan.id, workoutExerciseId)
+            }
+            onDelete={() => onDeleteProgram(activePlan.id)}
+            onUpdateNotes={(notes) => onUpdateProgramNotes?.(activePlan.id, notes)}
+          />
+        </ScrollView>
       ) : null}
 
       <Modal
@@ -239,9 +248,7 @@ export default function WorkoutPlansList({
               <ActivityIndicator />
             </View>
           ) : (
-            <ScrollView
-              contentContainerStyle={{ paddingBottom: 40, gap: 12 }}
-            >
+            <ScrollView contentContainerStyle={{ paddingBottom: 40, gap: 12 }}>
               {templates.map((template) => (
                 <WorkoutTemplateCard
                   key={template.id}
@@ -253,9 +260,7 @@ export default function WorkoutPlansList({
                 />
               ))}
 
-              {!templatesLoading &&
-              templates.length === 0 &&
-              !templatesError ? (
+              {!templatesLoading && templates.length === 0 && !templatesError ? (
                 <View style={{ paddingVertical: 20 }}>
                   <Text style={{ textAlign: "right", color: "#6b7280" }}>
                     אין תבניות זמינות.
