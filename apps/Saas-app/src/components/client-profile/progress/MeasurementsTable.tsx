@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./MeasurementsTable.styles";
+import { styles } from "./styles/MeasurementsTable.styles";
 
 export default function MeasurementsTable() {
   const { data } = useClientProgress();

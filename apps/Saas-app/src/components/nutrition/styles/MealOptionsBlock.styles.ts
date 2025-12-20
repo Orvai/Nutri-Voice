@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -12,8 +13,8 @@ export const styles = StyleSheet.create({
     backgroundColor: "#eef2ff",
   },
   containerInactive: {
-    borderColor: "#e5e7eb",
-    backgroundColor: "#fff",
+    borderColor: colors.neutral200,
+    backgroundColor: colors.white,
   },
   header: {
     flexDirection: "row-reverse",
@@ -33,7 +34,7 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   addButtonText: {
-    color: "#2563eb",
+    color: colors.primary,
     fontSize: 13,
   },
 });

@@ -7,15 +7,20 @@ type AxiosConfig = Parameters<typeof axios.request>[0] & {
 export const customFetcher = async <TData>(
   config: AxiosConfig
 ): Promise<TData> => {
+  const { signal, ...rest } = config;
+
   const response = await axios.request({
     baseURL: process.env.EXPO_PUBLIC_API_URL,
     withCredentials: true,
-    ...config,
+
+    ...(signal && typeof signal.addEventListener === "function"
+      ? { signal }
+      : {}),
+
+    ...rest,
   });
-// NOTE:
-// Gateway always returns { data: T }
-// We unwrap it here so the SDK returns T directly.
-// DO NOT unwrap in hooks or UI.
+
+  // unwrap gateway { data: T }
   if (
     response.data &&
     typeof response.data === "object" &&

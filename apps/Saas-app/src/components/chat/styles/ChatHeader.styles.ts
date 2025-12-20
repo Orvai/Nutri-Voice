@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
     height: 70,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: colors.neutral200,
     flexDirection: "row-reverse",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -27,6 +28,6 @@ export const styles = StyleSheet.create({
   },
   status: {
     fontSize: 12,
-    color: "#16a34a",
+    color: colors.success,
   },
 });

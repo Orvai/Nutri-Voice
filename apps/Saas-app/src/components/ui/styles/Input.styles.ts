@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.neutral200,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     textAlign: "right",
   },
 });

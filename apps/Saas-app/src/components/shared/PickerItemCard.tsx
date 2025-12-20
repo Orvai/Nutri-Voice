@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
-import { styles } from "./styles/PickerItemCard.style";
+import { styles } from "./styles/PickerItemCard.styles";
 
 export type PickerItemCardProps = {
   title: string;

@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flexDirection: "row-reverse",
     borderBottomWidth: 1,
-    borderColor: "#e5e7eb",
-    backgroundColor: "#fff",
+    borderColor: colors.neutral200,
+    backgroundColor: colors.white,
     paddingHorizontal: 20,
   },
   tab: {
@@ -14,16 +15,16 @@ export const styles = StyleSheet.create({
   },
   tabActive: {
     borderBottomWidth: 2,
-    borderColor: "#2563eb",
+    borderColor: colors.primary,
   },
   labelActive: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#2563eb",
+    color: colors.primary,
   },
   labelInactive: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#6b7280",
+    color: colors.neutral500,
   },
 });

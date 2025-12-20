@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: colors.neutral200,
   },
   header: {
     flexDirection: "row-reverse",
@@ -59,9 +60,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 6,
     fontWeight: "600",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: colors.neutral300,
   },
   caloriesUnit: {
     fontWeight: "600",
@@ -93,7 +94,7 @@ export const styles = StyleSheet.create({
   },
   modalInput: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: colors.neutral300,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,

@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -20,11 +21,11 @@ export const styles = StyleSheet.create({
   buttonInactive: {
     backgroundColor: "transparent",
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: colors.neutral200,
   },
   text: {
     fontWeight: "500",
-    color: "#6b7280",
+    color: colors.neutral500,
   },
   textActive: {
     fontWeight: "700",
@@ -32,6 +33,6 @@ export const styles = StyleSheet.create({
   },
   textInactive: {
     fontWeight: "500",
-    color: "#6b7280",
+    color: colors.neutral500,
   },
 });

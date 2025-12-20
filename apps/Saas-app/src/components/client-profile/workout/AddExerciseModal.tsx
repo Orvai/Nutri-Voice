@@ -13,7 +13,7 @@ import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
 import WorkoutSearchBar from "../../workout/WorkoutSearchBar";
 import WorkoutFilters from "../../workout/WorkoutFilters";
 import WorkoutExerciseGrid from "../../workout/WorkoutExerciseGrid";
-import { styles } from "../styles/AddExerciseModal.styles";
+import { styles } from "./styles/AddExerciseModal.styles";
 
 const MUSCLE_MAP: Record<string, string> = {
   חזה: "CHEST",
@@ -161,7 +161,7 @@ export default function AddExerciseModal({
           </View>
         ) : (
           <>
-            <WorkoutSearchBar query={query} onChange={setQuery} />
+            <WorkoutSearchBar value={query} onChange={setQuery}placeholder="חפש תרגיל" />
 
             <WorkoutFilters
               selectedMuscle={selectedMuscle}

@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -30,7 +31,7 @@ export const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 11,
-    color: "#6b7280",
+    color: colors.neutral500,
     marginTop: 6,
   },
 });

@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -11,19 +12,19 @@ export const styles = StyleSheet.create({
     maxWidth: "75%",
   },
   messageContainer: {
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     padding: 14,
     borderRadius: 16,
     borderTopLeftRadius: 0,
   },
   text: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 15,
     lineHeight: 22,
   },
   timeText: {
     fontSize: 11,
-    color: "#6b7280",
+    color: colors.neutral500,
     marginTop: 6,
     textAlign: "left",
   },

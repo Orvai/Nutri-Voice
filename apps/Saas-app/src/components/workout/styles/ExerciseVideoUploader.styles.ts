@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -27,7 +28,7 @@ export const styles = StyleSheet.create({
   },
 
   uploadText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "800",
   },
 });

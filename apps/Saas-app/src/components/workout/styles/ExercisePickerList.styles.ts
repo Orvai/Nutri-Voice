@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   list: {
@@ -47,6 +48,6 @@ export const styles = StyleSheet.create({
   skeleton: {
     height: 64,
     borderRadius: 12,
-    backgroundColor: "#e5e7eb",
+    backgroundColor: colors.neutral200,
   },
 });

@@ -1,7 +1,7 @@
 import { View, Text, Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./WeightTrendChart.styles";
+import { styles } from "./styles/WeightTrendChart.styles";
 
 export default function WeightTrendChart() {
   const { data } = useClientProgress();

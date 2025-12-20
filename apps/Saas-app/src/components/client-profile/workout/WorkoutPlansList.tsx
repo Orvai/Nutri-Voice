@@ -14,7 +14,7 @@ import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
 
 import WorkoutPlanCard from "./WorkoutPlanCard";
 import WorkoutTemplateCard from "../../workout/WorkoutTemplateCard";
-import { styles } from "../styles/WorkoutPlansList.styles";
+import { styles } from "./styles/WorkoutPlansList.styles";
 
 type Props = {
   plans: UIWorkoutProgram[];

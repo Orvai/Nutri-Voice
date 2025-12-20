@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -28,7 +29,7 @@ export const styles = StyleSheet.create({
     paddingLeft: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: colors.neutral200,
     fontSize: 16,
   },
   errorText: {
@@ -40,7 +41,7 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
   },
   forgotPasswordText: {
-    color: "#2563eb",
+    color: colors.primary,
     textAlign: "left",
   },
   submitButton: {
@@ -49,7 +50,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitButtonText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "700",
     fontSize: 16,
   },

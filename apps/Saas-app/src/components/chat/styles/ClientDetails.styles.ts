@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
     width: 300,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRightWidth: 1,
-    borderRightColor: "#e5e7eb",
+    borderRightColor: colors.neutral200,
     padding: 20,
     flexDirection: "column",
     gap: 20,
@@ -27,7 +28,7 @@ export const styles = StyleSheet.create({
   },
   status: {
     fontSize: 13,
-    color: "#6b7280",
+    color: colors.neutral500,
     textAlign: "right",
   },
   infoList: {
@@ -38,12 +39,12 @@ export const styles = StyleSheet.create({
   },
   button: {
     marginTop: 20,
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     borderRadius: 10,
   },
   buttonText: {
-    color: "#fff",
+    color: colors.white,
     textAlign: "center",
     fontWeight: "700",
   },

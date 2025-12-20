@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -14,7 +15,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     padding: 10,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     textAlign: "right",
   },
 
@@ -53,13 +54,13 @@ export const styles = StyleSheet.create({
   },
 
   primaryText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "800",
   },
 
   secondaryBtn: {
     flex: 1,
-    backgroundColor: "#e5e7eb",
+    backgroundColor: colors.neutral200,
     padding: 12,
     borderRadius: 12,
     alignItems: "center",

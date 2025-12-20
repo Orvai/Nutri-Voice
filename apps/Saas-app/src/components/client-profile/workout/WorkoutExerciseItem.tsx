@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from "react-native";
-import { styles } from "../styles/WorkoutExerciseItem.styles";
+import { styles } from "./styles/WorkoutExerciseItem.styles";
 
 export default function WorkoutExerciseItem({ exercise, onRemove }) {
   return (

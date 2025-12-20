@@ -1,7 +1,7 @@
 import { View, Text, Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./BodyCompositionChart.styles";
+import { styles } from "./styles/BodyCompositionChart.styles";
 
 export default function BodyCompositionChart() {
   const { data } = useClientProgress();

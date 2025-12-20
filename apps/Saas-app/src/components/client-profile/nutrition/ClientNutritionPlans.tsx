@@ -17,7 +17,7 @@ import {
 } from "../../../hooks/nutrition/useClientMenus";
 
 import { useTemplateMenus } from "../../../hooks/nutrition/useTemplateMenus";
-import { styles } from "../styles/ClientNutritionPlans.styles";
+import { styles } from "./styles/ClientNutritionPlans.styles";
 
 type Props = {
   clientId: string;

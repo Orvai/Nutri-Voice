@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   card: {
@@ -29,11 +30,11 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 12,
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
   },
 
   videoBtnText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "800",
     fontSize: 13,
   },

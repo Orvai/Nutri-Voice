@@ -1,5 +1,5 @@
 import { View, Text, Image, Pressable } from "react-native";
-import { styles } from "../styles/TodayMessages.styles";
+import { styles } from "./styles/TodayMessages.styles";
 
 export default function TodayMessages({ messages }) {
   return (

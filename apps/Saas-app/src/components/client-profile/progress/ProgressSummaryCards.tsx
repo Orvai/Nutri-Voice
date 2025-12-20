@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./ProgressSummaryCards.styles";
+import { styles } from "./styles/ProgressSummaryCards.styles";
 
 export default function ProgressSummaryCards() {
   const { data } = useClientProgress();

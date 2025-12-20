@@ -13,7 +13,7 @@ import { useExercises } from "@/hooks/workout/exercise/useExercises";
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
 
-import { styles } from "../styles/ClientWorkoutPlans.styles";
+import { styles } from "./styles/ClientWorkoutPlans.styles";
 
 type Props = {
   clientId: string;

@@ -1,17 +1,18 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
+    borderTopColor: colors.neutral200,
     flexDirection: "row-reverse",
     gap: 10,
   },
   button: {
     padding: 12,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: colors.neutral100,
     borderRadius: 12,
   },
   row: {
@@ -25,7 +26,7 @@ export const styles = StyleSheet.create({
   },
   sendButton: {
     paddingHorizontal: 20,
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     borderRadius: 12,
     justifyContent: "center",
   },

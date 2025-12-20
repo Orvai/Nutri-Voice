@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import WorkoutExerciseItem from "./WorkoutExerciseItem";
-import { styles } from "../styles/WorkoutCategory.styles";
+import { styles } from "./styles/WorkoutCategory.styles";
 
 export default function WorkoutCategory({
   group,

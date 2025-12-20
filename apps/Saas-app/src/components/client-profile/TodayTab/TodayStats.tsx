@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "../styles/TodayStats.styles";
+import { styles } from "./styles/TodayStats.styles";
 
 export default function TodayStats({ stats }) {
   return (

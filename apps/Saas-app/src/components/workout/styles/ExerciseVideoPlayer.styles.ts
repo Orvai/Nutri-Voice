@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   overlay: {
@@ -40,7 +41,7 @@ export const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     borderRadius: 14,
     overflow: "hidden",
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
   },
 
   video: {

@@ -29,6 +29,7 @@ import type {
   ClientMenuCreateRequestDto,
   ClientMenuResponseDto,
   ClientMenuUpdateRequestDto,
+  ConversationDto,
   DaySelectionCreateRequestDto,
   DaySelectionResponseDto,
   DaySelectionTodayResponseDto,
@@ -46,6 +47,7 @@ import type {
   GetApiFood200,
   GetApiMealTemplates200,
   GetApiMealTemplatesId200,
+  IncomingWebhookMessageDto,
   LoginRequestDto,
   LoginResponseDto,
   LogoutResponseDto,
@@ -54,16 +56,20 @@ import type {
   MealLogResponseDto,
   MealTemplateCreateRequestDto,
   MealTemplateUpdateRequestDto,
+  MessageDto,
   MfaRegisterResponseDto,
   MfaVerifyRequestDto,
   MfaVerifyResponseDto,
+  PendingClientMessageResponseDto,
   PostApiExercisesIdVideoBody,
   PostApiMealTemplates201,
+  PostApiMessagesIdHandledBody,
   PostApiWorkoutClientIdWorkoutProgramsBody,
   PutApiMealTemplatesId200,
   RefreshTokenResponseDto,
   RegisterRequestDto,
   RegisterResponseDto,
+  SendCoachMessageRequestDto,
   TemplateMenuCreateRequestDto,
   TemplateMenuResponseDto,
   TemplateMenuUpdateRequestDto,
@@ -72,6 +78,7 @@ import type {
   UserResponseDto,
   VitaminCreateRequestDto,
   VitaminResponseDto,
+  WebhookOkResponseDto,
   WeightHistoryResponseDto,
   WeightLogCreateRequestDto,
   WeightLogResponseDto,
@@ -95,6 +102,575 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 
 
+/**
+ * @summary Get all conversations of the authenticated coach
+ */
+export const getApiConversations = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<ConversationDto[]>(
+      {url: `/api/conversations`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiConversationsQueryKey = () => {
+    return [
+    `/api/conversations`
+    ] as const;
+    }
+
+    
+export const getGetApiConversationsQueryOptions = <TData = Awaited<ReturnType<typeof getApiConversations>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversations>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiConversationsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiConversations>>> = ({ signal }) => getApiConversations(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiConversations>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiConversationsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiConversations>>>
+export type GetApiConversationsQueryError = unknown
+
+
+export function useGetApiConversations<TData = Awaited<ReturnType<typeof getApiConversations>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversations>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiConversations>>,
+          TError,
+          Awaited<ReturnType<typeof getApiConversations>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiConversations<TData = Awaited<ReturnType<typeof getApiConversations>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversations>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiConversations>>,
+          TError,
+          Awaited<ReturnType<typeof getApiConversations>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiConversations<TData = Awaited<ReturnType<typeof getApiConversations>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversations>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get all conversations of the authenticated coach
+ */
+
+export function useGetApiConversations<TData = Awaited<ReturnType<typeof getApiConversations>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversations>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiConversationsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Get single conversation
+ */
+export const getApiConversationsId = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<ConversationDto>(
+      {url: `/api/conversations/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiConversationsIdQueryKey = (id?: string,) => {
+    return [
+    `/api/conversations/${id}`
+    ] as const;
+    }
+
+    
+export const getGetApiConversationsIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiConversationsId>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiConversationsIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiConversationsId>>> = ({ signal }) => getApiConversationsId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiConversationsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiConversationsId>>>
+export type GetApiConversationsIdQueryError = void
+
+
+export function useGetApiConversationsId<TData = Awaited<ReturnType<typeof getApiConversationsId>>, TError = void>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiConversationsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiConversationsId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiConversationsId<TData = Awaited<ReturnType<typeof getApiConversationsId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiConversationsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiConversationsId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiConversationsId<TData = Awaited<ReturnType<typeof getApiConversationsId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get single conversation
+ */
+
+export function useGetApiConversationsId<TData = Awaited<ReturnType<typeof getApiConversationsId>>, TError = void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiConversationsIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Get pending client messages awaiting coach reply
+ */
+export const getApiInboxPending = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<PendingClientMessageResponseDto>(
+      {url: `/api/inbox/pending`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiInboxPendingQueryKey = () => {
+    return [
+    `/api/inbox/pending`
+    ] as const;
+    }
+
+    
+export const getGetApiInboxPendingQueryOptions = <TData = Awaited<ReturnType<typeof getApiInboxPending>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInboxPending>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiInboxPendingQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiInboxPending>>> = ({ signal }) => getApiInboxPending(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiInboxPending>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiInboxPendingQueryResult = NonNullable<Awaited<ReturnType<typeof getApiInboxPending>>>
+export type GetApiInboxPendingQueryError = unknown
+
+
+export function useGetApiInboxPending<TData = Awaited<ReturnType<typeof getApiInboxPending>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInboxPending>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiInboxPending>>,
+          TError,
+          Awaited<ReturnType<typeof getApiInboxPending>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiInboxPending<TData = Awaited<ReturnType<typeof getApiInboxPending>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInboxPending>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiInboxPending>>,
+          TError,
+          Awaited<ReturnType<typeof getApiInboxPending>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiInboxPending<TData = Awaited<ReturnType<typeof getApiInboxPending>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInboxPending>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get pending client messages awaiting coach reply
+ */
+
+export function useGetApiInboxPending<TData = Awaited<ReturnType<typeof getApiInboxPending>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInboxPending>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiInboxPendingQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Get messages in conversation
+ */
+export const getApiConversationsIdMessages = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<MessageDto[]>(
+      {url: `/api/conversations/${id}/messages`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiConversationsIdMessagesQueryKey = (id?: string,) => {
+    return [
+    `/api/conversations/${id}/messages`
+    ] as const;
+    }
+
+    
+export const getGetApiConversationsIdMessagesQueryOptions = <TData = Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError = unknown>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiConversationsIdMessagesQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiConversationsIdMessages>>> = ({ signal }) => getApiConversationsIdMessages(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiConversationsIdMessagesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiConversationsIdMessages>>>
+export type GetApiConversationsIdMessagesQueryError = unknown
+
+
+export function useGetApiConversationsIdMessages<TData = Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError = unknown>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiConversationsIdMessages>>,
+          TError,
+          Awaited<ReturnType<typeof getApiConversationsIdMessages>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiConversationsIdMessages<TData = Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError = unknown>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiConversationsIdMessages>>,
+          TError,
+          Awaited<ReturnType<typeof getApiConversationsIdMessages>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiConversationsIdMessages<TData = Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError = unknown>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get messages in conversation
+ */
+
+export function useGetApiConversationsIdMessages<TData = Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError = unknown>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiConversationsIdMessages>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiConversationsIdMessagesQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Coach sends a message
+ */
+export const postApiConversationsIdMessages = (
+    id: string,
+    sendCoachMessageRequestDto: SendCoachMessageRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<MessageDto>(
+      {url: `/api/conversations/${id}/messages`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: sendCoachMessageRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiConversationsIdMessagesMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiConversationsIdMessages>>, TError,{id: string;data: SendCoachMessageRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiConversationsIdMessages>>, TError,{id: string;data: SendCoachMessageRequestDto}, TContext> => {
+
+const mutationKey = ['postApiConversationsIdMessages'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiConversationsIdMessages>>, {id: string;data: SendCoachMessageRequestDto}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  postApiConversationsIdMessages(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiConversationsIdMessagesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiConversationsIdMessages>>>
+    export type PostApiConversationsIdMessagesMutationBody = SendCoachMessageRequestDto
+    export type PostApiConversationsIdMessagesMutationError = unknown
+
+    /**
+ * @summary Coach sends a message
+ */
+export const usePostApiConversationsIdMessages = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiConversationsIdMessages>>, TError,{id: string;data: SendCoachMessageRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiConversationsIdMessages>>,
+        TError,
+        {id: string;data: SendCoachMessageRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiConversationsIdMessagesMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Mark client message as handled
+ */
+export const postApiMessagesIdHandled = (
+    id: string,
+    postApiMessagesIdHandledBody: PostApiMessagesIdHandledBody,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<MessageDto>(
+      {url: `/api/messages/${id}/handled`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: postApiMessagesIdHandledBody, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiMessagesIdHandledMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMessagesIdHandled>>, TError,{id: string;data: PostApiMessagesIdHandledBody}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiMessagesIdHandled>>, TError,{id: string;data: PostApiMessagesIdHandledBody}, TContext> => {
+
+const mutationKey = ['postApiMessagesIdHandled'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMessagesIdHandled>>, {id: string;data: PostApiMessagesIdHandledBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  postApiMessagesIdHandled(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiMessagesIdHandledMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMessagesIdHandled>>>
+    export type PostApiMessagesIdHandledMutationBody = PostApiMessagesIdHandledBody
+    export type PostApiMessagesIdHandledMutationError = unknown
+
+    /**
+ * @summary Mark client message as handled
+ */
+export const usePostApiMessagesIdHandled = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMessagesIdHandled>>, TError,{id: string;data: PostApiMessagesIdHandledBody}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiMessagesIdHandled>>,
+        TError,
+        {id: string;data: PostApiMessagesIdHandledBody},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiMessagesIdHandledMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Incoming external message (Telegram / WhatsApp / App)
+ */
+export const postInternalWebhookIncoming = (
+    incomingWebhookMessageDto: IncomingWebhookMessageDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<WebhookOkResponseDto>(
+      {url: `/internal/webhook/incoming`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: incomingWebhookMessageDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostInternalWebhookIncomingMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext> => {
+
+const mutationKey = ['postInternalWebhookIncoming'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, {data: IncomingWebhookMessageDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postInternalWebhookIncoming(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostInternalWebhookIncomingMutationResult = NonNullable<Awaited<ReturnType<typeof postInternalWebhookIncoming>>>
+    export type PostInternalWebhookIncomingMutationBody = IncomingWebhookMessageDto
+    export type PostInternalWebhookIncomingMutationError = unknown
+
+    /**
+ * @summary Incoming external message (Telegram / WhatsApp / App)
+ */
+export const usePostInternalWebhookIncoming = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postInternalWebhookIncoming>>,
+        TError,
+        {data: IncomingWebhookMessageDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostInternalWebhookIncomingMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
 /**
  * @summary User login
  */

@@ -1,15 +1,16 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
     height: 70,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: colors.neutral200,
     flexDirection: "row-reverse",
     alignItems: "center",
     paddingHorizontal: 20,
-    justifyContent: "space-between", // 👈 זה המפתח!
+    justifyContent: "space-between", 
   },
   image: {
     width: 40,

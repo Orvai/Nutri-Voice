@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./WorkoutWeightsTable.styles";
+import { styles } from "./styles/WorkoutWeightsTable.styles";
 
 export default function WorkoutWeightsTable() {
   const { data } = useClientProgress();

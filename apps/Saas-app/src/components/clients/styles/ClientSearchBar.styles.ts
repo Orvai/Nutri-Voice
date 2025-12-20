@@ -1,14 +1,15 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flexDirection: "row-reverse",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: colors.neutral200,
     alignItems: "center",
     marginBottom: 12,
   },

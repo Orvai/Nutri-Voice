@@ -5,17 +5,17 @@ import { styles } from "./styles/WorkoutExerciseGrid.styles";
 
 type Props = {
   exercises: UIExercise[];
-  onSelect?: (exercise: UIExercise) => void;
+  onPress?: (exercise: UIExercise) => void;
 };
 
-export default function WorkoutExerciseGrid({ exercises, onSelect }: Props) {
+export default function WorkoutExerciseGrid({ exercises, onPress }: Props) {
   return (
     <View style={styles.grid}>
       {exercises.map((ex) => (
         <WorkoutExerciseCard
           key={ex.id}
           item={ex}
-          onPress={() => onSelect?.(ex)}
+          onPress={() => onPress?.(ex)}
         />
       ))}
     </View>

@@ -3,13 +3,16 @@ import * as Idm from "../dto/idm.dto.js";
 import * as Menu from "../dto/menu/index.js";
 import * as Tracking from "../dto/tracking.dto.js";
 import * as Workout from "../dto/workout.dto.js";
+import * as conversation from "../dto/conversation/index.js";
+
+
 
 function unwrap(zodSchema) {
   let current = zodSchema;
   let nullable = false;
   let optional = false;
 
-  while (current?._def?.type === "optional" || current?._def?.type === "nullable" || current?._def?.type === "nullish") {
+  while (current?._def?.type === "optional" || current?._def?.type === "nullable" || current?._def?.type === "nullish"||current?._def?.type === "default") {
     if (current._def.type === "optional" || current._def.type === "nullish") optional = true;
     if (current._def.type === "nullable" || current._def.type === "nullish") nullable = true;
 
@@ -105,6 +108,9 @@ const idmSchemas = extractSchemas(Idm);
 const menuSchemas = extractSchemas(Menu);
 const trackingSchemas = extractSchemas(Tracking);
 const workoutSchemas = extractSchemas(Workout);
+const conversationSchemas = extractSchemas(conversation);
+
+
 
 
 // ===== Combined registry (used by Swagger) =====
@@ -113,6 +119,7 @@ export const zodSchemas = {
   ...menuSchemas,
   ...trackingSchemas,
   ...workoutSchemas,
+  ...conversationSchemas,
 };
 console.log("[ZOD-SCHEMAS] Loaded schemas keys:", Object.keys(zodSchemas));
 console.log("[ZOD-SCHEMAS] Total schemas loaded:", Object.keys(zodSchemas).length);

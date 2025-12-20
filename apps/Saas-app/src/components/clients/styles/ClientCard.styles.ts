@@ -1,3 +1,4 @@
+import { colors } from "src/styles/colors";
 +40
 -0
 
@@ -5,7 +6,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 18,
     marginBottom: 14,
@@ -13,7 +14,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 16,
     borderWidth: 1,
-    shadowColor: "#000",
+    shadowColor: colors.black,
   },
   avatar: {
     width: 62,
@@ -26,18 +27,18 @@ export const styles = StyleSheet.create({
   name: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.neutral800,
     textAlign: "right",
   },
   phone: {
     fontSize: 13,
-    color: "#6b7280",
+    color: colors.neutral500,
     marginTop: 4,
     textAlign: "right",
   },
   viewText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#2563eb",
+    color: colors.primary,
   },
 });

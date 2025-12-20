@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -25,7 +26,7 @@ export const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: colors.neutral300,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -33,7 +34,7 @@ export const styles = StyleSheet.create({
   },
   message: {
     textAlign: "center",
-    color: "#6b7280",
+    color: colors.neutral500,
     padding: 10,
   },
 });

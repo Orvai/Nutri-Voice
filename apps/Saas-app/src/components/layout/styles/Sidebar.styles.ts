@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
     width: 240,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderLeftWidth: 1,
-    borderLeftColor: "#e5e7eb",
+    borderLeftColor: colors.neutral200,
     paddingTop: 40,
   },
   title: {
@@ -26,18 +27,18 @@ export const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   buttonActive: {
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
   },
   icon: {
     marginLeft: 12,
   },
   text: {
-    color: "#374151",
+    color: colors.neutral700,
     fontSize: 16,
     fontWeight: "500",
   },
   textActive: {
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "700",
   },
   logoutButton: {
@@ -46,14 +47,14 @@ export const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
+    borderTopColor: colors.neutral200,
     marginTop: "auto",
   },
   logoutIcon: {
     marginLeft: 12,
   },
   logoutText: {
-    color: "#dc2626",
+    color: colors.danger,
     fontSize: 16,
     fontWeight: "600",
   },

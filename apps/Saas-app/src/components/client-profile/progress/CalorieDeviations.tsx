@@ -1,7 +1,7 @@
 import { View, Text, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./CalorieDeviations.styles";
+import { styles } from "./styles/CalorieDeviations.styles";
 
 export default function CalorieDeviations() {
   const { data } = useClientProgress();

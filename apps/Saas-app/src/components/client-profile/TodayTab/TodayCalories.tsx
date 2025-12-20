@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { styles } from "../styles/TodayCalories.styles";
+import { styles } from "./styles/TodayCalories.styles";
 
 export default function TodayCalories({ data }) {
   return (

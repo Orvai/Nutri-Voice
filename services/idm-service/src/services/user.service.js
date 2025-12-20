@@ -121,4 +121,21 @@ const getUserByEmail = async (email) => {
     });
 };
 
-module.exports = { createUser, updateUser, getUser, getAllUsers, recordLogin, getUserByEmail };
+const findByPhone = async (phone) => {
+    return prisma.user.findFirst({
+      where: {
+        phone,
+        status: "active",
+      },
+      select: {
+        id: true,
+        role: true,
+        phone: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+    });
+  };
+
+module.exports = { createUser, updateUser, getUser, getAllUsers, recordLogin, getUserByEmail,findByPhone };

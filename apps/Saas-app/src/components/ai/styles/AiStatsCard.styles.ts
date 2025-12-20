@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: colors.neutral200,
     padding: 18,
     borderRadius: 18,
     marginBottom: 20,
@@ -17,7 +18,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
-    color: "#374151",
+    color: colors.neutral700,
   },
   valueContainer: {
     flexDirection: "row-reverse",

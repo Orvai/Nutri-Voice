@@ -7,6 +7,7 @@ import menuRoutes from "./routes/menu/index.js";
 import workoutRoutes from "./routes/workout/index.js";
 import trackingRoutes from "./routes/tracking/index.js";
 import idmGatewayRoutes from "./routes/idm/index.js";
+import conversationRoutes from"./routes/conversation/index.js"
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyJwt } from "./middleware/verifyJwt.js";
 
@@ -36,6 +37,9 @@ app.use("/api", menuRoutes);
 app.use("/api/workout", workoutRoutes);
 app.use("/api", idmGatewayRoutes);
 app.use("/api/tracking", trackingRoutes);
+app.use("/api", conversationRoutes);
+
+
 
 // Error handler
 app.use(errorHandler);

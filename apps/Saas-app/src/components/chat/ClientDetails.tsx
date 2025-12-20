@@ -1,34 +1,56 @@
 import { View, Text, Image } from "react-native";
 import { styles } from "./styles/ClientDetails.styles";
 
-export default function ClientDetails({ conversation }) {
-  if (!conversation) return null;
+import type { ClientExtended } from "@/types/client";
+
+interface Props {
+  client: ClientExtended | null;
+}
+
+
+export default function ClientDetails({ client }: Props) {
+  if (!client) return null;
+
+  const avatarSource = client?.profileImageUrl
+  ? { uri: client.profileImageUrl }
+  : {
+      uri:
+        "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg",
+    };
+
 
   return (
     <View style={styles.container}>
+      {/* Profile */}
       <View style={styles.profileRow}>
-        <Image source={{ uri: conversation.avatar }} style={styles.avatar} />
+        <Image source={avatarSource} style={styles.avatar} />
         <View>
-          <Text style={styles.name}>
-            {conversation.name}
-          </Text>
-          <Text style={styles.status}>
-            לקוח פעיל
-          </Text>
+          <Text style={styles.name}>{client.name}</Text>
         </View>
       </View>
 
+      {/* Info */}
       <View style={styles.infoList}>
-        <Text style={styles.infoText}>דוא״ל: example@gmail.com</Text>
-        <Text style={styles.infoText}>טלפון: 050-1234567</Text>
-        <Text style={styles.infoText}>משקל: 78 ק״ג</Text>
-        <Text style={styles.infoText}>יעד: ירידה במשקל</Text>
+        {client.email && (
+          <Text style={styles.infoText}>דוא״ל: {client.email}</Text>
+        )}
+
+        {client.phone && (
+          <Text style={styles.infoText}>טלפון: {client.phone}</Text>
+        )}
+
+        {client.weight && (
+          <Text style={styles.infoText}>משקל: {client.weight} ק״ג</Text>
+        )}
+
+        {client.goals && (
+          <Text style={styles.infoText}>יעד: {client.goals}</Text>
+        )}
       </View>
 
+      {/* Action */}
       <View style={styles.button}>
-        <Text style={styles.buttonText}>
-          צפה בפרופיל מלא
-        </Text>
+        <Text style={styles.buttonText}>צפה בפרופיל מלא</Text>
       </View>
     </View>
   );

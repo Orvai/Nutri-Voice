@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -24,21 +25,21 @@ export const styles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 13,
-    color: "#6b7280",
+    color: colors.neutral500,
     textAlign: "right",
     marginTop: 2,
   },
   badge: {
     minWidth: 24,
     height: 24,
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
   },
   badgeText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "700",
     fontSize: 12,
   },

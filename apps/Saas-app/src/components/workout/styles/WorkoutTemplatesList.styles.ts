@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-
+import { colors } from "src/styles/colors";
 export const styles = StyleSheet.create({
   container: {
     borderRadius: 20,
@@ -54,14 +54,14 @@ export const styles = StyleSheet.create({
   },
 
   primaryCta: {
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 999,
   },
 
   primaryCtaText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "700",
   },
 
@@ -88,19 +88,19 @@ export const styles = StyleSheet.create({
   },
 
   retryText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "700",
   },
 
   headerCta: {
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 999,
   },
 
   headerCtaText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "600",
   },
 });

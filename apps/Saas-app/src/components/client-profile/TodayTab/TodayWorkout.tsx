@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "../styles/TodayWorkout.styles";
+import { styles } from "./styles/TodayWorkout.styles";
 
 export default function TodayWorkout({ workout }) {
   return (

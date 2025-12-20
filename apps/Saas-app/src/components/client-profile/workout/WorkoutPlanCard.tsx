@@ -6,7 +6,7 @@ import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
 
 import WorkoutCategory from "./WorkoutCategory";
 import AddExerciseModal from "./AddExerciseModal";
-import { styles } from "../styles/WorkoutPlanCard.styles";
+import { styles } from "./styles/WorkoutPlanCard.styles";
 
 type Props = {
   plan: UIWorkoutProgram;

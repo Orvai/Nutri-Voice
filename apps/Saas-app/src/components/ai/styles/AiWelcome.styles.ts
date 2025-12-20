@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -18,11 +19,11 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.neutral800,
   },
   text: {
     fontSize: 14,
-    color: "#6b7280",
+    color: colors.neutral500,
     marginTop: 6,
     textAlign: "center",
   },

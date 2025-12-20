@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     padding: 20,
     borderBottomWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: colors.neutral200,
   },
   row: {
     flexDirection: "row-reverse",
@@ -30,20 +31,20 @@ export const styles = StyleSheet.create({
     fontWeight: "700",
   },
   muted: {
-    color: "#6b7280",
+    color: colors.neutral500,
     fontSize: 14,
   },
   action: {
     paddingHorizontal: 14,
     paddingVertical: 10,
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     borderRadius: 8,
     flexDirection: "row-reverse",
     alignItems: "center",
   },
   actionText: {
     fontSize: 14,
-    color: "#fff",
+    color: colors.white,
   },
   actionIcon: {
     marginLeft: 6,

@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./ProgressRangeSelector.styles";
+import { styles } from "./styles/ProgressRangeSelector.styles";
 
 export default function ProgressRangeSelector() {
   const { range, setRange } = useClientProgress();

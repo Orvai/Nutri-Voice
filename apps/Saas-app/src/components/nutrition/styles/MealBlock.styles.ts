@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: colors.neutral50,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: colors.neutral200,
     marginBottom: 20,
     padding: 16,
   },
@@ -20,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 13,
-    color: "#6b7280",
+    color: colors.neutral500,
   },
   row: {
     flexDirection: "row-reverse",
@@ -28,7 +29,7 @@ export const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: colors.neutral300,
     borderRadius: 10,
     paddingHorizontal: 8,
     minWidth: 90,
@@ -81,7 +82,7 @@ export const styles = StyleSheet.create({
   },
   modalInput: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: colors.neutral300,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,

@@ -24,7 +24,7 @@ r.post('/internal/users', verifyInternalToken, User.createUser);
 r.get('/internal/users', verifyInternalToken, User.listUsers);
 r.get('/internal/users/:userId', verifyInternalToken, User.getUser);
 r.patch('/internal/users/:userId', verifyInternalToken, User.updateUser);
-
+r.get("/internal/users/by-phone/:phone",verifyInternalToken,User.getUserByPhone);
 // ===== USER INFO INTERNAL =====
 r.put('/internal/users/:userId/info', verifyInternalToken, Info.upsertUserInformation);
 r.get('/internal/users/:userId/info', verifyInternalToken, Info.getUserInformation);

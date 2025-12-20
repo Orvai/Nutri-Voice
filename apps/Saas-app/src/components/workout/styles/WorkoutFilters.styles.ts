@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -28,6 +29,6 @@ export const styles = StyleSheet.create({
 
   countText: {
     fontSize: 12,
-    color: "#6b7280",
+    color: colors.neutral500,
   },
 });

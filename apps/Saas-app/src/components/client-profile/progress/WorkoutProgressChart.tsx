@@ -1,7 +1,7 @@
 import { View, Text, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import { useClientProgress } from "../../../hooks/useClientProgress";
-import { styles } from "./WorkoutProgressChart.styles";
+import { styles } from "./styles/WorkoutProgressChart.styles";
 
 export default function WorkoutProgressChart() {
   const { data } = useClientProgress();

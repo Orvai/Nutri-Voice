@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "../styles/TodayMeals.styles";
+import { styles } from "./styles/TodayMeals.styles";
 
 export default function TodayMeals({ meals }) {
   return (

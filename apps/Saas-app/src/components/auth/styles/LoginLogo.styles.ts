@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -9,7 +10,7 @@ export const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    backgroundColor: "#2563eb",
+    backgroundColor: colors.primary,
     borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",

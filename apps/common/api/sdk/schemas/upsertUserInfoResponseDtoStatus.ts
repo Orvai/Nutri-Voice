@@ -5,4 +5,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type UpsertUserInfoResponseDtoStatus = { [key: string]: unknown };
+export type UpsertUserInfoResponseDtoStatus = typeof UpsertUserInfoResponseDtoStatus[keyof typeof UpsertUserInfoResponseDtoStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const UpsertUserInfoResponseDtoStatus = {
+  active: 'active',
+  deleted: 'deleted',
+  archived: 'archived',
+} as const;
