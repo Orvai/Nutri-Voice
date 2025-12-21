@@ -188,6 +188,8 @@ const WorkoutProgramResponseDto = z.object({
   exercises: z.array(WorkoutExerciseResponseDto),
 });
 
+
+
 /* ======================================================
    EXPORT
 ====================================================== */

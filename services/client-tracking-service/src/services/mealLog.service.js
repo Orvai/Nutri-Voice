@@ -48,7 +48,16 @@ const listAllMeals = (clientId) => {
   });
 };
 
+const updateMeal = async (logId, payload) => {
+  const data = MealLogUpdateDto.parse(payload);
+
+  return prisma.mealLog.update({
+    where: { id: logId },
+    data
+  });
+};
+
 module.exports = {
   createMeal,
-  listAllMeals
+  listAllMeals,updateMeal
 };

@@ -3,16 +3,31 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const COACH_ID = "ba59ccee-bd43-4102-acb8-fd11184c2bad";
+const COACH_ID = "bae20c85-f3b3-44e8-a001-1d236347665d";
 
 const clients = [
-  "80d90a32-1bd0-407b-b4b6-400463dc341a",
-  "db803c75-7b4e-4c95-8b15-f59445e5632f",
-  "b9483c1f-f4f9-4cab-bbb9-100184053e70",
-  "64ab6529-94dd-4bd1-8554-eb19f9edec90",
-  "46eb16f4-a9d7-4c55-9bf6-bcd54f9a578e",
-  "dc9e3a95-4efa-43eb-891d-c8cdc45a3c60",
+  "5f4e6f52-8362-42d4-99e2-a3ff36296ddf", // אור ברוך
+  "820c12f3-e49c-4b1d-b1ac-7dec62b02fd6", // נועה חדד
+  "748a76d4-acd3-44f7-94b1-91ce0b0e3ffd", // אור לוי
+  "e69ab580-ae45-485a-965d-c54d8c7bb34e", // מאיה מזרחי
+  "2d2ac147-7a2d-4c0f-a655-89d3d9498082", // רוני פרץ
+  "92f874da-cd65-4648-800b-bab55a3c6561", // יוסי אלבז
+  "5afef180-5baf-4dce-b2b4-51097db344a5", // שון חדד
+  "8ac90701-8220-441a-ac6f-49effd171846", // אליעד וולף
+  "78d0b192-7579-4cf4-a625-fe6ebd4f5952", // דניאל מזרחי
+  "82d47527-4e9d-4d46-8746-c7f52787b053", // יואב ברוך
+  "a701dd31-04b9-478a-b926-f731e253d4e0", // תומר כהן
+  "d1e38e8b-6b23-4dc2-a1bf-aa199ea136e5", // לינוי ברוך
+  "dc868bad-9822-487f-99d7-1af4ea95ff33", // תומר פרץ
+  "5b39f47e-df9d-459d-965f-c169ac7f11aa", // מאיה מזרחי
+  "81d3ac72-2d04-412e-a6f8-5a641807f6db", // שיר ביטון
+  "cc4c4b83-2541-40f5-858e-e3f6ca7e2676", // ניצן כהן
+  "73e5f55e-fbcc-4073-8488-bb8af199953e", // יואב מזרחי
+  "a1930ec4-0f29-49ce-965d-4521e4ca83a4", // יוסי חדד
+  "c148d51a-9910-4c10-94c6-7fc5bd662e2d", // ניצן מלול
+  "9175d0c6-0abe-4782-bbce-d3dbcb6eff70", // יעל כהן
 ];
+
 
 const randomChannel = "TELEGRAM";
 

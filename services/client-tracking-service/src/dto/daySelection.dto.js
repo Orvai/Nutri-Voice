@@ -1,6 +1,6 @@
 const { z } = require('zod');
 
-const DayTypeEnum = z.enum(['LOW', 'HIGH', 'MEDIUM', 'REST']);
+const DayTypeEnum = z.enum(['TRAINING', 'REST']);
 
 const DaySelectionCreateDto = z.object({
   dayType: DayTypeEnum,

@@ -10,8 +10,6 @@ export type MealLogCreateRequestDtoDayType = typeof MealLogCreateRequestDtoDayTy
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MealLogCreateRequestDtoDayType = {
-  LOW: 'LOW',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
+  TRAINING: 'TRAINING',
   REST: 'REST',
 } as const;

@@ -53,7 +53,7 @@ const getUserByPhone = async (req, res, next) => {
       return res.status(400).json({ message: "phone is required" });
     }
 
-    const user = await UsersService.findByPhone(phone);
+    const user = await S.findByPhone(phone);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

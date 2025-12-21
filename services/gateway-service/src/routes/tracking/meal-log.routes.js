@@ -81,4 +81,41 @@ r.get(
   forward(BASE, "/internal/tracking/meal-log/history/:clientId")
 );
 
+/**
+ * @openapi
+ * /api/tracking/meal-log/{logId}:
+ *   put:
+ *     tags: [Tracking]
+ *     summary: Client updates a meal log
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: logId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/MealLogUpdateRequestDto"
+ *     responses:
+ *       200:
+ *         description: Meal updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/MealLogResponseDto"
+ *       401:
+ *         description: Unauthorized
+ */
+r.put(
+  "/tracking/meal-log/:logId",
+  authRequired,
+  ensureClientId,
+  forward(BASE, "/internal/tracking/meal-log/:logId")
+);
+
 export default r;

@@ -2,6 +2,8 @@
 
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
+const TELEGRAM_COACH_ID = "1689799000";
+const TELEGRAM_CLIENT_ID = "1689799745";
 
 const prisma = new PrismaClient();
 
@@ -18,7 +20,7 @@ async function main() {
     update: {},
     create: {
       email: "coach@test.com",
-      phone: "0500000000",
+      phone: TELEGRAM_COACH_ID,
       firstName: "אורגד",
       lastName: "וייצמן",
       role: "coach",
@@ -97,7 +99,9 @@ async function main() {
       lastNames[Math.floor(Math.random() * lastNames.length)];
 
     const email = `client${i}@test.com`;
-    const phone = `050${Math.floor(1000000 + Math.random() * 9000000)}`;
+    const phone = i === 1
+      ? TELEGRAM_CLIENT_ID
+      : `050${Math.floor(1000000 + Math.random() * 9000000)}`;
     const gender = Math.random() > 0.5 ? "male" : "female";
     const avatar = `https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-${((i % 6) + 1)}.jpg`;
 

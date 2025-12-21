@@ -4,7 +4,7 @@ const { z } = require("zod");
    DAY SELECTION
 ============================================ */
 
-const DayTypeEnum = z.enum(["LOW", "HIGH", "MEDIUM", "REST"]);
+const DayTypeEnum = z.enum(['TRAINING', 'REST']);
 
 const DaySelectionCreateRequestDto = z.object({
   dayType: DayTypeEnum,
@@ -42,7 +42,7 @@ const MealLogResponseDto = z.object({
     id: z.string(),
     clientId: z.string(),
     date: z.string().datetime(),
-    dayType: z.enum(["LOW", "HIGH", "MEDIUM", "REST"]),
+    dayType:DayTypeEnum,
     calories: z.number(),
     protein: z.number(),
     carbs: z.number(),
@@ -51,6 +51,16 @@ const MealLogResponseDto = z.object({
     matchedMenuItemId: z.string().nullable(),
     loggedAt: z.string().datetime().optional(),
   }),
+});
+
+const MealLogUpdateRequestDto = z.object({
+  calories: z.number().int().optional(),
+  protein: z.number().int().optional(),
+  carbs: z.number().int().optional(),
+  fat: z.number().int().optional(),
+  description: z.string().optional(),
+  matchedMenuItemId: z.string().nullable().optional(),
+  dayType: DayTypeEnum.optional(),
 });
 
 
@@ -132,6 +142,10 @@ const WeightLogResponseDto = z.object({
     notes: z.string().nullable(),
   }),
 });
+const WeightLogUpdateRequestDto = z.object({
+  weightKg: z.number().optional(),
+  notes: z.string().nullable().optional(),
+});
 
 
 /* ============================================
@@ -154,6 +168,38 @@ const DaySelectionTodayResponseDto = z.object({
   data: DaySelectionResponseDto.shape.data,
 });
 
+/* ============================================
+   DAILY STATE
+============================================ */
+
+/**
+ * Calorie targets per day type
+ */
+const CalorieTargetsDto = z.object({
+  trainingDay: z.number().int().nullable(),
+  restDay: z.number().int().nullable(),
+});
+
+/**
+ * Daily aggregated tracking state
+ */
+const DailyStateResponseDto = z.object({
+  data: z.object({
+    dayType: DayTypeEnum.nullable(),
+
+    calorieTargets: CalorieTargetsDto,
+
+    activeCaloriesAllowed: z.number().int().nullable(),
+    consumedCalories: z.number().int(),
+    remainingCalories: z.number().int().nullable(),
+
+    meals: z.array(MealLogResponseDto.shape.data),
+    workouts: z.array(WorkoutLogResponseDto.shape.data),
+    weight: WeightLogResponseDto.shape.data.nullable(),
+  }),
+});
+
+
 
 /* ============================================
    EXPORT
@@ -166,6 +212,7 @@ module.exports = {
 
   MealLogCreateRequestDto,
   MealLogResponseDto,
+  MealLogUpdateRequestDto,
 
   WorkoutLogCreateRequestDto,
   WorkoutLogUpdateRequestDto,
@@ -174,9 +221,12 @@ module.exports = {
 
   WeightLogCreateRequestDto,
   WeightLogResponseDto,
+  WeightLogUpdateRequestDto,
 
   MealLogHistoryResponseDto,
   WorkoutLogHistoryResponseDto,
   WeightHistoryResponseDto,
   DaySelectionTodayResponseDto,
+
+  DailyStateResponseDto,
 };

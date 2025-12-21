@@ -15,7 +15,12 @@ const WeightLogResponseDto = z.object({
   loggedAt: z.string().datetime().optional()
 }).strict();
 
+const WeightLogUpdateDto = z.object({
+  weightKg: z.number().optional(),
+  notes: z.string().nullable().optional()
+}).strict();
+
 const WeightHistoryResponseDto = z.array(WeightLogResponseDto);
 
 
-module.exports = { WeightLogCreateDto,WeightLogResponseDto,WeightHistoryResponseDto };
+module.exports = { WeightLogCreateDto,WeightLogResponseDto,WeightHistoryResponseDto,WeightLogUpdateDto };

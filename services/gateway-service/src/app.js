@@ -10,6 +10,8 @@ import idmGatewayRoutes from "./routes/idm/index.js";
 import conversationRoutes from"./routes/conversation/index.js"
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyJwt } from "./middleware/verifyJwt.js";
+import webhookRoutes from "./routes/conversation/webhook.routes.js";
+
 
 const app = express();
 
@@ -23,6 +25,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/api/webhook", webhookRoutes);
 
 app.use(verifyJwt);
 

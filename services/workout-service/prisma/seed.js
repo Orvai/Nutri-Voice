@@ -2,9 +2,8 @@ const { PrismaClient, MuscleGroup, WorkoutType, Gender, BodyType } = require("@p
 
 const prisma = new PrismaClient();
 
-const COACH_ID = "ba59ccee-bd43-4102-acb8-fd11184c2bad";
+const COACH_ID = "bae20c85-f3b3-44e8-a001-1d236347665d";
 
-// סרטונים לדוגמה (פלייסהולדרים/יוטיוב/דמואים)
 const VIDEO_URLS = [
   "https://cdn.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
   "https://assets.server.com/videos/pushup-demo.mp4",
@@ -16,7 +15,6 @@ const VIDEO_URLS = [
   "https://assets.server.com/videos/tricep-extension.mp4",
 ];
 
-// פונקציה לבחירת וידיאו רנדומלי
 function randomVideo() {
   return VIDEO_URLS[Math.floor(Math.random() * VIDEO_URLS.length)];
 }

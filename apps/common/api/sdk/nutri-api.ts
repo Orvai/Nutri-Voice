@@ -30,6 +30,7 @@ import type {
   ClientMenuResponseDto,
   ClientMenuUpdateRequestDto,
   ConversationDto,
+  DailyStateResponseDto,
   DaySelectionCreateRequestDto,
   DaySelectionResponseDto,
   DaySelectionTodayResponseDto,
@@ -54,6 +55,7 @@ import type {
   MealLogCreateRequestDto,
   MealLogHistoryResponseDto,
   MealLogResponseDto,
+  MealLogUpdateRequestDto,
   MealTemplateCreateRequestDto,
   MealTemplateUpdateRequestDto,
   MessageDto,
@@ -82,6 +84,7 @@ import type {
   WeightHistoryResponseDto,
   WeightLogCreateRequestDto,
   WeightLogResponseDto,
+  WeightLogUpdateRequestDto,
   WorkoutExerciseUpdateDto,
   WorkoutLogCreateRequestDto,
   WorkoutLogHistoryResponseDto,
@@ -609,14 +612,14 @@ export const usePostApiMessagesIdHandled = <TError = unknown,
 /**
  * @summary Incoming external message (Telegram / WhatsApp / App)
  */
-export const postInternalWebhookIncoming = (
+export const postApiWebhookIncoming = (
     incomingWebhookMessageDto: IncomingWebhookMessageDto,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<WebhookOkResponseDto>(
-      {url: `/internal/webhook/incoming`, method: 'POST',
+      {url: `/api/webhook/incoming`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: incomingWebhookMessageDto, signal
     },
@@ -625,11 +628,11 @@ export const postInternalWebhookIncoming = (
   
 
 
-export const getPostInternalWebhookIncomingMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext> => {
+export const getPostApiWebhookIncomingMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext> => {
 
-const mutationKey = ['postInternalWebhookIncoming'];
+const mutationKey = ['postApiWebhookIncoming'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -639,10 +642,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, {data: IncomingWebhookMessageDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiWebhookIncoming>>, {data: IncomingWebhookMessageDto}> = (props) => {
           const {data} = props ?? {};
 
-          return  postInternalWebhookIncoming(data,)
+          return  postApiWebhookIncoming(data,)
         }
 
         
@@ -650,23 +653,23 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostInternalWebhookIncomingMutationResult = NonNullable<Awaited<ReturnType<typeof postInternalWebhookIncoming>>>
-    export type PostInternalWebhookIncomingMutationBody = IncomingWebhookMessageDto
-    export type PostInternalWebhookIncomingMutationError = unknown
+    export type PostApiWebhookIncomingMutationResult = NonNullable<Awaited<ReturnType<typeof postApiWebhookIncoming>>>
+    export type PostApiWebhookIncomingMutationBody = IncomingWebhookMessageDto
+    export type PostApiWebhookIncomingMutationError = unknown
 
     /**
  * @summary Incoming external message (Telegram / WhatsApp / App)
  */
-export const usePostInternalWebhookIncoming = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postInternalWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext>, }
+export const usePostApiWebhookIncoming = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWebhookIncoming>>, TError,{data: IncomingWebhookMessageDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postInternalWebhookIncoming>>,
+        Awaited<ReturnType<typeof postApiWebhookIncoming>>,
         TError,
         {data: IncomingWebhookMessageDto},
         TContext
       > => {
 
-      const mutationOptions = getPostInternalWebhookIncomingMutationOptions(options);
+      const mutationOptions = getPostApiWebhookIncomingMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -3104,6 +3107,99 @@ export const usePostApiVitamins = <TError = void,
     }
     
 /**
+ * @summary Get daily aggregated tracking state
+ */
+export const getApiTrackingDailyState = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<DailyStateResponseDto>(
+      {url: `/api/tracking/daily-state`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTrackingDailyStateQueryKey = () => {
+    return [
+    `/api/tracking/daily-state`
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingDailyStateQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingDailyStateQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingDailyState>>> = ({ signal }) => getApiTrackingDailyState(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTrackingDailyStateQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingDailyState>>>
+export type GetApiTrackingDailyStateQueryError = unknown
+
+
+export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingDailyState>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingDailyState>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingDailyState>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingDailyState>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get daily aggregated tracking state
+ */
+
+export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingDailyStateQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
  * @summary Client sets day type
  */
 export const postApiTrackingDaySelection = (
@@ -3420,6 +3516,71 @@ export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnTy
 
 
 /**
+ * @summary Client updates a meal log
+ */
+export const putApiTrackingMealLogLogId = (
+    logId: string,
+    mealLogUpdateRequestDto: MealLogUpdateRequestDto,
+ ) => {
+      
+      
+      return customFetcher<MealLogResponseDto>(
+      {url: `/api/tracking/meal-log/${logId}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: mealLogUpdateRequestDto
+    },
+      );
+    }
+  
+
+
+export const getPutApiTrackingMealLogLogIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>, TError,{logId: string;data: MealLogUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>, TError,{logId: string;data: MealLogUpdateRequestDto}, TContext> => {
+
+const mutationKey = ['putApiTrackingMealLogLogId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>, {logId: string;data: MealLogUpdateRequestDto}> = (props) => {
+          const {logId,data} = props ?? {};
+
+          return  putApiTrackingMealLogLogId(logId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiTrackingMealLogLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>>
+    export type PutApiTrackingMealLogLogIdMutationBody = MealLogUpdateRequestDto
+    export type PutApiTrackingMealLogLogIdMutationError = void
+
+    /**
+ * @summary Client updates a meal log
+ */
+export const usePutApiTrackingMealLogLogId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>, TError,{logId: string;data: MealLogUpdateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>,
+        TError,
+        {logId: string;data: MealLogUpdateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiTrackingMealLogLogIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
  * @summary Client logs body weight
  */
 export const postApiTrackingWeightLog = (
@@ -3577,6 +3738,71 @@ export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<Return
 
 
 
+/**
+ * @summary Client updates body weight log
+ */
+export const putApiTrackingWeightLogLogId = (
+    logId: string,
+    weightLogUpdateRequestDto: WeightLogUpdateRequestDto,
+ ) => {
+      
+      
+      return customFetcher<WeightLogResponseDto>(
+      {url: `/api/tracking/weight-log/${logId}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: weightLogUpdateRequestDto
+    },
+      );
+    }
+  
+
+
+export const getPutApiTrackingWeightLogLogIdMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>, TError,{logId: string;data: WeightLogUpdateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>, TError,{logId: string;data: WeightLogUpdateRequestDto}, TContext> => {
+
+const mutationKey = ['putApiTrackingWeightLogLogId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>, {logId: string;data: WeightLogUpdateRequestDto}> = (props) => {
+          const {logId,data} = props ?? {};
+
+          return  putApiTrackingWeightLogLogId(logId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiTrackingWeightLogLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>>
+    export type PutApiTrackingWeightLogLogIdMutationBody = WeightLogUpdateRequestDto
+    export type PutApiTrackingWeightLogLogIdMutationError = void
+
+    /**
+ * @summary Client updates body weight log
+ */
+export const usePutApiTrackingWeightLogLogId = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>, TError,{logId: string;data: WeightLogUpdateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>,
+        TError,
+        {logId: string;data: WeightLogUpdateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiTrackingWeightLogLogIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
 /**
  * @summary Client logs a workout
  */

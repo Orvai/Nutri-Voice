@@ -3,6 +3,7 @@ import { authRequired } from "../../middleware/authRequired.js";
 import { requireOwnership } from "../../middleware/requireOwnership.js";
 import { requireCoach } from "../../middleware/requireRole.js";
 import { forward } from "../../utils/forward.js";
+import {ensureClientId} from "../../middleware/ensureClientId.js"
 
 const r = Router();
 const BASE = process.env.MENU_SERVICE_URL;
@@ -166,15 +167,11 @@ r.post(
   "/client-menus/from-template",
   authRequired,
   requireCoach,
+  ensureClientId,      
+  requireOwnership,
   (req, res, next) => {
-    const { clientId, templateMenuId } = req.body ?? {};
-
-    if (!clientId) {
-      return res
-        .status(400)
-        .json({ message: "clientId is required (context)" });
-    }
-
+    const { templateMenuId } = req.body ?? {};
+    const clientId = req.context?.clientId;
     if (!templateMenuId) {
       return res
         .status(400)

@@ -2,17 +2,6 @@ const { prisma } = require("../db/prisma");
 const { AiTriageInputDto } = require("../dtos/aiTriage.dto");
 const { clientTriageAI } = require("../ai/clientTriageAI");
 
-/**
- * מריץ AI על הודעת CLIENT ומעדכן החלטה
- *
- * אחריות:
- * - לקרוא הודעת CLIENT
- * - להריץ AI
- * - לעדכן aiDecision + aiSuggestedReply
- *
- * ❌ לא שולח הודעות
- * ❌ לא קורא HTTP
- */
 const triageClientMessage = async (payload) => {
   const { messageId } = AiTriageInputDto.parse(payload);
 
@@ -22,7 +11,6 @@ const triageClientMessage = async (payload) => {
 
   if (!message) return;
 
-  // חוק ברזל – AI עובד רק על CLIENT
   if (message.sender !== "CLIENT") return;
 
   const aiResult = await clientTriageAI({

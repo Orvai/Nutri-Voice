@@ -1,5 +1,5 @@
 const { prisma } = require('../db/prisma');
-const { WeightLogCreateDto } = require('../dto/weightLog.dto');
+const { WeightLogCreateDto,WeightLogUpdateDto } = require('../dto/weightLog.dto');
 
 const startOfDay = (d) => {
   const date = new Date(d);
@@ -33,5 +33,21 @@ const listWeightHistory = (clientId) => {
     orderBy: { date: 'asc' }
   });
 };
+const updateWeightLog = async (logId, payload) => {
+  const data = WeightLogUpdateDto.parse(payload);
 
-module.exports = { createWeightLog, listWeightHistory };
+  return prisma.weightLog.update({
+    where: { id: logId },
+    data: {
+      weightKg: data.weightKg,
+      notes: data.notes ?? null
+    }
+  });
+};
+
+module.exports = {
+  createWeightLog,
+  listWeightHistory,
+  updateWeightLog
+};
+

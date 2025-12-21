@@ -8,7 +8,7 @@ const {
 
 const prisma = new PrismaClient();
 
-const COACH_ID = "ba59ccee-bd43-4102-acb8-fd11184c2bad";
+const COACH_ID = "bae20c85-f3b3-44e8-a001-1d236347665d";
 
 /* ======================================================
    HELPERS

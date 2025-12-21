@@ -81,4 +81,41 @@ r.get(
   forward(BASE, "/internal/tracking/weight-log/history/:clientId")
 );
 
+/**
+ * @openapi
+ * /api/tracking/weight-log/{logId}:
+ *   put:
+ *     tags: [Tracking]
+ *     summary: Client updates body weight log
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: logId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/WeightLogUpdateRequestDto"
+ *     responses:
+ *       200:
+ *         description: Weight updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WeightLogResponseDto"
+ *       401:
+ *         description: Unauthorized
+ */
+r.put(
+  "/tracking/weight-log/:logId",
+  authRequired,
+  ensureClientId,
+  forward(BASE, "/internal/tracking/weight-log/:logId")
+);
+
 export default r;

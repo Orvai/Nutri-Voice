@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { forward } from "../../utils/forward.js";
+import verifyTelegramWebhook from "../../middleware/verifyTelegramWebhook.js"
 
 const r = Router();
 const BASE = process.env.CONVERSATION_SERVICE_URL;
@@ -10,7 +11,7 @@ const BASE = process.env.CONVERSATION_SERVICE_URL;
 
 /**
  * @openapi
- * /internal/webhook/incoming:
+ * /api/webhook/incoming:
  *   post:
  *     tags: [Webhook]
  *     summary: Incoming external message (Telegram / WhatsApp / App)
@@ -31,8 +32,16 @@ const BASE = process.env.CONVERSATION_SERVICE_URL;
  *               $ref: "#/components/schemas/WebhookOkResponseDto"
  */
 r.post(
-  "/internal/webhook/incoming",
-  forward(BASE, "/webhook/incoming")
+  "/incoming",
+  (req, res, next) => {
+    console.log("🔥 WEBHOOK HIT", {
+      headers: req.headers,
+      body: req.body,
+    });
+    next();
+  },
+  verifyTelegramWebhook,
+  forward(BASE, "/internal/webhook/incoming")
 );
 
 export default r;

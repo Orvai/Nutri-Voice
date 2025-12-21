@@ -1,9 +1,13 @@
 export function attachUser(req, res, next) {
-    req.context = {
-      userId: req.user?.userId || null,
-      role: req.user?.role || null,
-      sessionId: req.user?.sessionId || null,
-    };
-    next();
+  if (!req.user) {
+    return next();
   }
-  
+
+  req.user = {
+    id: req.user.id ?? req.user.userId,
+    role: req.user.role,
+    sessionId: req.user.sessionId,
+  };
+
+  next();
+}

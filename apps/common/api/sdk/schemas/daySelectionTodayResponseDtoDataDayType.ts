@@ -10,8 +10,6 @@ export type DaySelectionTodayResponseDtoDataDayType = typeof DaySelectionTodayRe
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DaySelectionTodayResponseDtoDataDayType = {
-  LOW: 'LOW',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
+  TRAINING: 'TRAINING',
   REST: 'REST',
 } as const;

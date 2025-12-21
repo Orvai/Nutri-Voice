@@ -10,8 +10,6 @@ export type MealLogHistoryResponseDtoDataItemDayType = typeof MealLogHistoryResp
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MealLogHistoryResponseDtoDataItemDayType = {
-  LOW: 'LOW',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
+  TRAINING: 'TRAINING',
   REST: 'REST',
 } as const;

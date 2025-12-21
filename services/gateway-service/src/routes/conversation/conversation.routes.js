@@ -34,6 +34,7 @@ r.get(
   authRequired,
   requireCoach,
   (req, res, next) => {
+    
     const coachId = req.user.id;
 
     return forward(
