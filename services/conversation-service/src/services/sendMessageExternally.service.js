@@ -4,10 +4,6 @@ const { prisma } = require("../db/prisma");
 const { sendTelegramTextMessage } = require("../senders/telegram.sender");
 const idmClient = require("../clients/idm.client");
 
-/**
- * שולח הודעה החוצה לפי ערוץ השיחה
- * @param {string} messageId
- */
 const sendMessageExternally = async (messageId) => {
   const message = await prisma.message.findUnique({
     where: { id: messageId },
@@ -28,7 +24,6 @@ const sendMessageExternally = async (messageId) => {
     throw new Error("Target user not found");
   }
 
-  // 3. שליחה לפי ערוץ
   switch (conversation.channel) {
     case "TELEGRAM": {
       if (!toUser.telegramChatId) return;

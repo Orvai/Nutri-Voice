@@ -1,11 +1,11 @@
 const { Router } = require("express");
-const { verifyInternalToken } = require("./middleware/verifyInternalToken");
+const  verifyInternalToken  = require("./middleware/verifyInternalToken");
 
 const DaySelection = require("./controllers/daySelection.controller");
 const MealLog = require("./controllers/mealLog.controller");
 const WorkoutLog = require("./controllers/workoutLog.controller");
 const WeightLog = require("./controllers/weightLog.controller");
-const  DailyState  = require('../controllers/dailyState.controller');
+const  DailyState  = require('./controllers/dailyState.controller');
 
 
 

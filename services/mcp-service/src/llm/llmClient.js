@@ -24,7 +24,7 @@ export async function runLLM({
         ...messages,
       ],
       tools,
-      temperature: 0.3,
+      temperature: 0.2,
     });
 
     return response.data.choices[0].message;

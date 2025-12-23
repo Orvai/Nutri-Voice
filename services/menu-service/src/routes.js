@@ -61,7 +61,7 @@ router.delete("/internal/menu/template-menus/:id", verifyInternalToken, Template
    =========================== */
 
 router.post("/internal/menu/client-menus", verifyInternalToken, ClientMenus.createClientMenu);
-router.get("/internal/menu/client-menus", verifyInternalToken, ClientMenus.listClientMenus);
+router.get("/internal/menu/client-menus", verifyInternalToken,injectIdentity, ClientMenus.listClientMenus);
 router.get("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.getClientMenu);
 router.put("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.updateClientMenu);
 router.delete("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.deleteClientMenu);

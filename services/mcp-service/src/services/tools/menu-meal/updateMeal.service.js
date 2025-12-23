@@ -1,11 +1,9 @@
 // services/tools/updateMeal.service.js
-import axios from "axios";
+import { callGateway } from "../../../http/gatewayClient.js";
 import {
   UpdateMealInputDto,
   UpdateMealResponseDto,
-} from "../../dto/tools/updateMeal.dto.js";
-
-const GATEWAY_URL = process.env.GATEWAY_URL;
+} from "../../../dtos/tools/menu-meal/updateMeal.dto.js";
 
 export async function updateMeal(input, context) {
   const parsed = UpdateMealInputDto.parse(input);
@@ -13,10 +11,7 @@ export async function updateMeal(input, context) {
 
   if (payload.dayType) {
     const dailyDayType = context?.dailyState?.dayType;
-
-    if (!dailyDayType) {
-      throw new Error("Missing dailyState.dayType");
-    }
+    if (!dailyDayType) throw new Error("Missing dailyState.dayType");
 
     if (payload.dayType !== dailyDayType) {
       throw new Error(
@@ -25,15 +20,14 @@ export async function updateMeal(input, context) {
     }
   }
 
-  const res = await axios.put(
-    `${GATEWAY_URL}/api/tracking/meal-log/${logId}`,
-    payload,
-    {
-      headers: {
-        Authorization: `Bearer ${context.userToken}`,
-      },
-    }
-  );
+  const res = await callGateway({
+    contractKey: "MEAL_LOG_UPDATE",
+    sender: context.sender, // חייב להיות client
+    context,
+    pathParams: { logId },
+    body: payload,
+  });
 
-  return UpdateMealResponseDto.parse(res.data);
+  const raw = res?.data ?? res;
+  return UpdateMealResponseDto.parse(raw);
 }

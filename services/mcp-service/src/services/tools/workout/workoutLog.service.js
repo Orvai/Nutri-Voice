@@ -1,43 +1,37 @@
 // src/services/tools/workoutLog.service.js
-import axios from "axios";
+import { callGateway } from "../../../http/gatewayClient.js";
 
-const GATEWAY_BASE = process.env.GATEWAY_URL || process.env.API_GATEWAY_URL || "http://localhost:4000";
-
-function gatewayClient(userToken) {
-  return axios.create({
-    baseURL: GATEWAY_BASE,
-    timeout: 15000,
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-      "Content-Type": "application/json",
-    },
+export async function createWorkoutLog(payload, context) {
+  const res = await callGateway({
+    contractKey: "WORKOUT_LOG_CREATE",
+    sender: context.sender, 
+    context,
+    body: payload,
   });
+
+  return res?.data ?? res;
 }
 
-/**
- * POST /api/tracking/workout-log
- * uses ensureClientId in gateway, so no need clientId in payload.
- */
-export async function createWorkoutLog({ userToken, payload }) {
-  const client = gatewayClient(userToken);
-  const res = await client.post(`/api/tracking/workout-log`, payload);
-  return res.data;
+export async function updateWorkoutLog(logId, payload, context) {
+  const res = await callGateway({
+    contractKey: "WORKOUT_LOG_UPDATE",
+    sender: context.sender,
+    context,
+    pathParams: { logId },
+    body: payload,
+  });
+
+  return res?.data ?? res;
 }
 
-/**
- * PUT /api/tracking/workout-log/{logId}
- */
-export async function updateWorkoutLog({ userToken, logId, payload }) {
-  const client = gatewayClient(userToken);
-  const res = await client.put(`/api/tracking/workout-log/${logId}`, payload);
-  return res.data;
-}
+export async function patchWorkoutExercise(exerciseLogId, payload, context) {
+  const res = await callGateway({
+    contractKey: "WORKOUT_LOG_UPDATE_EXERCISE",
+    sender: context.sender,
+    context,
+    pathParams: { exerciseLogId },
+    body: payload,
+  });
 
-/**
- * PATCH /api/tracking/workout-log/exercise/{exerciseLogId}
- */
-export async function patchWorkoutExercise({ userToken, exerciseLogId, payload }) {
-  const client = gatewayClient(userToken);
-  const res = await client.patch(`/api/tracking/workout-log/exercise/${exerciseLogId}`, payload);
-  return res.data;
+  return res?.data ?? res;
 }

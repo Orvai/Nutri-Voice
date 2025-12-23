@@ -1,29 +1,24 @@
-// src/services/tools/updateWorkoutExercise.tool.js
+// src/services/tools/updateWorkout.tool.js
 import {
-    UpdateWorkoutExerciseToolInputDto,
-    UpdateWorkoutExerciseToolOutputDto,
-  } from "../../dto/tools/updateWorkoutExercise.dto.js";
-  import { patchWorkoutExercise } from "./workout/workoutLog.service.js";
-  
-  export const UpdateWorkoutExerciseTool = {
-    name: "update_workout_exercise",
-    description:
-      "מאפשר עדכון של תרגיל בודד בתוך workout log (PATCH exercise entry) כדי לתקן משקל/שם תרגיל מבלי לעדכן את כל הלוג.",
-    inputSchema: UpdateWorkoutExerciseToolInputDto,
-    outputSchema: UpdateWorkoutExerciseToolOutputDto,
-  
-    async execute(context, rawInput) {
-      const input = UpdateWorkoutExerciseToolInputDto.parse(rawInput);
-  
-      const { exerciseLogId, ...payload } = input;
-  
-      const result = await patchWorkoutExercise({
-        userToken: context.userToken,
-        exerciseLogId,
-        payload,
-      });
-  
-      return UpdateWorkoutExerciseToolOutputDto.parse(result);
-    },
-  };
-  
+  UpdateWorkoutToolInputDto,
+  UpdateWorkoutToolOutputDto,
+} from "../../../dtos/tools/workout/updateWorkout.dto.js";
+import { updateWorkoutLog } from "./workoutLog.service.js";
+
+export const UpdateWorkoutTool = {
+  name: "update_workout",
+  description:
+    "מאפשר עדכון של workout log קיים (סוג אימון / מאמץ / הערות / תרגילים).",
+
+  inputSchema: UpdateWorkoutToolInputDto,
+  outputSchema: UpdateWorkoutToolOutputDto,
+
+  async execute(context, rawInput) {
+    const input = UpdateWorkoutToolInputDto.parse(rawInput);
+    const { logId, ...payload } = input;
+
+    const result = await updateWorkoutLog(logId, payload, context);
+
+    return UpdateWorkoutToolOutputDto.parse(result);
+  },
+};

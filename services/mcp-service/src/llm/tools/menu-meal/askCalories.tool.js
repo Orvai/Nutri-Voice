@@ -1,4 +1,4 @@
-import { askCalories } from "../../services/tools/menu-meal/askCalories.service.js";
+import { askCalories } from "../../../services/tools/menu-meal/askCalories.service.js";
 
 export const AskCaloriesTool = {
   name: "ask_calories",
@@ -21,7 +21,6 @@ It assumes daily state was already retrieved using get_daily_state.
   },
 
   async execute(context) {
-    // dailyState כבר קיים בקונטקסט (נגיע לזה בשלב הבא)
     return askCalories(context.dailyState);
   },
 };

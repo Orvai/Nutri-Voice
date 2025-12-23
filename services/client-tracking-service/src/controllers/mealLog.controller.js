@@ -53,9 +53,7 @@ const updateMealController = async (req, res, next) => {
 };
 
 module.exports = {
-  createMeal,
+  createMeal: createMealController,
   history,
   updateMeal: updateMealController
 };
-
-module.exports = { createMeal: createMealController, history };

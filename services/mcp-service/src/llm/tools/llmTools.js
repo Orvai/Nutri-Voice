@@ -1,34 +1,32 @@
-export const llmTools = [
-    {
-      type: "function",
-      function: {
-        name: "get_daily_state",
-        description: `
-  Use this tool to get the single source of truth for today's client state.
-  
-  You MUST call this tool before answering any question related to:
-  - calories (allowed, eaten, remaining)
-  - meals reported today
-  - workouts reported today
-  - today's weight
-  - whether today is a training or rest day
-  
-  Never guess or assume daily data.
-  If the user asks:
-  - "כמה נשאר לי?"
-  - "אכלתי כבר?"
-  - "חרגתי?"
-  - "זה יום אימון?"
-  You must first call this tool.
-  
-  This tool has no parameters and always returns today's data.
-        `.trim(),
-        parameters: {
-          type: "object",
-          properties: {},
-          required: [],
-        },
+// src/llm/tools/llmTools.js
+import { toolRegistry } from "./registry.js";
+
+/**
+ * Converts internal tool definition into OpenAI "tools" schema.
+ * Every tool MUST expose:
+ * - name (string)
+ * - description (string)
+ * - parameters (JSON Schema object)  // required for function calling
+ */
+function toOpenAiTool(tool) {
+  if (!tool?.name) throw new Error("[llmTools] Tool is missing name");
+  if (!tool?.description) throw new Error(`[llmTools] Tool ${tool.name} missing description`);
+
+  return {
+    type: "function",
+    function: {
+      name: tool.name,
+      description: tool.description,
+      parameters: tool.parameters || {
+        type: "object",
+        properties: {},
+        required: [],
       },
     },
-  ];
-  
+  };
+}
+
+/**
+ * Export tools list for OpenAI function calling
+ */
+export const llmTools = Object.values(toolRegistry).map(toOpenAiTool);

@@ -11,6 +11,9 @@ import conversationRoutes from"./routes/conversation/index.js"
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyJwt } from "./middleware/verifyJwt.js";
 import webhookRoutes from "./routes/conversation/webhook.routes.js";
+import { verifyInternalToken } from "./middleware/verifyInternalToken.js";
+
+
 
 
 const app = express();
@@ -25,6 +28,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(verifyInternalToken);
 app.use("/api/webhook", webhookRoutes);
 
 app.use(verifyJwt);

@@ -1,11 +1,14 @@
 import jwt from "jsonwebtoken";
 
 export function verifyJwt(req, res, next) {
+  if (req.isInternal) {
+    return next();
+  }
+
   if (req.path === "/webhook/incoming") {
     return next();
   }
 
-  
   const token = req.cookies?.access_token;
 
   if (!token) {
