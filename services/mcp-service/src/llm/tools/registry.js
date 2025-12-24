@@ -5,8 +5,6 @@ import { setDayTypeTool } from "./DailyState/setDayType.tool.js";
 import { AskCaloriesTool } from "./menu-meal/askCalories.tool.js";
 
 import { getMenuContextTool } from "./menu-meal/getMenuContext.tool.js";
-import { previewMealTool } from "./menu-meal/previewMeal.tool.js";
-
 import { reportMealTool } from "./menu-meal/reportMeal.tool.js";
 import { updateMealTool } from "./menu-meal/updateMeal.tool.js";
 
@@ -17,7 +15,6 @@ import { shouldCoachReplyTool } from "./shouldCoachReply.tool.js";
 // ===============================
 import { getWorkoutProgramsTool } from "./workout/getWorkoutPrograms.tool.js";
 import { getWorkoutContextTool } from "./workout/getWorkoutContext.tool.js";
-import { previewWorkoutTool } from "./workout/previewWorkout.tool.js";
 import { reportWorkoutTool } from "./workout/reportWorkout.tool.js";
 import { updateWorkoutTool } from "./workout/updateWorkout.tool.js";
 import { updateWorkoutExerciseTool } from "./workout/updateWorkoutExercise.tool.js";
@@ -35,8 +32,6 @@ export const toolRegistry = {
   // ======================================================
   // Decision / Reasoning (NO side effects)
   // ======================================================
-  preview_meal: previewMealTool,
-  preview_workout: previewWorkoutTool,
   ask_calories: AskCaloriesTool,
 
   // ======================================================
