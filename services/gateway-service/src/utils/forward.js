@@ -28,16 +28,13 @@ export function forward(baseURL, targetPath, options = {}) {
 
       /* ============================
           Identity Injection Logic 
-          מחלץ את המזהים כדי למנוע "undefined" בשרת הפנימי
       ============================ */
-      // 1. מחלץ clientId מה-body (ביצירה) או מה-query (ברשימה) או מה-identity (אם הלקוח מחובר)
       const clientId = 
         req.body?.clientId || 
         req.query?.clientId || 
         req.identity?.clientId || 
         req.headers["x-client-id"];
 
-      // 2. מחלץ coachId מהזהות של המשתמש המחובר או מה-headers
       const coachId = 
         req.identity?.coachId || 
         req.identity?.userId || 
@@ -50,17 +47,14 @@ export function forward(baseURL, targetPath, options = {}) {
         // Internal auth
         "x-internal-token": process.env.INTERNAL_TOKEN,
 
-        // הזרקת זהות מפורשת לשרת הפנימי
         "x-client-id": clientId,
         "x-coach-id": coachId,
         "x-user-id": req.identity?.userId || req.headers["x-user-id"],
 
-        // MCP identity (שמירה על תאימות למבנה הקיים שלך)
         "x-mcp-sender": req.headers["x-mcp-sender"],
         "x-mcp-client-id": clientId, 
         "x-mcp-user-id": req.identity?.userId,
 
-        // העברת אימות מקורי
         authorization: req.headers.authorization,
         cookie: req.headers.cookie,
 

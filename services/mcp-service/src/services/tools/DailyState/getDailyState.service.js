@@ -14,6 +14,9 @@ export async function getDailyState(_, context) {
     contractKey: "DAILY_STATE_GET",
     sender: context.sender,
     context,
+    query: {
+      clientId: context.clientId 
+    }
   });
 
   const raw = res?.data ?? res;

@@ -54,6 +54,8 @@ const createClientMenuController = async (req, res, next) => {
 ========================= */
 const listClientMenusController = async (req, res, next) => {
   try {
+    console.log("🔍 Incoming Query:", req.query);
+    console.log("🔍 Incoming Identity:", req.identity);
     const query = ClientMenuListQueryDto.parse(req.query || {});
     const enrichedQuery = {
       ...query,
