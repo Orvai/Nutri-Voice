@@ -3,9 +3,12 @@ export function verifyInternalToken(req, res, next) {
   if (!token) {
     return next();
   }
+  console.log("check1");
   if (token !== process.env.INTERNAL_TOKEN) {
     return res.status(401).json({ error: "Invalid internal token" });
   }
+  console.log("check2");
+
   const role =
     req.headers["x-mcp-sender"] ||
     (req.headers["x-client-id"] ? "client" : "coach");

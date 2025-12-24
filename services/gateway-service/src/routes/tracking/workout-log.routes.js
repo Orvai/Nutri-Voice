@@ -38,7 +38,7 @@ const BASE = process.env.TRACKING_SERVICE_URL;
  *         description: Unauthorized
  */
 r.post(
-  "/tracking/workout-log",
+  "/workout-log",
   authRequired,
   ensureClientId,
   forward(BASE, "/internal/tracking/workout-log")
@@ -79,7 +79,7 @@ r.post(
  *         description: Workout log not found
  */
 r.put(
-  "/tracking/workout-log/:logId",
+  "/workout-log/:logId",
   authRequired,
   ensureClientId,
   forward(BASE, "/internal/tracking/workout-log/:logId")
@@ -120,7 +120,7 @@ r.put(
  *         description: Exercise entry not found
  */
 r.patch(
-  "/tracking/workout-log/exercise/:exerciseLogId",
+  "/workout-log/exercise/:exerciseLogId",
   authRequired,
   ensureClientId,
   forward(BASE, "/internal/tracking/workout-log/exercise/:exerciseLogId")
@@ -157,7 +157,7 @@ r.patch(
  *         description: Forbidden (coach only)
  */
 r.get(
-  "/tracking/workout-log/history/:clientId",
+  "/workout-log/history/:clientId",
   authRequired,
   requireCoach,
   forward(BASE, "/internal/tracking/workout-log/history/:clientId")

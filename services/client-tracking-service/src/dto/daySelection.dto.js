@@ -9,9 +9,9 @@ const DaySelectionCreateDto = z.object({
 const DaySelectionResponseDto = z.object({
   id: z.string(),
   clientId: z.string(),
-  date: z.string().datetime(),
+  date: z.date(),
   dayType: DayTypeEnum,
-  changedAt: z.string().datetime()
+  changedAt: z.date()
 }).strict();
 
 module.exports = { DaySelectionCreateDto, DayTypeEnum,DaySelectionResponseDto };

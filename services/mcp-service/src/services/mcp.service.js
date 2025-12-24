@@ -13,6 +13,8 @@ export async function runMcp(input) {
     sender,
     clientId,
     userId,
+    userText,
+    history 
   } = RunMcpDto.parse(input);
 
   const context = {
@@ -27,20 +29,20 @@ export async function runMcp(input) {
   const usedTools = [];
 
   const messages = [
+    ...history, 
     {
       role: "user",
-      content: "התקבלה הודעה חדשה מהלקוח",
+      content: userText, 
     },
   ];
 
-  // 1️⃣ First LLM pass
+  //  First LLM pass
   const llmMessage = await runLLM({
     systemPrompt,
     messages,
-    tools: llmTools, // פה נשאר llmTools כי המודל צריך את המערך
+    tools: llmTools, 
   });
 
-  // 2️⃣ If tools were called
   if (llmMessage.tool_calls?.length) {
     messages.push(llmMessage);
 
@@ -68,7 +70,7 @@ export async function runMcp(input) {
       });
     }
 
-    // 3️⃣ Final LLM pass
+    // Final LLM pass 
     const finalMessage = await runLLM({
       systemPrompt,
       messages,
@@ -77,6 +79,24 @@ export async function runMcp(input) {
     return McpResultDto.parse({
       decision: "AUTO_REPLY",
       replyText: finalMessage.content ?? null,
+      usedTools,
+    });
+  }
+
+  const content = llmMessage.content || "";
+
+  if (content.includes("COACH_REPLY")) {
+    return McpResultDto.parse({
+      decision: "COACH_REPLY",
+      replyText: null,
+      usedTools,
+    });
+  }
+
+  if (content.trim().length > 0) {
+    return McpResultDto.parse({
+      decision: "AUTO_REPLY",
+      replyText: content,
       usedTools,
     });
   }

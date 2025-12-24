@@ -72,11 +72,11 @@ const getTodayWeight = (clientId) => {
 ====================================================== */
 
 const getDailyState = async (clientId) => {
-  // 1️⃣ Day selection
+  // 1️ Day selection
   const daySelection = await getTodayDayType(clientId);
   const dayType = daySelection?.dayType ?? null;
 
-  // 2️⃣ Logs
+  // 2️ Logs
   const meals = await getMealsForToday(clientId);
   const workouts = await getWorkoutsForToday(clientId);
   const weight = await getTodayWeight(clientId);
@@ -86,7 +86,7 @@ const getDailyState = async (clientId) => {
     0
   );
 
-  // 3️⃣ Client menus (SOURCE OF TRUTH)
+  // 3️ Client menus (SOURCE OF TRUTH)
   const clientMenus = await getClientMenus(clientId);
 
   const trainingMenu = clientMenus.find(
@@ -102,7 +102,7 @@ const getDailyState = async (clientId) => {
     restDay: restMenu?.totalCalories ?? null,
   };
 
-  // 4️⃣ Active calories (only if dayType selected)
+  // 4️ Active calories (only if dayType selected)
   let activeCaloriesAllowed = null;
   let remainingCalories = null;
 
@@ -116,7 +116,7 @@ const getDailyState = async (clientId) => {
     remainingCalories = activeCaloriesAllowed - consumedCalories;
   }
 
-  // 5️⃣ Final snapshot
+  // 5 Final snapshot
   return {
     dayType,
     calorieTargets,

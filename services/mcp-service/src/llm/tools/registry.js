@@ -1,6 +1,7 @@
 // src/llm/tools/toolRegistry.js
 
 import { GetDailyStateTool } from "./DailyState/getDailyState.tool.js";
+import { setDayTypeTool } from "./DailyState/setDayType.tool.js";
 import { AskCaloriesTool } from "./menu-meal/askCalories.tool.js";
 
 import { getMenuContextTool } from "./menu-meal/getMenuContext.tool.js";
@@ -26,6 +27,7 @@ export const toolRegistry = {
   // Context Fetching (Source of Truth, NO side effects)
   // ======================================================
   get_daily_state: GetDailyStateTool,
+  set_day_type: setDayTypeTool,
   get_menu_context: getMenuContextTool,
   get_workout_programs: getWorkoutProgramsTool,
   get_workout_context: getWorkoutContextTool,

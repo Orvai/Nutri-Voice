@@ -3,15 +3,17 @@ const { setDayType, getTodayDayType } = require('../services/daySelection.servic
 const { DaySelectionCreateDto, DaySelectionResponseDto } = require('../dto/daySelection.dto');
 
 const ClientIdParamsDto = z.object({ clientId: z.string().min(1) }).strict();
-
 const setDayTypeController = async (req, res, next) => {
   try {
-    const payload = DaySelectionCreateDto.parse(req.body);
-    const clientId = req.user.id;
+    const parsed = DaySelectionCreateDto.parse(req.body);
+    const clientId = req.user.clientId;
 
-    const data = await setDayType(clientId, payload);
+    const data = await setDayType(clientId, parsed);
 
-    res.status(201).json({ message: 'Day type saved', data: DaySelectionResponseDto.parse(data) });
+    res.status(201).json({
+      message: "Day type saved",
+      data: DaySelectionResponseDto.parse(data),
+    });
   } catch (e) {
     next(e);
   }

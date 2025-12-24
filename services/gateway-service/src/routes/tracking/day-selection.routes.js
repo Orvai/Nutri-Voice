@@ -38,8 +38,7 @@ const BASE = process.env.TRACKING_SERVICE_URL;
  *         description: Unauthorized
  */
 r.post(
-  "/tracking/day-selection",
-  authRequired,
+  "/day-selection",
   ensureClientId,
   forward(BASE, "/internal/tracking/day-selection")
 );

@@ -38,7 +38,7 @@ const BASE = process.env.TRACKING_SERVICE_URL;
  *         description: Unauthorized
  */
 r.post(
-  "/tracking/meal-log",
+  "/meal-log",
   authRequired,
   ensureClientId,
   forward(BASE, "/internal/tracking/meal-log")
@@ -75,7 +75,7 @@ r.post(
  *         description: Forbidden (coach only)
  */
 r.get(
-  "/tracking/meal-log/history/:clientId",
+  "/meal-log/history/:clientId",
   authRequired,
   requireCoach,
   forward(BASE, "/internal/tracking/meal-log/history/:clientId")

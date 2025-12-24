@@ -8,9 +8,7 @@ datasource db {
 }
 
 enum DayType {
-  LOW
-  HIGH
-  MEDIUM
+  TRAINING
   REST
 }
 

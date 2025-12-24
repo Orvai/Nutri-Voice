@@ -29,11 +29,12 @@ export function forward(baseURL, targetPath, options = {}) {
       /* ============================
           Identity Injection Logic 
       ============================ */
-      const clientId = 
-        req.body?.clientId || 
-        req.query?.clientId || 
-        req.identity?.clientId || 
-        req.headers["x-client-id"];
+      const clientId =
+        req.headers["x-mcp-client-id"] ||   
+        req.headers["x-client-id"] ||
+        req.identity?.clientId ||
+        req.body?.clientId ||
+        req.query?.clientId;
 
       const coachId = 
         req.identity?.coachId || 

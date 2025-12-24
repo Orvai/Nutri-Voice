@@ -38,7 +38,7 @@ const BASE = process.env.TRACKING_SERVICE_URL;
  *         description: Unauthorized
  */
 r.post(
-  "/tracking/weight-log",
+  "/weight-log",
   authRequired,
   ensureClientId,
   forward(BASE, "/internal/tracking/weight-log")

@@ -14,6 +14,7 @@ const endOfDay = (d) => {
 };
 
 const findSelectionForDate = async (clientId, date) => {
+  console.log("check2");
   return prisma.daySelection.findFirst({
     where: {
       clientId,
@@ -26,9 +27,9 @@ const findSelectionForDate = async (clientId, date) => {
   });
 };
 
-const setDayType = async (clientId, payload) => {
-  const parsed = DaySelectionCreateDto.parse(payload);
+const setDayType = async (clientId, parsed) => {
   const targetDate = parsed.date ? new Date(parsed.date) : new Date();
+  console.log("check222");
   const existing = await findSelectionForDate(clientId, targetDate);
 
   if (existing) {
@@ -37,8 +38,8 @@ const setDayType = async (clientId, payload) => {
       data: {
         dayType: parsed.dayType,
         date: startOfDay(targetDate),
-        changedAt: new Date()
-      }
+        changedAt: new DateTime(),
+      },
     });
   }
 
@@ -46,9 +47,10 @@ const setDayType = async (clientId, payload) => {
     data: {
       clientId,
       dayType: parsed.dayType,
-      date: startOfDay(targetDate)
-    }
+      date: startOfDay(targetDate),
+    },
   });
+
 };
 
 const getTodayDayType = async (clientId) => {
