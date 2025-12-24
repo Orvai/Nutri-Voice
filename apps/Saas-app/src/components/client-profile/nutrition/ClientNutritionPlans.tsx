@@ -58,10 +58,16 @@ export default function ClientNutritionPlans({ clientId }: Props) {
     didInitRef.current = true;
 
     const createAll = async () => {
-      for (const tmpl of templates) {
-        await createFromTemplate.mutateAsync({
-          templateMenuId: tmpl.id,
-        });
+      try {
+        for (const tmpl of templates) {
+          await createFromTemplate.mutateAsync({
+            templateMenuId: tmpl.id,
+            clientId: clientId,
+          });
+        }
+
+      } catch (err) {
+        console.error("Failed to create initial menus", err);
       }
     };
 

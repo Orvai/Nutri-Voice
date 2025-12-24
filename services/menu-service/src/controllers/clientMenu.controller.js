@@ -114,6 +114,8 @@ const deleteClientMenuController = async (req, res, next) => {
 ========================= */
 const createClientMenuFromTemplateController = async (req, res, next) => {
   try {
+    console.log("Params:", req.params); 
+    console.log("Body:", req.body);
     requireIdentity(req, ["coachId", "clientId"]);
     const dto = ClientMenuCreateFromTemplateDto.parse(req.body);
 

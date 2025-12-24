@@ -94,6 +94,7 @@ export * from './foodItemRequestCreateDto';
 export * from './foodItemRequestUpdateDto';
 export * from './foodItemResponseDto';
 export * from './genderEnum';
+export * from './getApiClientMenusParams';
 export * from './getApiFood200';
 export * from './getApiMealTemplates200';
 export * from './getApiMealTemplatesId200';

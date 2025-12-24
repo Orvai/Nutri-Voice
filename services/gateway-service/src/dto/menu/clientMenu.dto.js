@@ -154,6 +154,7 @@ export const ClientMenuListQueryDto = z.object({
    CREATE FROM TEMPLATE
 ========================= */
 export const ClientMenuCreateFromTemplateRequestDto = z.object({
+  clientId: z.string().min(1),
   templateMenuId: z.string(),
   name: z.string().optional(),
   selectedOptions: z

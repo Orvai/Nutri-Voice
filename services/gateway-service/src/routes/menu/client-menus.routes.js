@@ -20,6 +20,12 @@ const BASE = process.env.MENU_SERVICE_URL;
  *     summary: List client menus (coach or client)
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Client menus list
@@ -170,8 +176,12 @@ r.post(
   ensureClientId,      
   requireOwnership,
   (req, res, next) => {
-    const { templateMenuId } = req.body ?? {};
-    const clientId = req.context?.clientId;
+    const { templateMenuId, clientId } = req.body ?? {};
+    if (!clientId || clientId === "undefined") {
+      return res.status(400).json({ 
+        message: "Missing valid clientId in request body" 
+      });
+    }
     if (!templateMenuId) {
       return res
         .status(400)

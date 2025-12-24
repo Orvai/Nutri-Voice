@@ -4,19 +4,38 @@ export function verifyInternalToken(req, res, next) {
   if (!token) {
     return next();
   }
+  
 
   if (token !== process.env.INTERNAL_TOKEN) {
     return res.status(401).json({ error: "Invalid internal token" });
   }
 
-  const role = req.headers["x-mcp-sender"] || "client";
-  const clientId = req.headers["x-mcp-client-id"] || null;
+  const role =
+    req.headers["x-mcp-sender"] ||
+    (req.headers["x-client-id"] ? "client" : "coach");
+
+  const clientId =
+    req.headers["x-mcp-client-id"] ||
+    req.headers["x-client-id"] ||
+    null;
+
+  const userId =
+    req.headers["x-mcp-user-id"] ||
+    req.headers["x-coach-id"] ||
+    null;
+
+  if (role === "client" && !clientId) {
+    return res.status(400).json({ error: "Missing clientId for internal request" });
+  }
+
+  if (role !== "client" && !userId) {
+    return res.status(400).json({ error: "Missing userId for internal request" });
+  }
 
   req.isInternal = true;
 
   req.user = {
-    id: role === "client" ? clientId : req.headers["x-mcp-user-id"] || null,
-
+    id: role === "client" ? clientId : userId,
     role,
     clientId,
     source: "INTERNAL",

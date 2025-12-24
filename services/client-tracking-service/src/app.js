@@ -27,7 +27,7 @@ app.use(dbLogger);
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 // Routes
-app.use('/api', routes);
+app.use( routes);
 
 // Error handler (always last)
 app.use(errorHandler);

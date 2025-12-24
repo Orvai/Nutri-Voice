@@ -23,11 +23,10 @@ const sendMessageExternally = async (messageId) => {
   if (!toUser) {
     throw new Error("Target user not found");
   }
+  console.log("CHANNEL =", conversation.channel, typeof conversation.channel);
 
   switch (conversation.channel) {
     case "TELEGRAM": {
-      if (!toUser.telegramChatId) return;
-
       await sendTelegramTextMessage({
         chatId: toUser.phone,
         text: message.text,

@@ -5,8 +5,8 @@ const { WorkoutLogResponseDto } = require('./workoutLog.dto');
 const { WeightLogResponseDto } = require('./weightLog.dto');
 
 const CalorieTargetsDto = z.object({
-  trainingDay: z.number().int(),
-  restDay: z.number().int()
+  trainingDay: z.number().int().nullable(),
+  restDay: z.number().int().nullable()
 }).strict();
 
 const DailyStateDto = z.object({
@@ -14,7 +14,6 @@ const DailyStateDto = z.object({
 
   calorieTargets: CalorieTargetsDto,
 
-  // קיים רק אם dayType !== null
   activeCaloriesAllowed: z.number().int().nullable(),
   consumedCalories: z.number().int(),
   remainingCalories: z.number().int().nullable(),

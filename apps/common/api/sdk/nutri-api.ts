@@ -45,6 +45,7 @@ import type {
   ExerciseUpdateRequestDto,
   FoodItemRequestCreateDto,
   FoodItemRequestUpdateDto,
+  GetApiClientMenusParams,
   GetApiFood200,
   GetApiMealTemplates200,
   GetApiMealTemplatesId200,
@@ -1468,13 +1469,14 @@ export const useDeleteApiUsersIdInfo = <TError = unknown,
  * @summary List client menus (coach or client)
  */
 export const getApiClientMenus = (
-    
+    params: GetApiClientMenusParams,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<ClientMenuResponseDto[]>(
-      {url: `/api/client-menus`, method: 'GET', signal
+      {url: `/api/client-menus`, method: 'GET',
+        params, signal
     },
       );
     }
@@ -1482,23 +1484,23 @@ export const getApiClientMenus = (
 
 
 
-export const getGetApiClientMenusQueryKey = () => {
+export const getGetApiClientMenusQueryKey = (params?: GetApiClientMenusParams,) => {
     return [
-    `/api/client-menus`
+    `/api/client-menus`, ...(params ? [params]: [])
     ] as const;
     }
 
     
-export const getGetApiClientMenusQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
+export const getGetApiClientMenusQueryOptions = <TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(params: GetApiClientMenusParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiClientMenusQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiClientMenusQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClientMenus>>> = ({ signal }) => getApiClientMenus(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClientMenus>>> = ({ signal }) => getApiClientMenus(params, signal);
 
       
 
@@ -1512,7 +1514,7 @@ export type GetApiClientMenusQueryError = unknown
 
 
 export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
+ params: GetApiClientMenusParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiClientMenus>>,
           TError,
@@ -1522,7 +1524,7 @@ export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiCli
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
+ params: GetApiClientMenusParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiClientMenus>>,
           TError,
@@ -1532,7 +1534,7 @@ export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiCli
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
+ params: GetApiClientMenusParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1540,11 +1542,11 @@ export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiCli
  */
 
 export function useGetApiClientMenus<TData = Awaited<ReturnType<typeof getApiClientMenus>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
+ params: GetApiClientMenusParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClientMenus>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiClientMenusQueryOptions(options)
+  const queryOptions = getGetApiClientMenusQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

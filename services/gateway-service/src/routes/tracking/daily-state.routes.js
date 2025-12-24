@@ -22,8 +22,7 @@ const TRACKING_BASE = process.env.TRACKING_SERVICE_URL;
  *               $ref: "#/components/schemas/DailyStateResponseDto"
  */
 r.get(
-  "/tracking/daily-state",
-  authRequired,
+  "/daily-state",
   forward(TRACKING_BASE, "/internal/tracking/daily-state")
 );
 

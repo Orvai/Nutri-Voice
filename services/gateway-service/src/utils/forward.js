@@ -14,9 +14,8 @@ export function forward(baseURL, targetPath, options = {}) {
       }
 
       /* ============================
-         Resolve target URL
+          Resolve target URL
       ============================ */
-
       let resolvedPath = preservePath ? req.path : targetPath;
 
       if (resolvedPath && resolvedPath.includes(":")) {
@@ -28,21 +27,42 @@ export function forward(baseURL, targetPath, options = {}) {
       url = `${baseURL}${resolvedPath}`;
 
       /* ============================
-         Build SAFE headers
-         (🔥 do NOT forward raw req.headers)
+          Identity Injection Logic 
+          מחלץ את המזהים כדי למנוע "undefined" בשרת הפנימי
       ============================ */
+      // 1. מחלץ clientId מה-body (ביצירה) או מה-query (ברשימה) או מה-identity (אם הלקוח מחובר)
+      const clientId = 
+        req.body?.clientId || 
+        req.query?.clientId || 
+        req.identity?.clientId || 
+        req.headers["x-client-id"];
 
+      // 2. מחלץ coachId מהזהות של המשתמש המחובר או מה-headers
+      const coachId = 
+        req.identity?.coachId || 
+        req.identity?.userId || 
+        req.headers["x-coach-id"];
+
+      /* ============================
+          Build SAFE headers
+      ============================ */
       const headers = {
-        // Copy only high-level headers
-        authorization: req.headers.authorization,
-        cookie: req.headers.cookie,
-
         // Internal auth
         "x-internal-token": process.env.INTERNAL_TOKEN,
 
-        // Forwarded identity (if exists)
-        "x-coach-id": req.headers["x-coach-id"],
-        "x-client-id": req.headers["x-client-id"],
+        // הזרקת זהות מפורשת לשרת הפנימי
+        "x-client-id": clientId,
+        "x-coach-id": coachId,
+        "x-user-id": req.identity?.userId || req.headers["x-user-id"],
+
+        // MCP identity (שמירה על תאימות למבנה הקיים שלך)
+        "x-mcp-sender": req.headers["x-mcp-sender"],
+        "x-mcp-client-id": clientId, 
+        "x-mcp-user-id": req.identity?.userId,
+
+        // העברת אימות מקורי
+        authorization: req.headers.authorization,
+        cookie: req.headers.cookie,
 
         // Cache control
         "cache-control": "no-cache",
@@ -50,16 +70,16 @@ export function forward(baseURL, targetPath, options = {}) {
         expires: "0",
       };
 
-      // 🔥 VERY IMPORTANT — never forward these
-      delete headers["content-length"];
-      delete headers["content-type"];
-      delete headers["host"];
-      delete headers["connection"];
+      // ניקוי headers שהם null/undefined
+      Object.keys(headers).forEach((k) => {
+        if (headers[k] === undefined || headers[k] === null) {
+          delete headers[k];
+        }
+      });
 
       /* ============================
-         Axios config
+          Axios config
       ============================ */
-
       const config = {
         method,
         url,
@@ -71,32 +91,25 @@ export function forward(baseURL, targetPath, options = {}) {
       const isMultipart = req.is("multipart/form-data");
 
       if (isMultipart) {
-        // Multipart → stream the request as-is
         config.data = req;
         config.headers["content-type"] = req.headers["content-type"];
         config.maxBodyLength = Infinity;
         config.maxContentLength = Infinity;
       } else if (method !== "get" && method !== "delete") {
-        // JSON body
         config.data = { ...req.body };
       }
 
-      console.log("➡️ FORWARDING", method.toUpperCase(), url);
+      console.log(`➡️ FORWARDING ${method.toUpperCase()}: ${url} | Client: ${clientId}`);
 
       const response = await axios(config);
 
       /* ============================
-         Forward cookies
+          Forward cookies & response
       ============================ */
-
       const cookies = response.headers["set-cookie"];
       if (cookies) {
         res.setHeader("set-cookie", cookies);
       }
-
-      /* ============================
-         Auth routes → raw passthrough
-      ============================ */
 
       const isAuthRoute =
         targetPath === "/internal/auth/login" ||
@@ -107,45 +120,20 @@ export function forward(baseURL, targetPath, options = {}) {
         return res.status(response.status).json(response.data);
       }
 
-      /* ============================
-         Response normalizer
-      ============================ */
-
-      let payload = response.data;
-
+      const payload = response.data;
       if (payload?.data !== undefined) {
-        const d = payload.data;
-
-        if (Array.isArray(d)) {
-          return res.status(response.status).json({ data: d.flat() });
-        }
-
-        return res.status(response.status).json({ data: d });
-      }
-
-      if (Array.isArray(payload)) {
-        return res.status(response.status).json({ data: payload.flat() });
+        return res.status(response.status).json({ data: payload.data });
       }
 
       return res.status(response.status).json({ data: payload });
 
     } catch (err) {
       console.error("❌ ERROR on", method.toUpperCase(), url);
-      console.error("   STATUS:", err?.response?.status);
-      console.error(
-        "   RESPONSE DATA:",
-        JSON.stringify(err?.response?.data, null, 2)
-      );
-
       if (err.response) {
         return res.status(err.response.status).json({
-          error:
-            err.response.data?.message ||
-            err.response.data ||
-            "Error",
+          error: err.response.data?.message || err.response.data || "Error",
         });
       }
-
       next(err);
     }
   };

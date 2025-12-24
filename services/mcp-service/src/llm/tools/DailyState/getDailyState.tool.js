@@ -29,5 +29,6 @@ export const GetDailyStateTool = {
   async execute(_args, context) {
 
 
-    return getDailyState(context);  },
+    return getDailyState(_args, context);
+  },
 };
