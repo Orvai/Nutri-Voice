@@ -1,24 +1,23 @@
-// src/services/tools/updateWorkout.tool.js
-import {
-  UpdateWorkoutToolInputDto,
-  UpdateWorkoutToolOutputDto,
-} from "../../../dtos/tools/workout/updateWorkout.dto.js";
-import { updateWorkoutLog } from "./workoutLog.service.js";
+// src/services/tools/updateWorkoutExercise.tool.js
+import {UpdateWorkoutExerciseToolInputDto,UpdateWorkoutExerciseToolOutputDto,} from "../../../dtos/tools/workout/updateWorkout.dto.js";
+import { patchWorkoutExercise } from "./workoutLog.service.js";
 
-export const UpdateWorkoutTool = {
-  name: "update_workout",
-  description:
-    "מאפשר עדכון של workout log קיים (סוג אימון / מאמץ / הערות / תרגילים).",
-
-  inputSchema: UpdateWorkoutToolInputDto,
-  outputSchema: UpdateWorkoutToolOutputDto,
+export const UpdateWorkoutExerciseTool = {
+  name: "update_workout_exercise",
+  description:"עדכון פרטים של תרגיל בודד (למשל משקל) בתוך אימון קיים, לפי exerciseLogId.",
+  inputSchema: UpdateWorkoutExerciseToolInputDto,
+  outputSchema: UpdateWorkoutExerciseToolOutputDto,
 
   async execute(context, rawInput) {
-    const input = UpdateWorkoutToolInputDto.parse(rawInput);
-    const { logId, ...payload } = input;
+    const input = UpdateWorkoutExerciseToolInputDto.parse(rawInput);
+    const { exerciseLogId, ...payload } = input;
 
-    const result = await updateWorkoutLog(logId, payload, context);
+    const result = await patchWorkoutExercise(exerciseLogId, payload, context);
 
-    return UpdateWorkoutToolOutputDto.parse(result);
+    return UpdateWorkoutExerciseToolOutputDto.parse({
+      success: true,
+      id: result.id, 
+      message: `Exercise updated successfully to ${result.weight}kg`,
+    });
   },
 };

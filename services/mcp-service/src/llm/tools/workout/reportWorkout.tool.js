@@ -1,10 +1,8 @@
 // src/llm/tools/workout/reportWorkout.tool.js
-import { ReportWorkoutTool } from "../../../services/tools/workout/reportWorkout.tool.js";
-
+import { createWorkoutLog } from "../../../services/tools/workout/workoutLog.service.js";
 export const reportWorkoutTool = {
   name: "report_workout",
-  description:
-    "Reports a completed workout and creates a workout log (side effect).",
+  description: "Reports a new completed workout.",
 
   parameters: {
     type: "object",
@@ -35,6 +33,6 @@ export const reportWorkoutTool = {
   },
 
   async execute(args, context) {
-    return ReportWorkoutTool.execute(context, args);
+    return createWorkoutLog(args, context);
   },
 };

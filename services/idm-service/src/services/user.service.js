@@ -64,11 +64,22 @@ const getUser = async (userId) => {
     return u;
 };
 
-const getAllUsers = async () => prisma.user.findMany();
-
+const getAllUsers = async (filters = {}) => {
+    const { coachId, role } = filters;
+  
+    const where = {};
+  
+    if (role === 'coach' && coachId) {where.coachId = coachId; }
+  
+  
+    return prisma.user.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
+  };
 const recordLogin = async (userId, success) => {
     if (success) {
-        // ✅ Successful login — reset counters and unlock if needed
+        //  Successful login — reset counters and unlock if needed
         return prisma.user.update({
             where: {id: userId},
             data: {
@@ -80,11 +91,11 @@ const recordLogin = async (userId, success) => {
         });
     }
 
-    // ❌ Failed login — increment failure counter
+    //  Failed login — increment failure counter
     const u = await getUser(userId);
     const lf = (u.loginFailures || 0) + 1;
 
-    // 🔒 If exceeded threshold, lock account for duration
+    //  If exceeded threshold, lock account for duration
     if (lf >= LOCK_THRESHOLD) {
         const until = new Date(Date.now() + LOCK_DURATION_MS);
         return prisma.user.update({

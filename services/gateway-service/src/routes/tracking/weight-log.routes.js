@@ -1,22 +1,17 @@
 import { Router } from "express";
 import { authRequired } from "../../middleware/authRequired.js";
-import { ensureClientId } from "../../middleware/ensureClientId.js";
 import { requireCoach } from "../../middleware/requireRole.js";
 import { forward } from "../../utils/forward.js";
 
 const r = Router();
 const BASE = process.env.TRACKING_SERVICE_URL;
 
-/* ======================================================
-   CLIENT ROUTES
-====================================================== */
-
 /**
  * @openapi
  * /api/tracking/weight-log:
  *   post:
  *     tags: [Tracking]
- *     summary: Client logs body weight
+ *     summary: Log weight
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -26,59 +21,18 @@ const BASE = process.env.TRACKING_SERVICE_URL;
  *           schema:
  *             $ref: "#/components/schemas/WeightLogCreateRequestDto"
  *     responses:
- *       200:
- *         description: Weight logged
+ *       201:
+ *         description: Created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WeightLogResponseDto"
- *       400:
- *         description: Invalid payload
- *       401:
- *         description: Unauthorized
  */
+
 r.post(
   "/weight-log",
   authRequired,
-  ensureClientId,
   forward(BASE, "/internal/tracking/weight-log")
-);
-
-/* ======================================================
-   COACH ROUTES
-====================================================== */
-
-/**
- * @openapi
- * /api/tracking/weight-log/history/{clientId}:
- *   get:
- *     tags: [Tracking]
- *     summary: Coach views weight log history for a client
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: clientId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Weight log history
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/WeightHistoryResponseDto"
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Forbidden (coach only)
- */
-r.get(
-  "/tracking/weight-log/history/:clientId",
-  authRequired,
-  requireCoach,
-  forward(BASE, "/internal/tracking/weight-log/history/:clientId")
 );
 
 /**
@@ -86,7 +40,7 @@ r.get(
  * /api/tracking/weight-log/{logId}:
  *   put:
  *     tags: [Tracking]
- *     summary: Client updates body weight log
+ *     summary: Update weight log
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -103,19 +57,46 @@ r.get(
  *             $ref: "#/components/schemas/WeightLogUpdateRequestDto"
  *     responses:
  *       200:
- *         description: Weight updated
+ *         description: Updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WeightLogResponseDto"
- *       401:
- *         description: Unauthorized
  */
 r.put(
-  "/tracking/weight-log/:logId",
+  "/weight-log/:logId",
   authRequired,
-  ensureClientId,
   forward(BASE, "/internal/tracking/weight-log/:logId")
+);
+
+/**
+ * @openapi
+ * /api/tracking/weight-log/history/{clientId}:
+ *   get:
+ *     tags: [Tracking]
+ *     summary: Coach views weight history for client
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: History
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/WeightHistoryResponseDto"
+ */
+
+r.get(
+  "/weight-log/history/:clientId",
+  authRequired,
+  requireCoach,
+  forward(BASE, "/internal/tracking/weight-log/history/:clientId")
 );
 
 export default r;

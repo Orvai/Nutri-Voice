@@ -1,16 +1,12 @@
+// middleware/verifyJwt.js
 import jwt from "jsonwebtoken";
 
 export function verifyJwt(req, res, next) {
-  if (req.isInternal) {
-    return next();
-  }
-
-  if (req.path === "/webhook/incoming") {
-    return next();
-  }
+  if (req.isInternal) return next();
+  
+  if (req.path === "/webhook/incoming") return next();
 
   const token = req.cookies?.access_token;
-
   if (!token) {
     req.user = null;
     return next();
@@ -25,9 +21,9 @@ export function verifyJwt(req, res, next) {
     }
 
     req.user = {
+      id: payload.sub,     
+      userId: payload.sub,  
       sessionId: payload.sid,
-      userId: payload.sub,
-      id: payload.sub,
       role: payload.role,
     };
   } catch (err) {

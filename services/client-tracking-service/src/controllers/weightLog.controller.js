@@ -1,5 +1,6 @@
 const { z } = require('zod');
-const { createWeightLog, listWeightHistory } = require('../services/weightLog.service');
+// FIX: Added updateWeightLog to import
+const { createWeightLog, listWeightHistory, updateWeightLog } = require('../services/weightLog.service');
 const {
   WeightLogCreateDto,
   WeightLogResponseDto,
@@ -9,11 +10,10 @@ const {
 const ClientIdParamsDto = z.object({ clientId: z.string().min(1) }).strict();
 const LogIdParamsDto = z.object({ logId: z.string().min(1) });
 
-
 const createWeight = async (req, res, next) => {
   try {
     const payload = WeightLogCreateDto.parse(req.body);
-    const clientId = req.user.id;
+    const clientId = req.user.id; // Correct
 
     const data = await createWeightLog(clientId, payload);
 
@@ -42,7 +42,7 @@ const history = async (req, res, next) => {
 const updateWeight = async (req, res, next) => {
   try {
     const { logId } = LogIdParamsDto.parse(req.params);
-    const payload = WeightLogCreateDto.parse(req.body);
+    const payload = WeightLogCreateDto.parse(req.body); 
 
     const data = await updateWeightLog(logId, payload);
 

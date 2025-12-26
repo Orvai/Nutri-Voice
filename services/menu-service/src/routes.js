@@ -1,8 +1,6 @@
 // routes.js
 const { Router } = require("express");
 const verifyInternalToken = require("./middleware/verifyInternalToken");
-const { injectIdentity } = require("./middleware/injectIdentity");
-
 
 /* Controllers */
 const Food = require("./controllers/food.controller");
@@ -13,59 +11,52 @@ const MealTemplates = require("./controllers/mealTemplate.controller");
 
 const router = Router();
 
-
+/* =============================================================================
+   SECURITY BARRIER 
+============================================================================= */
+router.use(verifyInternalToken); 
 
 /* ===========================
    MEAL TEMPLATE ROUTES
    =========================== */
-
-// Create MealTemplate
-router.post("/internal/menu/meal-templates",verifyInternalToken,MealTemplates.createMealTemplate);
- // List MealTemplates (by coachId injected by gateway)
- router.get("/internal/menu/meal-templates",verifyInternalToken,MealTemplates.listMealTemplates);
- // Get MealTemplate by ID
- router.get("/internal/menu/meal-templates/:id",verifyInternalToken, MealTemplates.getMealTemplate);
- // Update MealTemplate
- router.put("/internal/menu/meal-templates/:id",verifyInternalToken,MealTemplates.updateMealTemplate);
- // Delete MealTemplate
- router.delete("/internal/menu/meal-templates/:id",verifyInternalToken,MealTemplates.deleteMealTemplate);
+router.post("/internal/menu/meal-templates", MealTemplates.createMealTemplate);
+router.get("/internal/menu/meal-templates", MealTemplates.listMealTemplates);
+router.get("/internal/menu/meal-templates/:id", MealTemplates.getMealTemplate);
+router.put("/internal/menu/meal-templates/:id", MealTemplates.updateMealTemplate);
+router.delete("/internal/menu/meal-templates/:id", MealTemplates.deleteMealTemplate);
 
 /* ===========================
    FOOD ROUTES
    =========================== */
-
-router.post("/internal/menu/food", verifyInternalToken, Food.createFoodItem);
-router.get("/internal/menu/food", verifyInternalToken, Food.listFoodItems);
-router.put("/internal/menu/food/:id", verifyInternalToken, Food.updateFoodItem);
-router.delete("/internal/menu/food/:id", verifyInternalToken, Food.deleteFoodItem);
+router.post("/internal/menu/food", Food.createFoodItem);
+router.get("/internal/menu/food", Food.listFoodItems);
+router.put("/internal/menu/food/:id", Food.updateFoodItem);
+router.delete("/internal/menu/food/:id", Food.deleteFoodItem);
 
 /* ===========================
    VITAMIN ROUTES
    =========================== */
-router.get("/internal/menu/vitamins", verifyInternalToken, VitaminController.list);
-router.post("/internal/menu/vitamins", verifyInternalToken, VitaminController.create);
-
+router.get("/internal/menu/vitamins", VitaminController.list);
+router.post("/internal/menu/vitamins", VitaminController.create);
 
 /* ===========================
    TEMPLATE MENU ROUTES
    =========================== */
-
-router.post("/internal/menu/template-menus", verifyInternalToken, TemplateMenus.createTemplateMenu);
-router.get("/internal/menu/template-menus", verifyInternalToken, TemplateMenus.listTemplateMenus);
-router.get("/internal/menu/template-menus/:id", verifyInternalToken, TemplateMenus.getTemplateMenu);
-router.put("/internal/menu/template-menus/:id", verifyInternalToken, TemplateMenus.updateTemplateMenu);
-router.delete("/internal/menu/template-menus/:id", verifyInternalToken, TemplateMenus.deleteTemplateMenu);
+router.post("/internal/menu/template-menus", TemplateMenus.createTemplateMenu);
+router.get("/internal/menu/template-menus", TemplateMenus.listTemplateMenus);
+router.get("/internal/menu/template-menus/:id", TemplateMenus.getTemplateMenu);
+router.put("/internal/menu/template-menus/:id", TemplateMenus.updateTemplateMenu);
+router.delete("/internal/menu/template-menus/:id", TemplateMenus.deleteTemplateMenu);
 
 /* ===========================
    CLIENT MENU ROUTES
    =========================== */
+router.post("/internal/menu/client-menus", ClientMenus.createClientMenu);
+router.get("/internal/menu/client-menus", ClientMenus.listClientMenus);
+router.get("/internal/menu/client-menus/:id", ClientMenus.getClientMenu);
+router.put("/internal/menu/client-menus/:id", ClientMenus.updateClientMenu);
+router.delete("/internal/menu/client-menus/:id", ClientMenus.deleteClientMenu);
 
-router.post("/internal/menu/client-menus", verifyInternalToken, ClientMenus.createClientMenu);
-router.get("/internal/menu/client-menus", verifyInternalToken,injectIdentity, ClientMenus.listClientMenus);
-router.get("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.getClientMenu);
-router.put("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.updateClientMenu);
-router.delete("/internal/menu/client-menus/:id", verifyInternalToken, ClientMenus.deleteClientMenu);
-
-router.post("/internal/menu/client-menus/from-template",verifyInternalToken,injectIdentity,ClientMenus.createClientMenuFromTemplate);
+router.post("/internal/menu/client-menus/from-template", ClientMenus.createClientMenuFromTemplate);
 
 module.exports = router;

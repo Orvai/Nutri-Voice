@@ -1,23 +1,7 @@
 const { prisma } = require('../db/prisma');
 const { getTodayDayType } = require('./daySelection.service');
 const { getClientMenus } = require('../clients/menu.client');
-
-/* ======================================================
-   Date helpers
-====================================================== */
-
-const startOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(0, 0, 0, 0);
-  return date;
-};
-
-const endOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(23, 59, 59, 999);
-  return date;
-};
-
+const { getStartOfDay, getEndOfDay } = require('../utils/date.utils'); 
 /* ======================================================
    Internal fetchers
 ====================================================== */
@@ -28,8 +12,8 @@ const getMealsForToday = (clientId) => {
     where: {
       clientId,
       date: {
-        gte: startOfDay(today),
-        lte: endOfDay(today),
+        gte: getStartOfDay(today),
+        lte: getEndOfDay(today),  
       },
     },
     orderBy: [{ date: 'asc' }, { loggedAt: 'asc' }],
@@ -42,8 +26,8 @@ const getWorkoutsForToday = (clientId) => {
     where: {
       clientId,
       date: {
-        gte: startOfDay(today),
-        lte: endOfDay(today),
+        gte: getStartOfDay(today),
+        lte: getEndOfDay(today),
       },
     },
     include: {
@@ -59,8 +43,8 @@ const getTodayWeight = (clientId) => {
     where: {
       clientId,
       date: {
-        gte: startOfDay(today),
-        lte: endOfDay(today),
+        gte: getStartOfDay(today),
+        lte: getEndOfDay(today),
       },
     },
     orderBy: { date: 'desc' },

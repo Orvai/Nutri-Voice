@@ -1,17 +1,6 @@
 const { prisma } = require('../db/prisma');
 const { MealLogCreateDto } = require('../dto/mealLog.dto');
-
-const startOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(0, 0, 0, 0);
-  return date;
-};
-
-const endOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(23, 59, 59, 999);
-  return date;
-};
+const { getStartOfDay, getEndOfDay, getDateDaysAgo } = require('../utils/date.utils');
 
 const createMeal = async (clientId, payload) => {
   const data = MealLogCreateDto.parse(payload);
@@ -33,15 +22,15 @@ const createMeal = async (clientId, payload) => {
 };
 
 const listAllMeals = (clientId) => {
-  const start = new Date(1970, 0, 1);
-  const end = new Date();
+  const start = getStartOfDay(getDateDaysAgo(30)); 
+  const end = getEndOfDay(new Date());
 
   return prisma.mealLog.findMany({
     where: {
       clientId,
       date: {
-        gte: startOfDay(start),
-        lte: endOfDay(end)
+        gte: start,
+        lte: end
       }
     },
     orderBy: [{ date: 'asc' }, { loggedAt: 'asc' }]

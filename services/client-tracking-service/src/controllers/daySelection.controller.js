@@ -6,7 +6,7 @@ const ClientIdParamsDto = z.object({ clientId: z.string().min(1) }).strict();
 const setDayTypeController = async (req, res, next) => {
   try {
     const parsed = DaySelectionCreateDto.parse(req.body);
-    const clientId = req.user.clientId;
+    const clientId = req.user.id;
 
     const data = await setDayType(clientId, parsed);
 

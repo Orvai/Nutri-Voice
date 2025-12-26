@@ -36,8 +36,12 @@ const BASE = process.env.MENU_SERVICE_URL;
  *               items:
  *                 $ref: "#/components/schemas/ClientMenuResponseDto"
  */
-r.get("/client-menus", authRequired, forward(BASE, "/internal/menu/client-menus"));
-
+r.get("/client-menus",authRequired,ensureClientId, (req, res, next) => {
+    if (req.user.role === 'coach' && !req.query.clientId) {
+      return res.status(400).json({ message: "Coach must provide clientId parameter" });
+    }next();
+  },forward(BASE, "/internal/menu/client-menus")
+);
 /**
  * @openapi
  * /api/client-menus/{id}:
@@ -169,36 +173,34 @@ r.delete("/client-menus/:id",authRequired,requireCoach,forward(BASE, "/internal/
  *             schema:
  *               $ref: "#/components/schemas/ClientMenuResponseDto"
  */
-r.post(
-  "/client-menus/from-template",
+r.post("/client-menus/from-template",
   authRequired,
   requireCoach,
-  ensureClientId,      
-  requireOwnership,
+  // Middleware 1: ולידציה
   (req, res, next) => {
-    const { templateMenuId, clientId } = req.body ?? {};
+    const { clientId } = req.body ?? {};
     if (!clientId || clientId === "undefined") {
       return res.status(400).json({ 
         message: "Missing valid clientId in request body" 
       });
     }
+    next();
+  },
+  requireOwnership,
+  (req, res, next) => {
+    const { templateMenuId, clientId } = req.body;
+
     if (!templateMenuId) {
-      return res
-        .status(400)
-        .json({ message: "templateMenuId is required" });
+      return res.status(400).json({ message: "templateMenuId is required" });
     }
 
-    // inject identity for internal service
     req.headers["x-coach-id"] = String(req.user.id);
-    req.headers["x-client-id"] = String(clientId);
-
-    // never forward clientId to service
+    
+    req.headers["x-client-id"] = String(clientId); 
+    
     delete req.body.clientId;
 
-    return forward(
-      BASE,
-      "/internal/menu/client-menus/from-template"
-    )(req, res, next);
+    return forward(BASE, "/internal/menu/client-menus/from-template")(req, res, next);
   }
 );
 

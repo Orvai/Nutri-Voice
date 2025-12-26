@@ -6,7 +6,7 @@ dotenv.config();
 const EnvSchema = z.object({
   PORT: z.string().default("4020"),
   GATEWAY_BASE_URL: z.string().url(),
-  INTERNAL_SERVICE_TOKEN: z.string(),
+  INTERNAL_TOKEN: z.string(),
   OPENAI_API_KEY: z.string().optional(),
 });
 

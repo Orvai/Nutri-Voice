@@ -14,7 +14,7 @@ export function forward(baseURL, targetPath, options = {}) {
       }
 
       /* ============================
-          Resolve target URL
+          1. Resolve target URL
       ============================ */
       let resolvedPath = preservePath ? req.path : targetPath;
 
@@ -27,37 +27,37 @@ export function forward(baseURL, targetPath, options = {}) {
       url = `${baseURL}${resolvedPath}`;
 
       /* ============================
-          Identity Injection Logic 
+          2. Identity Injection Logic                       
       ============================ */
-      const clientId =
-        req.headers["x-mcp-client-id"] ||   
-        req.headers["x-client-id"] ||
-        req.identity?.clientId ||
-        req.body?.clientId ||
-        req.query?.clientId;
-
-      const coachId = 
-        req.identity?.coachId || 
-        req.identity?.userId || 
-        req.headers["x-coach-id"];
+      const user = req.user || {};
+      const actorId = user.id; // או user.userId
+      const actorRole = user.role;
 
       /* ============================
-          Build SAFE headers
+          3. Build SAFE headers
       ============================ */
       const headers = {
-        // Internal auth
+        // Internal Auth Secret
         "x-internal-token": process.env.INTERNAL_TOKEN,
 
-        "x-client-id": clientId,
-        "x-coach-id": coachId,
-        "x-user-id": req.identity?.userId || req.headers["x-user-id"],
+        // Identity Headers (Source of Truth for the Actor)
+        "x-user-id": actorId,
+        "x-role": actorRole,
+        "x-session-id": user.sessionId,
+        
 
-        "x-mcp-sender": req.headers["x-mcp-sender"],
-        "x-mcp-client-id": clientId, 
-        "x-mcp-user-id": req.identity?.userId,
+        "x-client-id": req.headers["x-client-id"] || (actorRole === 'client' ? actorId : undefined),
+        "x-coach-id": req.headers["x-coach-id"] || (actorRole === 'coach' ? actorId : undefined),
 
+        // Pass-through headers 
         authorization: req.headers.authorization,
+        "content-type": req.headers["content-type"],
         cookie: req.headers.cookie,
+        
+        // MCP Specifics 
+        "x-mcp-sender": req.headers["x-mcp-sender"],
+        "x-mcp-client-id": req.headers["x-mcp-client-id"],
+        "x-mcp-user-id": req.headers["x-mcp-user-id"],
 
         // Cache control
         "cache-control": "no-cache",
@@ -65,7 +65,6 @@ export function forward(baseURL, targetPath, options = {}) {
         expires: "0",
       };
 
-      // ניקוי headers שהם null/undefined
       Object.keys(headers).forEach((k) => {
         if (headers[k] === undefined || headers[k] === null) {
           delete headers[k];
@@ -73,13 +72,13 @@ export function forward(baseURL, targetPath, options = {}) {
       });
 
       /* ============================
-          Axios config
+          4. Axios config
       ============================ */
       const config = {
         method,
         url,
         headers,
-        params: req.query,
+        params: req.query, 
         withCredentials: true,
       };
 
@@ -87,19 +86,18 @@ export function forward(baseURL, targetPath, options = {}) {
 
       if (isMultipart) {
         config.data = req;
-        config.headers["content-type"] = req.headers["content-type"];
         config.maxBodyLength = Infinity;
         config.maxContentLength = Infinity;
       } else if (method !== "get" && method !== "delete") {
-        config.data = { ...req.body };
+        config.data = req.body;
       }
 
-      console.log(`➡️ FORWARDING ${method.toUpperCase()}: ${url} | Client: ${clientId}`);
+      console.log(`➡️ FORWARD: ${method.toUpperCase()} ${url} | Actor: ${actorId} (${actorRole})`);
 
       const response = await axios(config);
 
       /* ============================
-          Forward cookies & response
+          5. Forward cookies & response
       ============================ */
       const cookies = response.headers["set-cookie"];
       if (cookies) {
@@ -107,28 +105,30 @@ export function forward(baseURL, targetPath, options = {}) {
       }
 
       const isAuthRoute =
-        targetPath === "/internal/auth/login" ||
-        targetPath === "/internal/auth/logout" ||
-        targetPath === "/internal/auth/token/refresh";
+        targetPath.includes("/auth/login") ||
+        targetPath.includes("/auth/logout") ||
+        targetPath.includes("/token/refresh");
 
       if (isAuthRoute) {
         return res.status(response.status).json(response.data);
       }
 
       const payload = response.data;
-      if (payload?.data !== undefined) {
-        return res.status(response.status).json({ data: payload.data });
+      if (payload && payload.data !== undefined) {
+        return res.status(response.status).json(payload);
       }
 
       return res.status(response.status).json({ data: payload });
 
     } catch (err) {
-      console.error("❌ ERROR on", method.toUpperCase(), url);
       if (err.response) {
-        return res.status(err.response.status).json({
-          error: err.response.data?.message || err.response.data || "Error",
-        });
+        console.error(`❌ ERROR from downstream: ${err.response.status} on ${url}`);
+        return res.status(err.response.status).json(
+           err.response.data 
+        );
       }
+      
+      console.error("❌ GATEWAY ERROR:", err.message);
       next(err);
     }
   };

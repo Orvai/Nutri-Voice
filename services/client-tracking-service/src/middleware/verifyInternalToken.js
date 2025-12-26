@@ -1,5 +1,6 @@
 module.exports = function verifyInternalToken(req, res, next) {
   const token = req.headers["x-internal-token"];
+
   if (!token) {
     return next();
   }
@@ -8,27 +9,18 @@ module.exports = function verifyInternalToken(req, res, next) {
     return res.status(401).json({ message: "Invalid internal token" });
   }
 
-  const role =
-    req.headers["x-mcp-sender"] ||
-    (req.headers["x-client-id"] ? "client" : "coach");
+  const userId = req.headers["x-user-id"];
+  const role = req.headers["x-role"];
 
-  const clientId =
-    req.headers["x-mcp-client-id"] ||
-    req.headers["x-client-id"] ||
-    null;
-
-  const userId =
-    req.headers["x-mcp-user-id"] ||
-    req.headers["x-coach-id"] ||
-    null;
-
+  if (!userId) {
+    console.warn("⚠️ Internal request missing x-user-id");
+  }
 
   req.isInternal = true;
 
   req.user = {
-    id: role === "client" ? clientId : userId,
-    role,
-    clientId,
+    id: userId,       
+    role: role,
     source: "INTERNAL",
   };
 

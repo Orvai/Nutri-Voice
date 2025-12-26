@@ -31,7 +31,7 @@ const BASE = process.env.IDM_SERVICE_URL;
  */
 r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
   try {
-    const enriched = await aggregateClients(BASE);
+    const enriched = await aggregateClients(req, BASE);
     return res.json({ data: enriched });
   } catch (err) {
     console.error("❌ Error in /api/clients:", err?.response?.data || err);

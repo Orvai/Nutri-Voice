@@ -1,12 +1,7 @@
 const A = require('../services/auth.service');
 const { AppError } = require('../common/errors');
 const { validateDto } = require('../common/validation');
-const {
-  registerRequestDto,
-  loginRequestDto,
-  loginContextDto,
-  refreshTokenDto,
-} = require('../dto/auth.dto');
+const {registerRequestDto,loginRequestDto,loginContextDto,refreshTokenDto,} = require('../dto/auth.dto');
 const { registerMFARequestDto, verifyMFARequestDto } = require('../dto/mfa.dto');
 
 const registerUser = async (req, res, next) => {

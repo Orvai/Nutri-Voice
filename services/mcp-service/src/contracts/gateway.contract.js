@@ -2,16 +2,6 @@
  * contracts/gateway.contract.js
  *
  * Source of Truth for MCP → Gateway calls
- *
- * Design principles:
- * - Contract describes WHAT can be called, not HOW gateway authenticates.
- * - MCP always sends internal identity via verifyInternalToken.
- * - clientContext determines where clientId comes from.
- *
- * clientContext meanings:
- * - SELF  → clientId = identity.user.id (client acting on self)
- * - PATH  → clientId MUST be provided in URL path
- * - NONE  → endpoint is not client-specific
  */
 
 export const GatewayRole = {
@@ -28,7 +18,7 @@ export const ClientContext = {
 
 export const GatewayContract = {
   /* ======================================================
-     WEBHOOK
+      WEBHOOK
   ====================================================== */
   WEBHOOK_INCOMING: {
     method: "POST",
@@ -38,15 +28,50 @@ export const GatewayContract = {
   },
 
   /* ======================================================
-     TRACKING — CLIENT SELF
+      TRACKING — READ (Daily State & History)
+      Role: BOTH (Client sees own data, Coach sees client data)
+      Context: PATH (clientId is explicit in URL)
   ====================================================== */
   DAILY_STATE_GET: {
     method: "GET",
-    path: "/api/tracking/daily-state",
+    path: "/api/tracking/daily-state", 
     role: GatewayRole.BOTH,
-    clientContext: ClientContext.SELF,
+    clientContext: ClientContext.PATH,           
   },
 
+  DAY_SELECTION_TODAY_GET: {
+    method: "GET",
+    path: "/api/tracking/day-selection/today/{clientId}",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.PATH,
+  },
+
+  MEAL_LOG_HISTORY: {
+    method: "GET",
+    path: "/api/tracking/meal-log/history/{clientId}",
+    role: GatewayRole.BOTH, 
+    clientContext: ClientContext.PATH,
+  },
+
+  WORKOUT_LOG_HISTORY: {
+    method: "GET",
+    path: "/api/tracking/workout-log/history/{clientId}",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.PATH,
+  },
+
+  WEIGHT_LOG_HISTORY: {
+    method: "GET",
+    path: "/api/tracking/weight-log/history/{clientId}",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.PATH,
+  },
+
+  /* ======================================================
+      TRACKING — WRITE (Log Actions)
+      Role: CLIENT (Usually users log for themselves)
+      Context: SELF (clientId comes from User Token)
+  ====================================================== */
   MEAL_LOG_CREATE: {
     method: "POST",
     path: "/api/tracking/meal-log",
@@ -102,78 +127,124 @@ export const GatewayContract = {
     role: GatewayRole.CLIENT,
     clientContext: ClientContext.SELF,
   },
+/* ======================================================
+      MENU SERVICE - EXTENDED (Missing parts)
+     ====================================================== */
 
-  /* ======================================================
-     TRACKING — COACH ON CLIENT (clientId in PATH)
-  ====================================================== */
-  DAY_SELECTION_TODAY_FOR_CLIENT: {
-    method: "GET",
-    path: "/api/tracking/day-selection/today/{clientId}",
-    role: GatewayRole.COACH,
-    clientContext: ClientContext.PATH,
-  },
-
-  MEAL_LOG_HISTORY: {
-    method: "GET",
-    path: "/api/tracking/meal-log/history/{clientId}",
-    role: GatewayRole.COACH,
-    clientContext: ClientContext.PATH,
-  },
-
-  WORKOUT_LOG_HISTORY: {
-    method: "GET",
-    path: "/api/tracking/workout-log/history/{clientId}",
-    role: GatewayRole.COACH,
-    clientContext: ClientContext.PATH,
-  },
-
-  WEIGHT_LOG_HISTORY: {
-    method: "GET",
-    path: "/api/tracking/weight-log/history/{clientId}",
-    role: GatewayRole.COACH,
-    clientContext: ClientContext.PATH,
-  },
-
-  /* ======================================================
-     MENUS
-  ====================================================== */
-  CLIENT_MENUS_LIST: {
-    method: "GET",
-    path: "/api/client-menus",
-    role: GatewayRole.BOTH,
-    clientContext: ClientContext.NONE,
-  },
-
-  CLIENT_MENUS_GET_BY_ID: {
-    method: "GET",
-    path: "/api/client-menus/{id}",
-    role: GatewayRole.BOTH,
-    clientContext: ClientContext.NONE,
-  },
-
-  CLIENT_MENUS_CREATE: {
+  // --- SPECIAL ACTION: Create from Template ---
+  CLIENT_MENUS_CREATE_FROM_TEMPLATE: {
     method: "POST",
-    path: "/api/client-menus",
+    path: "/api/client-menus/from-template",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE, // ה-Tool שולח את ה-clientId ב-Body
+  },
+
+  // --- FOOD ---
+  FOOD_LIST: {
+    method: "GET",
+    path: "/api/food",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  FOOD_CREATE: {
+    method: "POST",
+    path: "/api/food",
     role: GatewayRole.COACH,
     clientContext: ClientContext.NONE,
   },
-
-  CLIENT_MENUS_UPDATE: {
+  FOOD_UPDATE: {
     method: "PUT",
-    path: "/api/client-menus/{id}",
+    path: "/api/food/{id}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  FOOD_DELETE: {
+    method: "DELETE",
+    path: "/api/food/{id}",
     role: GatewayRole.COACH,
     clientContext: ClientContext.NONE,
   },
 
-  CLIENT_MENUS_DELETE: {
+  // --- VITAMINS ---
+  VITAMINS_LIST: {
+    method: "GET",
+    path: "/api/vitamins",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  VITAMINS_CREATE: {
+    method: "POST",
+    path: "/api/vitamins",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+
+  // --- MEAL TEMPLATES ---
+  MEAL_TEMPLATES_LIST: {
+    method: "GET",
+    path: "/api/meal-templates",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  MEAL_TEMPLATES_GET_BY_ID: {
+    method: "GET",
+    path: "/api/meal-templates/{id}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  MEAL_TEMPLATES_CREATE: {
+    method: "POST",
+    path: "/api/meal-templates",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  MEAL_TEMPLATES_UPDATE: {
+    method: "PUT",
+    path: "/api/meal-templates/{id}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  MEAL_TEMPLATES_DELETE: {
     method: "DELETE",
-    path: "/api/client-menus/{id}",
+    path: "/api/meal-templates/{id}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+
+  // --- TEMPLATE MENUS ---
+  TEMPLATE_MENUS_LIST: {
+    method: "GET",
+    path: "/api/template-menus",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  TEMPLATE_MENUS_GET_BY_ID: {
+    method: "GET",
+    path: "/api/template-menus/{id}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  TEMPLATE_MENUS_CREATE: {
+    method: "POST",
+    path: "/api/template-menus",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  TEMPLATE_MENUS_UPDATE: {
+    method: "PUT",
+    path: "/api/template-menus/{id}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  TEMPLATE_MENUS_DELETE: {
+    method: "DELETE",
+    path: "/api/template-menus/{id}",
     role: GatewayRole.COACH,
     clientContext: ClientContext.NONE,
   },
 
   /* ======================================================
-     WORKOUT PROGRAMS
+      WORKOUT PROGRAMS
   ====================================================== */
   WORKOUT_PROGRAMS_LIST_ALL: {
     method: "GET",

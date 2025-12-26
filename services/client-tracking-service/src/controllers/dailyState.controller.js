@@ -4,7 +4,6 @@ const { getDailyState } = require('../services/dailyState.service');
 const getDailyStateController = async (req, res, next) => {
   try {
     const clientId = req.user.id;
-
     const data = await getDailyState(clientId);
 
     res.json({

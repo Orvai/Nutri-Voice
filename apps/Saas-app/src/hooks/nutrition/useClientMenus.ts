@@ -66,8 +66,11 @@ export function useCreateClientMenuFromTemplate(clientId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: ClientMenuCreateFromTemplateRequestDto) => {
-      return postApiClientMenusFromTemplate(data); 
+    mutationFn: (data: Omit<ClientMenuCreateFromTemplateRequestDto, 'clientId'>) => {
+      return postApiClientMenusFromTemplate({
+        ...data,
+        clientId: clientId 
+      }); 
     },
     
     onSuccess: (_data) => {

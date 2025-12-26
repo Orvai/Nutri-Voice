@@ -1,22 +1,17 @@
 import { Router } from "express";
 import { authRequired } from "../../middleware/authRequired.js";
-import { ensureClientId } from "../../middleware/ensureClientId.js";
 import { requireCoach } from "../../middleware/requireRole.js";
 import { forward } from "../../utils/forward.js";
 
 const r = Router();
 const BASE = process.env.TRACKING_SERVICE_URL;
 
-/* ======================================================
-   CLIENT ROUTES
-====================================================== */
-
 /**
  * @openapi
  * /api/tracking/workout-log:
  *   post:
  *     tags: [Tracking]
- *     summary: Client logs a workout
+ *     summary: Log a workout
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -26,21 +21,17 @@ const BASE = process.env.TRACKING_SERVICE_URL;
  *           schema:
  *             $ref: "#/components/schemas/WorkoutLogCreateRequestDto"
  *     responses:
- *       200:
- *         description: Workout logged
+ *       201:
+ *         description: Created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WorkoutLogResponseDto"
- *       400:
- *         description: Invalid payload
- *       401:
- *         description: Unauthorized
  */
+
 r.post(
   "/workout-log",
   authRequired,
-  ensureClientId,
   forward(BASE, "/internal/tracking/workout-log")
 );
 
@@ -49,7 +40,7 @@ r.post(
  * /api/tracking/workout-log/{logId}:
  *   put:
  *     tags: [Tracking]
- *     summary: Client updates a workout log
+ *     summary: Update workout log header
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -66,22 +57,15 @@ r.post(
  *             $ref: "#/components/schemas/WorkoutLogUpdateRequestDto"
  *     responses:
  *       200:
- *         description: Workout log updated
+ *         description: Updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WorkoutLogResponseDto"
- *       400:
- *         description: Invalid payload
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Workout log not found
  */
 r.put(
   "/workout-log/:logId",
   authRequired,
-  ensureClientId,
   forward(BASE, "/internal/tracking/workout-log/:logId")
 );
 
@@ -90,7 +74,7 @@ r.put(
  * /api/tracking/workout-log/exercise/{exerciseLogId}:
  *   patch:
  *     tags: [Tracking]
- *     summary: Client updates a single exercise entry in a workout log
+ *     summary: Update specific exercise
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -107,35 +91,24 @@ r.put(
  *             $ref: "#/components/schemas/WorkoutExerciseUpdateDto"
  *     responses:
  *       200:
- *         description: Exercise entry updated
+ *         description: Updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WorkoutLogResponseDto"
- *       400:
- *         description: Invalid payload
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Exercise entry not found
  */
 r.patch(
   "/workout-log/exercise/:exerciseLogId",
   authRequired,
-  ensureClientId,
   forward(BASE, "/internal/tracking/workout-log/exercise/:exerciseLogId")
 );
-
-/* ======================================================
-   COACH ROUTES
-====================================================== */
 
 /**
  * @openapi
  * /api/tracking/workout-log/history/{clientId}:
  *   get:
  *     tags: [Tracking]
- *     summary: Coach views workout log history for a client
+ *     summary: Coach views workout history for client
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -146,15 +119,11 @@ r.patch(
  *           type: string
  *     responses:
  *       200:
- *         description: Workout log history
+ *         description: History
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/WorkoutLogHistoryResponseDto"
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Forbidden (coach only)
  */
 r.get(
   "/workout-log/history/:clientId",

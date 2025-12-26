@@ -146,18 +146,33 @@ export default function WorkoutTemplateForm({
     Number(level) > 0 &&
     selectedMuscleGroups.length > 0;
 
-  /* ======================
-     Submit
+/* ======================
+      Submit
   ====================== */
+
+  const toTitleCase = (str: string) => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
 
   const handleSubmit = () => {
     if (!isValid || !gender || workoutType === "") return;
 
+    const validEnumValues = Object.values(MUSCLE_LABEL_TO_ENUM);
+
     const mappedMuscles = uniq(selectedMuscleGroups).map((label) => {
-      const mapped = MUSCLE_LABEL_TO_ENUM[label];
+
+      let mapped = MUSCLE_LABEL_TO_ENUM[label] || MUSCLE_LABEL_TO_ENUM[toTitleCase(label)];
+
+      if (!mapped && validEnumValues.includes(label)) {
+        mapped = label;
+      }
+
       if (!mapped) {
+        console.error("❌ Failed to map label:", label);
         throw new Error(`Unknown muscle label: ${label}`);
       }
+      
       return mapped;
     });
 

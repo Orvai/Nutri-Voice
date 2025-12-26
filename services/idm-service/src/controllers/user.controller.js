@@ -38,7 +38,9 @@ const getUser = async (req, res, next) => {
 
 const listUsers = async (req, res, next) => {
   try {
-    const data = await S.getAllUsers();
+    const { coachId, role } = req.auth || {};
+    const data = await S.getAllUsers({ coachId, role });
+    
     res.json(data);
   } catch (e) {
     next(e);

@@ -1,6 +1,6 @@
 const { z } = require('zod');
-const { createMeal, listAllMeals } = require('../services/mealLog.service');
-const { MealLogCreateDto, MealLogResponseDto } = require('../dto/mealLog.dto');
+const { createMeal, listAllMeals,updateMeal } = require('../services/mealLog.service');
+const { MealLogCreateDto, MealLogResponseDto,MealLogUpdateDto } = require('../dto/mealLog.dto');
 
 const ClientIdParamsDto = z.object({ clientId: z.string().min(1) }).strict();
 const LogIdParamsDto = z.object({ logId: z.string().min(1) });
@@ -39,8 +39,7 @@ const history = async (req, res, next) => {
 const updateMealController = async (req, res, next) => {
   try {
     const { logId } = LogIdParamsDto.parse(req.params);
-    const payload = MealLogUpdateDto.parse(req.body);
-
+    const payload = MealLogUpdateDto ? MealLogUpdateDto.parse(req.body) : req.body;
     const data = await updateMeal(logId, payload);
 
     res.json({

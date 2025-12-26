@@ -1,15 +1,14 @@
 // src/llm/tools/workout/updateWorkout.tool.js
-import { UpdateWorkoutTool } from "../../../services/tools/workout/updateWorkout.tool.js";
+import { updateWorkoutLog } from "../../../services/tools/workout/workoutLog.service.js";
 
 export const updateWorkoutTool = {
   name: "update_workout",
-  description:
-    "Updates an existing workout log (side effect).",
+  description: "Updates an existing workout log header (effort, type, notes).",
 
   parameters: {
     type: "object",
     properties: {
-      logId: { type: "string", minLength: 1 },
+      logId: { type: "string", minLength: 1, description: "The Workout Log ID" },
       workoutType: { type: "string" },
       effortLevel: {
         type: "string",
@@ -21,12 +20,10 @@ export const updateWorkoutTool = {
         items: {
           type: "object",
           properties: {
-            id: { type: "string" },
-            exerciseName: { type: "string", minLength: 1 },
+            id: { type: "string" }, 
+            exerciseName: { type: "string" },
             weight: { type: ["number", "null"] },
           },
-          required: ["id", "exerciseName"],
-          additionalProperties: false,
         },
       },
     },
@@ -35,6 +32,7 @@ export const updateWorkoutTool = {
   },
 
   async execute(args, context) {
-    return UpdateWorkoutTool.execute(context, args);
+    const { logId, ...payload } = args;
+    return updateWorkoutLog(logId, payload, context);
   },
 };

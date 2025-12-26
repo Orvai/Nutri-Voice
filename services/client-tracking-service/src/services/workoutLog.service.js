@@ -3,19 +3,6 @@ const {
   WorkoutLogCreateDto,
   WorkoutLogUpdateDto
 } = require('../dto/workoutLog.dto');
-
-const startOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(0, 0, 0, 0);
-  return date;
-};
-
-const endOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(23, 59, 59, 999);
-  return date;
-};
-
 /**
  * Create a workout log + exercises
  */
@@ -63,7 +50,8 @@ const createWorkoutLog = async (clientId, payload) => {
         }
       }
     }
-  });};
+  });
+};
 
 /**
  * Get full workout history (no date limit)
