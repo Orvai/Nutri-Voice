@@ -1,69 +1,116 @@
-import { StyleSheet } from 'react-native';
+// src/components/client-profile/progress/styles/NutritionPeriodReport.styles.ts
+import { StyleSheet } from "react-native";
+import { progressTheme } from "../../../../theme/progressTheme";
 
 export const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
+  container: { marginTop: 14 },
+
+  headerRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
   },
+
+  titleWrap: { flex: 1 },
+
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#475569',
-    textTransform: 'uppercase',
-    marginBottom: 12,
-    textAlign: 'right',
+    color: progressTheme.colors.text,
+    fontSize: 16,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
+  sectionSub: {
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    marginTop: 3,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
+    backgroundColor: progressTheme.colors.surface,
+    borderRadius: progressTheme.radius.card,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    alignItems: 'center',
+    borderColor: progressTheme.colors.border,
   },
+
   calorieSection: {
-    alignItems: 'center',
-    marginBottom: 24,
+    alignItems: "flex-end",
   },
+
   avgLabel: {
+    color: progressTheme.colors.textDim,
     fontSize: 12,
-    fontWeight: '700',
-    color: '#64748B',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    fontWeight: "800",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
   avgValue: {
-    fontSize: 36,
-    fontWeight: '900',
-    color: '#0F172A',
-    marginVertical: 4,
+    marginTop: 6,
+    color: progressTheme.colors.text,
+    fontSize: 28,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
   unit: {
+    marginTop: 2,
+    color: progressTheme.colors.textDim,
     fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: '600',
+    fontWeight: "800",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
+  variabilityText: {
+    marginTop: 8,
+    color: progressTheme.colors.textMuted,
+    fontSize: 12,
+    lineHeight: 16,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: progressTheme.colors.border,
+    marginVertical: 12,
+  },
+
   macroGrid: {
-    flexDirection: 'row-reverse',
-    gap: 8,
-    width: '100%',
+    flexDirection: "row-reverse",
+    gap: 10,
   },
+
   tag: {
     flex: 1,
-    padding: 10,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    backgroundColor: '#F8FAFC',
-    alignItems: 'center',
+    borderRadius: progressTheme.radius.sub,
+    padding: 12,
+    backgroundColor: progressTheme.colors.surface2,
+    borderWidth: 1,
+    borderColor: progressTheme.colors.border,
   },
+
   tagLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    marginBottom: 4,
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    fontWeight: "800",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
   tagValue: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1E293B',
+    marginTop: 6,
+    color: progressTheme.colors.text,
+    fontSize: 16,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
 });

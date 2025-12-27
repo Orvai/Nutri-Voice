@@ -1,5 +1,5 @@
 import { ScrollView, View } from "react-native";
-import { useAiHelpData } from "../../../src/hooks/useAiHelpData";
+import { useAiHelpData } from "../../../src/hooks/Assistant/useAiHelpData";
 
 import AiWelcome from "../../../src/components/ai/AiWelcome";
 import AiQuickActions from "../../../src/components/ai/AiQuickActions";

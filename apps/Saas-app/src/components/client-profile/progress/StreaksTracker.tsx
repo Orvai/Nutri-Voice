@@ -1,38 +1,57 @@
-import React, { memo } from 'react';
-import { View, Text } from 'react-native';
-import { styles } from './styles/StreaksTracker.styles';
+// src/components/analytics/StreaksTracker.tsx
+import React, { memo } from "react";
+import { View, Text } from "react-native";
+import { styles } from "./styles/StreaksTracker.styles";
+import type { CoachAnalytics } from "@/types/ui/tracking/coach-analytics.ui";
 
-/**
- * Visualizing behavioral momentum through current and max streaks.
- * Highlights both adherence to nutrition and consistency in logging.
- */
-const StreaksTracker = memo(({ streaks }: any) => {
+type Props = {
+  streaks: CoachAnalytics["streaks"];
+};
+
+const StreaksTracker = memo(({ streaks }: Props) => {
+  const quality =
+    streaks.nutritionStreak.quality === "חזק"
+      ? styles.qStrong
+      : streaks.nutritionStreak.quality === "בינוני"
+      ? styles.qMid
+      : styles.qWeak;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Consistency Streaks</Text>
-      
+      <View style={styles.headerRow}>
+        <View style={styles.titleWrap}>
+          <Text style={styles.sectionTitle}>מומנטום ועקביות</Text>
+          <Text style={styles.sectionSub}>אמינות: {streaks.confidence}</Text>
+        </View>
+
+        <View style={[styles.qualityPill, quality]}>
+          <Text style={styles.qualityText}>איכות: {streaks.nutritionStreak.quality}</Text>
+        </View>
+      </View>
+
       <View style={styles.row}>
-        {/* Compliance Streak */}
         <View style={styles.card}>
           <Text style={styles.emoji}>🔥</Text>
           <View style={styles.textContainer}>
-            <Text style={styles.label}>Nutrition Streak</Text>
+            <Text style={styles.label}>סטריק עמידה ביעד</Text>
             <View style={styles.valueRow}>
-              <Text style={styles.currentValue}>{streaks.currentCompliance}</Text>
-              <Text style={styles.maxValue}>/ {streaks.maxCompliance} max</Text>
+              <Text style={styles.currentValue}>{streaks.nutritionStreak.currentDays}</Text>
+              <Text style={styles.maxValue}>/ {streaks.nutritionStreak.maxDays} שיא</Text>
             </View>
           </View>
         </View>
 
-        {/* Logging Streak */}
         <View style={styles.card}>
           <Text style={styles.emoji}>📝</Text>
           <View style={styles.textContainer}>
-            <Text style={styles.label}>Logging Streak</Text>
+            <Text style={styles.label}>סטריק רישום</Text>
             <View style={styles.valueRow}>
-              <Text style={styles.currentValue}>{streaks.currentLogging}</Text>
-              <Text style={styles.maxValue}>/ {streaks.maxLogging} max</Text>
+              <Text style={styles.currentValue}>{streaks.loggingStreak.currentDays}</Text>
+              <Text style={styles.maxValue}>/ {streaks.loggingStreak.maxDays} שיא</Text>
             </View>
+            {typeof streaks.loggingStreak.completenessRate === "number" ? (
+              <Text style={styles.note}>שלמות רישום: {Math.round(streaks.loggingStreak.completenessRate)}%</Text>
+            ) : null}
           </View>
         </View>
       </View>

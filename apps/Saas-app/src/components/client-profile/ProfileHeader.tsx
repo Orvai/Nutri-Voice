@@ -1,13 +1,10 @@
 import { View, Text, Image, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-// 1. ייבוא ה-Hook
-import { useNavigation } from "@react-navigation/native"; 
+import { useRouter } from "expo-router"; 
 import { styles } from "./styles/ProfileHeader.styles";
 
 export default function ProfileHeader({ client }) {
-  // 2. אתחול הניווט
-  const navigation = useNavigation();
-
+  const router = useRouter();
   const avatarSource = client.profileImageUrl
     ? { uri: client.profileImageUrl }
     : {
@@ -21,13 +18,12 @@ export default function ProfileHeader({ client }) {
 
   const location = client.city || client.address || "לא צוין";
 
-  // 3. פונקציית המעבר למסך השיחה
   const handleChatPress = () => {
-    // אנו עוברים למסך בשם 'Chat' (ודא שזה השם שהגדרת ב-Stack Navigator)
-    // ומעבירים את פרטי הלקוח כפרמטרים
-    navigation.navigate("Chat", { 
-      clientId: client.id, 
-      clientName: client.name 
+    router.push({
+      pathname: "/chat",
+      params: { 
+        clientId: client.id,
+      },
     });
   };
 
@@ -45,7 +41,6 @@ export default function ProfileHeader({ client }) {
           </View>
         </View>
 
-        {/* 4. הוספת אירוע הלחיצה */}
         <Pressable style={styles.action} onPress={handleChatPress}>
           <Ionicons
             name="chatbubble-ellipses"

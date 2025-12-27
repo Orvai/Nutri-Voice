@@ -1,111 +1,84 @@
-// ChatScreen.tsx
 import React, { useMemo, useState, useEffect } from "react";
-import { View } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
-
+import { useLocalSearchParams } from "expo-router";
 import ChatList from "@/components/chat/ChatList";
 import ChatMessages from "@/components/chat/ChatMessages";
 import ChatHeader from "@/components/chat/ChatHeader";
 import ChatInput from "@/components/chat/ChatInput";
 import ClientDetails from "@/components/chat/ClientDetails";
-
 import { useCoachConversations } from "@/hooks/coversation/useCoachConversations";
 import { useConversation } from "@/hooks/coversation/useConversation";
 import { useConversationMessages } from "@/hooks/coversation/useConversationMessages";
 import { useSendCoachMessage } from "@/hooks/coversation/useSendCoachMessage";
 import { useMarkMessageHandled } from "@/hooks/coversation/useMarkMessageHandled";
-
 import { useClients } from "@/hooks/clients/useClients";
 import { conversationKeys } from "@/queryKeys/conversationKeys";
-
 export default function ChatScreen() {
   const qc = useQueryClient();
-
+  const { clientId } = useLocalSearchParams<{ clientId: string }>();
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
-
   /* =========================
-     Conversations list
+      Conversations list
   ========================= */
-  const { data: conversations = [] } = useCoachConversations();
-  console.log("conversations from hook:", conversations);
-
-
-  /* =========================
-     Active conversation meta
-  ========================= */
+  const { data: conversations = [], isLoading: loadingConvs } = useCoachConversations();
+  useEffect(() => {
+    if (loadingConvs || conversations.length === 0) return;
+    if (clientId) {
+      const target = conversations.find(c => c.clientId === clientId);
+      if (target && target.id !== activeConversationId) {
+        setActiveConversationId(target.id);
+        return;
+      }
+    }
+    if (!activeConversationId && !clientId) {
+      setActiveConversationId(conversations[0].id);
+    }
+  }, [conversations, clientId, loadingConvs]); 
   const { data: conversation } = useConversation(activeConversationId ?? "");
-
-  /* =========================
-     Messages
-  ========================= */
   const { data: messages = [] } = useConversationMessages(activeConversationId ?? "");
-
-  /* =========================
-     Clients directory
-  ========================= */
   const { data: clients = [] } = useClients();
-
   const activeClient = useMemo(() => {
     if (!conversation) return null;
     return clients.find((c) => c.id === conversation.clientId) ?? null;
   }, [conversation, clients]);
-
-  /* =========================
-     Pending client message
-     (AI suggested reply lives here)
-  ========================= */
   const pendingClientMessage = useMemo(() => {
-    return (
-      messages.find(
-        (m) => m.sender === "CLIENT" && m.handledBy === null
-      ) ?? null
-    );
+    return messages.find((m) => m.sender === "CLIENT" && m.handledBy === null) ?? null;
   }, [messages]);
-
   const suggestedText = pendingClientMessage?.aiSuggestedReply ?? "";
-
-  /* =========================
-     Draft (controlled input)
-  ========================= */
   const [draft, setDraft] = useState("");
-
-  useEffect(() => {
-    setDraft(suggestedText);
-  }, [suggestedText]);
-
-  /* =========================
-     Mutations
-  ========================= */
+  useEffect(() => {setDraft(suggestedText);}, [suggestedText]);
   const sendCoachMessage = useSendCoachMessage(activeConversationId ?? "");
   const markMessageHandled = useMarkMessageHandled(activeConversationId);
-
+  /* =========================
+      handleSend 
+  ========================= */
   const handleSend = async (text: string) => {
     if (!activeConversationId) return;
-    if (!pendingClientMessage) return;
-
     const trimmed = text.trim();
     if (!trimmed) return;
-
-    // 1) send coach reply
     await sendCoachMessage.mutateAsync({
       contentType: "TEXT",
       text: trimmed,
     });
-
-    // 2) mark client message as handled
-    await markMessageHandled.mutateAsync({messageId: pendingClientMessage.id,handledBy: "COACH"});
-    // 3) refresh messages so handledBy updates in UI
+    if (pendingClientMessage) {
+      await markMessageHandled.mutateAsync({
+        messageId: pendingClientMessage.id,
+        handledBy: "COACH"
+      });
+    }
     await qc.invalidateQueries({
       queryKey: conversationKeys.messages(activeConversationId),
     });
-
-    // 4) clear draft
     setDraft("");
   };
-
-  /* =========================
-     Render
-  ========================= */
+  if (loadingConvs && conversations.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
   return (
     <View style={{ flex: 1, flexDirection: "row-reverse" }}>
       <ChatList
@@ -114,25 +87,21 @@ export default function ChatScreen() {
         activeId={activeConversationId}
         onSelect={(convId) => setActiveConversationId(convId)}
       />
-
       <View style={{ flex: 1, flexDirection: "column" }}>
         <ChatHeader client={activeClient} />
-
         <ChatMessages
           messages={messages}
           aiSuggestedText={suggestedText}
           showSuggestion={!!pendingClientMessage}
           onSend={handleSend}
         />
-
         <ChatInput
           value={draft}
           onChange={setDraft}
           onSend={handleSend}
-          disabled={!pendingClientMessage}
+          disabled={!activeConversationId} 
         />
       </View>
-
       <ClientDetails client={activeClient} />
     </View>
   );

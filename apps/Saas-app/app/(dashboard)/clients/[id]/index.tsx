@@ -3,7 +3,7 @@ import { ScrollView, View, ActivityIndicator, RefreshControl } from "react-nativ
 import { useLocalSearchParams } from "expo-router";
 
 // Hooks
-import { useClientProfile } from "../../../../src/hooks/useClientProfile";
+import { useClientProfile } from "../../../../src/hooks/clients/useClientProfile";
 import { useDailyState } from "../../../../src/hooks/tracking/useDailyState";
 
 // Components

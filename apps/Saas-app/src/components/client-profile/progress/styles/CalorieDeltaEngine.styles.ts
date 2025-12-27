@@ -1,79 +1,134 @@
-import { StyleSheet } from 'react-native';
+// src/components/client-profile/progress/styles/CalorieDeltaEngine.styles.ts
+import { StyleSheet } from "react-native";
+import { progressTheme } from "../../../../theme/progressTheme";
 
 export const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    marginTop: 14,
   },
+
+  headerRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    marginBottom: 10,
+  },
+
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#475569',
-    textTransform: 'uppercase',
-    marginBottom: 12,
-    textAlign: 'right',
+    color: progressTheme.colors.text,
+    fontSize: 16,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
+  sectionSub: {
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    marginTop: 3,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
   mainCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
+    backgroundColor: progressTheme.colors.surface,
+    borderRadius: progressTheme.radius.card,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: progressTheme.colors.border,
   },
+
   summaryRow: {
-    flexDirection: 'row-reverse',
-    justifyContent: 'space-around',
-    marginBottom: 24,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
   },
+
   summaryItem: {
-    alignItems: 'center',
+    flex: 1,
   },
+
   summaryLabel: {
-    fontSize: 11,
-    color: '#94A3B8',
-    fontWeight: '700',
-    textTransform: 'uppercase',
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    fontWeight: "700",
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
   summaryValue: {
+    color: progressTheme.colors.text,
     fontSize: 18,
-    fontWeight: '800',
-    color: '#1E293B',
-    marginTop: 4,
+    fontWeight: "900",
+    marginTop: 6,
+    textAlign: "right",
+    writingDirection: "rtl",
   },
+
   divider: {
     width: 1,
-    backgroundColor: '#F1F5F9',
+    height: 34,
+    backgroundColor: progressTheme.colors.border,
   },
-  chartPlaceholder: {
-    height: 100,
-    flexDirection: 'row-reverse',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
+
+  chart: {
+    marginTop: 14,
+    height: 92,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderWidth: 1,
+    borderColor: progressTheme.colors.border,
+    flexDirection: "row-reverse",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
     paddingHorizontal: 10,
+    paddingBottom: 10,
+    position: "relative",
+    overflow: "hidden",
   },
+
+  zeroLine: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 32,
+    height: 1,
+    backgroundColor: progressTheme.colors.border,
+  },
+
   barColumn: {
-    alignItems: 'center',
+    width: 28,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 6,
   },
+
   bar: {
-    width: 24,
-    borderRadius: 4,
+    width: 16,
+    borderRadius: 8,
   },
+
   barPositive: {
-    backgroundColor: '#EF4444', // Red for over-eating
+    backgroundColor: "rgba(239,68,68,0.90)",
   },
+
   barNegative: {
-    backgroundColor: '#3B82F6', // Blue for under-eating
+    backgroundColor: "rgba(34,197,94,0.90)",
   },
+
   barLabel: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginTop: 6,
-    color: '#64748B',
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    fontWeight: "800",
   },
+
   footerNote: {
-    fontSize: 10,
-    color: '#94A3B8',
-    marginTop: 16,
-    textAlign: 'center',
-    fontStyle: 'italic',
-  }
+    marginTop: 10,
+    color: progressTheme.colors.textDim,
+    fontSize: 11,
+    lineHeight: 15,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
 });

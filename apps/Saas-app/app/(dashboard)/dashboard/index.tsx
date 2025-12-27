@@ -5,7 +5,7 @@ import NutritionDeviations from "../../../src/components/dashboard/NutritionDevi
 import MissingReports from "../../../src/components/dashboard/MissingReports";
 import AtRiskClients from "../../../src/components/dashboard/AtRiskClients";
 import Spacer from "../../../src/components/ui/Spacer";
-import { useDashboardData } from "../../../src/hooks/useDashboardData";
+import { useDashboardData } from "../../../src/hooks/dashboard/useDashboardData";
 
 export default function DashboardScreen() {
   const data = useDashboardData();

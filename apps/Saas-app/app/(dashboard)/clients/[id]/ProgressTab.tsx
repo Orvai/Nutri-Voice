@@ -1,45 +1,69 @@
-import React, { useState } from 'react';
-import { 
-  ScrollView, 
-  View, 
-  ActivityIndicator, 
-  Text, 
-  StyleSheet, 
+// app/(dashboard)/clients/[id]/ProgressTab.tsx
+import React, { useState } from "react";
+import {
+  ScrollView,
+  View,
+  ActivityIndicator,
+  Text,
+  StyleSheet,
   SafeAreaView,
-  LayoutAnimation
-} from 'react-native';
-import { useDailyStateRange } from '../../../../src/hooks/tracking/useDailyState'; 
-import { useDailyAnalytics } from '../../../../src/hooks/tracking/useDailyAnalytics';
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from "react-native";
+import { progressTheme } from "../../../../src/theme/progressTheme";
 
-import ProgressRangeSelector from '../../../../src/components/client-profile/progress/ProgressRangeSelector';
-import DisciplineScoreCard from '../../../../src/components/client-profile/progress/DisciplineScoreCard';
-import AIInsightsPanel from '../../../../src/components/client-profile/progress/AIInsightsPanel';
-import StreaksTracker from '../../../../src/components/client-profile/progress/StreaksTracker';
-import CalorieDeltaEngine from '../../../../src/components/client-profile/progress/CalorieDeltaEngine';
-import NutritionPeriodReport from '../../../../src/components/client-profile/progress/NutritionPeriodReport';
-import StrengthProgressionList from '../../../../src/components/client-profile/progress/StrengthProgressionList';
-import RecoveryBurnoutAlert from '../../../../src/components/client-profile/progress/RecoveryBurnoutAlert';
-import HabitCorrelationCards from '../../../../src/components/client-profile/progress/HabitCorrelationCards';
-import BodyHabitsSummary from '../../../../src/components/client-profile/progress/BodyHabitsSummary';
+import { useDailyStateRange } from "../../../../src/hooks/tracking/useDailyState";
+import { useDailyAnalytics } from "../../../../src/hooks/tracking/useDailyAnalytics";
 
-export default function ProgressTab({ client }) {
-  const [range, setRange] = useState({
-    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
+import ProgressRangeSelector from "../../../../src/components/client-profile/progress/ProgressRangeSelector";
+import DisciplineScoreCard from "../../../../src/components/client-profile/progress/DisciplineScoreCard";
+import AIInsightsPanel from "../../../../src/components/client-profile/progress/AIInsightsPanel";
+import StreaksTracker from "../../../../src/components/client-profile/progress/StreaksTracker";
+import CalorieDeltaEngine from "../../../../src/components/client-profile/progress/CalorieDeltaEngine";
+import NutritionPeriodReport from "../../../../src/components/client-profile/progress/NutritionPeriodReport";
+import StrengthProgressionList from "../../../../src/components/client-profile/progress/StrengthProgressionList";
+import RecoveryBurnoutAlert from "../../../../src/components/client-profile/progress/RecoveryBurnoutAlert";
+import HabitCorrelationCards from "../../../../src/components/client-profile/progress/HabitCorrelationCards";
+import BodyHabitsSummary from "../../../../src/components/client-profile/progress/BodyHabitsSummary";
+
+import type { DateRange, ISODate } from "../../../../src/types/ui/tracking/coach-analytics.ui";
+
+// Enable LayoutAnimation for Android
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+type RangeValue = Pick<DateRange, "startDate" | "endDate">;
+
+function toISODate(d: Date): ISODate {
+  return d.toISOString().slice(0, 10) as ISODate;
+}
+
+export default function ProgressTab({ client }: { client: { id: string } }) {
+  const [range, setRange] = useState<RangeValue>(() => {
+    const end = new Date();
+    const start = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    return {
+      startDate: toISODate(start),
+      endDate: toISODate(end),
+    };
   });
 
   const { data: dailyStates, isLoading } = useDailyStateRange(range.startDate, range.endDate);
-  const analytics = useDailyAnalytics(dailyStates);
 
-  // Wrapped handleRangeChange to ensure UI feedback
-  const handleRangeChange = (newRange) => {
+  // IMPORTANT: Expected signature: (clientId, range, dailyStates)
+  const analytics = useDailyAnalytics(client?.id, range, dailyStates);
+
+  const handleRangeChange = (newRange: RangeValue) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setRange(newRange);
   };
 
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#3B82F6" />
+        <ActivityIndicator size="large" color={progressTheme.colors.accent} />
         <Text style={styles.loadingText}>מנתח נתונים בתקופת זמן זו...</Text>
       </View>
     );
@@ -47,8 +71,8 @@ export default function ProgressTab({ client }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView 
-        style={styles.container} 
+      <ScrollView
+        style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
@@ -68,16 +92,14 @@ export default function ProgressTab({ client }) {
             <AIInsightsPanel insights={analytics.insights} />
             <StreaksTracker streaks={analytics.streaks} />
             <CalorieDeltaEngine data={analytics.calorieBehavior} />
-            <NutritionPeriodReport nutrition={analytics.nutritionReport} />
-            <StrengthProgressionList 
-              exercises={analytics.strength.exercises} 
-              volumeTrend={analytics.strength.volumeTrend} 
-            />
+            <NutritionPeriodReport nutrition={analytics.nutrition} />
+            <StrengthProgressionList exercises={analytics.strength.exercises} confidence={analytics.strength.confidence} />
             <RecoveryBurnoutAlert recovery={analytics.recovery} />
             <HabitCorrelationCards correlations={analytics.correlations} />
-            <BodyHabitsSummary body={analytics.bodyMetrics} />
+            <BodyHabitsSummary body={analytics.body} />
           </>
         )}
+
         <View style={styles.footerSpacer} />
       </ScrollView>
     </SafeAreaView>
@@ -85,29 +107,58 @@ export default function ProgressTab({ client }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#F8F9FA' },
-  container: { flex: 1 },
+  safeArea: { flex: 1, backgroundColor: progressTheme.colors.bg },
+  container: { flex: 1, backgroundColor: progressTheme.colors.bg },
   contentContainer: { padding: 16 },
-  header: { marginBottom: 20, alignItems: 'center' },
+
+  header: { marginBottom: 14 },
   title: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: '#111827',
-    marginBottom: 16,
-    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: "900",
+    color: progressTheme.colors.text,
+    marginBottom: 12,
+    textAlign: "right",
+    writingDirection: "rtl",
   },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F9FA' },
-  loadingText: { marginTop: 12, color: '#6B7280', fontSize: 14, fontWeight: '500' },
+
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: progressTheme.colors.bg,
+  },
+  loadingText: {
+    marginTop: 12,
+    color: progressTheme.colors.textDim,
+    fontSize: 14,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+
   emptyContainer: {
-    padding: 40,
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    padding: 22,
+    alignItems: "flex-end",
+    backgroundColor: progressTheme.colors.surface,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginTop: 20,
+    borderColor: progressTheme.colors.border,
+    marginTop: 10,
   },
-  emptyText: { color: '#1E293B', fontSize: 16, fontWeight: '700', marginBottom: 8 },
-  emptySubText: { color: '#64748B', fontSize: 14, textAlign: 'center' },
-  footerSpacer: { height: 60 }
+  emptyText: {
+    color: progressTheme.colors.text,
+    fontSize: 14,
+    fontWeight: "900",
+    marginBottom: 6,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+  emptySubText: {
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    textAlign: "right",
+    writingDirection: "rtl",
+    lineHeight: 16,
+  },
+
+  footerSpacer: { height: 60 },
 });

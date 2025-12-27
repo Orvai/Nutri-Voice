@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AiMessage } from "../types/ai";
+import { AiMessage } from "../../types/ai";
 
 export function useAiHelpData() {
   const [messages, setMessages] = useState<AiMessage[]>([

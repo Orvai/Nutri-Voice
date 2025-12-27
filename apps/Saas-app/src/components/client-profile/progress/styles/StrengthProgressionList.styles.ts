@@ -1,43 +1,145 @@
-import { StyleSheet } from 'react-native';
+// src/components/client-profile/progress/styles/StrengthProgressionList.styles.ts
+import { StyleSheet } from "react-native";
+import { progressTheme } from "../../../../theme/progressTheme";
 
 export const styles = StyleSheet.create({
-  container: { marginBottom: 20 },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#475569',
-    textTransform: 'uppercase',
-    marginBottom: 12,
-    textAlign: 'right',
+  container: {
+    marginTop: 14,
   },
-  list: { gap: 10 },
-  exerciseCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
+
   headerRow: {
-    flexDirection: 'row-reverse',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
+    flexDirection: "row-reverse",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    marginBottom: 10,
   },
-  exerciseName: { fontSize: 16, fontWeight: '700', color: '#1E293B' },
-  badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  positiveBadge: { backgroundColor: '#DCFCE7' },
-  negativeBadge: { backgroundColor: '#FEE2E2' },
-  badgeText: { fontSize: 12, fontWeight: '700', color: '#166534' },
+
+  sectionTitle: {
+    color: progressTheme.colors.text,
+    fontSize: 16,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  sectionSub: {
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    textAlign: "left",
+  },
+
+  list: {
+    gap: 10,
+  },
+
+  exerciseCard: {
+    backgroundColor: progressTheme.colors.surface,
+    borderRadius: progressTheme.radius.card,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: progressTheme.colors.border,
+  },
+
+  headerRowCard: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+
+  exerciseName: {
+    flex: 1,
+    color: progressTheme.colors.text,
+    fontSize: 14,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: progressTheme.radius.pill,
+    borderWidth: 1,
+  },
+
+  positiveBadge: {
+    backgroundColor: progressTheme.colors.successSoft,
+    borderColor: progressTheme.colors.successBorder,
+  },
+
+  negativeBadge: {
+    backgroundColor: progressTheme.colors.dangerSoft,
+    borderColor: progressTheme.colors.dangerBorder,
+  },
+
+  badgeText: {
+    color: progressTheme.colors.text,
+    fontSize: 12,
+    fontWeight: "900",
+  },
+
+  statusText: {
+    marginTop: 8,
+    color: progressTheme.colors.textMuted,
+    fontSize: 12,
+    lineHeight: 16,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
   statsRow: {
-    flexDirection: 'row-reverse',
-    justifyContent: 'space-around',
-    backgroundColor: '#F8FAFC',
-    padding: 10,
-    borderRadius: 12,
+    marginTop: 12,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
   },
-  statItem: { alignItems: 'center' },
-  statLabel: { fontSize: 10, color: '#64748B', textTransform: 'uppercase', marginBottom: 2 },
-  statValue: { fontSize: 14, fontWeight: '800', color: '#334155' },
-  verticalDivider: { width: 1, backgroundColor: '#E2E8F0' },
+
+  statItem: {
+    flex: 1,
+    padding: 10,
+    borderRadius: progressTheme.radius.sub,
+    backgroundColor: progressTheme.colors.surface2,
+    borderWidth: 1,
+    borderColor: progressTheme.colors.border,
+  },
+
+  statLabel: {
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    fontWeight: "700",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  statValue: {
+    marginTop: 6,
+    color: progressTheme.colors.text,
+    fontSize: 15,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  verticalDivider: {
+    width: 1,
+    height: 34,
+    backgroundColor: progressTheme.colors.border,
+  },
+
+  emptyCard: {
+    backgroundColor: progressTheme.colors.surface,
+    borderRadius: progressTheme.radius.card,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: progressTheme.colors.border,
+  },
+
+  emptyText: {
+    color: progressTheme.colors.textMuted,
+    fontSize: 13,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
 });
