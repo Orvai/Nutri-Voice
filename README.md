@@ -60,25 +60,25 @@ The result: **personalized, contextual coaching** with minimal coach overhead—
 
 ```mermaid
 flowchart LR
-  subgraph Client Channels
-    WA[WhatsApp Client]
+  subgraph Client_Channels["Client Channels"]
+    WA["WhatsApp Client"]
   end
 
-  subgraph SaaS App
-    Expo[Coach App (Expo Web + Mobile)]
+  subgraph SaaS_App["SaaS App"]
+    Expo["Coach App<br/>(Expo Web + Mobile)"]
   end
 
-  subgraph Gateway
-    GW[API Gateway (OpenAPI Source of Truth)]
+  subgraph Gateway["Gateway"]
+    GW["API Gateway<br/>(OpenAPI Source of Truth)"]
   end
 
-  subgraph Core Services
-    IDM[Identity Service]
-    TRACK[Client Tracking Service]
-    MENU[Menu Service]
-    WORK[Workout Service]
-    CONV[Conversation Service]
-    MCP[MCP Service]
+  subgraph Core_Services["Core Services"]
+    IDM["Identity Service"]
+    TRACK["Client Tracking Service"]
+    MENU["Menu Service"]
+    WORK["Workout Service"]
+    CONV["Conversation Service"]
+    MCP["MCP Service"]
   end
 
   WA -->|webhook| GW

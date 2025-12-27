@@ -22,21 +22,21 @@ This directory contains the backend services powering Nutri-Voice. The architect
 
 ```mermaid
 flowchart TB
-  subgraph External Channels
-    WA[WhatsApp Client]
+  subgraph External_Channels["External Channels"]
+    WA["WhatsApp Client"]
   end
 
-  subgraph API Gateway
-    GW[Gateway Service]
+  subgraph API_Gateway["API Gateway"]
+    GW["Gateway Service"]
   end
 
-  subgraph Core Services
-    IDM[Identity (idm-service)]
-    TRACK[Client Tracking (client-tracking-service)]
-    MENU[Menu (menu-service)]
-    WORK[Workout (workout-service)]
-    CONV[Conversation (conversation-service)]
-    MCP[MCP (mcp-service)]
+  subgraph Core_Services["Core Services"]
+    IDM["Identity (idm-service)"]
+    TRACK["Client Tracking (client-tracking-service)"]
+    MENU["Menu (menu-service)"]
+    WORK["Workout (workout-service)"]
+    CONV["Conversation (conversation-service)"]
+    MCP["MCP (mcp-service)"]
   end
 
   WA -->|webhook| GW

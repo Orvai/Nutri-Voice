@@ -20,20 +20,20 @@ It is designed around **contract-first data access** (OpenAPI → Orval SDK) and
 
 ```mermaid
 flowchart LR
-  subgraph Expo App
-    Router[Expo Router (app/)]
-    Screens[Dashboard • Clients • Chat • Plans]
-    Query[TanStack Query]
+  subgraph Expo_App["Expo App"]
+    Router["Expo Router (app/)"]
+    Screens["Dashboard, Clients, Chat, Plans"]
+    Query["TanStack Query"]
   end
 
-  subgraph SDK
-    Orval[Orval Generated SDK]
-    Fetcher[Custom Fetcher]
+  subgraph SDK["SDK"]
+    Orval["Orval Generated SDK"]
+    Fetcher["Custom Fetcher"]
   end
 
-  subgraph Backend
-    Gateway[API Gateway (OpenAPI)]
-    Services[Microservices]
+  subgraph Backend["Backend"]
+    Gateway["API Gateway (OpenAPI)"]
+    Services["Microservices"]
   end
 
   Router --> Screens
