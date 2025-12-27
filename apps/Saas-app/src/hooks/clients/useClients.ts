@@ -13,6 +13,8 @@ export const useClients = () => {
     queryKey: clientKeys.list(),
     queryFn: async ({ signal }) => {
       const clients = await getApiClients(signal);
+      console.log("RAW API CLIENT:", clients[0]);
+
       return clients.map(buildClient);
     },
   });

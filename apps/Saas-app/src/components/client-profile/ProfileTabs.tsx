@@ -6,7 +6,6 @@ const tabs = [
   { id: "nutrition", label: "תוכניות תזונה" },
   { id: "workout", label: "תוכניות אימון" },
   { id: "progress", label: "התקדמות" },
-  { id: "chat", label: "צ'אט" },
 ];
 
 export default function ProfileTabs({ active, onChange }) {

@@ -11,12 +11,19 @@ const BASE = process.env.TRACKING_SERVICE_URL;
  * /api/tracking/daily-state:
  *   get:
  *     tags: [Tracking]
- *     summary: Get my daily tracking state
+ *     summary: Get tracking state (Self or Client)
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: clientId
+ *         required: false
+ *         description: Optional clientId for coach viewing a client
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: Daily state
+ *         description: Daily tracking state
  *         content:
  *           application/json:
  *             schema:
@@ -27,6 +34,42 @@ r.get(
   authRequired,
   forward(BASE, "/internal/tracking/daily-state")
 );
+
+/**
+ * @openapi
+ * /api/tracking/daily-state/range:
+ *   get:
+ *     tags: [Tracking]
+ *     summary: Get tracking state for a range of dates
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         description: Start date (YYYY-MM-DD)
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         description: End date (YYYY-MM-DD)
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: List of daily states for the requested range
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/DailyStateResponseDto"
+ */
+r.get("/daily-state/range",authRequired,forward(BASE,"/internal/tracking/range-state"));
+
 
 /**
  * @openapi

@@ -3,6 +3,8 @@ const { DayTypeEnum } = require('./daySelection.dto');
 const { MealLogResponseDto } = require('./mealLog.dto');
 const { WorkoutLogResponseDto } = require('./workoutLog.dto');
 const { WeightLogResponseDto } = require('./weightLog.dto');
+// ייבוא ה-DTO החדש שיצרנו מקודם
+const { MetricsLogResponseDto } = require('./metricsLog.dto');
 
 const CalorieTargetsDto = z.object({
   trainingDay: z.number().int().nullable(),
@@ -20,7 +22,8 @@ const DailyStateDto = z.object({
 
   meals: z.array(MealLogResponseDto),
   workouts: z.array(WorkoutLogResponseDto),
-  weight: WeightLogResponseDto.nullable()
+  weight: WeightLogResponseDto.nullable(),
+  metrics: MetricsLogResponseDto.nullable()
 }).strict();
 
 module.exports = { DailyStateDto };

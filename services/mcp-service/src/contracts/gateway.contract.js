@@ -294,6 +294,24 @@ export const GatewayContract = {
     role: GatewayRole.COACH,
     clientContext: ClientContext.PATH,
   },
+  /* ======================================================
+      METRICS LOG (Steps, Water, Sleep)
+      Role: BOTH (Read history) / CLIENT (Write log)
+     ====================================================== */
+
+  METRICS_LOG_HISTORY: {
+    method: "GET",
+    path: "/api/tracking/metrics-log/history/{clientId}",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.PATH,
+  },
+
+  METRICS_LOG_UPSERT: {
+    method: "POST",
+    path: "/api/tracking/metrics-log",
+    role: GatewayRole.CLIENT,
+    clientContext: ClientContext.SELF, 
+  },
 };
 
 export const GatewayContractKeys = Object.keys(GatewayContract);

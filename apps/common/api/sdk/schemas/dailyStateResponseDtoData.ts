@@ -9,6 +9,7 @@ import type { DailyStateResponseDtoDataCalorieTargets } from './dailyStateRespon
 import type { DailyStateResponseDtoDataMealsItem } from './dailyStateResponseDtoDataMealsItem';
 import type { DailyStateResponseDtoDataWorkoutsItem } from './dailyStateResponseDtoDataWorkoutsItem';
 import type { DailyStateResponseDtoDataWeight } from './dailyStateResponseDtoDataWeight';
+import type { DailyStateResponseDtoDataMetrics } from './dailyStateResponseDtoDataMetrics';
 
 export type DailyStateResponseDtoData = {
   /** @nullable */
@@ -23,4 +24,6 @@ export type DailyStateResponseDtoData = {
   workouts: DailyStateResponseDtoDataWorkoutsItem[];
   /** @nullable */
   weight: DailyStateResponseDtoDataWeight;
+  /** @nullable */
+  metrics: DailyStateResponseDtoDataMetrics;
 };

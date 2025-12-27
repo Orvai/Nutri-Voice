@@ -1,6 +1,7 @@
 // src/llm/tools/toolRegistry.js
 
 import { GetDailyStateTool } from "./DailyState/getDailyState.tool.js";
+import {UpsertMetricsLogTool} from "./DailyState/upsertMetricsLog.tool.js"
 import { setDayTypeTool } from "./DailyState/setDayType.tool.js";
 import { AskCaloriesTool } from "./menu-meal/askCalories.tool.js";
 
@@ -18,12 +19,14 @@ import { getWorkoutContextTool } from "./workout/getWorkoutContext.tool.js";
 import { reportWorkoutTool } from "./workout/reportWorkout.tool.js";
 import { updateWorkoutTool } from "./workout/updateWorkout.tool.js";
 import { updateWorkoutExerciseTool } from "./workout/updateWorkoutExercise.tool.js";
+import { upsertMetricsLog } from "../../services/tools/DailyState/upsertMetricsLog.service.js";
 
 export const toolRegistry = {
   // ======================================================
   // Context Fetching (Source of Truth, NO side effects)
   // ======================================================
   get_daily_state: GetDailyStateTool,
+  metrics_log_uspert:UpsertMetricsLogTool,
   set_day_type: setDayTypeTool,
   get_menu_context: getMenuContextTool,
   get_workout_programs: getWorkoutProgramsTool,

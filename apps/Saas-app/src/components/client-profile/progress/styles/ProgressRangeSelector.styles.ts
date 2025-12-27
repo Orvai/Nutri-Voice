@@ -1,42 +1,66 @@
-import { StyleSheet } from "react-native";
-import { colors } from "src/styles/colors";
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.neutral200,
-    padding: 16,
+  outerContainer: {
     marginBottom: 20,
+    width: '100%',
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
+  presetsRow: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'center',
+    gap: 8,
     marginBottom: 12,
   },
-  row: {
-    flexDirection: "row-reverse",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  button: {
+  presetBtn: {
+    paddingVertical: 6,
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 20,
+    backgroundColor: '#E2E8F0',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
-  buttonActive: {
-    backgroundColor: colors.primary,
+  activePresetBtn: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#2563EB',
   },
-  buttonInactive: {
-    backgroundColor: colors.neutral100,
+  presetText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569',
   },
-  textActive: {
-    color: colors.white,
-    fontWeight: "600",
+  activePresetText: {
+    color: '#FFFFFF',
   },
-  textInactive: {
-    color: colors.neutral700,
-    fontWeight: "600",
+  container: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
+  infoSection: {
+    alignItems: 'flex-end',
+  },
+  label: {
+    fontSize: 10,
+    color: '#94A3B8',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  dateRange: {
+    fontSize: 13,
+    color: '#1E293B',
+    fontWeight: '700',
+  },
+  editBtn: {
+    padding: 6,
+  },
+  editBtnText: {
+    fontSize: 12,
+    color: '#3B82F6',
+    fontWeight: '700',
+  }
 });

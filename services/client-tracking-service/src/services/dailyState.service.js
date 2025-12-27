@@ -1,7 +1,8 @@
 const { prisma } = require('../db/prisma');
 const { getTodayDayType } = require('./daySelection.service');
 const { getClientMenus } = require('../clients/menu.client');
-const { getStartOfDay, getEndOfDay } = require('../utils/date.utils'); 
+const { getStartOfDay, getEndOfDay } = require('../utils/date.utils');
+
 /* ======================================================
    Internal fetchers
 ====================================================== */
@@ -13,7 +14,7 @@ const getMealsForToday = (clientId) => {
       clientId,
       date: {
         gte: getStartOfDay(today),
-        lte: getEndOfDay(today),  
+        lte: getEndOfDay(today),
       },
     },
     orderBy: [{ date: 'asc' }, { loggedAt: 'asc' }],
@@ -31,9 +32,22 @@ const getWorkoutsForToday = (clientId) => {
       },
     },
     include: {
-      exercises: true,
+      exercises: true, // תואם ל-WorkoutLog schema
     },
     orderBy: [{ date: 'asc' }, { loggedAt: 'asc' }],
+  });
+};
+
+const getTodayMetrics = (clientId) => {
+  const today = new Date();
+  return prisma.metricsLog.findFirst({
+    where: {
+      clientId,
+      date: {
+        gte: getStartOfDay(today),
+        lte: getEndOfDay(today),
+      },
+    },
   });
 };
 
@@ -56,21 +70,19 @@ const getTodayWeight = (clientId) => {
 ====================================================== */
 
 const getDailyState = async (clientId) => {
-  // 1️ Day selection
   const daySelection = await getTodayDayType(clientId);
   const dayType = daySelection?.dayType ?? null;
 
-  // 2️ Logs
   const meals = await getMealsForToday(clientId);
   const workouts = await getWorkoutsForToday(clientId);
   const weight = await getTodayWeight(clientId);
+  const metrics = await getTodayMetrics(clientId);
 
   const consumedCalories = meals.reduce(
     (sum, meal) => sum + (meal.calories || 0),
     0
   );
 
-  // 3️ Client menus (SOURCE OF TRUTH)
   const clientMenus = await getClientMenus(clientId);
 
   const trainingMenu = clientMenus.find(
@@ -86,7 +98,6 @@ const getDailyState = async (clientId) => {
     restDay: restMenu?.totalCalories ?? null,
   };
 
-  // 4️ Active calories (only if dayType selected)
   let activeCaloriesAllowed = null;
   let remainingCalories = null;
 
@@ -100,7 +111,6 @@ const getDailyState = async (clientId) => {
     remainingCalories = activeCaloriesAllowed - consumedCalories;
   }
 
-  // 5 Final snapshot
   return {
     dayType,
     calorieTargets,
@@ -110,7 +120,74 @@ const getDailyState = async (clientId) => {
     meals,
     workouts,
     weight,
+    metrics,
   };
 };
+/* ======================================================
+   Range State (NEW)
+====================================================== */
+const getRangeState = async (clientId, startDate, endDate) => {
+  const start = getStartOfDay(new Date(startDate));
+  const end = getEndOfDay(new Date(endDate));
 
-module.exports = { getDailyState };
+  const [daySelections, meals, workouts, weights, metrics, clientMenus] = await Promise.all([
+    prisma.daySelection.findMany({ where: { clientId, date: { gte: start, lte: end } } }),
+    prisma.mealLog.findMany({ where: { clientId, date: { gte: start, lte: end } } }),
+    prisma.workoutLog.findMany({ 
+      where: { clientId, date: { gte: start, lte: end } }, 
+      include: { exercises: true } 
+    }),
+    prisma.weightLog.findMany({ where: { clientId, date: { gte: start, lte: end } } }),
+    prisma.metricsLog.findMany({ where: { clientId, date: { gte: start, lte: end } } }),
+    getClientMenus(clientId)
+  ]);
+
+  const trainingMenu = clientMenus.find(m => m.type === 'TRAINING' && m.isActive);
+  const restMenu = clientMenus.find(m => m.type === 'REST' && m.isActive);
+  const calorieTargets = {
+    trainingDay: trainingMenu?.totalCalories ?? null,
+    restDay: restMenu?.totalCalories ?? null,
+  };
+
+  const results = [];
+  const dateCursor = new Date(start);
+
+  while (dateCursor <= end) {
+    const dStr = dateCursor.toISOString().split('T')[0];
+
+    const dayMeals = meals.filter(m => m.date.toISOString().startsWith(dStr));
+    const dayWorkouts = workouts.filter(w => w.date.toISOString().startsWith(dStr));
+    const daySelection = daySelections.find(s => s.date.toISOString().startsWith(dStr));
+    const dayWeight = weights.find(w => w.date.toISOString().startsWith(dStr));
+    const dayMetrics = metrics.find(m => m.date.toISOString().startsWith(dStr));
+
+    const dayType = daySelection?.dayType ?? null;
+    const consumedCalories = dayMeals.reduce((sum, m) => sum + (m.calories || 0), 0);
+
+    let activeAllowed = null;
+    if (dayType === 'TRAINING') activeAllowed = calorieTargets.trainingDay;
+    else if (dayType === 'REST') activeAllowed = calorieTargets.restDay;
+
+    results.push({
+      data: {
+        dayType,
+        calorieTargets,
+        activeCaloriesAllowed: activeAllowed,
+        consumedCalories,
+        remainingCalories: activeAllowed !== null ? activeAllowed - consumedCalories : null,
+        meals: dayMeals,
+        workouts: dayWorkouts,
+        weight: dayWeight || null,
+        metrics: dayMetrics || null,
+      }
+    });
+
+    dateCursor.setDate(dateCursor.getDate() + 1);
+  }
+
+  return results;
+};
+module.exports = { 
+  getDailyState,
+  getRangeState 
+};

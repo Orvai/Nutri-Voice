@@ -49,6 +49,9 @@ import type {
   GetApiFood200,
   GetApiMealTemplates200,
   GetApiMealTemplatesId200,
+  GetApiTrackingDailyStateParams,
+  GetApiTrackingDailyStateRangeParams,
+  GetApiTrackingMetricsLogHistoryClientIdParams,
   IncomingWebhookMessageDto,
   LoginRequestDto,
   LoginResponseDto,
@@ -60,6 +63,8 @@ import type {
   MealTemplateCreateRequestDto,
   MealTemplateUpdateRequestDto,
   MessageDto,
+  MetricsLogCreateRequestDto,
+  MetricsLogResponseDto,
   MfaRegisterResponseDto,
   MfaVerifyRequestDto,
   MfaVerifyResponseDto,
@@ -3109,16 +3114,17 @@ export const usePostApiVitamins = <TError = void,
     }
     
 /**
- * @summary Get daily aggregated tracking state
+ * @summary Get tracking state (Self or Client)
  */
 export const getApiTrackingDailyState = (
-    
+    params?: GetApiTrackingDailyStateParams,
  signal?: AbortSignal
 ) => {
       
       
       return customFetcher<DailyStateResponseDto>(
-      {url: `/api/tracking/daily-state`, method: 'GET', signal
+      {url: `/api/tracking/daily-state`, method: 'GET',
+        params, signal
     },
       );
     }
@@ -3126,23 +3132,23 @@ export const getApiTrackingDailyState = (
 
 
 
-export const getGetApiTrackingDailyStateQueryKey = () => {
+export const getGetApiTrackingDailyStateQueryKey = (params?: GetApiTrackingDailyStateParams,) => {
     return [
-    `/api/tracking/daily-state`
+    `/api/tracking/daily-state`, ...(params ? [params]: [])
     ] as const;
     }
 
     
-export const getGetApiTrackingDailyStateQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
+export const getGetApiTrackingDailyStateQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(params?: GetApiTrackingDailyStateParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingDailyStateQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingDailyStateQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingDailyState>>> = ({ signal }) => getApiTrackingDailyState(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingDailyState>>> = ({ signal }) => getApiTrackingDailyState(params, signal);
 
       
 
@@ -3156,7 +3162,7 @@ export type GetApiTrackingDailyStateQueryError = unknown
 
 
 export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>> & Pick<
+ params: undefined |  GetApiTrackingDailyStateParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingDailyState>>,
           TError,
@@ -3166,7 +3172,7 @@ export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof ge
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>> & Pick<
+ params?: GetApiTrackingDailyStateParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingDailyState>>,
           TError,
@@ -3176,19 +3182,19 @@ export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof ge
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
+ params?: GetApiTrackingDailyStateParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get daily aggregated tracking state
+ * @summary Get tracking state (Self or Client)
  */
 
 export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
+ params?: GetApiTrackingDailyStateParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyState>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiTrackingDailyStateQueryOptions(options)
+  const queryOptions = getGetApiTrackingDailyStateQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3202,7 +3208,101 @@ export function useGetApiTrackingDailyState<TData = Awaited<ReturnType<typeof ge
 
 
 /**
- * @summary Client sets day type
+ * @summary Get tracking state for a range of dates
+ */
+export const getApiTrackingDailyStateRange = (
+    params: GetApiTrackingDailyStateRangeParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<DailyStateResponseDto[]>(
+      {url: `/api/tracking/daily-state/range`, method: 'GET',
+        params, signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTrackingDailyStateRangeQueryKey = (params?: GetApiTrackingDailyStateRangeParams,) => {
+    return [
+    `/api/tracking/daily-state/range`, ...(params ? [params]: [])
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingDailyStateRangeQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError = unknown>(params: GetApiTrackingDailyStateRangeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingDailyStateRangeQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>> = ({ signal }) => getApiTrackingDailyStateRange(params, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTrackingDailyStateRangeQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>>
+export type GetApiTrackingDailyStateRangeQueryError = unknown
+
+
+export function useGetApiTrackingDailyStateRange<TData = Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError = unknown>(
+ params: GetApiTrackingDailyStateRangeParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingDailyStateRange<TData = Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError = unknown>(
+ params: GetApiTrackingDailyStateRangeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingDailyStateRange<TData = Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError = unknown>(
+ params: GetApiTrackingDailyStateRangeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get tracking state for a range of dates
+ */
+
+export function useGetApiTrackingDailyStateRange<TData = Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError = unknown>(
+ params: GetApiTrackingDailyStateRangeParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDailyStateRange>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingDailyStateRangeQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Set day type (Training/Rest)
  */
 export const postApiTrackingDaySelection = (
     daySelectionCreateRequestDto: DaySelectionCreateRequestDto,
@@ -3220,7 +3320,7 @@ export const postApiTrackingDaySelection = (
   
 
 
-export const getPostApiTrackingDaySelectionMutationOptions = <TError = void,
+export const getPostApiTrackingDaySelectionMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingDaySelection>>, TError,{data: DaySelectionCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingDaySelection>>, TError,{data: DaySelectionCreateRequestDto}, TContext> => {
 
@@ -3247,12 +3347,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiTrackingDaySelectionMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingDaySelection>>>
     export type PostApiTrackingDaySelectionMutationBody = DaySelectionCreateRequestDto
-    export type PostApiTrackingDaySelectionMutationError = void
+    export type PostApiTrackingDaySelectionMutationError = unknown
 
     /**
- * @summary Client sets day type
+ * @summary Set day type (Training/Rest)
  */
-export const usePostApiTrackingDaySelection = <TError = void,
+export const usePostApiTrackingDaySelection = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingDaySelection>>, TError,{data: DaySelectionCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiTrackingDaySelection>>,
@@ -3267,7 +3367,7 @@ export const usePostApiTrackingDaySelection = <TError = void,
     }
     
 /**
- * @summary Coach views today's day type for a client
+ * @summary Coach views today's selection for a client
  */
 export const getApiTrackingDaySelectionTodayClientId = (
     clientId: string,
@@ -3291,7 +3391,7 @@ export const getGetApiTrackingDaySelectionTodayClientIdQueryKey = (clientId?: st
     }
 
     
-export const getGetApiTrackingDaySelectionTodayClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
+export const getGetApiTrackingDaySelectionTodayClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
@@ -3310,10 +3410,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiTrackingDaySelectionTodayClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>>
-export type GetApiTrackingDaySelectionTodayClientIdQueryError = void
+export type GetApiTrackingDaySelectionTodayClientIdQueryError = unknown
 
 
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
  clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>,
@@ -3323,7 +3423,7 @@ export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<Retur
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>,
@@ -3333,15 +3433,15 @@ export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<Retur
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Coach views today's day type for a client
+ * @summary Coach views today's selection for a client
  */
 
-export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = void>(
+export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError = unknown>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingDaySelectionTodayClientId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -3360,7 +3460,7 @@ export function useGetApiTrackingDaySelectionTodayClientId<TData = Awaited<Retur
 
 
 /**
- * @summary Client logs a meal
+ * @summary Log a meal
  */
 export const postApiTrackingMealLog = (
     mealLogCreateRequestDto: MealLogCreateRequestDto,
@@ -3378,7 +3478,7 @@ export const postApiTrackingMealLog = (
   
 
 
-export const getPostApiTrackingMealLogMutationOptions = <TError = void,
+export const getPostApiTrackingMealLogMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMealLog>>, TError,{data: MealLogCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMealLog>>, TError,{data: MealLogCreateRequestDto}, TContext> => {
 
@@ -3405,12 +3505,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiTrackingMealLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingMealLog>>>
     export type PostApiTrackingMealLogMutationBody = MealLogCreateRequestDto
-    export type PostApiTrackingMealLogMutationError = void
+    export type PostApiTrackingMealLogMutationError = unknown
 
     /**
- * @summary Client logs a meal
+ * @summary Log a meal
  */
-export const usePostApiTrackingMealLog = <TError = void,
+export const usePostApiTrackingMealLog = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMealLog>>, TError,{data: MealLogCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiTrackingMealLog>>,
@@ -3425,100 +3525,7 @@ export const usePostApiTrackingMealLog = <TError = void,
     }
     
 /**
- * @summary Coach views meal log history for a client
- */
-export const getApiTrackingMealLogHistoryClientId = (
-    clientId: string,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<MealLogHistoryResponseDto>(
-      {url: `/api/tracking/meal-log/history/${clientId}`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiTrackingMealLogHistoryClientIdQueryKey = (clientId?: string,) => {
-    return [
-    `/api/tracking/meal-log/history/${clientId}`
-    ] as const;
-    }
-
-    
-export const getGetApiTrackingMealLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingMealLogHistoryClientIdQueryKey(clientId);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>> = ({ signal }) => getApiTrackingMealLogHistoryClientId(clientId, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiTrackingMealLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>>
-export type GetApiTrackingMealLogHistoryClientIdQueryError = void
-
-
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
- clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Coach views meal log history for a client
- */
-
-export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = void>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiTrackingMealLogHistoryClientIdQueryOptions(clientId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Client updates a meal log
+ * @summary Update a meal log
  */
 export const putApiTrackingMealLogLogId = (
     logId: string,
@@ -3536,7 +3543,7 @@ export const putApiTrackingMealLogLogId = (
   
 
 
-export const getPutApiTrackingMealLogLogIdMutationOptions = <TError = void,
+export const getPutApiTrackingMealLogLogIdMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>, TError,{logId: string;data: MealLogUpdateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>, TError,{logId: string;data: MealLogUpdateRequestDto}, TContext> => {
 
@@ -3563,12 +3570,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PutApiTrackingMealLogLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>>
     export type PutApiTrackingMealLogLogIdMutationBody = MealLogUpdateRequestDto
-    export type PutApiTrackingMealLogLogIdMutationError = void
+    export type PutApiTrackingMealLogLogIdMutationError = unknown
 
     /**
- * @summary Client updates a meal log
+ * @summary Update a meal log
  */
-export const usePutApiTrackingMealLogLogId = <TError = void,
+export const usePutApiTrackingMealLogLogId = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>, TError,{logId: string;data: MealLogUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiTrackingMealLogLogId>>,
@@ -3583,7 +3590,266 @@ export const usePutApiTrackingMealLogLogId = <TError = void,
     }
     
 /**
- * @summary Client logs body weight
+ * @summary Coach views meal history for client
+ */
+export const getApiTrackingMealLogHistoryClientId = (
+    clientId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<MealLogHistoryResponseDto>(
+      {url: `/api/tracking/meal-log/history/${clientId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTrackingMealLogHistoryClientIdQueryKey = (clientId?: string,) => {
+    return [
+    `/api/tracking/meal-log/history/${clientId}`
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingMealLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingMealLogHistoryClientIdQueryKey(clientId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>> = ({ signal }) => getApiTrackingMealLogHistoryClientId(clientId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTrackingMealLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>>
+export type GetApiTrackingMealLogHistoryClientIdQueryError = unknown
+
+
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Coach views meal history for client
+ */
+
+export function useGetApiTrackingMealLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMealLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingMealLogHistoryClientIdQueryOptions(clientId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Log or update daily metrics (steps, water, sleep)
+ */
+export const postApiTrackingMetricsLog = (
+    metricsLogCreateRequestDto: MetricsLogCreateRequestDto,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<MetricsLogResponseDto>(
+      {url: `/api/tracking/metrics-log`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: metricsLogCreateRequestDto, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiTrackingMetricsLogMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMetricsLog>>, TError,{data: MetricsLogCreateRequestDto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMetricsLog>>, TError,{data: MetricsLogCreateRequestDto}, TContext> => {
+
+const mutationKey = ['postApiTrackingMetricsLog'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiTrackingMetricsLog>>, {data: MetricsLogCreateRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiTrackingMetricsLog(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiTrackingMetricsLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingMetricsLog>>>
+    export type PostApiTrackingMetricsLogMutationBody = MetricsLogCreateRequestDto
+    export type PostApiTrackingMetricsLogMutationError = unknown
+
+    /**
+ * @summary Log or update daily metrics (steps, water, sleep)
+ */
+export const usePostApiTrackingMetricsLog = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingMetricsLog>>, TError,{data: MetricsLogCreateRequestDto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiTrackingMetricsLog>>,
+        TError,
+        {data: MetricsLogCreateRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiTrackingMetricsLogMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Get metrics history for a specific client
+ */
+export const getApiTrackingMetricsLogHistoryClientId = (
+    clientId: string,
+    params?: GetApiTrackingMetricsLogHistoryClientIdParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<MetricsLogResponseDto[]>(
+      {url: `/api/tracking/metrics-log/history/${clientId}`, method: 'GET',
+        params, signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTrackingMetricsLogHistoryClientIdQueryKey = (clientId?: string,
+    params?: GetApiTrackingMetricsLogHistoryClientIdParams,) => {
+    return [
+    `/api/tracking/metrics-log/history/${clientId}`, ...(params ? [params]: [])
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingMetricsLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError = unknown>(clientId: string,
+    params?: GetApiTrackingMetricsLogHistoryClientIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingMetricsLogHistoryClientIdQueryKey(clientId,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>> = ({ signal }) => getApiTrackingMetricsLogHistoryClientId(clientId,params, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTrackingMetricsLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>>
+export type GetApiTrackingMetricsLogHistoryClientIdQueryError = unknown
+
+
+export function useGetApiTrackingMetricsLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError = unknown>(
+ clientId: string,
+    params: undefined |  GetApiTrackingMetricsLogHistoryClientIdParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingMetricsLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError = unknown>(
+ clientId: string,
+    params?: GetApiTrackingMetricsLogHistoryClientIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingMetricsLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError = unknown>(
+ clientId: string,
+    params?: GetApiTrackingMetricsLogHistoryClientIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get metrics history for a specific client
+ */
+
+export function useGetApiTrackingMetricsLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError = unknown>(
+ clientId: string,
+    params?: GetApiTrackingMetricsLogHistoryClientIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingMetricsLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingMetricsLogHistoryClientIdQueryOptions(clientId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Log weight
  */
 export const postApiTrackingWeightLog = (
     weightLogCreateRequestDto: WeightLogCreateRequestDto,
@@ -3601,7 +3867,7 @@ export const postApiTrackingWeightLog = (
   
 
 
-export const getPostApiTrackingWeightLogMutationOptions = <TError = void,
+export const getPostApiTrackingWeightLogMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWeightLog>>, TError,{data: WeightLogCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWeightLog>>, TError,{data: WeightLogCreateRequestDto}, TContext> => {
 
@@ -3628,12 +3894,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiTrackingWeightLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingWeightLog>>>
     export type PostApiTrackingWeightLogMutationBody = WeightLogCreateRequestDto
-    export type PostApiTrackingWeightLogMutationError = void
+    export type PostApiTrackingWeightLogMutationError = unknown
 
     /**
- * @summary Client logs body weight
+ * @summary Log weight
  */
-export const usePostApiTrackingWeightLog = <TError = void,
+export const usePostApiTrackingWeightLog = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWeightLog>>, TError,{data: WeightLogCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiTrackingWeightLog>>,
@@ -3648,100 +3914,7 @@ export const usePostApiTrackingWeightLog = <TError = void,
     }
     
 /**
- * @summary Coach views weight log history for a client
- */
-export const getApiTrackingWeightLogHistoryClientId = (
-    clientId: string,
- signal?: AbortSignal
-) => {
-      
-      
-      return customFetcher<WeightHistoryResponseDto>(
-      {url: `/api/tracking/weight-log/history/${clientId}`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
-
-export const getGetApiTrackingWeightLogHistoryClientIdQueryKey = (clientId?: string,) => {
-    return [
-    `/api/tracking/weight-log/history/${clientId}`
-    ] as const;
-    }
-
-    
-export const getGetApiTrackingWeightLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingWeightLogHistoryClientIdQueryKey(clientId);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>> = ({ signal }) => getApiTrackingWeightLogHistoryClientId(clientId, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiTrackingWeightLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>>
-export type GetApiTrackingWeightLogHistoryClientIdQueryError = void
-
-
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
- clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Coach views weight log history for a client
- */
-
-export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = void>(
- clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiTrackingWeightLogHistoryClientIdQueryOptions(clientId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-
-/**
- * @summary Client updates body weight log
+ * @summary Update weight log
  */
 export const putApiTrackingWeightLogLogId = (
     logId: string,
@@ -3759,7 +3932,7 @@ export const putApiTrackingWeightLogLogId = (
   
 
 
-export const getPutApiTrackingWeightLogLogIdMutationOptions = <TError = void,
+export const getPutApiTrackingWeightLogLogIdMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>, TError,{logId: string;data: WeightLogUpdateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>, TError,{logId: string;data: WeightLogUpdateRequestDto}, TContext> => {
 
@@ -3786,12 +3959,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PutApiTrackingWeightLogLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>>
     export type PutApiTrackingWeightLogLogIdMutationBody = WeightLogUpdateRequestDto
-    export type PutApiTrackingWeightLogLogIdMutationError = void
+    export type PutApiTrackingWeightLogLogIdMutationError = unknown
 
     /**
- * @summary Client updates body weight log
+ * @summary Update weight log
  */
-export const usePutApiTrackingWeightLogLogId = <TError = void,
+export const usePutApiTrackingWeightLogLogId = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>, TError,{logId: string;data: WeightLogUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiTrackingWeightLogLogId>>,
@@ -3806,7 +3979,100 @@ export const usePutApiTrackingWeightLogLogId = <TError = void,
     }
     
 /**
- * @summary Client logs a workout
+ * @summary Coach views weight history for client
+ */
+export const getApiTrackingWeightLogHistoryClientId = (
+    clientId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customFetcher<WeightHistoryResponseDto>(
+      {url: `/api/tracking/weight-log/history/${clientId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetApiTrackingWeightLogHistoryClientIdQueryKey = (clientId?: string,) => {
+    return [
+    `/api/tracking/weight-log/history/${clientId}`
+    ] as const;
+    }
+
+    
+export const getGetApiTrackingWeightLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTrackingWeightLogHistoryClientIdQueryKey(clientId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>> = ({ signal }) => getApiTrackingWeightLogHistoryClientId(clientId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiTrackingWeightLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>>
+export type GetApiTrackingWeightLogHistoryClientIdQueryError = unknown
+
+
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Coach views weight history for client
+ */
+
+export function useGetApiTrackingWeightLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError = unknown>(
+ clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWeightLogHistoryClientId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiTrackingWeightLogHistoryClientIdQueryOptions(clientId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * @summary Log a workout
  */
 export const postApiTrackingWorkoutLog = (
     workoutLogCreateRequestDto: WorkoutLogCreateRequestDto,
@@ -3824,7 +4090,7 @@ export const postApiTrackingWorkoutLog = (
   
 
 
-export const getPostApiTrackingWorkoutLogMutationOptions = <TError = void,
+export const getPostApiTrackingWorkoutLogMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext> => {
 
@@ -3851,12 +4117,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiTrackingWorkoutLogMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>>
     export type PostApiTrackingWorkoutLogMutationBody = WorkoutLogCreateRequestDto
-    export type PostApiTrackingWorkoutLogMutationError = void
+    export type PostApiTrackingWorkoutLogMutationError = unknown
 
     /**
- * @summary Client logs a workout
+ * @summary Log a workout
  */
-export const usePostApiTrackingWorkoutLog = <TError = void,
+export const usePostApiTrackingWorkoutLog = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>, TError,{data: WorkoutLogCreateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiTrackingWorkoutLog>>,
@@ -3871,7 +4137,7 @@ export const usePostApiTrackingWorkoutLog = <TError = void,
     }
     
 /**
- * @summary Client updates a workout log
+ * @summary Update workout log header
  */
 export const putApiTrackingWorkoutLogLogId = (
     logId: string,
@@ -3889,7 +4155,7 @@ export const putApiTrackingWorkoutLogLogId = (
   
 
 
-export const getPutApiTrackingWorkoutLogLogIdMutationOptions = <TError = void,
+export const getPutApiTrackingWorkoutLogLogIdMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext> => {
 
@@ -3916,12 +4182,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PutApiTrackingWorkoutLogLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>>
     export type PutApiTrackingWorkoutLogLogIdMutationBody = WorkoutLogUpdateRequestDto
-    export type PutApiTrackingWorkoutLogLogIdMutationError = void
+    export type PutApiTrackingWorkoutLogLogIdMutationError = unknown
 
     /**
- * @summary Client updates a workout log
+ * @summary Update workout log header
  */
-export const usePutApiTrackingWorkoutLogLogId = <TError = void,
+export const usePutApiTrackingWorkoutLogLogId = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>, TError,{logId: string;data: WorkoutLogUpdateRequestDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiTrackingWorkoutLogLogId>>,
@@ -3936,7 +4202,7 @@ export const usePutApiTrackingWorkoutLogLogId = <TError = void,
     }
     
 /**
- * @summary Client updates a single exercise entry in a workout log
+ * @summary Update specific exercise
  */
 export const patchApiTrackingWorkoutLogExerciseExerciseLogId = (
     exerciseLogId: string,
@@ -3954,7 +4220,7 @@ export const patchApiTrackingWorkoutLogExerciseExerciseLogId = (
   
 
 
-export const getPatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationOptions = <TError = void,
+export const getPatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: WorkoutExerciseUpdateDto}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: WorkoutExerciseUpdateDto}, TContext> => {
 
@@ -3981,12 +4247,12 @@ const {mutation: mutationOptions} = options ?
 
     export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationResult = NonNullable<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>>
     export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationBody = WorkoutExerciseUpdateDto
-    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationError = void
+    export type PatchApiTrackingWorkoutLogExerciseExerciseLogIdMutationError = unknown
 
     /**
- * @summary Client updates a single exercise entry in a workout log
+ * @summary Update specific exercise
  */
-export const usePatchApiTrackingWorkoutLogExerciseExerciseLogId = <TError = void,
+export const usePatchApiTrackingWorkoutLogExerciseExerciseLogId = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>, TError,{exerciseLogId: string;data: WorkoutExerciseUpdateDto}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof patchApiTrackingWorkoutLogExerciseExerciseLogId>>,
@@ -4001,7 +4267,7 @@ export const usePatchApiTrackingWorkoutLogExerciseExerciseLogId = <TError = void
     }
     
 /**
- * @summary Coach views workout log history for a client
+ * @summary Coach views workout history for client
  */
 export const getApiTrackingWorkoutLogHistoryClientId = (
     clientId: string,
@@ -4025,7 +4291,7 @@ export const getGetApiTrackingWorkoutLogHistoryClientIdQueryKey = (clientId?: st
     }
 
     
-export const getGetApiTrackingWorkoutLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
+export const getGetApiTrackingWorkoutLogHistoryClientIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
@@ -4044,10 +4310,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiTrackingWorkoutLogHistoryClientIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>>
-export type GetApiTrackingWorkoutLogHistoryClientIdQueryError = void
+export type GetApiTrackingWorkoutLogHistoryClientIdQueryError = unknown
 
 
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
  clientId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>,
@@ -4057,7 +4323,7 @@ export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<Retur
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>,
@@ -4067,15 +4333,15 @@ export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<Retur
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Coach views workout log history for a client
+ * @summary Coach views workout history for client
  */
 
-export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = void>(
+export function useGetApiTrackingWorkoutLogHistoryClientId<TData = Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError = unknown>(
  clientId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTrackingWorkoutLogHistoryClientId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

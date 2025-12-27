@@ -6,6 +6,7 @@ const MealLog = require("./controllers/mealLog.controller");
 const WorkoutLog = require("./controllers/workoutLog.controller");
 const WeightLog = require("./controllers/weightLog.controller");
 const  DailyState  = require('./controllers/dailyState.controller');
+const metricsLog = require('./controllers/metricsLog.controller');
 
 
 
@@ -38,7 +39,14 @@ r.put("/internal/tracking/weight-log/:logId",verifyInternalToken, WeightLog.upda
 /* ======================================================
    DAILY STATE
 ====================================================== */
-r.get("/internal/tracking/daily-state",verifyInternalToken,DailyState.getDailyState);
-  
+r.get("/internal/tracking/daily-state",verifyInternalToken,DailyState.getTodayState);
+r.get("/internal/tracking/range-state",verifyInternalToken,DailyState.getRangeState);
 
+
+/* ======================================================
+   wsMetrics STATE
+====================================================== */
+r.post("/internal/tracking/metrics-log", verifyInternalToken, metricsLog.logMetrics);
+
+r.get("/internal/tracking/metrics-log/history/:clientId", verifyInternalToken, metricsLog.history);
 module.exports = r;

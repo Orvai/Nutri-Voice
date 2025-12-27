@@ -180,6 +180,26 @@ const CalorieTargetsDto = z.object({
   restDay: z.number().int().nullable(),
 });
 
+const MetricsLogCreateDto = z.object({
+  date: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date()).optional(),
+  steps: z.number().int().min(0).optional(),
+  waterLiters: z.number().min(0).optional(),
+  sleepHours: z.number().min(0).max(24).optional(),
+  notes: z.string().optional()
+}).strict();
+
+const MetricsLogResponseDto = z.object({
+  id: z.string(),
+  clientId: z.string(),
+  date: z.date(),
+  steps: z.number().nullable(),
+  waterLiters: z.number().nullable(),
+  sleepHours: z.number().nullable(),
+  notes: z.string().nullable(),
+  updatedAt: z.date()
+});
+
+
 /**
  * Daily aggregated tracking state
  */
@@ -196,6 +216,8 @@ const DailyStateResponseDto = z.object({
     meals: z.array(MealLogResponseDto.shape.data),
     workouts: z.array(WorkoutLogResponseDto.shape.data),
     weight: WeightLogResponseDto.shape.data.nullable(),
+    metrics: MetricsLogResponseDto.nullable(),
+
   }),
 });
 
@@ -229,4 +251,6 @@ module.exports = {
   DaySelectionTodayResponseDto,
 
   DailyStateResponseDto,
+  MetricsLogCreateDto,
+  MetricsLogResponseDto,
 };

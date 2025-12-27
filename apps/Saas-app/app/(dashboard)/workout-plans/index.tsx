@@ -106,7 +106,7 @@ export default function WorkoutPlansScreen() {
           ספריית תרגילים (Exercise Library)
         </Text>
 
-        <WorkoutSearchBar query={query} onChange={setQuery} />
+        <WorkoutSearchBar value={query} onChange={setQuery} />
 
         <WorkoutFilters
           selectedMuscle={selectedMuscle}

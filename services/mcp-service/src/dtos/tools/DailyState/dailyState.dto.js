@@ -3,7 +3,15 @@ import { z } from "zod";
 /**
  * ===== Sub DTOs (Tool-level, AI-friendly)
  */
-
+const MetricsToolDto = z.object({
+  id: z.string(),
+  date: z.string(),
+  steps: z.number().nullable(),
+  waterLiters: z.number().nullable(),
+  sleepHours: z.number().nullable(),
+  notes: z.string().nullable(),
+  updatedAt: z.string()
+});
 const MealToolDto = z.object({
   id: z.string(),
   date: z.string(),               // ISO date
@@ -59,4 +67,6 @@ export const DailyStateToolDto = z.object({
   meals: z.array(MealToolDto),
   workouts: z.array(WorkoutToolDto),
   weight: WeightToolDto.nullable(),
+  metrics: MetricsToolDto.nullable(), 
 });
+
