@@ -3,29 +3,29 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const COACH_ID = "bae20c85-f3b3-44e8-a001-1d236347665d";
+const COACH_ID = "5ed57b28-caf4-4f78-bba5-bce43996ddfc";
 
 const clients = [
-  "5f4e6f52-8362-42d4-99e2-a3ff36296ddf", // אור ברוך
-  "820c12f3-e49c-4b1d-b1ac-7dec62b02fd6", // נועה חדד
-  "748a76d4-acd3-44f7-94b1-91ce0b0e3ffd", // אור לוי
-  "e69ab580-ae45-485a-965d-c54d8c7bb34e", // מאיה מזרחי
-  "2d2ac147-7a2d-4c0f-a655-89d3d9498082", // רוני פרץ
-  "92f874da-cd65-4648-800b-bab55a3c6561", // יוסי אלבז
-  "5afef180-5baf-4dce-b2b4-51097db344a5", // שון חדד
-  "8ac90701-8220-441a-ac6f-49effd171846", // אליעד וולף
-  "78d0b192-7579-4cf4-a625-fe6ebd4f5952", // דניאל מזרחי
-  "82d47527-4e9d-4d46-8746-c7f52787b053", // יואב ברוך
-  "a701dd31-04b9-478a-b926-f731e253d4e0", // תומר כהן
-  "d1e38e8b-6b23-4dc2-a1bf-aa199ea136e5", // לינוי ברוך
-  "dc868bad-9822-487f-99d7-1af4ea95ff33", // תומר פרץ
-  "5b39f47e-df9d-459d-965f-c169ac7f11aa", // מאיה מזרחי
-  "81d3ac72-2d04-412e-a6f8-5a641807f6db", // שיר ביטון
-  "cc4c4b83-2541-40f5-858e-e3f6ca7e2676", // ניצן כהן
-  "73e5f55e-fbcc-4073-8488-bb8af199953e", // יואב מזרחי
-  "a1930ec4-0f29-49ce-965d-4521e4ca83a4", // יוסי חדד
-  "c148d51a-9910-4c10-94c6-7fc5bd662e2d", // ניצן מלול
-  "9175d0c6-0abe-4782-bbce-d3dbcb6eff70", // יעל כהן
+  "04658b3c-c687-4899-a334-2ab4055120c2", // client1 - משה מזרחי
+  "4477eeaf-284a-40b4-939f-e95646aa2b04", // client2 - יעל לוי
+  "3ee5b30d-3b6a-41ed-a88b-7383edcc20ac", // client3 - יואב וולף
+  "7c757600-4d8f-410a-95e6-a5b22101cabd", // client4 - לינוי שטרן
+  "9c3499fa-e9ee-4b62-bd89-e725f507b3e5", // client5 - ניצן פרץ
+  "c3b9cd00-fd91-488c-bd2a-2c1d97a96242", // client6 - מאיה חדד
+  "61a0703b-f007-48a9-bda0-f45c779a03ad", // client7 - מאיה חדד
+  "0f0b273c-8f48-4dfc-8529-744639ec22b7", // client8 - נועה כהן
+  "0669dc24-2630-4a15-94d7-19e42dbf1ece", // client9 - עדן ביטון
+  "1d2236eb-594b-404a-98e4-2ee94da9590c", // client10 - אליעד לוי
+  "21dbdb35-7f93-4441-90cf-ca2e7ecdfc79", // client11 - אליעד ברוך
+  "7afdc547-5022-4d85-b015-43345645dd7d", // client12 - עדן ביטון
+  "85512046-96fd-4e85-8a78-c840fa6cfe23", // client13 - נועה אלבז
+  "37ede9a1-c2f9-4ff2-8ae8-2391a4b2fff2", // client14 - תומר אלבז
+  "4574b2b9-37ba-480b-ae38-7da9b049312b", // client15 - שון וולף
+  "1dc5d2ac-f772-462d-9392-acb7936b2fe9", // client16 - מאיה מזרחי
+  "cd77d1eb-ebe0-45cf-84dd-5c41785bd9ea", // client17 - משה וולף
+  "701587c5-63bc-4a0c-a15e-d218b0fd9e11", // client18 - דוד חדד
+  "30975a16-001e-437c-bb69-e8dbd8ff8870", // client19 - מאיה אלבז
+  "24e27b82-ca8c-4264-9568-15bc4a57d399", // client20 - שקד אלבז
 ];
 
 

@@ -35,11 +35,11 @@ app.use(logger);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get("/api/docs-json", (req, res) => res.json(swaggerSpec));
 
-// 3. Security Middleware Layer 1: Internal Token
-app.use(verifyInternalToken);
-
-// 4. Webhooks (Special Case)
+// 3. Webhooks (Special Case) — before internal token check, secured by Telegram secret
 app.use("/api/webhook", webhookRoutes);
+
+// 4. Security Middleware Layer 1: Internal Token
+app.use(verifyInternalToken);
 
 // 5. Security Middleware Layer 2: User JWT
 app.use(verifyJwt);
