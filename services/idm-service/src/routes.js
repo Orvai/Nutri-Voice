@@ -28,9 +28,9 @@ r.post('/internal/auth/mfa/verify', verifyInternalToken, Auth.verifyMFA);
 // ==========================================
 r.post('/internal/users', verifyInternalToken, User.createUser);
 r.get('/internal/users', verifyInternalToken, User.listUsers); 
+r.get("/internal/users/by-phone/:phone", verifyInternalToken, User.getUserByPhone);
 r.get('/internal/users/:userId', verifyInternalToken, User.getUser); 
 r.patch('/internal/users/:userId', verifyInternalToken, User.updateUser);
-r.get("/internal/users/by-phone/:phone", verifyInternalToken, User.getUserByPhone);
 
 
 // ==========================================

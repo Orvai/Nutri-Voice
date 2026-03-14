@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 /**
  * Target IDs provided for the specific client and coach
  */
-const CLIENT_ID = "c148d51a-9910-4c10-94c6-7fc5bd662e2d";
+const CLIENT_ID = "24e27b82-ca8c-4264-9568-15bc4a57d399";
 
 async function main() {
   console.log("🚀 Starting comprehensive 3-month seed process (JavaScript version)...");
