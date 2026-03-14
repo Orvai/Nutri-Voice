@@ -24,6 +24,5 @@ export async function reportMeal(input, context) {
     body: payload,
   });
 
-  const raw = res?.data ?? res;
-  return ReportMealResponseDto.parse(raw);
+  return ReportMealResponseDto.parse(res);
 }

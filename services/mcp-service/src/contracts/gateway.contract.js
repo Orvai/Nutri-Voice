@@ -131,6 +131,14 @@ export const GatewayContract = {
       MENU SERVICE - EXTENDED (Missing parts)
      ====================================================== */
 
+  // --- CLIENT MENUS ---
+  CLIENT_MENUS_LIST: {
+    method: "GET",
+    path: "/api/client-menus",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.SELF,
+  },
+
   // --- SPECIAL ACTION: Create from Template ---
   CLIENT_MENUS_CREATE_FROM_TEMPLATE: {
     method: "POST",

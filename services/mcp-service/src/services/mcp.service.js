@@ -5,6 +5,7 @@ import { systemPrompt } from "../llm/systemPrompt.js";
 import { llmTools } from "../llm/tools/llmTools.js";
 import { toolRegistry } from "../llm/tools/registry.js";
 import { executeTool } from "../llm/toolExecutor.js";
+import { callGateway } from "../http/gatewayClient.js";
 
 export async function runMcp(input) {
   // 1. Validation
@@ -40,6 +41,14 @@ export async function runMcp(input) {
   ];
 
   try {
+    // Pre-fetch dailyState so tools like get_menu_context have dayType available
+    const dailyStateRes = await callGateway({
+      contractKey: "DAILY_STATE_GET",
+      sender,
+      context,
+    });
+    context.dailyState = dailyStateRes?.data ?? dailyStateRes;
+
     // First LLM pass
     const llmMessage = await runLLM({
       systemPrompt,
@@ -65,6 +74,10 @@ export async function runMcp(input) {
         console.log(`[MCP] Executing tool: ${toolName} for client: ${clientId}`);
 
 
+        // Ensure get_daily_state is run first if it's in the tool calls
+        // For now, let's just pre-fetch daily state if it's missing and we need it?
+        // Actually, LLM might call get_menu_context without get_daily_state.
+        // We will execute the tool:
         const toolResult = await executeTool({
           toolName,
           args,

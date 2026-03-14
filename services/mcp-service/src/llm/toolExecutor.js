@@ -24,5 +24,10 @@ export async function executeTool({
     throw new Error(`[toolExecutor] Tool ${toolName} has no execute() method`);
   }
 
-  return Tool.execute(args,context);
+  try {
+    return await Tool.execute(args, context);
+  } catch (err) {
+    console.error(`[toolExecutor] Tool ${toolName} failed:`, err.message);
+    return { error: err.message };
+  }
 }

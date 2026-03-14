@@ -6,7 +6,7 @@ const dailyStateService = require('../services/dailyState.service');
  */
 const getRangeState = async (req, res, next) => {
   try {
-    const { clientId } = req.user; 
+    const clientId = req.user.id;
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -26,7 +26,7 @@ const getRangeState = async (req, res, next) => {
  */
 const getTodayState = async (req, res, next) => {
   try {
-    const { clientId } = req.user;
+    const clientId = req.user.id;
     const state = await dailyStateService.getDailyState(clientId);
     res.json(state);
   } catch (error) {

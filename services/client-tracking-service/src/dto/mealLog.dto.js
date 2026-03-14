@@ -1,6 +1,11 @@
 const { z } = require('zod');
 const { DayTypeEnum } = require('./daySelection.dto');
 
+const dateTimeField = z.union([
+  z.string().datetime(),
+  z.date().transform(d => d.toISOString()),
+]);
+
 const MealLogCreateDto = z.object({
   date: z.string().datetime().optional(),
   calories: z.number().int(),
@@ -14,7 +19,7 @@ const MealLogCreateDto = z.object({
 const MealLogResponseDto = z.object({
   id: z.string(),
   clientId: z.string(),
-  date: z.string().datetime(),
+  date: dateTimeField,
   dayType: DayTypeEnum,
   calories: z.number(),
   protein: z.number(),
@@ -22,7 +27,7 @@ const MealLogResponseDto = z.object({
   fat: z.number(),
   description: z.string().nullable(),
   matchedMenuItemId: z.string().nullable(),
-  loggedAt: z.string().datetime().optional()
+  loggedAt: dateTimeField.optional()
 }).strict();
 const MealLogUpdateDto = z.object({
   calories: z.number().int().optional(),

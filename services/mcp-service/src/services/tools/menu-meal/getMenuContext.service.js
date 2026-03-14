@@ -4,7 +4,9 @@ import { MenuContextDto } from "../../../dtos/tools/menu-meal/menuContext.dto.js
 
 export async function getMenuContext(_, context) {
   const dayType = context?.dailyState?.dayType;
-  if (!dayType) throw new Error("Missing dayType in dailyState");
+  if (!dayType) {
+    return { error: "No day type has been set for today. Please tell me whether today is a training day or a rest day before I can show you the menu." };
+  }
 
   const res = await callGateway({
     contractKey: "CLIENT_MENUS_LIST",
