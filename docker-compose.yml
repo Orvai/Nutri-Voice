@@ -75,10 +75,13 @@ services:
     restart: unless-stopped
     entrypoint: ["sh", "/app/entrypoint.sh"]
     command: ["src/index.js"]
+    ports:
+      - "5556:5556"
     environment:
       PORT: 4002
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/nutri_menu?schema=public
       INTERNAL_TOKEN: ${INTERNAL_TOKEN}
+      STUDIO_PORT: 5556
     volumes:
       - ./docker/entrypoint.sh:/app/entrypoint.sh
     depends_on:
@@ -93,10 +96,13 @@ services:
     restart: unless-stopped
     entrypoint: ["sh", "/app/entrypoint.sh"]
     command: ["src/index.js"]
+    ports:
+      - "5557:5557"
     environment:
       PORT: 4003
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/nutri_workout?schema=public
       INTERNAL_TOKEN: ${INTERNAL_TOKEN}
+      STUDIO_PORT: 5557
     volumes:
       - ./docker/entrypoint.sh:/app/entrypoint.sh
       - workout-uploads:/app/src/uploads/videos
@@ -112,11 +118,14 @@ services:
     restart: unless-stopped
     entrypoint: ["sh", "/app/entrypoint.sh"]
     command: ["src/app.js"]
+    ports:
+      - "5558:5558"
     environment:
       PORT: 4004
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/nutri_tracking?schema=public
       INTERNAL_TOKEN: ${INTERNAL_TOKEN}
       MENU_SERVICE_URL: http://menu-service:4002
+      STUDIO_PORT: 5558
     volumes:
       - ./docker/entrypoint.sh:/app/entrypoint.sh
     depends_on:
@@ -133,6 +142,8 @@ services:
     restart: unless-stopped
     entrypoint: ["sh", "/app/entrypoint.sh"]
     command: ["src/index.js"]
+    ports:
+      - "5559:5559"
     environment:
       PORT: 4006
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/nutri_conversation?schema=public
@@ -141,6 +152,7 @@ services:
       MCP_BASE_URL: http://mcp-service:4020
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_COACH_ID: ${TELEGRAM_COACH_ID}
+      STUDIO_PORT: 5559
     volumes:
       - ./docker/entrypoint.sh:/app/entrypoint.sh
     depends_on:
