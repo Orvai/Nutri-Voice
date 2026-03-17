@@ -22,7 +22,11 @@ export const UpdateWorkoutToolInputDto = z.object({
   exercises: z.array(WorkoutExerciseUpdateDto).optional(),
 });
 
-export const UpdateWorkoutToolOutputDto = WorkoutLogResponseDto;
+export const UpdateWorkoutToolOutputDto = WorkoutLogResponseDto.extend({
+  diff: z.object({
+    changedFields: z.array(z.string()),
+  }),
+});
 
 
 export const UpdateWorkoutExerciseToolInputDto = z.object({
@@ -35,4 +39,7 @@ export const UpdateWorkoutExerciseToolOutputDto = z.object({
   success: z.boolean(),
   id: z.string(),
   message: z.string(),
+  diff: z.object({
+    changedFields: z.array(z.string()),
+  }),
 });

@@ -17,12 +17,34 @@ export async function reportMeal(input, context) {
     );
   }
 
+  const gatewayPayload = {
+    date: payload.date,
+    calories: payload.calories,
+    protein: payload.protein,
+    carbs: payload.carbs,
+    fat: payload.fat,
+    description: payload.description,
+    matchedMenuItemId: payload.matchedMenuItemId,
+    dayType: payload.dayType,
+  };
+
   const res = await callGateway({
     contractKey: "MEAL_LOG_CREATE",
     sender: context.sender,
     context,
-    body: payload,
+    body: gatewayPayload,
   });
 
-  return ReportMealResponseDto.parse(res);
+  const raw = res?.data ?? res;
+  return ReportMealResponseDto.parse({
+    data: raw?.data ?? raw,
+    meta: {
+      source: payload.source ?? "ESTIMATE",
+      confidence: payload.confidence ?? null,
+      isEstimated: payload.isEstimated ?? payload.source === "ESTIMATE",
+      outsideMenu: payload.outsideMenu ?? false,
+      portionText: payload.portionText ?? null,
+      caloriesUsedForLog: payload.caloriesUsedForLog ?? payload.calories,
+    },
+  });
 }

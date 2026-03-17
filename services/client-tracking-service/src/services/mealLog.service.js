@@ -1,5 +1,5 @@
 const { prisma } = require('../db/prisma');
-const { MealLogCreateDto } = require('../dto/mealLog.dto');
+const { MealLogCreateDto, MealLogUpdateDto } = require('../dto/mealLog.dto');
 const { getStartOfDay, getEndOfDay, getDateDaysAgo } = require('../utils/date.utils');
 
 const createMeal = async (clientId, payload) => {

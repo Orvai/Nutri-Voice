@@ -14,4 +14,8 @@ startDate: string;
  * End date (YYYY-MM-DD)
  */
 endDate: string;
+/**
+ * Optional clientId for coach viewing a client
+ */
+clientId?: string;
 };

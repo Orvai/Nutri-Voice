@@ -1,5 +1,10 @@
 const { z } = require('zod');
 
+const dateTimeField = z.union([
+  z.string().datetime(),
+  z.date().transform((d) => d.toISOString()),
+]);
+
 /**
  * Effort level enum
  */
@@ -59,11 +64,11 @@ const WorkoutExerciseResponseDto = z.object({
 const WorkoutLogResponseDto = z.object({
   id: z.string(),
   clientId: z.string(),
-  date: z.string().datetime(),
+  date: dateTimeField,
   workoutType: z.string(),
   effortLevel: EffortLevelEnum,
   notes: z.string().nullable(),
-  loggedAt: z.string().datetime().optional(),
+  loggedAt: dateTimeField.optional(),
   exercises: z.array(WorkoutExerciseResponseDto).default([])
 }).strict();
 const WorkoutHistoryResponseDto = z.array(WorkoutLogResponseDto);

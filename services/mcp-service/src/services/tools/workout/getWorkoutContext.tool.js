@@ -27,6 +27,27 @@ export const GetWorkoutContextTool = {
       if (found) chosen = found;
     }
 
-    return GetWorkoutContextToolOutputDto.parse({ data: chosen });
+    const exerciseList = (chosen.exercises ?? []).map((exercise) => ({
+      id: exercise.id,
+      exerciseId: exercise.exerciseId,
+      exerciseName: exercise.exercise?.name || "תרגיל",
+      sets: exercise.sets,
+      reps: exercise.reps,
+      weight: exercise.weight ?? null,
+      notes: exercise.notes ?? null,
+    }));
+
+    return GetWorkoutContextToolOutputDto.parse({
+      currentProgram: chosen ?? null,
+      workoutDay: chosen?.name ?? null,
+      exerciseList,
+      completionStatus: "UNKNOWN",
+      notes: [],
+      substitutions: [],
+      progressionContext: {
+        hasHistory: false,
+        hint: null,
+      },
+    });
   },
 };

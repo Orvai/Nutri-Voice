@@ -13,7 +13,7 @@ export function useDailyState(clientId?: string) {
   return useQuery<DailyState>({
     queryKey: clientId ? [...trackingKeys.dailyState(), clientId] : trackingKeys.dailyState(),
     queryFn: async ({ signal }) => {
-      const res = await getApiTrackingDailyState({clientId}, signal); 
+      const res = await getApiTrackingDailyState(clientId ? { clientId } : undefined, signal);
       return mapDailyState(res);
     },
     refetchInterval: 30000,
@@ -22,12 +22,12 @@ export function useDailyState(clientId?: string) {
   });
 }
 
-export function useDailyStateRange(startDate: string, endDate: string) {
+export function useDailyStateRange(startDate: string, endDate: string, clientId?: string) {
   return useQuery<DailyState[]>({
-    queryKey: trackingKeys.rangeState(startDate, endDate),
+    queryKey: trackingKeys.rangeState(startDate, endDate, clientId),
     queryFn: async ({ signal }) => {
       const res = await getApiTrackingDailyStateRange(
-        { startDate, endDate }, 
+        { startDate, endDate, ...(clientId ? { clientId } : {}) },
         signal
       );
       

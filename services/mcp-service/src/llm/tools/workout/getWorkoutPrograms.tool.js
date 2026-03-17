@@ -4,14 +4,14 @@ import { GetWorkoutProgramsTool } from "../../../services/tools/workout/getWorko
 export const getWorkoutProgramsTool = {
   name: "get_workout_programs",
   description:
-    "Fetches all workout programs for a specific client.",
+    "Fetches all workout programs for current conversation client (client id comes from trusted runtime context).",
 
   parameters: {
     type: "object",
     properties: {
-      clientId: { type: "string", minLength: 1 },
+      includeExercises: { type: "boolean" },
     },
-    required: ["clientId"],
+    required: [],
     additionalProperties: false,
   },
 

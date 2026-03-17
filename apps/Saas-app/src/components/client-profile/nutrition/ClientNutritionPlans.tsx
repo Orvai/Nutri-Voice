@@ -62,7 +62,6 @@ export default function ClientNutritionPlans({ clientId }: Props) {
         for (const tmpl of templates) {
           await createFromTemplate.mutateAsync({
             templateMenuId: tmpl.id,
-            clientId: clientId,
           });
         }
 

@@ -32,10 +32,11 @@ export const styles = StyleSheet.create({
 
   card: {
     backgroundColor: progressTheme.colors.surface,
-    borderRadius: progressTheme.radius.card,
-    padding: 14,
+    borderRadius: 20,
+    padding: 16,
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
+    ...progressTheme.shadow.card,
   },
 
   calorieSection: {
@@ -53,7 +54,7 @@ export const styles = StyleSheet.create({
   avgValue: {
     marginTop: 6,
     color: progressTheme.colors.text,
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "900",
     textAlign: "right",
     writingDirection: "rtl",
@@ -80,7 +81,35 @@ export const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: progressTheme.colors.border,
-    marginVertical: 12,
+    marginVertical: 14,
+  },
+
+  adherenceCard: {
+    borderRadius: progressTheme.radius.sub,
+    padding: 12,
+    borderWidth: 1,
+  },
+  adherenceLabel: {
+    color: progressTheme.colors.textMuted,
+    fontSize: 12,
+    fontWeight: "800",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+  adherenceValue: {
+    color: progressTheme.colors.text,
+    fontSize: 22,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
+    marginTop: 6,
+  },
+  adherenceSub: {
+    color: progressTheme.colors.textDim,
+    fontSize: 11,
+    textAlign: "right",
+    writingDirection: "rtl",
+    marginTop: 4,
   },
 
   macroGrid: {
@@ -92,7 +121,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     borderRadius: progressTheme.radius.sub,
     padding: 12,
-    backgroundColor: progressTheme.colors.surface2,
+    backgroundColor: "rgba(15,23,42,0.03)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
   },
@@ -112,5 +141,29 @@ export const styles = StyleSheet.create({
     fontWeight: "900",
     textAlign: "right",
     writingDirection: "rtl",
+  },
+  adherenceGood: {
+    backgroundColor: progressTheme.colors.successSoft,
+    borderColor: progressTheme.colors.successBorder,
+  },
+  adherenceMid: {
+    backgroundColor: progressTheme.colors.warningSoft,
+    borderColor: progressTheme.colors.warningBorder,
+  },
+  adherenceLow: {
+    backgroundColor: progressTheme.colors.dangerSoft,
+    borderColor: progressTheme.colors.dangerBorder,
+  },
+  proteinTag: {
+    backgroundColor: "rgba(22,163,74,0.09)",
+    borderColor: "rgba(22,163,74,0.2)",
+  },
+  carbTag: {
+    backgroundColor: "rgba(37,99,235,0.09)",
+    borderColor: "rgba(37,99,235,0.2)",
+  },
+  fatTag: {
+    backgroundColor: "rgba(249,115,22,0.11)",
+    borderColor: "rgba(249,115,22,0.25)",
   },
 });

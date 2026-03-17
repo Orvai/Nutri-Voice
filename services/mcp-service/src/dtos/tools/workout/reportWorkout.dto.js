@@ -20,6 +20,10 @@ export const ReportWorkoutToolInputDto = z.object({
   effortLevel: EffortLevelEnum,
   notes: z.string().optional(),
   exercises: z.array(WorkoutExerciseCreateDto).min(1),
+  durationMin: z.number().int().positive().optional(),
+  intensity: z.enum(["LOW", "MEDIUM", "HIGH"]).optional(),
+  performedAsPlanned: z.boolean().optional(),
+  caloriesBurnEstimate: z.number().int().nonnegative().optional(),
 });
 
 export const WorkoutLogResponseDto = z.object({
@@ -42,4 +46,11 @@ export const WorkoutLogResponseDto = z.object({
   }),
 });
 
-export const ReportWorkoutToolOutputDto = WorkoutLogResponseDto;
+export const ReportWorkoutToolOutputDto = WorkoutLogResponseDto.extend({
+  meta: z.object({
+    durationMin: z.number().int().positive().nullable(),
+    intensity: z.enum(["LOW", "MEDIUM", "HIGH"]).nullable(),
+    performedAsPlanned: z.boolean().nullable(),
+    caloriesBurnEstimate: z.number().int().nonnegative().nullable(),
+  }),
+});

@@ -1,9 +1,17 @@
 const axios = require("axios");
 
-const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
+const getTelegramApiBaseUrl = () => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) {
+    throw new Error(
+      "TELEGRAM_BOT_TOKEN is missing. Cannot send outbound Telegram message."
+    );
+  }
+  return `https://api.telegram.org/bot${token}`;
+};
 
 const sendTelegramTextMessage = async ({ chatId, text }) => {
-  const res = await axios.post(`${TELEGRAM_API}/sendMessage`, {
+  const res = await axios.post(`${getTelegramApiBaseUrl()}/sendMessage`, {
     chat_id: Number(chatId), 
     text,
   });

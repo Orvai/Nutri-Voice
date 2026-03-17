@@ -2,16 +2,16 @@ import React from "react";
 import { View, ActivityIndicator, Text, Pressable } from "react-native";
 import { styles } from "../../styles";
 
-import type { ClientExtended } from "@/types/client";
+import type { ClientTrackingSnapshot } from "../../types";
 import ClientStatusCard from "./ClientStatusCard";
 
 export default function ClientsSnapshotSection({
   loading,
-  clients,
+  rows,
   onLoadMore,
 }: {
   loading: boolean;
-  clients: ClientExtended[];
+  rows: ClientTrackingSnapshot[];
   onLoadMore: () => void;
 }) {
   if (loading) {
@@ -22,7 +22,7 @@ export default function ClientsSnapshotSection({
     );
   }
 
-  if (!clients.length) {
+  if (!rows.length) {
     return (
       <View style={styles.card}>
         <Text style={styles.title}>אין לקוחות</Text>
@@ -33,8 +33,8 @@ export default function ClientsSnapshotSection({
 
   return (
     <View style={{ gap: 12 }}>
-      {clients.map((c) => (
-        <ClientStatusCard key={c.id} client={c} />
+      {rows.map((row) => (
+        <ClientStatusCard key={row.client.id} row={row} />
       ))}
 
       <Pressable style={styles.secondaryBtn} onPress={onLoadMore}>

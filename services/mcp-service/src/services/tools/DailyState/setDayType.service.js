@@ -18,16 +18,25 @@ export async function setDayType(args, context) {
   }
 
   const payload = DaySelectionCreateDto.parse(args);
+  const gatewayPayload = {
+    dayType: payload.dayType,
+    date: payload.effectiveDate || payload.date,
+  };
 
   const res = await callGateway({
     contractKey: "DAY_SELECTION_CREATE",
     sender: context.sender,
     context,
-    body: payload, 
+    body: gatewayPayload,
   });
 
   return {
     success: true,
     data: res?.data ?? res,
+    meta: {
+      source: payload.source ?? "USER_EXPLICIT",
+      confidence: payload.confidence ?? null,
+      effectiveDate: gatewayPayload.date ?? null,
+    },
   };
 }

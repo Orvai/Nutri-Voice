@@ -16,9 +16,9 @@ export const styles = StyleSheet.create({
 
   presetBtn: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 11,
     borderRadius: progressTheme.radius.sub,
-    backgroundColor: progressTheme.colors.surface2,
+    backgroundColor: "rgba(15,23,42,0.04)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
     alignItems: "center",
@@ -26,8 +26,8 @@ export const styles = StyleSheet.create({
   },
 
   activePresetBtn: {
-    backgroundColor: progressTheme.colors.accentSoft,
-    borderColor: progressTheme.colors.accentBorder,
+    backgroundColor: "rgba(37,99,235,0.12)",
+    borderColor: "rgba(37,99,235,0.3)",
   },
 
   presetText: {
@@ -43,11 +43,12 @@ export const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     alignItems: "center",
     justifyContent: "space-between",
-    borderRadius: progressTheme.radius.card,
+    borderRadius: 20,
     backgroundColor: progressTheme.colors.surface,
-    padding: 14,
+    padding: 16,
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
+    ...progressTheme.shadow.card,
   },
 
   infoSection: { flex: 1 },
@@ -63,7 +64,7 @@ export const styles = StyleSheet.create({
   dateRange: {
     marginTop: 6,
     color: progressTheme.colors.text,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "900",
     textAlign: "right",
     writingDirection: "rtl",
@@ -81,14 +82,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: progressTheme.radius.sub,
-    backgroundColor: "rgba(255,255,255,0.04)",
+    backgroundColor: "rgba(37,99,235,0.12)",
     borderWidth: 1,
-    borderColor: progressTheme.colors.border,
+    borderColor: "rgba(37,99,235,0.3)",
     marginLeft: 12,
   },
 
   editBtnText: {
-    color: progressTheme.colors.text,
+    color: "#1d4ed8",
     fontSize: 12,
     fontWeight: "900",
   },
@@ -103,11 +104,11 @@ export const styles = StyleSheet.create({
 
   modalCard: {
     width: "100%",
-    borderRadius: progressTheme.radius.card,
+    borderRadius: 20,
     backgroundColor: progressTheme.colors.surface,
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
-    padding: 14,
+    padding: 16,
   },
 
   modalHeader: {
@@ -168,7 +169,7 @@ export const styles = StyleSheet.create({
   wheelFrame: {
     height: ITEM_H * (WHEEL_PADDING_ITEMS * 2 + 3),
     borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.03)",
+    backgroundColor: "rgba(15,23,42,0.03)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
     overflow: "hidden",
@@ -181,7 +182,7 @@ export const styles = StyleSheet.create({
     right: 0,
     top: ITEM_H * WHEEL_PADDING_ITEMS + ITEM_H,
     height: ITEM_H,
-    backgroundColor: "rgba(255,255,255,0.06)",
+    backgroundColor: "rgba(37,99,235,0.1)",
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: "rgba(255,255,255,0.10)",
@@ -211,7 +212,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: progressTheme.radius.sub,
-    backgroundColor: "rgba(255,255,255,0.04)",
+    backgroundColor: "rgba(15,23,42,0.04)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
     alignItems: "center",
@@ -227,14 +228,14 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: progressTheme.radius.sub,
-    backgroundColor: progressTheme.colors.accentSoft,
+    backgroundColor: "rgba(37,99,235,0.12)",
     borderWidth: 1,
-    borderColor: progressTheme.colors.accentBorder,
+    borderColor: "rgba(37,99,235,0.3)",
     alignItems: "center",
   },
 
   primaryBtnText: {
-    color: progressTheme.colors.text,
+    color: "#1d4ed8",
     fontSize: 12,
     fontWeight: "900",
   },

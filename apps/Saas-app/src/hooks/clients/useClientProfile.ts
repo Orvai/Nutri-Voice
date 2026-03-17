@@ -24,6 +24,7 @@ export function useClientProfile(id: string) {
         },
         quickStats: [],
         meals: [],
+        workouts: [],
         workout: null,
       };
     }
@@ -80,12 +81,32 @@ export function useClientProfile(id: string) {
         description: m.description,
       })),
 
-      workout: dailyState.workouts?.[0] ? {
-        done: true,
-        title: dailyState.workouts[0].workoutType,
-        effort: dailyState.workouts[0].effortLevel,
-        exercisesCount: dailyState.workouts[0].exercises?.length || 0
-      } : null
+      workouts: (dailyState.workouts || []).map((w) => ({
+        id: w.id,
+        date: w.date,
+        workoutType: w.workoutType,
+        effortLevel: w.effortLevel,
+        notes: w.notes,
+        exercises: (w.exercises || []).map((ex) => ({
+          id: ex.id,
+          exerciseName: ex.exerciseName,
+          weight: ex.weight,
+        })),
+      })),
+      workout: dailyState.workouts?.[0]
+        ? {
+            id: dailyState.workouts[0].id,
+            date: dailyState.workouts[0].date,
+            workoutType: dailyState.workouts[0].workoutType,
+            effortLevel: dailyState.workouts[0].effortLevel,
+            notes: dailyState.workouts[0].notes,
+            exercises: (dailyState.workouts[0].exercises || []).map((ex) => ({
+              id: ex.id,
+              exerciseName: ex.exerciseName,
+              weight: ex.weight,
+            })),
+          }
+        : null,
     };
   }, [dailyState]);
 

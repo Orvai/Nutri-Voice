@@ -23,6 +23,14 @@ const IncomingWebhookMessageDto = z.object({
     })
     .optional(),
   sourceMessageId: z.string().optional(),
+}).superRefine((value, ctx) => {
+  if (value.contentType !== "TEXT" && !value.media?.mediaUrl) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["media", "mediaUrl"],
+      message: "media.mediaUrl is required for non-TEXT webhook messages",
+    });
+  }
 });
 
 module.exports = { IncomingWebhookMessageDto };

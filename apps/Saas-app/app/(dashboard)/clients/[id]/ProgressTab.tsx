@@ -50,10 +50,10 @@ export default function ProgressTab({ client }: { client: { id: string } }) {
     };
   });
 
-  const { data: dailyStates, isLoading } = useDailyStateRange(range.startDate, range.endDate);
+  const { data: dailyStates, isLoading } = useDailyStateRange(range.startDate, range.endDate, client.id);
 
   // IMPORTANT: Expected signature: (clientId, range, dailyStates)
-  const analytics = useDailyAnalytics(client?.id, range, dailyStates);
+  const analytics = useDailyAnalytics(client.id, range, dailyStates);
 
   const handleRangeChange = (newRange: RangeValue) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

@@ -29,9 +29,15 @@ export const UpsertMetricsLogTool = {
       date: {
         type: "string",
         description: "ISO date string (YYYY-MM-DD). Use this only if the user specifically mentions a past date. Defaults to today."
-      }
+      },
+      updateMode: {
+        type: "string",
+        enum: ["ABSOLUTE", "DELTA"],
+        description: "Use DELTA for phrases like 'עוד כוס מים' / 'עוד 500 צעדים'.",
+      },
     },
-    required: [], 
+    required: [],
+    additionalProperties: false,
   },
   async execute(args, context) {
     return upsertMetricsLog(args, context);

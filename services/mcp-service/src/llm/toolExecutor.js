@@ -1,5 +1,7 @@
 // src/llm/toolExecutor.js
 
+import { logger } from "../utils/logger.js";
+
 /**
  * Executes a tool selected by the LLM
  *
@@ -27,7 +29,11 @@ export async function executeTool({
   try {
     return await Tool.execute(args, context);
   } catch (err) {
-    console.error(`[toolExecutor] Tool ${toolName} failed:`, err.message);
-    return { error: err.message };
+    const errorMessage = err?.message || "Tool execution failed";
+    logger.error("Tool execution failed", {
+      toolName,
+      error: errorMessage,
+    });
+    return { error: errorMessage };
   }
 }

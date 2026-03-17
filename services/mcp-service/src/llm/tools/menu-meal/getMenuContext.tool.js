@@ -5,7 +5,7 @@ import { getMenuContext } from "../../../services/tools/menu-meal/getMenuContext
 export const getMenuContextTool = {
   name: "get_menu_context",
   description:
-    "Fetches full nutrition menu context for the current day including meals, items, vitamins and notes",
+    "Fetches structured nutrition menu context for current day type, with normalized food index and menu match metadata. If day type is missing, returns requiresDayType=true instead of failing.",
 
   parameters: {
     type: "object",

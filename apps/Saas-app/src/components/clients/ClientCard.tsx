@@ -26,14 +26,14 @@ export default function ClientCard({ client }: ClientCardProps) {
   return (
     <Pressable
       onPress={goToProfile}
-      style={({ hovered, pressed }) => [
+      style={({ pressed }) => [
         styles.container,
         {
-          borderColor: hovered ? "#d1d5db" : "#e5e7eb",
+          borderColor: "#e5e7eb",
           opacity: pressed ? 0.8 : 1,
-          shadowRadius: hovered ? 8 : 4,
-          shadowOpacity: hovered ? 0.12 : 0.06,
-          elevation: hovered ? 3 : 1,
+          shadowRadius: pressed ? 6 : 4,
+          shadowOpacity: pressed ? 0.1 : 0.06,
+          elevation: pressed ? 2 : 1,
         },
       ]}
     >

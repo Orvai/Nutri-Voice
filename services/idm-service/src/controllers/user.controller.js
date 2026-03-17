@@ -38,7 +38,13 @@ const getUser = async (req, res, next) => {
 
 const listUsers = async (req, res, next) => {
   try {
-    const { coachId, role } = req.auth || {};
+    const role = req.auth?.role ?? req.identity?.role;
+    const coachId =
+      req.identity?.coachId ??
+      req.auth?.coachId ??
+      req.auth?.userId ??
+      req.auth?.id;
+
     const data = await S.getAllUsers({ coachId, role });
     
     res.json(data);

@@ -1,4 +1,4 @@
-import type { UIConversation } from "@/types/ui/conversation.ui";
+import type { UIConversation } from "@/types/ui/conversation/conversation.ui";
 import type { DailyState } from "@/types/ui/tracking/daily-state.ui";
 
 export function formatShortDateTime(ts?: string | null) {

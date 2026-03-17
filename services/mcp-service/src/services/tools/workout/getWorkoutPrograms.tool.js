@@ -17,11 +17,23 @@ export const GetWorkoutProgramsTool = {
     GetWorkoutProgramsToolInputDto.parse(rawInput); // אין payload משמעותי
 
     const result = await fetchWorkoutPrograms(null, context);
+    const data = Array.isArray(result) ? result : result?.data ?? [];
+    const summaries = data.map((program) => ({
+      id: program.id,
+      name: program.name,
+      exerciseCount: (program.exercises ?? []).length,
+      muscleGroups: [
+        ...new Set(
+          (program.exercises ?? [])
+            .map((e) => e.exercise?.muscleGroup)
+            .filter(Boolean)
+        ),
+      ],
+    }));
 
-    const normalized = Array.isArray(result)
-      ? { data: result }
-      : result;
-
-    return GetWorkoutProgramsToolOutputDto.parse(normalized);
+    return GetWorkoutProgramsToolOutputDto.parse({
+      data,
+      summaries,
+    });
   },
 };

@@ -22,6 +22,9 @@ const CalorieDeltaEngine = memo(({ data }: Props) => {
     return m;
   }, [last7]);
 
+  const meanDelta = Math.round(data.deltaStats.overall.mean ?? 0);
+  const signedMean = meanDelta > 0 ? `+${meanDelta}` : `${meanDelta}`;
+
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -34,6 +37,11 @@ const CalorieDeltaEngine = memo(({ data }: Props) => {
       </View>
 
       <View style={styles.mainCard}>
+        <View style={styles.kpiRow}>
+          <Text style={styles.kpiLabel}>דלתא ממוצעת יומית</Text>
+          <Text style={[styles.kpiValue, meanDelta > 0 ? styles.kpiDanger : styles.kpiGood]}>{signedMean} kcal</Text>
+        </View>
+
         <View style={styles.summaryRow}>
           <View style={styles.summaryItem}>
             <Text style={styles.summaryLabel}>ימי חריגה</Text>
@@ -52,8 +60,19 @@ const CalorieDeltaEngine = memo(({ data }: Props) => {
           <View style={styles.summaryItem}>
             <Text style={styles.summaryLabel}>ממוצע דלתא</Text>
             <Text style={styles.summaryValue}>
-              {Math.round(data.deltaStats.overall.mean)} kcal
+              {signedMean} kcal
             </Text>
+          </View>
+        </View>
+
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, styles.barPositive]} />
+            <Text style={styles.legendText}>מעל יעד</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, styles.barNegative]} />
+            <Text style={styles.legendText}>מתחת ליעד</Text>
           </View>
         </View>
 

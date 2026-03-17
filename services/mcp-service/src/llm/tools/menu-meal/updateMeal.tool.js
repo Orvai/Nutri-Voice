@@ -17,7 +17,6 @@ export const updateMealTool = {
       fat: { type: "integer" },
       dayType: { type: "string", enum: ["TRAINING", "REST"] },
 
-      date: { type: "string", description: "ISO datetime (optional)" },
       description: { type: "string" },
       matchedMenuItemId: { type: "string" },
     },

@@ -58,6 +58,12 @@ r.get(
  *         schema:
  *           type: string
  *           format: date
+ *       - in: query
+ *         name: clientId
+ *         required: false
+ *         description: Optional clientId for coach viewing a client
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: List of daily states for the requested range

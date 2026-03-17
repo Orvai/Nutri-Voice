@@ -22,6 +22,14 @@ const CreateClientMessageDto = z.object({
   text: z.string().optional(),
   media: MediaDto.optional(),
   sourceMessageId: z.string().optional(),
+}).superRefine((value, ctx) => {
+  if (value.contentType !== "TEXT" && !value.media?.mediaUrl) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["media", "mediaUrl"],
+      message: "media.mediaUrl is required for non-TEXT messages",
+    });
+  }
 });
 
 const CreateCoachMessageDto = z.object({
@@ -29,6 +37,14 @@ const CreateCoachMessageDto = z.object({
   contentType: MessageContentTypeEnum,
   text: z.string().optional(),
   media: MediaDto.optional(),
+}).superRefine((value, ctx) => {
+  if (value.contentType !== "TEXT" && !value.media?.mediaUrl) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["media", "mediaUrl"],
+      message: "media.mediaUrl is required for non-TEXT coach messages",
+    });
+  }
 });
 
 const CreateAiMessageDto = z.object({

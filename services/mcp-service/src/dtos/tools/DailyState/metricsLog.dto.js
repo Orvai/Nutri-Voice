@@ -41,7 +41,12 @@ export const UpsertMetricsToolDto = z.object({
     
   notes: z.string()
     .optional()
-    .describe("Any context or thoughts the user shared about these metrics.")
+    .describe("Any context or thoughts the user shared about these metrics."),
+
+  updateMode: z.enum(["ABSOLUTE", "DELTA"])
+    .optional()
+    .default("ABSOLUTE")
+    .describe("ABSOLUTE sets totals directly. DELTA adds values to existing totals."),
 }).strict();
 
 /**

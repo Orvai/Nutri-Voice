@@ -1,12 +1,21 @@
 export function ensureClientId(req, res, next) {
-    if (req.user?.role === "client") {
-      if (typeof req.params.clientId !== "undefined") {
-        req.params.clientId = req.user.id;
-      }
-  
-      req.body = { ...req.body, clientId: req.user.id };
-      req.query = { ...req.query, clientId: req.user.id };
+  if (req.user?.role === "client") {
+    const clientId = String(req.user.id);
+
+    if (req.params && typeof req.params.clientId !== "undefined") {
+      req.params.clientId = clientId;
     }
-  
-    next();
+
+    if (req.body && typeof req.body === "object" && !Array.isArray(req.body)) {
+      req.body.clientId = clientId;
+    } else if (req.method !== "GET" && req.method !== "DELETE") {
+      req.body = { clientId };
+    }
+
+    if (req.query && typeof req.query === "object") {
+      req.query.clientId = clientId;
+    }
   }
+
+  next();
+}

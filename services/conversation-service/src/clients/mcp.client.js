@@ -30,7 +30,35 @@ function assertValidUrl(url) {
   return trimmed;
 }
 
-async function runMcp(input) {
+function buildTrustedIdentityHeaders(actor = {}, input = {}) {
+  const role = typeof actor.role === "string" ? actor.role.toLowerCase() : "";
+  const userId = typeof actor.userId === "string" ? actor.userId.trim() : "";
+
+  if (!userId) {
+    throw new Error("❌ Trusted actor userId is required for MCP call");
+  }
+
+  if (role !== "client" && role !== "coach") {
+    throw new Error(`❌ Trusted actor role is invalid: ${actor.role}`);
+  }
+
+  const headers = {
+    "x-user-id": userId,
+    "x-role": role,
+  };
+
+  if (input.clientId) {
+    headers["x-client-id"] = input.clientId;
+  }
+
+  if (role === "coach") {
+    headers["x-coach-id"] = userId;
+  }
+
+  return headers;
+}
+
+async function runMcp(input, trustedActor) {
   const base = assertValidUrl(MCP_BASE_URL);
 
   const finalUrl = `${base.replace(/\/+$/, "")}/internal/mcp/run`; // מסיר / בסוף אם יש
@@ -44,9 +72,12 @@ async function runMcp(input) {
     throw new Error(`❌ FINAL URL invalid: ${finalUrl} | ${e.message}`);
   }
 
+  const trustedHeaders = buildTrustedIdentityHeaders(trustedActor, input);
+
   const res = await axios.post(finalUrl, input, {
     headers: {
       "x-internal-token": process.env.INTERNAL_TOKEN,
+      ...trustedHeaders,
     },
   });
 

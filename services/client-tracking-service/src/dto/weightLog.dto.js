@@ -1,5 +1,10 @@
 const { z } = require('zod');
 
+const dateTimeField = z.union([
+  z.string().datetime(),
+  z.date().transform((d) => d.toISOString()),
+]);
+
 const WeightLogCreateDto = z.object({
   date: z.string().datetime().optional(),
   weightKg: z.number(),
@@ -9,10 +14,10 @@ const WeightLogCreateDto = z.object({
 const WeightLogResponseDto = z.object({
   id: z.string(),
   clientId: z.string(),
-  date: z.string().datetime(),
+  date: dateTimeField,
   weightKg: z.number(),
   notes: z.string().nullable(),
-  loggedAt: z.string().datetime().optional()
+  loggedAt: dateTimeField.optional()
 }).strict();
 
 const WeightLogUpdateDto = z.object({

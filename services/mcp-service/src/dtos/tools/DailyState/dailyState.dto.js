@@ -67,6 +67,20 @@ export const DailyStateToolDto = z.object({
   meals: z.array(MealToolDto),
   workouts: z.array(WorkoutToolDto),
   weight: WeightToolDto.nullable(),
-  metrics: MetricsToolDto.nullable(), 
-});
+  metrics: MetricsToolDto.nullable(),
 
+  dailyCaloriesTarget: z.number().int().nullable().optional(),
+  mealsSummary: z.object({
+    count: z.number().int().nonnegative(),
+    lastMealAt: z.string().nullable(),
+  }).optional(),
+  metricsSummary: z.object({
+    hasMetrics: z.boolean(),
+    steps: z.number().nullable(),
+    waterLiters: z.number().nullable(),
+    sleepHours: z.number().nullable(),
+  }).optional(),
+  workoutPlanned: z.boolean().optional(),
+  workoutCompleted: z.boolean().optional(),
+  missingCriticalFields: z.array(z.string()).optional(),
+});

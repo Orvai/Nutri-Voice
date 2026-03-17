@@ -17,5 +17,40 @@ export async function getDailyState(_, context) {
   });
 
   const raw = res?.data ?? res;
-  return DailyStateToolDto.parse(raw);
+  const parsed = DailyStateToolDto.parse(raw);
+
+  const dailyCaloriesTarget =
+    parsed.dayType === "TRAINING"
+      ? parsed.calorieTargets.trainingDay
+      : parsed.dayType === "REST"
+      ? parsed.calorieTargets.restDay
+      : null;
+
+  const meals = parsed.meals ?? [];
+  const workouts = parsed.workouts ?? [];
+  const lastMealAt = meals.length
+    ? (meals[meals.length - 1].loggedAt || meals[meals.length - 1].date || null)
+    : null;
+
+  const missingCriticalFields = [];
+  if (!parsed.dayType) missingCriticalFields.push("dayType");
+  if (dailyCaloriesTarget === null) missingCriticalFields.push("dailyCaloriesTarget");
+
+  return DailyStateToolDto.parse({
+    ...parsed,
+    dailyCaloriesTarget,
+    mealsSummary: {
+      count: meals.length,
+      lastMealAt,
+    },
+    metricsSummary: {
+      hasMetrics: !!parsed.metrics,
+      steps: parsed.metrics?.steps ?? null,
+      waterLiters: parsed.metrics?.waterLiters ?? null,
+      sleepHours: parsed.metrics?.sleepHours ?? null,
+    },
+    workoutPlanned: workouts.length > 0,
+    workoutCompleted: workouts.some((w) => w.effortLevel !== "SKIPPED"),
+    missingCriticalFields,
+  });
 }

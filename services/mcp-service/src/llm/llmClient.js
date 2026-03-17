@@ -5,6 +5,7 @@ import { logger } from "../utils/logger.js";
 
 const openaiClient = axios.create({
   baseURL: "https://api.openai.com/v1",
+  timeout: env.LLM_TIMEOUT_MS,
   headers: {
     Authorization: `Bearer ${env.OPENAI_API_KEY}`,
     "Content-Type": "application/json",
@@ -16,6 +17,10 @@ export async function runLLM({
   messages,
   tools = [],
 }) {
+  if (!env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is missing");
+  }
+
   try {
     const response = await openaiClient.post("/chat/completions", {
       model: "gpt-4.1-mini",

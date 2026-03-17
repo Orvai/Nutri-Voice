@@ -16,6 +16,7 @@ export const DayTypeEnum = z.enum(["TRAINING", "REST"]);
  * All fields optional – partial update
  */
 export const UpdateMealInputDto = z.object({
+  logId: z.string().min(1),
   calories: z.number().int().optional(),
   protein: z.number().int().optional(),
   carbs: z.number().int().optional(),
@@ -25,7 +26,7 @@ export const UpdateMealInputDto = z.object({
   matchedMenuItemId: z.string().nullable().optional(),
 
   dayType: DayTypeEnum.optional(),
-});
+}).strict();
 
 /**
  * Response DTO returned after update
@@ -48,5 +49,14 @@ export const UpdateMealResponseDto = z.object({
     matchedMenuItemId: z.string().nullable(),
 
     loggedAt: z.string().datetime().optional(),
+  }),
+  diff: z.object({
+    changedFields: z.array(z.string()),
+    oldCalories: z.number().nullable().optional(),
+    newCalories: z.number().nullable().optional(),
+    oldPortion: z.string().nullable().optional(),
+    newPortion: z.string().nullable().optional(),
+    oldFood: z.string().nullable().optional(),
+    newFood: z.string().nullable().optional(),
   }),
 });

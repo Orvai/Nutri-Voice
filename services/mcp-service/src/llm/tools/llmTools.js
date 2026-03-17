@@ -26,6 +26,28 @@ function toOpenAiTool(tool) {
   };
 }
 
+function validateToolRegistry(registry) {
+  const seenNames = new Set();
+
+  for (const [key, tool] of Object.entries(registry)) {
+    if (!tool?.name) {
+      throw new Error(`[llmTools] Tool at key '${key}' is missing name`);
+    }
+
+    if (tool.name !== key) {
+      throw new Error(`[llmTools] Registry key mismatch: key='${key}' name='${tool.name}'`);
+    }
+
+    if (seenNames.has(tool.name)) {
+      throw new Error(`[llmTools] Duplicate tool name detected: '${tool.name}'`);
+    }
+
+    seenNames.add(tool.name);
+  }
+}
+
+validateToolRegistry(toolRegistry);
+
 /**
  * Export tools list for OpenAI function calling
  */

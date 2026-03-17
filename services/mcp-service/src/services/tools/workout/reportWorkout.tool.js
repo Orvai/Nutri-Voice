@@ -15,9 +15,27 @@ export const ReportWorkoutTool = {
 
   async execute(context, rawInput) {
     const input = ReportWorkoutToolInputDto.parse(rawInput);
+    const payload = {
+      date: input.date,
+      workoutType: input.workoutType,
+      effortLevel: input.effortLevel,
+      notes: input.notes,
+      exercises: input.exercises,
+    };
 
-    const result = await createWorkoutLog(input, context);
+    const result = await createWorkoutLog(payload, context);
 
-    return ReportWorkoutToolOutputDto.parse(result);
+    return ReportWorkoutToolOutputDto.parse({
+      data: result?.data ?? result,
+      meta: {
+        durationMin: input.durationMin ?? null,
+        intensity: input.intensity ?? null,
+        performedAsPlanned:
+          typeof input.performedAsPlanned === "boolean"
+            ? input.performedAsPlanned
+            : null,
+        caloriesBurnEstimate: input.caloriesBurnEstimate ?? null,
+      },
+    });
   },
 };

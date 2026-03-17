@@ -1,21 +1,42 @@
 import React from "react";
-import { View, Pressable, Text } from "react-native";
+import { View, Pressable, Text, ActivityIndicator } from "react-native";
 import { styles } from "../../styles";
 
-import type { ClientExtended } from "@/types/client";
+import type { ClientTrackingSnapshot } from "../../types";
 import MissingTodayRow from "../MissingToday/MissingTodayRow";
 
 export default function MissingTodaySection({
-  clients,
+  loading,
+  rows,
   onScanMore,
 }: {
-  clients: ClientExtended[];
+  loading: boolean;
+  rows: ClientTrackingSnapshot[];
   onScanMore: () => void;
 }) {
+  if (loading) {
+    return (
+      <View style={styles.card}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (!rows.length) {
+    return (
+      <View style={[styles.card, styles.cardOk]}>
+        <Text style={styles.title}>כולם דיווחו בטווח שנבחר</Text>
+        <Text style={[styles.text, { marginTop: 6 }]}>
+          לא נמצאו מתאמנים ללא דיווחים בכלל בתקופה.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={{ gap: 10 }}>
-      {clients.map((c) => (
-        <MissingTodayRow key={c.id} client={c} />
+      {rows.map((row) => (
+        <MissingTodayRow key={row.client.id} row={row} />
       ))}
 
       <Pressable style={styles.secondaryBtn} onPress={onScanMore}>

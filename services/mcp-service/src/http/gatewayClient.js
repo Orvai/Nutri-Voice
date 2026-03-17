@@ -40,6 +40,7 @@ export async function callGateway({
 
   const client = axios.create({
     baseURL: env.GATEWAY_BASE_URL,
+    timeout: env.GATEWAY_TIMEOUT_MS,
     headers,
   });
 

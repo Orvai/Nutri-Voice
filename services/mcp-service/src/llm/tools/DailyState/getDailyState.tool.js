@@ -4,7 +4,8 @@ import { getDailyState } from "../../../services/tools/DailyState/getDailyState.
 
 export const GetDailyStateTool = {
   name: "get_daily_state",
-  description: "Fetch today's nutrition and workout state for the current client",
+  description:
+    "Fetches structured daily state for current client: dayType, calorie target/consumption, meals/workout summaries, metrics summary, and missing critical fields.",
   parameters: {
     type: "object",
     properties: {},

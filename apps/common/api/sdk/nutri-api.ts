@@ -63,7 +63,7 @@ import type {
   MealTemplateCreateRequestDto,
   MealTemplateUpdateRequestDto,
   MessageDto,
-  MetricsLogCreateRequestDto,
+  MetricsLogCreateDto as MetricsLogCreateRequestDto,
   MetricsLogResponseDto,
   MfaRegisterResponseDto,
   MfaVerifyRequestDto,

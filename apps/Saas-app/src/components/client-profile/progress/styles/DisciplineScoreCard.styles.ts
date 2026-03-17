@@ -5,10 +5,11 @@ import { progressTheme } from "../../../../theme/progressTheme";
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: progressTheme.colors.surface,
-    borderRadius: progressTheme.radius.card,
-    padding: 14,
+    borderRadius: 20,
+    padding: 16,
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
+    ...progressTheme.shadow.card,
   },
 
   headerRow: {
@@ -25,7 +26,7 @@ export const styles = StyleSheet.create({
   title: {
     color: progressTheme.colors.text,
     fontSize: 16,
-    fontWeight: "800",
+    fontWeight: "900",
     textAlign: "right",
     writingDirection: "rtl",
   },
@@ -42,7 +43,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: progressTheme.radius.pill,
-    backgroundColor: progressTheme.colors.surface2,
+    backgroundColor: "rgba(15,23,42,0.04)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
     marginLeft: 10,
@@ -62,19 +63,21 @@ export const styles = StyleSheet.create({
   },
 
   scoreCircle: {
-    width: 76,
-    height: 76,
+    width: 84,
+    height: 84,
     borderRadius: 999,
-    borderWidth: 1,
-    borderColor: progressTheme.colors.border,
+    borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.03)",
+    backgroundColor: "rgba(248,250,252,0.8)",
   },
+  scoreSuccess: { borderColor: progressTheme.colors.successBorder },
+  scoreWarning: { borderColor: progressTheme.colors.warningBorder },
+  scoreCritical: { borderColor: progressTheme.colors.dangerBorder },
 
   scoreValue: {
     color: progressTheme.colors.text,
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "900",
     lineHeight: 26,
   },
@@ -117,18 +120,20 @@ export const styles = StyleSheet.create({
   },
 
   metricsGrid: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
     gap: 10,
   },
 
   metricEntry: {
-    flex: 1,
     padding: 10,
     borderRadius: progressTheme.radius.sub,
-    backgroundColor: progressTheme.colors.surface2,
+    backgroundColor: "rgba(15,23,42,0.03)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
+  },
+  metricTopRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   metricLabel: {
@@ -140,11 +145,24 @@ export const styles = StyleSheet.create({
   },
 
   metricValue: {
-    marginTop: 6,
     color: progressTheme.colors.text,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "900",
     textAlign: "right",
     writingDirection: "rtl",
   },
+  metricTrack: {
+    marginTop: 8,
+    height: 7,
+    borderRadius: 999,
+    backgroundColor: "rgba(15,23,42,0.08)",
+    overflow: "hidden",
+  },
+  metricFill: {
+    height: "100%",
+    borderRadius: 999,
+  },
+  metricGood: { backgroundColor: progressTheme.colors.success },
+  metricMid: { backgroundColor: progressTheme.colors.warning },
+  metricLow: { backgroundColor: progressTheme.colors.danger },
 });

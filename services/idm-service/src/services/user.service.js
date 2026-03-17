@@ -65,16 +65,17 @@ const getUser = async (userId) => {
 };
 
 const getAllUsers = async (filters = {}) => {
-    const { coachId, role } = filters;
-  
+    const normalizedRole = String(filters.role || "").toLowerCase();
     const where = {};
-  
-    if (role === 'coach' && coachId) {where.coachId = coachId; }
-  
-  
+
+    // Coach/trainer-facing list should return clients only.
+    if (normalizedRole === "coach" || normalizedRole === "trainer") {
+      where.role = "client";
+    }
+
     return prisma.user.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   };
 const recordLogin = async (userId, success) => {

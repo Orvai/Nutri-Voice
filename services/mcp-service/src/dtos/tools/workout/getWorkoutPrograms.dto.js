@@ -3,7 +3,7 @@ import { z } from "zod";
 
 
 export const GetWorkoutProgramsToolInputDto = z.object({
-  clientId: z.string().min(1),
+  includeExercises: z.boolean().optional().default(true),
 });
 
 
@@ -39,4 +39,12 @@ export const WorkoutProgramResponseDto = z.object({
 
 export const GetWorkoutProgramsToolOutputDto = z.object({
   data: z.array(WorkoutProgramResponseDto),
+  summaries: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      exerciseCount: z.number().int().nonnegative(),
+      muscleGroups: z.array(z.string()),
+    })
+  ).optional(),
 });

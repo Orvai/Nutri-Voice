@@ -23,6 +23,21 @@ const DisciplineScoreCard = memo(({ data }: Props) => {
       ? styles.statusWarning
       : styles.statusCritical;
 
+  const scoreRing =
+    severity === "success"
+      ? styles.scoreSuccess
+      : severity === "warning"
+      ? styles.scoreWarning
+      : styles.scoreCritical;
+
+  const metrics = [
+    { label: "רישום", value: Math.round(data.breakdown.loggingRate) },
+    { label: "עמידה ביעד", value: Math.round(data.breakdown.adherenceRate) },
+    ...(typeof data.breakdown.workoutConsistency === "number"
+      ? [{ label: "עקביות אימונים", value: Math.round(data.breakdown.workoutConsistency) }]
+      : []),
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -39,7 +54,7 @@ const DisciplineScoreCard = memo(({ data }: Props) => {
       </View>
 
       <View style={styles.mainContent}>
-        <View style={styles.scoreCircle}>
+        <View style={[styles.scoreCircle, scoreRing]}>
           <Text style={styles.scoreValue}>{data.score}</Text>
           <Text style={styles.scorePercent}>%</Text>
         </View>
@@ -61,22 +76,24 @@ const DisciplineScoreCard = memo(({ data }: Props) => {
       <View style={styles.divider} />
 
       <View style={styles.metricsGrid}>
-        <View style={styles.metricEntry}>
-          <Text style={styles.metricLabel}>רישום</Text>
-          <Text style={styles.metricValue}>{Math.round(data.breakdown.loggingRate)}%</Text>
-        </View>
+        {metrics.map((metric) => (
+          <View key={metric.label} style={styles.metricEntry}>
+            <View style={styles.metricTopRow}>
+              <Text style={styles.metricLabel}>{metric.label}</Text>
+              <Text style={styles.metricValue}>{metric.value}%</Text>
+            </View>
 
-        <View style={styles.metricEntry}>
-          <Text style={styles.metricLabel}>עמידה ביעד</Text>
-          <Text style={styles.metricValue}>{Math.round(data.breakdown.adherenceRate)}%</Text>
-        </View>
-
-        {typeof data.breakdown.workoutConsistency === "number" ? (
-          <View style={styles.metricEntry}>
-            <Text style={styles.metricLabel}>עקביות אימונים</Text>
-            <Text style={styles.metricValue}>{Math.round(data.breakdown.workoutConsistency)}%</Text>
+            <View style={styles.metricTrack}>
+              <View
+                style={[
+                  styles.metricFill,
+                  metric.value >= 75 ? styles.metricGood : metric.value >= 55 ? styles.metricMid : styles.metricLow,
+                  { width: `${Math.max(4, metric.value)}%` },
+                ]}
+              />
+            </View>
           </View>
-        ) : null}
+        ))}
       </View>
     </View>
   );

@@ -24,13 +24,14 @@ const triageClientMessage = async (payload) => {
       sender: true,
       text: true,
       contentType: true,
+      mediaUrl: true,
     }
   });
 
   const history = previousMessages.reverse().map(msg => {
     let content = msg.text;
     if (msg.contentType !== 'TEXT' && !content) {
-       content = `[${msg.contentType} Message]`; 
+       content = msg.mediaUrl ? `[${msg.contentType}] ${msg.mediaUrl}` : `[${msg.contentType} Message]`; 
     }
 
     if (!content) return null;
@@ -42,29 +43,48 @@ const triageClientMessage = async (payload) => {
     };
   }).filter(Boolean); 
 
+  const trustedActor = {
+    userId: message.conversation.clientId,
+    role: "client",
+  };
+
   const mcpResult = await runMcp({
     conversationId: message.conversationId,
     messageId: message.id,
     sender: "client",
     clientId: message.conversation.clientId,
-    userText: message.text || "[Media Message]",
-    history: history 
-  });
+    contentType: message.contentType,
+    media: message.mediaUrl
+      ? {
+          mediaUrl: message.mediaUrl,
+          mediaMimeType: message.mediaMimeType || undefined,
+          mediaDurationSec:
+            typeof message.mediaDurationSec === "number"
+              ? message.mediaDurationSec
+              : undefined,
+          mediaThumbnail: message.mediaThumbnail || undefined,
+        }
+      : undefined,
+    userText: message.text || "",
+    history: history
+  }, trustedActor);
 
   
   let decision = mcpResult.decision || "AUTO_REPLY";
   let replyText = mcpResult.replyText;
+  let coachSuggestedReply = mcpResult.coachSuggestedReply || null;
 
   if (typeof mcpResult === 'string') {
      replyText = mcpResult;
      decision = "AUTO_REPLY";
+     coachSuggestedReply = null;
   }
 
   await prisma.message.update({
     where: { id: messageId },
     data: {
       aiDecision: decision,
-      aiSuggestedReply: decision === "COACH_REPLY" ? null : replyText,
+      aiSuggestedReply: decision === "COACH_REPLY" ? coachSuggestedReply : replyText,
       handledBy: "AI", 
       handledAt: new Date()
     },

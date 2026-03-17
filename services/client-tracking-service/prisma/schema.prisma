@@ -47,6 +47,7 @@ model WorkoutLog {
   clientId      String
   date          DateTime
   workoutType   String       // A / B / FBW / Upper / Lower / וכו'
+  effortLevel   EffortLevel  @default(NORMAL)
   notes         String?
   loggedAt      DateTime     @default(now())
   exercises     WorkoutExerciseLog[]

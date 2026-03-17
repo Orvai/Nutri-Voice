@@ -9,6 +9,15 @@ export const RunMcpDto = z.object({
   clientId: z.string(),
   userId: z.string().optional(),
   
+  contentType: z.enum(["TEXT", "IMAGE", "AUDIO", "VIDEO"]).optional().default("TEXT"),
+  media: z
+    .object({
+      mediaUrl: z.string().url(),
+      mediaMimeType: z.string().optional(),
+      mediaDurationSec: z.number().int().optional(),
+      mediaThumbnail: z.string().optional(),
+    })
+    .optional(),
 
   userText: z.string().optional().default(""),
 
@@ -18,4 +27,20 @@ export const RunMcpDto = z.object({
       content: z.string(),
     })
   ).optional().default([]), 
+}).superRefine((value, ctx) => {
+  if (value.sender === "coach" && !value.userId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["userId"],
+      message: "userId is required when sender is coach",
+    });
+  }
+
+  if (value.contentType !== "TEXT" && !value.media?.mediaUrl) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["media", "mediaUrl"],
+      message: "media.mediaUrl is required for non-TEXT content",
+    });
+  }
 });

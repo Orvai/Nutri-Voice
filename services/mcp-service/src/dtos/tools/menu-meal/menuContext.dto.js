@@ -1,12 +1,45 @@
 // dto/tools/menuContext.dto.js
 import { z } from "zod";
 
-export const MenuContextDto = z.object({
-  menuId: z.string(),
-  name: z.string(),
-  dayType: z.string(),
+const MenuItemDto = z.object({
+  foodItemId: z.string().nullable(),
+  foodName: z.string(),
+  role: z.string().nullable().optional(),
+  grams: z.number().nullable().optional(),
+  caloriesPer100g: z.number().nullable().optional(),
+});
 
+export const MenuContextDto = z.object({
+  requiresDayType: z.boolean().default(false),
+  availableDayTypes: z.array(z.enum(["TRAINING", "REST"])).default(["TRAINING", "REST"]),
+  dayType: z.enum(["TRAINING", "REST"]).nullable(),
+
+  menuId: z.string().nullable(),
+  name: z.string().nullable(),
   notes: z.string().nullable(),
+
+  menuItems: z.array(MenuItemDto).default([]),
+  normalizedFoodIndex: z.array(
+    z.object({
+      token: z.string(),
+      foodItemId: z.string().nullable(),
+      foodName: z.string(),
+      synonyms: z.array(z.string()).default([]),
+      portionUnits: z.array(z.string()).default([]),
+    })
+  ).default([]),
+  candidateMatches: z.array(
+    z.object({
+      foodItemId: z.string().nullable(),
+      foodName: z.string(),
+      confidence: z.number().min(0).max(1).optional(),
+    })
+  ).default([]),
+  synonyms: z.record(z.array(z.string())).default({}),
+  portionUnits: z.array(z.string()).default(["גרם", "יחידה", "כף", "כוס"]),
+  inMenu: z.boolean().nullable().default(null),
+  likelyMatch: z.string().nullable().default(null),
+  mismatchReason: z.string().nullable().default(null),
 
   meals: z.array(
     z.object({
@@ -21,18 +54,12 @@ export const MenuContextDto = z.object({
           name: z.string().nullable(),
 
           items: z.array(
-            z.object({
-              foodItemId: z.string(),
-              foodName: z.string(),
-              role: z.string(),
-              grams: z.number(),
-              caloriesPer100g: z.number().nullable(),
-            })
+            MenuItemDto
           ),
         })
       ),
     })
-  ),
+  ).default([]),
 
   vitamins: z.array(
     z.object({
@@ -41,5 +68,5 @@ export const MenuContextDto = z.object({
       description: z.string().nullable(),
       notes: z.string().nullable(),
     })
-  ),
+  ).default([]),
 });

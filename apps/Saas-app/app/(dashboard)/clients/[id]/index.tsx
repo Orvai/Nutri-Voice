@@ -52,7 +52,7 @@ export default function ClientProfileScreen() {
             <TodayCalories data={client.today.calories} />
             <TodayStats stats={client.today.quickStats} />
             {client.today.meals.length > 0 && <TodayMeals meals={client.today.meals} />}
-            {client.today.workout && <TodayWorkout workout={client.today.workout} />}
+            <TodayWorkout workouts={client.today.workouts} workout={client.today.workout} />
           </View>
         );
       case "nutrition":

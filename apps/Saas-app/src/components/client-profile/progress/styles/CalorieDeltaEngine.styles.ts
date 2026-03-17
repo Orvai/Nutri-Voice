@@ -32,10 +32,61 @@ export const styles = StyleSheet.create({
 
   mainCard: {
     backgroundColor: progressTheme.colors.surface,
-    borderRadius: progressTheme.radius.card,
-    padding: 14,
+    borderRadius: 20,
+    padding: 16,
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
+    ...progressTheme.shadow.card,
+  },
+
+  kpiRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+    backgroundColor: "rgba(15,23,42,0.03)",
+    borderWidth: 1,
+    borderColor: progressTheme.colors.border,
+    borderRadius: progressTheme.radius.sub,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  kpiLabel: {
+    color: progressTheme.colors.textDim,
+    fontSize: 12,
+    fontWeight: "800",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+  kpiValue: {
+    fontSize: 16,
+    fontWeight: "900",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+  kpiGood: { color: progressTheme.colors.success },
+  kpiDanger: { color: progressTheme.colors.danger },
+
+  legendRow: {
+    marginTop: 12,
+    marginBottom: 6,
+    flexDirection: "row-reverse",
+    gap: 12,
+  },
+  legendItem: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 6,
+  },
+  legendDot: {
+    width: 9,
+    height: 9,
+    borderRadius: 999,
+  },
+  legendText: {
+    color: progressTheme.colors.textDim,
+    fontSize: 11,
+    fontWeight: "800",
   },
 
   summaryRow: {
@@ -73,10 +124,10 @@ export const styles = StyleSheet.create({
   },
 
   chart: {
-    marginTop: 14,
+    marginTop: 8,
     height: 92,
     borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.03)",
+    backgroundColor: "rgba(15,23,42,0.03)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
     flexDirection: "row-reverse",
@@ -110,11 +161,11 @@ export const styles = StyleSheet.create({
   },
 
   barPositive: {
-    backgroundColor: "rgba(239,68,68,0.90)",
+    backgroundColor: "rgba(220,38,38,0.9)",
   },
 
   barNegative: {
-    backgroundColor: "rgba(34,197,94,0.90)",
+    backgroundColor: "rgba(22,163,74,0.9)",
   },
 
   barLabel: {

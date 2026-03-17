@@ -11,13 +11,20 @@ export const UpdateWorkoutExerciseTool = {
   async execute(context, rawInput) {
     const input = UpdateWorkoutExerciseToolInputDto.parse(rawInput);
     const { exerciseLogId, ...payload } = input;
+    const changedFields = Object.keys(payload).filter((key) => payload[key] !== undefined);
+    if (changedFields.length === 0) {
+      throw new Error("At least one exercise field must be provided for update");
+    }
 
     const result = await patchWorkoutExercise(exerciseLogId, payload, context);
 
     return UpdateWorkoutExerciseToolOutputDto.parse({
       success: true,
-      id: result.id, 
-      message: `Exercise updated successfully to ${result.weight}kg`,
+      id: result.id,
+      message: "Workout exercise updated",
+      diff: {
+        changedFields,
+      },
     });
   },
 };

@@ -16,9 +16,18 @@ export const UpdateWorkoutTool = {
   async execute(context, rawInput) {
     const input = UpdateWorkoutToolInputDto.parse(rawInput);
     const { logId, ...payload } = input;
+    const changedFields = Object.keys(payload).filter((key) => payload[key] !== undefined);
+    if (changedFields.length === 0) {
+      throw new Error("At least one workout field must be provided for update");
+    }
 
     const result = await updateWorkoutLog(logId, payload, context);
 
-    return UpdateWorkoutToolOutputDto.parse(result);
+    return UpdateWorkoutToolOutputDto.parse({
+      data: result?.data ?? result,
+      diff: {
+        changedFields,
+      },
+    });
   },
 };

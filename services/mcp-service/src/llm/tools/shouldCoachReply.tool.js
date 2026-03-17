@@ -12,6 +12,7 @@ export const shouldCoachReplyTool = {
   parameters: {
     type: "object",
     properties: {
+      userMessage: { type: "string" },
       mentionsMedical: { type: "boolean" },
       hasUncertainty: { type: "boolean" },
       repeatedCorrections: { type: "boolean" },
