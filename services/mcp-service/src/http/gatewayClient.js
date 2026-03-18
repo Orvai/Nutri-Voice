@@ -9,6 +9,7 @@ export async function callGateway({
   pathParams = {},
   query = {},
   body,
+  audit = {},
 }) {
   const contract = GatewayContract[contractKey];
   if (!contract) {
@@ -36,7 +37,15 @@ export async function callGateway({
     "x-mcp-sender": sender,                 
     "x-mcp-client-id": context?.clientId,   
     "x-mcp-user-id": context?.userId,       
+    "x-request-id": audit.requestId || context?.audit?.requestId,
+    "x-actor-id": audit.actorId || context?.audit?.actorId || context?.userId,
+    "x-tool-name": audit.toolName || context?.currentToolName || context?.audit?.toolName,
   };
+  Object.keys(headers).forEach((key) => {
+    if (headers[key] === undefined || headers[key] === null) {
+      delete headers[key];
+    }
+  });
 
   const client = axios.create({
     baseURL: env.GATEWAY_BASE_URL,

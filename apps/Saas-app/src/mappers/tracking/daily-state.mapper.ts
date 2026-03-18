@@ -35,8 +35,8 @@ export const mapDailyState = (raw: any): DailyState => {
 
     metrics: raw.metrics ? {
       id: raw.metrics.id,
-      steps: raw.metrics.steps ?? 0,
-      waterLiters: raw.metrics.waterLiters ?? 0,
+      steps: raw.metrics.steps ?? null,
+      waterLiters: raw.metrics.waterLiters ?? null,
       sleepHours: raw.metrics.sleepHours ?? null,
       notes: raw.metrics.notes || null
     } : null,

@@ -81,14 +81,34 @@ function severityFromBand(band: DisciplineBand): Severity {
   return "critical";
 }
 
-function parseBestDate(day: DailyState, index: number): ISODate {
+function parseISODate(value: string): Date {
+  const [y, m, d] = value.slice(0, 10).split("-").map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+function toISODate(date: Date): ISODate {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}` as ISODate;
+}
+
+function addDays(date: Date, amount: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + amount);
+  return next;
+}
+
+function parseBestDate(day: DailyState, index: number, rangeStartDate: string): ISODate {
+  const fallbackDate = toISODate(addDays(parseISODate(rangeStartDate), index));
+
   // Prefer ISO date sources
   const iso =
     day.weight?.date ||
     day.meals?.[0]?.date ||
     day.workouts?.[0]?.date ||
-    // fallback - still return ISODate typed (best effort)
-    new Date(Date.now() - (Math.max(0, 999 - index) * 86400000)).toISOString().slice(0, 10);
+    // Fallback to the requested range timeline, preserving day order.
+    fallbackDate;
 
   return iso.slice(0, 10) as ISODate;
 }
@@ -194,7 +214,7 @@ export const useDailyAnalytics = (clientId: string, range: { startDate: string; 
     // -----------------------------
     for (let i = 0; i < dailyStates.length; i++) {
       const day = dailyStates[i];
-      const date = parseBestDate(day, i);
+      const date = parseBestDate(day, i, range.startDate);
 
       const hasNutrition = (day.meals?.length || 0) > 0 || day.consumedCalories > 0;
       const hasWorkouts = (day.workouts?.length || 0) > 0;

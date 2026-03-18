@@ -61,10 +61,15 @@ const GetMessagesByConversationDto = z.object({
   conversationId: z.string().min(1),
 });
 
+const GetMessageByIdDto = z.object({
+  messageId: z.string().min(1),
+});
+
 module.exports = {
   CreateClientMessageDto,
   CreateCoachMessageDto,
   CreateAiMessageDto,
   MarkClientMessageHandledDto,
   GetMessagesByConversationDto,
+  GetMessageByIdDto,
 };

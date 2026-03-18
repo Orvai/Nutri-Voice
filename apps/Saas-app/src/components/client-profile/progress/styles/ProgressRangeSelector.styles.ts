@@ -1,43 +1,13 @@
-// src/components/client-profile/progress/styles/ProgressRangeSelector.styles.ts
 import { StyleSheet } from "react-native";
+
 import { progressTheme } from "../../../../theme/progressTheme";
 
-export const ITEM_H = 44;
-export const WHEEL_PADDING_ITEMS = 2;
-
 export const styles = StyleSheet.create({
-  outerContainer: { marginTop: 10, marginBottom: 6 },
-
-  presetsRow: {
-    flexDirection: "row-reverse",
-    gap: 10,
-    marginBottom: 10,
+  outerContainer: {
+    marginTop: 10,
+    marginBottom: 6,
+    gap: 8,
   },
-
-  presetBtn: {
-    flex: 1,
-    paddingVertical: 11,
-    borderRadius: progressTheme.radius.sub,
-    backgroundColor: "rgba(15,23,42,0.04)",
-    borderWidth: 1,
-    borderColor: progressTheme.colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  activePresetBtn: {
-    backgroundColor: "rgba(37,99,235,0.12)",
-    borderColor: "rgba(37,99,235,0.3)",
-  },
-
-  presetText: {
-    color: progressTheme.colors.textMuted,
-    fontSize: 12,
-    fontWeight: "900",
-    textAlign: "center",
-  },
-
-  activePresetText: { color: progressTheme.colors.text },
 
   container: {
     flexDirection: "row-reverse",
@@ -78,7 +48,10 @@ export const styles = StyleSheet.create({
     writingDirection: "rtl",
   },
 
-  editBtn: {
+  calendarBtn: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: progressTheme.radius.sub,
@@ -88,155 +61,318 @@ export const styles = StyleSheet.create({
     marginLeft: 12,
   },
 
-  editBtnText: {
+  calendarBtnText: {
     color: "#1d4ed8",
     fontSize: 12,
     fontWeight: "900",
   },
 
-  modalBackdrop: {
+  presetsRow: {
+    flexDirection: "row-reverse",
+    gap: 6,
+  },
+
+  presetBtn: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-  },
-
-  modalCard: {
-    width: "100%",
-    borderRadius: 20,
-    backgroundColor: progressTheme.colors.surface,
-    borderWidth: 1,
-    borderColor: progressTheme.colors.border,
-    padding: 16,
-  },
-
-  modalHeader: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  modalTitle: {
-    color: progressTheme.colors.text,
-    fontSize: 16,
-    fontWeight: "900",
-    textAlign: "right",
-    writingDirection: "rtl",
-  },
-
-  modalClose: {
-    color: progressTheme.colors.textMuted,
-    fontSize: 12,
-    fontWeight: "900",
-  },
-
-  modalSub: {
-    marginTop: 10,
-    color: progressTheme.colors.text,
-    fontSize: 13,
-    fontWeight: "800",
-    textAlign: "right",
-    writingDirection: "rtl",
-  },
-
-  modalPreview: {
-    marginTop: 6,
-    color: progressTheme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 16,
-    textAlign: "right",
-    writingDirection: "rtl",
-  },
-
-  wheelsRow: {
-    marginTop: 14,
-    flexDirection: "row-reverse",
-    gap: 12,
-  },
-
-  wheelWrap: { flex: 1 },
-
-  wheelLabel: {
-    color: progressTheme.colors.textDim,
-    fontSize: 12,
-    fontWeight: "800",
-    textAlign: "right",
-    writingDirection: "rtl",
-    marginBottom: 8,
-  },
-
-  wheelFrame: {
-    height: ITEM_H * (WHEEL_PADDING_ITEMS * 2 + 3),
-    borderRadius: 16,
-    backgroundColor: "rgba(15,23,42,0.03)",
-    borderWidth: 1,
-    borderColor: progressTheme.colors.border,
-    overflow: "hidden",
-    position: "relative",
-  },
-
-  wheelHighlight: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: ITEM_H * WHEEL_PADDING_ITEMS + ITEM_H,
-    height: ITEM_H,
-    backgroundColor: "rgba(37,99,235,0.1)",
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "rgba(255,255,255,0.10)",
-  },
-
-  wheelContent: {},
-
-  wheelItem: {
-    height: ITEM_H,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  wheelItemText: {
-    color: progressTheme.colors.text,
-    fontSize: 14,
-    fontWeight: "900",
-  },
-
-  modalFooter: {
-    marginTop: 14,
-    flexDirection: "row-reverse",
-    gap: 10,
-  },
-
-  secondaryBtn: {
-    flex: 1,
-    paddingVertical: 12,
+    minHeight: 40,
+    paddingVertical: 8,
     borderRadius: progressTheme.radius.sub,
     backgroundColor: "rgba(15,23,42,0.04)",
     borderWidth: 1,
     borderColor: progressTheme.colors.border,
     alignItems: "center",
+    justifyContent: "center",
   },
 
-  secondaryBtnText: {
+  activePresetBtn: {
+    backgroundColor: "rgba(37,99,235,0.12)",
+    borderColor: "rgba(37,99,235,0.3)",
+  },
+
+  disabledPresetBtn: {
+    opacity: 0.45,
+  },
+
+  presetText: {
     color: progressTheme.colors.textMuted,
     fontSize: 12,
     fontWeight: "900",
+    textAlign: "center",
   },
 
-  primaryBtn: {
+  activePresetText: {
+    color: "#1d4ed8",
+  },
+
+  disabledPresetText: {
+    color: progressTheme.colors.textDim,
+  },
+
+  unavailableText: {
+    marginTop: 1,
+    color: progressTheme.colors.textDim,
+    fontSize: 10,
+    fontWeight: "800",
+  },
+
+  availabilityText: {
+    color: progressTheme.colors.textDim,
+    fontSize: 11,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  backdrop: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: progressTheme.radius.sub,
-    backgroundColor: "rgba(37,99,235,0.12)",
+    backgroundColor: "rgba(2,6,23,0.46)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 28,
+  },
+
+  modalCard: {
+    width: "92%",
+    maxWidth: 390,
+    maxHeight: "82%",
+    borderRadius: 18,
+    backgroundColor: progressTheme.colors.surface,
     borderWidth: 1,
-    borderColor: "rgba(37,99,235,0.3)",
+    borderColor: progressTheme.colors.border,
+    padding: 12,
+    gap: 10,
+  },
+
+  modalScroll: {
+    flexGrow: 0,
+  },
+
+  modalScrollContent: {
+    gap: 10,
+  },
+
+  modalHeader: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
     alignItems: "center",
   },
 
-  primaryBtnText: {
-    color: "#1d4ed8",
-    fontSize: 12,
+  modalTitle: {
+    fontSize: 15,
     fontWeight: "900",
+    color: progressTheme.colors.text,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  closeBtn: {
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+    borderRadius: 10,
+    backgroundColor: "rgba(15,23,42,0.06)",
+    borderWidth: 1,
+    borderColor: "rgba(15,23,42,0.08)",
+  },
+
+  closeBtnText: {
+    fontSize: 10,
+    fontWeight: "900",
+    color: progressTheme.colors.textMuted,
+  },
+
+  modalRangeText: {
+    fontSize: 12,
+    color: progressTheme.colors.text,
+    fontWeight: "800",
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  modalRangeSub: {
+    marginTop: 1,
+    fontSize: 10,
+    color: progressTheme.colors.textDim,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+
+  modalPresetRow: {
+    flexDirection: "row-reverse",
+    gap: 6,
+  },
+
+  modalPresetBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: progressTheme.radius.pill,
+    borderWidth: 1,
+    borderColor: progressTheme.colors.border,
+    backgroundColor: "rgba(15,23,42,0.04)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  modalPresetBtnActive: {
+    backgroundColor: "rgba(37,99,235,0.16)",
+    borderColor: "rgba(30,58,138,0.32)",
+  },
+
+  modalPresetBtnDisabled: {
+    opacity: 0.45,
+  },
+
+  modalPresetText: {
+    fontSize: 11,
+    fontWeight: "900",
+    color: progressTheme.colors.textMuted,
+  },
+
+  modalPresetTextActive: {
+    color: "#1d4ed8",
+  },
+
+  modalPresetTextDisabled: {
+    color: progressTheme.colors.textDim,
+  },
+
+  monthHeader: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  monthLabel: {
+    fontSize: 13,
+    fontWeight: "900",
+    color: progressTheme.colors.text,
+    textAlign: "center",
+  },
+
+  monthArrow: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(15,23,42,0.06)",
+    borderWidth: 1,
+    borderColor: "rgba(15,23,42,0.08)",
+  },
+
+  weekdaysRow: {
+    flexDirection: "row-reverse",
+    marginTop: -2,
+  },
+
+  weekdayCell: {
+    width: "14.285%",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 6,
+  },
+
+  weekdayText: {
+    fontSize: 10,
+    color: progressTheme.colors.textDim,
+    fontWeight: "800",
+  },
+
+  monthGrid: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    borderWidth: 1,
+    borderColor: "rgba(15,23,42,0.08)",
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+
+  dayCell: {
+    width: "14.285%",
+    aspectRatio: 0.9,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 0.5,
+    borderColor: "rgba(15,23,42,0.06)",
+    backgroundColor: progressTheme.colors.surface,
+  },
+
+  dayCellOutside: {
+    backgroundColor: "rgba(148,163,184,0.08)",
+  },
+
+  dayCellInRange: {
+    backgroundColor: "rgba(59,130,246,0.14)",
+  },
+
+  dayCellSelected: {
+    backgroundColor: "#1d4ed8",
+  },
+
+  dayCellToday: {
+    borderColor: "rgba(29,78,216,0.55)",
+    borderWidth: 1,
+  },
+
+  dayCellDisabled: {
+    opacity: 0.35,
+  },
+
+  dayText: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: progressTheme.colors.text,
+  },
+
+  dayTextOutside: {
+    color: "rgba(15,23,42,0.44)",
+  },
+
+  dayTextSelected: {
+    color: "#ffffff",
+  },
+
+  dayTextDisabled: {
+    color: progressTheme.colors.textDim,
+  },
+
+  footer: {
+    flexDirection: "row-reverse",
+    gap: 8,
+  },
+
+  footerSecondary: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: progressTheme.radius.sub,
+    borderWidth: 1,
+    borderColor: "rgba(15,23,42,0.12)",
+    backgroundColor: "rgba(15,23,42,0.04)",
+    alignItems: "center",
+  },
+
+  footerSecondaryText: {
+    fontSize: 11,
+    fontWeight: "900",
+    color: progressTheme.colors.textMuted,
+  },
+
+  footerPrimary: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: progressTheme.radius.sub,
+    borderWidth: 1,
+    borderColor: "rgba(30,58,138,0.42)",
+    backgroundColor: "rgba(37,99,235,0.16)",
+    alignItems: "center",
+  },
+
+  footerPrimaryDisabled: {
+    opacity: 0.45,
+  },
+
+  footerPrimaryText: {
+    fontSize: 11,
+    fontWeight: "900",
+    color: "#1e3a8a",
   },
 });

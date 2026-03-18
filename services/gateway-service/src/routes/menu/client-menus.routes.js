@@ -40,7 +40,7 @@ r.get("/client-menus",authRequired,ensureClientId, (req, res, next) => {
     if (req.user.role === 'coach' && !req.query.clientId) {
       return res.status(400).json({ message: "Coach must provide clientId parameter" });
     }next();
-  },forward(BASE, "/internal/menu/client-menus")
+  },requireOwnership,forward(BASE, "/internal/menu/client-menus")
 );
 /**
  * @openapi
@@ -66,7 +66,7 @@ r.get("/client-menus",authRequired,ensureClientId, (req, res, next) => {
  *       404:
  *         description: Client menu not found
  */
-r.get("/client-menus/:id",authRequired,forward(BASE, "/internal/menu/client-menus/:id"));
+r.get("/client-menus/:id",authRequired,requireOwnership,forward(BASE, "/internal/menu/client-menus/:id"));
 
 /**
  * @openapi
@@ -90,7 +90,7 @@ r.get("/client-menus/:id",authRequired,forward(BASE, "/internal/menu/client-menu
  *             schema:
  *               $ref: "#/components/schemas/ClientMenuResponseDto"
  */
-r.post("/client-menus",authRequired,requireCoach,forward(BASE, "/internal/menu/client-menus"));
+r.post("/client-menus",authRequired,requireCoach,requireOwnership,forward(BASE, "/internal/menu/client-menus"));
 
 /**
  * @openapi
@@ -122,7 +122,7 @@ r.post("/client-menus",authRequired,requireCoach,forward(BASE, "/internal/menu/c
  *       404:
  *         description: Client menu not found
  */
-r.put("/client-menus/:id",authRequired,requireCoach,forward(BASE, "/internal/menu/client-menus/:id"));
+r.put("/client-menus/:id",authRequired,requireCoach,requireOwnership,forward(BASE, "/internal/menu/client-menus/:id"));
 
 /**
  * @openapi
@@ -149,7 +149,7 @@ r.put("/client-menus/:id",authRequired,requireCoach,forward(BASE, "/internal/men
  *                 id:
  *                   type: string
  */
-r.delete("/client-menus/:id",authRequired,requireCoach,forward(BASE, "/internal/menu/client-menus/:id"));
+r.delete("/client-menus/:id",authRequired,requireCoach,requireOwnership,forward(BASE, "/internal/menu/client-menus/:id"));
 
 /**
  * @openapi

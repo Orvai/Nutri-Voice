@@ -320,6 +320,175 @@ export const GatewayContract = {
     role: GatewayRole.CLIENT,
     clientContext: ClientContext.SELF, 
   },
+
+  /* ======================================================
+      COACH ASSISTANT CAPABILITIES
+  ====================================================== */
+  COACH_LIST_CLIENTS: {
+    method: "GET",
+    path: "/api/clients",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  COACH_GET_DAILY_STATE: {
+    method: "GET",
+    path: "/api/tracking/daily-state",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  COACH_GET_DAILY_STATE_RANGE: {
+    method: "GET",
+    path: "/api/tracking/daily-state/range",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+
+  COACH_LIST_CONVERSATIONS: {
+    method: "GET",
+    path: "/api/conversations",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  COACH_GET_CONVERSATION: {
+    method: "GET",
+    path: "/api/conversations/{conversationId}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  COACH_GET_CONVERSATION_MESSAGES: {
+    method: "GET",
+    path: "/api/conversations/{conversationId}/messages",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  COACH_SEND_MESSAGE: {
+    method: "POST",
+    path: "/api/conversations/{conversationId}/messages",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  COACH_MARK_MESSAGE_HANDLED: {
+    method: "POST",
+    path: "/api/messages/{messageId}/handled",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+
+  NUTRITION_LIST_TEMPLATE_MENUS: {
+    method: "GET",
+    path: "/api/template-menus",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_GET_TEMPLATE_MENU: {
+    method: "GET",
+    path: "/api/template-menus/{menuId}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_UPDATE_TEMPLATE_MENU: {
+    method: "PUT",
+    path: "/api/template-menus/{menuId}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_LIST_CLIENT_MENUS: {
+    method: "GET",
+    path: "/api/client-menus",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_GET_CLIENT_MENU: {
+    method: "GET",
+    path: "/api/client-menus/{menuId}",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_UPDATE_CLIENT_MENU: {
+    method: "PUT",
+    path: "/api/client-menus/{menuId}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_CREATE_CLIENT_MENU_FROM_TEMPLATE: {
+    method: "POST",
+    path: "/api/client-menus/from-template",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_LIST_FOOD: {
+    method: "GET",
+    path: "/api/food",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_LIST_VITAMINS: {
+    method: "GET",
+    path: "/api/vitamins",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  NUTRITION_UPDATE_MEAL_TEMPLATE: {
+    method: "PUT",
+    path: "/api/meal-templates/{templateId}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+
+  WORKOUT_LIST_TEMPLATES: {
+    method: "GET",
+    path: "/api/workout/templates",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  WORKOUT_CREATE_TEMPLATE: {
+    method: "POST",
+    path: "/api/workout/templates",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  WORKOUT_LIST_EXERCISES: {
+    method: "GET",
+    path: "/api/workout/exercises",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.NONE,
+  },
+  WORKOUT_UPLOAD_EXERCISE_VIDEO: {
+    method: "POST",
+    path: "/api/workout/exercises/{exerciseId}/video",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.NONE,
+  },
+  WORKOUT_LIST_CLIENT_PROGRAMS: {
+    method: "GET",
+    path: "/api/workout/{clientId}/workout-programs",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.PATH,
+  },
+  WORKOUT_GET_CLIENT_PROGRAM: {
+    method: "GET",
+    path: "/api/workout/{clientId}/workout-programs/{programId}",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.PATH,
+  },
+  WORKOUT_CREATE_CLIENT_PROGRAM: {
+    method: "POST",
+    path: "/api/workout/{clientId}/workout-programs",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.PATH,
+  },
+  WORKOUT_UPDATE_CLIENT_PROGRAM: {
+    method: "PUT",
+    path: "/api/workout/{clientId}/workout-programs/{programId}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.PATH,
+  },
+  WORKOUT_DELETE_CLIENT_PROGRAM: {
+    method: "DELETE",
+    path: "/api/workout/{clientId}/workout-programs/{programId}",
+    role: GatewayRole.COACH,
+    clientContext: ClientContext.PATH,
+  },
 };
 
 export const GatewayContractKeys = Object.keys(GatewayContract);

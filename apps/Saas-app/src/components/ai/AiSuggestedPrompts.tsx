@@ -3,10 +3,13 @@ import { styles } from "./styles/AiSuggestedPrompts.styles";
 
 export default function AiSuggestedPrompts({ onChoose }) {
   const prompts = [
-    "צור תפריט לירידה במשקל",
-    "מה הלקוחות בסיכון?",
-    "סכם דוחות השבוע",
-    "תוכנית אימון לבניית שריר",
+    "סקירת לקוח",
+    "התקדמות שבועית",
+    "סקירת תזונה",
+    "סקירת אימונים",
+    "רשימת לקוחות",
+    "שליחת הודעה",
+    "סימון הודעה כטופלה",
   ];
 
   return (

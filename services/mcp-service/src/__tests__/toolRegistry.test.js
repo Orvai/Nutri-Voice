@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
+import "./setup-env.js";
 
 process.env.GATEWAY_BASE_URL = process.env.GATEWAY_BASE_URL || "http://localhost:4000";
 process.env.INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || "test-internal-token";
 process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || "test-openai-key";
 
-const { toolRegistry } = await import("../llm/tools/registry.js");
+const { toolRegistry } = await import("../client/llm/tools/registry.js");
 
 describe("tool registry consistency", () => {
   it("registers upsert_metrics_log under the correct key", () => {

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { authRequired } from "../../middleware/authRequired.js";
 import { requireCoach } from "../../middleware/requireRole.js";
+import { requireOwnership } from "../../middleware/requireOwnership.js";
+import { resolveConversationClient } from "../../middleware/resolveConversationClient.js";
 import { forward } from "../../utils/forward.js";
 
 const r = Router();
@@ -70,6 +72,8 @@ r.get(
 r.get(
   "/conversations/:id",
   authRequired,
+  resolveConversationClient,
+  requireOwnership,
   forward(BASE, "/internal/conversations/:id")
 );
 

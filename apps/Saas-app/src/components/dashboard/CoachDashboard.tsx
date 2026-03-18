@@ -17,9 +17,11 @@ import { isDayLogged } from "./utils";
 
 import { useClients } from "@/hooks/clients/useClients";
 import { useCoachConversations } from "../../hooks/coversation/useCoachConversations";
+import { usePendingInboxMessages } from "../../hooks/coversation/usePendingInboxMessages";
 import { mapDailyStateList } from "@/mappers/tracking/daily-state-list.mapper";
 import type { DailyState } from "@/types/ui/tracking/daily-state.ui";
 import type { ClientExtended } from "@/types/client";
+import type { UIMessage } from "@/types/ui/conversation/message.ui";
 
 import { clientKeys } from "@/queryKeys/clientKeys";
 import { conversationKeys } from "@/queryKeys/conversationKeys";
@@ -167,9 +169,11 @@ export default function CoachDashboard() {
 
   const clientsQ = useClients();
   const convQ = useCoachConversations(undefined);
+  const inboxQ = usePendingInboxMessages();
 
   const clients = clientsQ.data ?? [];
   const conversations = convQ.data ?? [];
+  const pendingMessages = (inboxQ.data as UIMessage[] | undefined) ?? [];
   const rangeDays = useMemo(
     () => diffDaysInclusive(range.startDate, range.endDate),
     [range.endDate, range.startDate]
@@ -236,14 +240,37 @@ export default function CoachDashboard() {
     };
   }, [rangeDays, resolvedRows]);
 
-  const recentConversations = useMemo(() => {
-    const sorted = [...conversations].sort((a, b) => {
-      const at = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
-      const bt = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+  const pendingByConversation = useMemo(() => {
+    const map = new Map<string, UIMessage>();
+
+    const sorted = [...pendingMessages].sort((a, b) => {
+      const at = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const bt = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return bt - at;
     });
-    return sorted.slice(0, RECENT_CONVERSATIONS_LIMIT);
-  }, [conversations]);
+
+    for (const message of sorted) {
+      if (!map.has(message.conversationId)) {
+        map.set(message.conversationId, message);
+      }
+    }
+
+    return map;
+  }, [pendingMessages]);
+
+  const inboxConversations = useMemo(() => {
+    const filtered = conversations.filter((conversation) => pendingByConversation.has(conversation.id));
+
+    filtered.sort((a, b) => {
+      const aMessage = pendingByConversation.get(a.id);
+      const bMessage = pendingByConversation.get(b.id);
+      const at = aMessage?.createdAt ? new Date(aMessage.createdAt).getTime() : 0;
+      const bt = bMessage?.createdAt ? new Date(bMessage.createdAt).getTime() : 0;
+      return bt - at;
+    });
+
+    return filtered.slice(0, RECENT_CONVERSATIONS_LIMIT);
+  }, [conversations, pendingByConversation]);
 
   const onLoadMoreClients = () => setScanLimit((x) => x + CLIENTS_SCAN_STEP);
 
@@ -251,6 +278,7 @@ export default function CoachDashboard() {
     await Promise.all([
       qc.invalidateQueries({ queryKey: clientKeys.list(), exact: false }),
       qc.invalidateQueries({ queryKey: conversationKeys.all, exact: false }),
+      qc.invalidateQueries({ queryKey: conversationKeys.inbox(), exact: false }),
       qc.invalidateQueries({ queryKey: trackingKeys.all, exact: false }),
     ]);
   }, [qc]);
@@ -262,7 +290,7 @@ export default function CoachDashboard() {
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl
-          refreshing={clientsQ.isFetching || convQ.isFetching || trackingLoading}
+          refreshing={clientsQ.isFetching || convQ.isFetching || inboxQ.isFetching || trackingLoading}
           onRefresh={refresh}
         />
       }
@@ -319,9 +347,13 @@ export default function CoachDashboard() {
 
       <Section
         title="Inbox – מה דורש טיפול"
-        subtitle={`מציג ${RECENT_CONVERSATIONS_LIMIT} שיחות אחרונות (בשביל ביצועים)`}
+        subtitle={`${pendingByConversation.size} הודעות לקוח ממתינות • מציג עד ${RECENT_CONVERSATIONS_LIMIT}`}
       >
-        <InboxPreviewSection loading={convQ.isLoading} conversations={recentConversations} />
+        <InboxPreviewSection
+          loading={convQ.isLoading || inboxQ.isLoading}
+          conversations={inboxConversations}
+          pendingByConversation={pendingByConversation}
+        />
       </Section>
 
       <Section

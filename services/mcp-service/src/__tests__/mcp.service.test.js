@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import "./setup-env.js";
 
 vi.mock("../llm/llmClient.js", () => ({
   runLLM: vi.fn(),
@@ -12,14 +13,14 @@ vi.mock("../llm/toolExecutor.js", () => ({
   executeTool: vi.fn(),
 }));
 
-import { runMcp } from "../services/mcp.service.js";
+import { runMcp } from "../client/services/mcp.service.js";
 import { runLLM } from "../llm/llmClient.js";
 import { callGateway } from "../http/gatewayClient.js";
 import { executeTool } from "../llm/toolExecutor.js";
 import {
   clearAllConversationStateForTests,
   patchConversationState,
-} from "../state/conversationState.store.js";
+} from "../client/state/conversationState.store.js";
 
 const baseInput = {
   conversationId: "conv-1",
@@ -51,9 +52,9 @@ function dailyStateFixture(dayType = "TRAINING") {
 }
 
 describe("runMcp", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    clearAllConversationStateForTests();
+    await clearAllConversationStateForTests();
     callGateway.mockResolvedValue(dailyStateFixture());
   });
 
@@ -288,7 +289,7 @@ describe("runMcp", () => {
   });
 
   it("executes pending meal candidate on short confirmation without re-asking", async () => {
-    patchConversationState(baseInput.conversationId, {
+    await patchConversationState(baseInput.conversationId, {
       pending_meal_candidate: {
         calories: 560,
         protein: 30,
@@ -318,7 +319,7 @@ describe("runMcp", () => {
   it("asks only for day type if pending meal confirmation lacks dayType", async () => {
     callGateway.mockResolvedValueOnce(dailyStateFixture(null));
 
-    patchConversationState(baseInput.conversationId, {
+    await patchConversationState(baseInput.conversationId, {
       pending_meal_candidate: {
         calories: 410,
         protein: 20,
@@ -341,7 +342,7 @@ describe("runMcp", () => {
   it("uses remembered dayType from conversation state and logs meal without asking again", async () => {
     callGateway.mockResolvedValueOnce(dailyStateFixture(null));
 
-    patchConversationState(baseInput.conversationId, {
+    await patchConversationState(baseInput.conversationId, {
       resolved_day_type: {
         dayType: "TRAINING",
         source: "SET_DAY_TYPE",
@@ -429,7 +430,7 @@ describe("runMcp", () => {
   });
 
   it("after workout selection asks for effort, notes and exercise weights", async () => {
-    patchConversationState(baseInput.conversationId, {
+    await patchConversationState(baseInput.conversationId, {
       awaiting_missing_fields: {
         actionType: "report_workout",
         missingFields: ["workoutType", "effortLevel", "notes", "exerciseWeights"],

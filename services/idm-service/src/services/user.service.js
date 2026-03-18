@@ -150,4 +150,20 @@ const findByPhone = async (phone) => {
     });
   };
 
-module.exports = { createUser, updateUser, getUser, getAllUsers, recordLogin, getUserByEmail,findByPhone };
+const coachOwnsClient = async ({ coachId, clientId }) => {
+    if (!coachId || !clientId) return false;
+
+    const clients = await getAllUsers({ coachId, role: "coach" });
+    return clients.some((client) => client.id === clientId);
+};
+
+module.exports = {
+    createUser,
+    updateUser,
+    getUser,
+    getAllUsers,
+    recordLogin,
+    getUserByEmail,
+    findByPhone,
+    coachOwnsClient,
+};

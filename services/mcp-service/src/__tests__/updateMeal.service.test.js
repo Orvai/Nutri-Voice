@@ -1,10 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
+import "./setup-env.js";
 
 vi.mock("../http/gatewayClient.js", () => ({
   callGateway: vi.fn(),
 }));
 
-import { updateMeal } from "../services/tools/menu-meal/updateMeal.service.js";
+import { updateMeal } from "../client/services/tools/menu-meal/updateMeal.service.js";
 import { callGateway } from "../http/gatewayClient.js";
 
 describe("updateMeal service", () => {

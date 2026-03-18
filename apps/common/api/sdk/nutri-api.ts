@@ -5851,3 +5851,117 @@ export const useDeleteApiWorkoutTemplatesId = <TError = void,
 
       return useMutation(mutationOptions, queryClient);
     }
+
+export type CoachAssistantRunHistoryItem = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
+
+export type CoachAssistantRunRequestDto = {
+  conversationId: string;
+  messageId: string;
+  sender?: "coach";
+  userId: string;
+  clientId?: string | null;
+  userText: string;
+  history?: CoachAssistantRunHistoryItem[];
+  metadata?: Record<string, unknown>;
+};
+
+export type CoachAssistantRunResponseDto = {
+  status: "ok" | "clarification_required" | "out_of_scope" | "escalation_required" | "error";
+  summary: string;
+  replyText: string | null;
+  resolvedClient?: {
+    id: string;
+    name?: string | null;
+  } | null;
+  toolResults?: Array<Record<string, unknown>>;
+  usedTools?: string[];
+  meta?: Record<string, unknown>;
+  audit?: {
+    requestId?: string | null;
+    actorId?: string | null;
+    clientId?: string | null;
+    toolName?: string | null;
+  };
+};
+
+/**
+ * @summary Run coach assistant flow
+ */
+export const postApiCoachAssistantRun = (
+  coachAssistantRunRequestDto: CoachAssistantRunRequestDto,
+  signal?: AbortSignal
+) => {
+  return customFetcher<CoachAssistantRunResponseDto>({
+    url: `/api/coach-assistant/run`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: coachAssistantRunRequestDto,
+    signal,
+  });
+};
+
+export const getPostApiCoachAssistantRunMutationOptions = <
+  TError = unknown,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiCoachAssistantRun>>,
+    TError,
+    { data: CoachAssistantRunRequestDto },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiCoachAssistantRun>>,
+  TError,
+  { data: CoachAssistantRunRequestDto },
+  TContext
+> => {
+  const mutationKey = ["postApiCoachAssistantRun"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiCoachAssistantRun>>,
+    { data: CoachAssistantRunRequestDto }
+  > = (props) => {
+    const { data } = props ?? {};
+    return postApiCoachAssistantRun(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostApiCoachAssistantRunMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiCoachAssistantRun>>
+>;
+export type PostApiCoachAssistantRunMutationBody = CoachAssistantRunRequestDto;
+export type PostApiCoachAssistantRunMutationError = unknown;
+
+/**
+ * @summary Run coach assistant flow
+ */
+export const usePostApiCoachAssistantRun = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiCoachAssistantRun>>,
+      TError,
+      { data: CoachAssistantRunRequestDto },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof postApiCoachAssistantRun>>,
+  TError,
+  { data: CoachAssistantRunRequestDto },
+  TContext
+> => {
+  const mutationOptions = getPostApiCoachAssistantRunMutationOptions(options);
+  return useMutation(mutationOptions, queryClient);
+};

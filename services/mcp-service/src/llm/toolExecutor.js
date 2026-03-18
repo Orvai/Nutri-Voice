@@ -26,6 +26,15 @@ export async function executeTool({
     throw new Error(`[toolExecutor] Tool ${toolName} has no execute() method`);
   }
 
+  const previousToolName = context?.currentToolName;
+  if (context) {
+    context.currentToolName = toolName;
+    context.audit = {
+      ...(context.audit || {}),
+      toolName,
+    };
+  }
+
   try {
     return await Tool.execute(args, context);
   } catch (err) {
@@ -35,5 +44,12 @@ export async function executeTool({
       error: errorMessage,
     });
     return { error: errorMessage };
+  } finally {
+    if (context) {
+      context.currentToolName = previousToolName;
+      if (context.audit) {
+        context.audit.toolName = previousToolName || null;
+      }
+    }
   }
 }

@@ -1,0 +1,1475 @@
+{
+  "generated_at": "2026-03-18",
+  "domains": [
+    {
+      "domain": "User / Client",
+      "purpose": "Identity and profile context for trainee app",
+      "main_dtos": [
+        "userResponseDto",
+        "createUserDto",
+        "updateUserDto",
+        "UserInfoResponseDto",
+        "ClientListItemDto",
+        "ClientsListResponseDto"
+      ],
+      "read_operations": [
+        "GET /api/users/:id/info",
+        "GET /api/clients",
+        "GET /api/clients/:id"
+      ],
+      "write_operations": [
+        "PUT /api/users/:id/info"
+      ],
+      "notes": "Profile ownership checks are not uniformly attached across all user/profile routes."
+    },
+    {
+      "domain": "Coach interaction",
+      "purpose": "Conversation and coach-message interaction",
+      "main_dtos": [
+        "ConversationDto",
+        "MessageDto",
+        "SendCoachMessageRequestDto"
+      ],
+      "read_operations": [
+        "GET /api/conversations/:id",
+        "GET /api/conversations/:id/messages"
+      ],
+      "write_operations": [
+        "POST /api/conversations/:id/messages (coach-only)",
+        "POST /api/messages/:id/handled"
+      ],
+      "notes": "Client direct-send endpoint is missing from public API."
+    },
+    {
+      "domain": "Daily state",
+      "purpose": "Aggregate of nutrition + workout + weight + metrics for day",
+      "main_dtos": [
+        "DailyStateDto",
+        "DailyStateResponseDto",
+        "DailyStateToolDto"
+      ],
+      "read_operations": [
+        "GET /api/tracking/daily-state",
+        "GET /api/tracking/daily-state/range"
+      ],
+      "write_operations": [],
+      "notes": "Calculated from logs, menu targets, and day selection."
+    },
+    {
+      "domain": "Day type",
+      "purpose": "Training/rest context for calorie/menu logic",
+      "main_dtos": [
+        "DaySelectionCreateDto",
+        "DaySelectionResponseDto"
+      ],
+      "read_operations": [
+        "GET /api/tracking/day-selection/today/:clientId (coach)"
+      ],
+      "write_operations": [
+        "POST /api/tracking/day-selection"
+      ],
+      "notes": "Service upserts per date."
+    },
+    {
+      "domain": "Metrics log",
+      "purpose": "Steps/water/sleep daily tracking",
+      "main_dtos": [
+        "MetricsLogCreateDto",
+        "MetricsLogResponseDto",
+        "UpsertMetricsToolDto"
+      ],
+      "read_operations": [
+        "GET /api/tracking/metrics-log/history/:clientId (coach)"
+      ],
+      "write_operations": [
+        "POST /api/tracking/metrics-log"
+      ],
+      "notes": "Create-or-update semantics by date."
+    },
+    {
+      "domain": "Weight log",
+      "purpose": "Weight progress timeline",
+      "main_dtos": [
+        "WeightLogCreateDto",
+        "WeightLogUpdateDto",
+        "WeightLogResponseDto"
+      ],
+      "read_operations": [
+        "GET /api/tracking/weight-log/history/:clientId (coach)"
+      ],
+      "write_operations": [
+        "POST /api/tracking/weight-log",
+        "PUT /api/tracking/weight-log/:logId"
+      ],
+      "notes": "Controller currently parses create DTO on update endpoint."
+    },
+    {
+      "domain": "Meal log",
+      "purpose": "Meal event recording",
+      "main_dtos": [
+        "MealLogCreateDto",
+        "MealLogUpdateDto",
+        "MealLogResponseDto",
+        "ReportMealInputDto",
+        "UpdateMealInputDto"
+      ],
+      "read_operations": [
+        "GET /api/tracking/meal-log/history/:clientId (coach)"
+      ],
+      "write_operations": [
+        "POST /api/tracking/meal-log",
+        "PUT /api/tracking/meal-log/:logId"
+      ],
+      "notes": "No delete endpoint."
+    },
+    {
+      "domain": "Workout log",
+      "purpose": "Workout event recording",
+      "main_dtos": [
+        "WorkoutLogCreateDto",
+        "WorkoutLogUpdateDto",
+        "WorkoutLogResponseDto",
+        "ReportWorkoutToolInputDto",
+        "UpdateWorkoutToolInputDto"
+      ],
+      "read_operations": [
+        "GET /api/tracking/workout-log/history/:clientId (coach)"
+      ],
+      "write_operations": [
+        "POST /api/tracking/workout-log",
+        "PUT /api/tracking/workout-log/:logId",
+        "PATCH /api/tracking/workout-log/exercise/:exerciseLogId"
+      ],
+      "notes": "Patch endpoint effectively weight-only in service/controller."
+    },
+    {
+      "domain": "Workout programs",
+      "purpose": "Assigned trainee plans",
+      "main_dtos": [
+        "WorkoutProgramCreateRequestDto",
+        "WorkoutProgramUpdateRequestDto",
+        "WorkoutProgramResponseDto",
+        "GetWorkoutProgramsToolOutputDto"
+      ],
+      "read_operations": [
+        "GET /api/workout/:clientId/workout-programs",
+        "GET /api/workout/:clientId/workout-programs/:programId"
+      ],
+      "write_operations": [
+        "Coach-only create/update/delete routes"
+      ],
+      "notes": "Client is read-only."
+    },
+    {
+      "domain": "Workout context",
+      "purpose": "Assistant runtime context for reporting",
+      "main_dtos": [
+        "GetWorkoutContextToolInputDto",
+        "GetWorkoutContextToolOutputDto"
+      ],
+      "read_operations": [
+        "MCP tool get_workout_context"
+      ],
+      "write_operations": [],
+      "notes": "Internal assistant tool."
+    },
+    {
+      "domain": "Menus",
+      "purpose": "Daily nutrition plan structure",
+      "main_dtos": [
+        "ClientMenuCreateDto",
+        "ClientMenuUpdateDto",
+        "ClientMenuCreateFromTemplateDto",
+        "ClientMenuResponseDto",
+        "ClientMenuListResponseDto"
+      ],
+      "read_operations": [
+        "GET /api/client-menus",
+        "GET /api/client-menus/:id"
+      ],
+      "write_operations": [
+        "Coach create/update/deactivate/from-template"
+      ],
+      "notes": "List response contract mismatch vs runtime summary payload."
+    },
+    {
+      "domain": "Notifications / coach reply",
+      "purpose": "Escalation and handoff status",
+      "main_dtos": [
+        "MessageDto",
+        "PendingClientMessageResponseDto"
+      ],
+      "read_operations": [
+        "GET /api/inbox/pending (coach)"
+      ],
+      "write_operations": [
+        "POST /api/messages/:id/handled"
+      ],
+      "notes": "Uses aiDecision + handled fields."
+    },
+    {
+      "domain": "Conversation state",
+      "purpose": "Assistant memory for multi-step actions",
+      "main_dtos": [
+        "ConversationStateDto",
+        "ConversationStatePatchDto",
+        "PendingActionToolInputDto"
+      ],
+      "read_operations": [
+        "Internal store read"
+      ],
+      "write_operations": [
+        "set_conversation_state tool"
+      ],
+      "notes": "TTL-backed memory in redis/memory."
+    },
+    {
+      "domain": "Conversation / chat",
+      "purpose": "Message history and thread state",
+      "main_dtos": [
+        "conversation.dto.js",
+        "message.dto.js"
+      ],
+      "read_operations": [
+        "GET /api/conversations/:id",
+        "GET /api/conversations/:id/messages"
+      ],
+      "write_operations": [
+        "Coach send message",
+        "mark handled"
+      ],
+      "notes": "Client list endpoint missing."
+    },
+    {
+      "domain": "Inbox / pending coach messages",
+      "purpose": "Coach queue of unresolved escalations",
+      "main_dtos": [
+        "PendingClientMessageResponseDto"
+      ],
+      "read_operations": [
+        "GET /api/inbox/pending"
+      ],
+      "write_operations": [
+        "POST /api/messages/:id/handled"
+      ],
+      "notes": "Filtering logic depends on aiDecision + handledAt null."
+    },
+    {
+      "domain": "Assistant run / MCP result",
+      "purpose": "Automated tool execution and escalation",
+      "main_dtos": [
+        "RunMcpDto",
+        "McpResultDto",
+        "RunCoachMcpDto",
+        "CoachMcpResultDto"
+      ],
+      "read_operations": [
+        "POST /internal/mcp/run",
+        "POST /internal/mcp/coach/run"
+      ],
+      "write_operations": [
+        "Tool-triggered state/log writes"
+      ],
+      "notes": "Internal-only contracts with trusted identity enforcement."
+    }
+  ],
+  "dtos": [
+    {
+      "name": "userResponseDto",
+      "source_file": "services/idm-service/src/dto/user.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "email", "type": "string(email)", "required": true, "nullable": false },
+        { "name": "firstName", "type": "string", "required": true, "nullable": false },
+        { "name": "lastName", "type": "string", "required": true, "nullable": false },
+        { "name": "phone", "type": "string", "required": false, "nullable": false },
+        { "name": "status", "type": "enum", "required": true, "nullable": false, "enum_values": ["active", "deleted", "locked"] },
+        { "name": "role", "type": "enum", "required": true, "nullable": false, "enum_values": ["trainer", "client", "admin"] },
+        { "name": "createdAt", "type": "string(datetime)", "required": true, "nullable": false },
+        { "name": "updatedAt", "type": "string(datetime)", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "createUserDto",
+      "source_file": "services/idm-service/src/dto/user.dto.js",
+      "fields": [
+        { "name": "email", "type": "string(trim,email)", "required": true, "nullable": false },
+        { "name": "phone", "type": "string(trim,min4)", "required": true, "nullable": false },
+        { "name": "firstName", "type": "string(trim,min1)", "required": true, "nullable": false },
+        { "name": "lastName", "type": "string(trim,min1)", "required": true, "nullable": false }
+      ],
+      "notes": ["strict object"]
+    },
+    {
+      "name": "updateUserDto",
+      "source_file": "services/idm-service/src/dto/user.dto.js",
+      "fields": [
+        { "name": "email", "type": "string(trim,email)", "required": false, "nullable": false },
+        { "name": "phone", "type": "string(trim)", "required": false, "nullable": false },
+        { "name": "firstName", "type": "string(trim)", "required": false, "nullable": false },
+        { "name": "lastName", "type": "string(trim)", "required": false, "nullable": false }
+      ],
+      "notes": ["superRefine requires at least one provided field"]
+    },
+    {
+      "name": "ClientListItemDto",
+      "source_file": "services/gateway-service/src/dto/idm.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "name", "type": "string", "required": true, "nullable": false },
+        { "name": "phone", "type": "string", "required": true, "nullable": true },
+        { "name": "email", "type": "string", "required": true, "nullable": true },
+        { "name": "profileImageUrl", "type": "string(url)", "required": true, "nullable": true },
+        { "name": "gender", "type": "string", "required": true, "nullable": true },
+        { "name": "age", "type": "number", "required": true, "nullable": true },
+        { "name": "height", "type": "number", "required": true, "nullable": true },
+        { "name": "weight", "type": "number", "required": true, "nullable": true },
+        { "name": "goals", "type": "any", "required": true, "nullable": true },
+        { "name": "activityLevel", "type": "any", "required": true, "nullable": true },
+        { "name": "creationDate", "type": "string", "required": true, "nullable": true },
+        { "name": "city", "type": "string", "required": true, "nullable": true },
+        { "name": "address", "type": "string", "required": true, "nullable": true }
+      ]
+    },
+    {
+      "name": "ClientsListResponseDto",
+      "source_file": "services/gateway-service/src/dto/idm.dto.js",
+      "fields": [
+        { "name": "data", "type": "ClientListItemDto[]", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "UserInfoResponseDto",
+      "source_file": "services/gateway-service/src/dto/idm.dto.js",
+      "fields": [
+        { "name": "id", "type": "string(uuid)", "required": true, "nullable": false },
+        { "name": "userId", "type": "string(uuid)", "required": true, "nullable": false },
+        { "name": "status", "type": "enum", "required": true, "nullable": false, "enum_values": ["active", "deleted", "archived"] },
+        { "name": "dateOfBirth", "type": "string(datetime)", "required": false, "nullable": true },
+        { "name": "gender", "type": "string", "required": false, "nullable": true },
+        { "name": "address", "type": "string", "required": false, "nullable": true },
+        { "name": "city", "type": "string", "required": false, "nullable": true },
+        { "name": "profileImageUrl", "type": "string(url)", "required": false, "nullable": true },
+        { "name": "height", "type": "number(int)", "required": false, "nullable": true },
+        { "name": "age", "type": "number(int)", "required": false, "nullable": true },
+        { "name": "createdAt", "type": "string(datetime)", "required": true, "nullable": false },
+        { "name": "updatedAt", "type": "string(datetime)", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "UserResponseDto",
+      "source_file": "services/gateway-service/src/dto/idm.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "email", "type": "string(email)", "required": true, "nullable": false },
+        { "name": "firstName", "type": "string", "required": true, "nullable": false },
+        { "name": "lastName", "type": "string", "required": true, "nullable": false },
+        { "name": "phone", "type": "string", "required": false, "nullable": false },
+        { "name": "status", "type": "enum", "required": true, "nullable": false, "enum_values": ["active", "deleted", "locked"] },
+        { "name": "role", "type": "enum", "required": true, "nullable": false, "enum_values": ["trainer", "client", "admin"] },
+        { "name": "createdAt", "type": "string(datetime)", "required": true, "nullable": false },
+        { "name": "updatedAt", "type": "string(datetime)", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "RunCoachMcpDto",
+      "source_file": "services/mcp-service/src/dtos/runCoachMcp.dto.js",
+      "fields": [
+        { "name": "conversationId", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "messageId", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "sender", "type": "literal(coach)", "required": false, "nullable": false },
+        { "name": "userId", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "clientId", "type": "string(min1)", "required": false, "nullable": true },
+        { "name": "userText", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "history", "type": "array", "required": false, "nullable": false },
+        { "name": "requestAudit", "type": "object", "required": false, "nullable": false },
+        { "name": "metadata", "type": "record<any>", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "CoachSessionStateDto",
+      "source_file": "services/mcp-service/src/dtos/coachSessionState.dto.js",
+      "fields": [
+        { "name": "activeClient", "type": "object", "required": false, "nullable": true },
+        { "name": "pendingClarification", "type": "object", "required": false, "nullable": true },
+        { "name": "lastOverview", "type": "object", "required": false, "nullable": true },
+        { "name": "updatedAt", "type": "string(datetime)", "required": true, "nullable": false }
+      ],
+      "nested": {
+        "activeClient": [
+          { "name": "id", "type": "string" },
+          { "name": "name", "type": "string", "required": false, "nullable": true }
+        ],
+        "pendingClarification": [
+          { "name": "type", "type": "enum", "enum_values": ["client_selection"] },
+          { "name": "options", "type": "array<object{id,name}>" }
+        ],
+        "lastOverview": [
+          { "name": "clientId", "type": "string" },
+          { "name": "generatedAt", "type": "string(datetime)" }
+        ]
+      }
+    },
+    {
+      "name": "CoachMcpResultDto",
+      "source_file": "services/mcp-service/src/dtos/coachResult.dto.js",
+      "fields": [
+        { "name": "status", "type": "enum", "required": true, "nullable": false, "enum_values": ["ok", "clarification_required", "out_of_scope", "escalation_required", "error"] },
+        { "name": "replyText", "type": "string", "required": true, "nullable": true },
+        { "name": "summary", "type": "string", "required": true, "nullable": false },
+        { "name": "resolvedClient", "type": "object", "required": true, "nullable": true },
+        { "name": "toolResults", "type": "CoachToolResultDto[]", "required": false, "nullable": false },
+        { "name": "usedTools", "type": "string[]", "required": false, "nullable": false },
+        { "name": "meta", "type": "record<any>", "required": false, "nullable": false },
+        { "name": "audit", "type": "object", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "SendCoachMessageRequestDto",
+      "source_file": "services/gateway-service/src/dto/conversation/message.requests.dto.js",
+      "fields": [
+        { "name": "contentType", "type": "enum", "required": false, "nullable": false, "enum_values": ["TEXT", "IMAGE", "AUDIO", "VIDEO"] },
+        { "name": "text", "type": "string", "required": false, "nullable": false },
+        { "name": "media", "type": "MediaInputDto", "required": false, "nullable": false }
+      ],
+      "nested": {
+        "media": [
+          { "name": "mediaUrl", "type": "string(url)", "required": true },
+          { "name": "mediaMimeType", "type": "string", "required": false },
+          { "name": "mediaDurationSec", "type": "number(int)", "required": false },
+          { "name": "mediaThumbnail", "type": "string", "required": false }
+        ]
+      },
+      "notes": ["TEXT requires text, non-TEXT requires media"]
+    },
+    {
+      "name": "MealLogCreateDto",
+      "source_file": "services/client-tracking-service/src/dto/mealLog.dto.js",
+      "fields": [
+        { "name": "date", "type": "string(datetime)", "required": false, "nullable": false },
+        { "name": "calories", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "protein", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "carbs", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "fat", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "description", "type": "string", "required": false, "nullable": false },
+        { "name": "matchedMenuItemId", "type": "string", "required": false, "nullable": false },
+        { "name": "dayType", "type": "enum", "required": true, "nullable": false, "enum_values": ["TRAINING", "REST"] }
+      ]
+    },
+    {
+      "name": "MealLogUpdateDto",
+      "source_file": "services/client-tracking-service/src/dto/mealLog.dto.js",
+      "fields": [
+        { "name": "calories", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "protein", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "carbs", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "fat", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "description", "type": "string", "required": false, "nullable": false },
+        { "name": "matchedMenuItemId", "type": "string", "required": false, "nullable": true },
+        { "name": "dayType", "type": "enum", "required": false, "nullable": false, "enum_values": ["TRAINING", "REST"] }
+      ]
+    },
+    {
+      "name": "MealLogResponseDto (tracking-service)",
+      "source_file": "services/client-tracking-service/src/dto/mealLog.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "clientId", "type": "string", "required": true, "nullable": false },
+        { "name": "date", "type": "string(datetime)|Date", "required": true, "nullable": false },
+        { "name": "dayType", "type": "enum", "required": true, "nullable": false, "enum_values": ["TRAINING", "REST"] },
+        { "name": "calories", "type": "number", "required": true, "nullable": false },
+        { "name": "protein", "type": "number", "required": true, "nullable": false },
+        { "name": "carbs", "type": "number", "required": true, "nullable": false },
+        { "name": "fat", "type": "number", "required": true, "nullable": false },
+        { "name": "description", "type": "string", "required": true, "nullable": true },
+        { "name": "matchedMenuItemId", "type": "string", "required": true, "nullable": true },
+        { "name": "loggedAt", "type": "string(datetime)|Date", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "MealLogCreateRequestDto",
+      "source_file": "services/gateway-service/src/dto/tracking.dto.js",
+      "fields": [
+        { "name": "date", "type": "string(datetime)", "required": false, "nullable": false },
+        { "name": "calories", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "protein", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "carbs", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "fat", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "description", "type": "string", "required": false, "nullable": false },
+        { "name": "matchedMenuItemId", "type": "string", "required": false, "nullable": false },
+        { "name": "dayType", "type": "enum", "required": true, "nullable": false, "enum_values": ["TRAINING", "REST"] }
+      ]
+    },
+    {
+      "name": "MealLogUpdateRequestDto",
+      "source_file": "services/gateway-service/src/dto/tracking.dto.js",
+      "fields": [
+        { "name": "calories", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "protein", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "carbs", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "fat", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "description", "type": "string", "required": false, "nullable": false },
+        { "name": "matchedMenuItemId", "type": "string", "required": false, "nullable": true },
+        { "name": "dayType", "type": "enum", "required": false, "nullable": false, "enum_values": ["TRAINING", "REST"] }
+      ]
+    },
+    {
+      "name": "MealLogResponseDto (gateway)",
+      "source_file": "services/gateway-service/src/dto/tracking.dto.js",
+      "fields": [
+        { "name": "data", "type": "object", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "ReportMealInputDto",
+      "source_file": "services/mcp-service/src/dtos/tools/menu-meal/reportMeal.dto.js",
+      "fields": [
+        { "name": "date", "type": "string(datetime)", "required": false, "nullable": false },
+        { "name": "calories", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "protein", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "carbs", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "fat", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "description", "type": "string", "required": false, "nullable": false },
+        { "name": "matchedMenuItemId", "type": "string", "required": false, "nullable": false },
+        { "name": "dayType", "type": "enum", "required": true, "nullable": false, "enum_values": ["TRAINING", "REST"] },
+        { "name": "source", "type": "enum", "required": false, "nullable": false, "enum_values": ["MENU_MATCH", "ESTIMATE", "USER_PROVIDED"] },
+        { "name": "confidence", "type": "number(0..1)", "required": false, "nullable": false },
+        { "name": "isEstimated", "type": "boolean", "required": false, "nullable": false },
+        { "name": "outsideMenu", "type": "boolean", "required": false, "nullable": false },
+        { "name": "portionText", "type": "string", "required": false, "nullable": false },
+        { "name": "caloriesUsedForLog", "type": "number(int)", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "UpdateMealInputDto",
+      "source_file": "services/mcp-service/src/dtos/tools/menu-meal/updateMeal.dto.js",
+      "fields": [
+        { "name": "logId", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "calories", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "protein", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "carbs", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "fat", "type": "number(int)", "required": false, "nullable": false },
+        { "name": "description", "type": "string", "required": false, "nullable": false },
+        { "name": "matchedMenuItemId", "type": "string", "required": false, "nullable": true },
+        { "name": "dayType", "type": "enum", "required": false, "nullable": false, "enum_values": ["TRAINING", "REST"] }
+      ]
+    },
+    {
+      "name": "WorkoutLogCreateDto",
+      "source_file": "services/client-tracking-service/src/dto/workoutLog.dto.js",
+      "fields": [
+        { "name": "date", "type": "string(datetime)", "required": false, "nullable": false },
+        { "name": "workoutType", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "effortLevel", "type": "enum", "required": true, "nullable": false, "enum_values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"] },
+        { "name": "notes", "type": "string", "required": false, "nullable": false },
+        { "name": "exercises", "type": "array<object>", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutLogUpdateDto",
+      "source_file": "services/client-tracking-service/src/dto/workoutLog.dto.js",
+      "fields": [
+        { "name": "workoutType", "type": "string", "required": false, "nullable": false },
+        { "name": "effortLevel", "type": "enum", "required": false, "nullable": false, "enum_values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"] },
+        { "name": "notes", "type": "string", "required": false, "nullable": false },
+        { "name": "exercises", "type": "array<object{id,exerciseName,weight?}>", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutLogResponseDto (tracking-service)",
+      "source_file": "services/client-tracking-service/src/dto/workoutLog.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "clientId", "type": "string", "required": true, "nullable": false },
+        { "name": "date", "type": "string(datetime)|Date", "required": true, "nullable": false },
+        { "name": "workoutType", "type": "string", "required": true, "nullable": false },
+        { "name": "effortLevel", "type": "enum", "required": true, "nullable": false, "enum_values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"] },
+        { "name": "notes", "type": "string", "required": true, "nullable": true },
+        { "name": "loggedAt", "type": "string(datetime)|Date", "required": false, "nullable": false },
+        { "name": "exercises", "type": "WorkoutExerciseResponseDto[]", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutLogCreateRequestDto",
+      "source_file": "services/gateway-service/src/dto/tracking.dto.js",
+      "fields": [
+        { "name": "date", "type": "string(datetime)", "required": false, "nullable": false },
+        { "name": "workoutType", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "effortLevel", "type": "enum", "required": true, "nullable": false, "enum_values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"] },
+        { "name": "notes", "type": "string", "required": false, "nullable": false },
+        { "name": "exercises", "type": "array<object>", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutLogUpdateRequestDto",
+      "source_file": "services/gateway-service/src/dto/tracking.dto.js",
+      "fields": [
+        { "name": "workoutType", "type": "string", "required": false, "nullable": false },
+        { "name": "effortLevel", "type": "enum", "required": false, "nullable": false, "enum_values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"] },
+        { "name": "notes", "type": "string", "required": false, "nullable": false },
+        { "name": "exercises", "type": "array<object{id,exerciseName,weight?}>", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutLogResponseDto (gateway)",
+      "source_file": "services/gateway-service/src/dto/tracking.dto.js",
+      "fields": [
+        { "name": "data", "type": "object", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "ReportWorkoutToolInputDto",
+      "source_file": "services/mcp-service/src/dtos/tools/workout/reportWorkout.dto.js",
+      "fields": [
+        { "name": "date", "type": "string(datetime)", "required": false, "nullable": false },
+        { "name": "workoutType", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "effortLevel", "type": "enum", "required": true, "nullable": false, "enum_values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"] },
+        { "name": "notes", "type": "string", "required": false, "nullable": false },
+        { "name": "exercises", "type": "array(min1)", "required": true, "nullable": false },
+        { "name": "durationMin", "type": "number(int,positive)", "required": false, "nullable": false },
+        { "name": "intensity", "type": "enum", "required": false, "nullable": false, "enum_values": ["LOW", "MEDIUM", "HIGH"] },
+        { "name": "performedAsPlanned", "type": "boolean", "required": false, "nullable": false },
+        { "name": "caloriesBurnEstimate", "type": "number(int,nonnegative)", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "UpdateWorkoutToolInputDto",
+      "source_file": "services/mcp-service/src/dtos/tools/workout/updateWorkout.dto.js",
+      "fields": [
+        { "name": "logId", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "workoutType", "type": "string", "required": false, "nullable": false },
+        { "name": "effortLevel", "type": "enum", "required": false, "nullable": false, "enum_values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"] },
+        { "name": "notes", "type": "string", "required": false, "nullable": false },
+        { "name": "exercises", "type": "array", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "DailyStateDto",
+      "source_file": "services/client-tracking-service/src/dto/dailyState.dto.js",
+      "fields": [
+        { "name": "dayType", "type": "enum", "required": true, "nullable": true, "enum_values": ["TRAINING", "REST"] },
+        { "name": "calorieTargets", "type": "object", "required": true, "nullable": false },
+        { "name": "activeCaloriesAllowed", "type": "number(int)", "required": true, "nullable": true },
+        { "name": "consumedCalories", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "remainingCalories", "type": "number(int)", "required": true, "nullable": true },
+        { "name": "meals", "type": "MealLogResponseDto[]", "required": true, "nullable": false },
+        { "name": "workouts", "type": "WorkoutLogResponseDto[]", "required": true, "nullable": false },
+        { "name": "weight", "type": "WeightLogResponseDto", "required": true, "nullable": true },
+        { "name": "metrics", "type": "MetricsLogResponseDto", "required": true, "nullable": true }
+      ]
+    },
+    {
+      "name": "DailyStateResponseDto",
+      "source_file": "services/gateway-service/src/dto/tracking.dto.js",
+      "fields": [
+        { "name": "data", "type": "DailyState payload", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "DailyStateToolDto",
+      "source_file": "services/mcp-service/src/dtos/tools/DailyState/dailyState.dto.js",
+      "fields": [
+        { "name": "dayType", "type": "enum", "required": true, "nullable": true, "enum_values": ["TRAINING", "REST"] },
+        { "name": "calorieTargets", "type": "object", "required": true, "nullable": false },
+        { "name": "activeCaloriesAllowed", "type": "number(int)", "required": true, "nullable": true },
+        { "name": "consumedCalories", "type": "number(int)", "required": true, "nullable": false },
+        { "name": "remainingCalories", "type": "number(int)", "required": true, "nullable": true },
+        { "name": "meals", "type": "MealToolDto[]", "required": true, "nullable": false },
+        { "name": "workouts", "type": "WorkoutToolDto[]", "required": true, "nullable": false },
+        { "name": "weight", "type": "WeightToolDto", "required": true, "nullable": true },
+        { "name": "metrics", "type": "MetricsToolDto", "required": true, "nullable": true },
+        { "name": "dailyCaloriesTarget", "type": "number(int)", "required": false, "nullable": true },
+        { "name": "mealsSummary", "type": "object", "required": false, "nullable": false },
+        { "name": "metricsSummary", "type": "object", "required": false, "nullable": false },
+        { "name": "workoutPlanned", "type": "boolean", "required": false, "nullable": false },
+        { "name": "workoutCompleted", "type": "boolean", "required": false, "nullable": false },
+        { "name": "missingCriticalFields", "type": "string[]", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "MessageDto",
+      "source_file": "services/gateway-service/src/dto/conversation/message.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "conversationId", "type": "string", "required": true, "nullable": false },
+        { "name": "sender", "type": "enum", "required": true, "nullable": false, "enum_values": ["CLIENT", "COACH", "AI"] },
+        { "name": "contentType", "type": "enum", "required": true, "nullable": false, "enum_values": ["TEXT", "IMAGE", "AUDIO", "VIDEO"] },
+        { "name": "text", "type": "string", "required": true, "nullable": true },
+        { "name": "mediaUrl", "type": "string", "required": true, "nullable": true },
+        { "name": "mediaMimeType", "type": "string", "required": true, "nullable": true },
+        { "name": "mediaDurationSec", "type": "number", "required": true, "nullable": true },
+        { "name": "mediaThumbnail", "type": "string", "required": true, "nullable": true },
+        { "name": "sourceMessageId", "type": "string", "required": false, "nullable": true },
+        { "name": "autoGenerated", "type": "boolean", "required": false, "nullable": true },
+        { "name": "aiDecision", "type": "enum", "required": true, "nullable": true, "enum_values": ["AUTO_REPLY", "COACH_REPLY"] },
+        { "name": "aiSuggestedReply", "type": "string", "required": true, "nullable": true },
+        { "name": "handledAt", "type": "string(datetime)", "required": true, "nullable": true },
+        { "name": "handledBy", "type": "enum", "required": true, "nullable": true, "enum_values": ["AI", "COACH"] },
+        { "name": "createdAt", "type": "string(datetime)", "required": true, "nullable": false },
+        { "name": "updatedAt", "type": "string(datetime)", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "PendingClientMessageResponseDto",
+      "source_file": "services/gateway-service/src/dto/conversation/inbox.dto.js",
+      "fields": [
+        { "name": "data", "type": "MessageDto[]", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "ShouldCoachReplyInputDto",
+      "source_file": "services/mcp-service/src/dtos/tools/shouldCoachReply.dto.js",
+      "fields": [
+        { "name": "userMessage", "type": "string", "required": false, "nullable": false },
+        { "name": "dailyState", "type": "any", "required": false, "nullable": false },
+        { "name": "previewMeal", "type": "object", "required": false, "nullable": false },
+        { "name": "lastAction", "type": "any", "required": false, "nullable": false },
+        { "name": "hasUncertainty", "type": "boolean", "required": false, "nullable": false },
+        { "name": "mentionsMedical", "type": "boolean", "required": false, "nullable": false },
+        { "name": "repeatedCorrections", "type": "boolean", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "ShouldCoachReplyResultDto",
+      "source_file": "services/mcp-service/src/dtos/tools/shouldCoachReply.dto.js",
+      "fields": [
+        { "name": "decision", "type": "enum", "required": true, "nullable": false, "enum_values": ["AUTO_REPLY", "COACH_REPLY"] },
+        { "name": "reasons", "type": "string[]", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "ConversationStateDto",
+      "source_file": "services/mcp-service/src/dtos/conversationState.dto.js",
+      "fields": [
+        { "name": "pending_meal_candidate", "type": "object", "required": false, "nullable": true },
+        { "name": "pending_meal_update", "type": "object", "required": false, "nullable": true },
+        { "name": "pending_workout_candidate", "type": "object", "required": false, "nullable": true },
+        { "name": "pending_workout_update", "type": "object", "required": false, "nullable": true },
+        { "name": "awaiting_day_type", "type": "boolean", "required": false, "nullable": false },
+        { "name": "awaiting_missing_fields", "type": "object", "required": false, "nullable": true },
+        { "name": "last_menu_check", "type": "object", "required": false, "nullable": true },
+        { "name": "last_calorie_estimate", "type": "object", "required": false, "nullable": true },
+        { "name": "last_workout_context", "type": "object", "required": false, "nullable": true },
+        { "name": "resolved_day_type", "type": "object", "required": false, "nullable": true },
+        { "name": "updatedAt", "type": "string(datetime)", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "ConversationStatePatchDto",
+      "source_file": "services/mcp-service/src/dtos/conversationState.dto.js",
+      "fields": [
+        { "name": "all ConversationStateDto keys", "type": "optional patch", "required": false, "nullable": true },
+        { "name": "clearKeys", "type": "array(enum)", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "PendingActionToolInputDto",
+      "source_file": "services/mcp-service/src/dtos/conversationState.dto.js",
+      "fields": [
+        { "name": "same as ConversationStatePatchDto", "type": "object", "required": false, "nullable": true }
+      ],
+      "notes": ["Used by set_conversation_state tool"]
+    },
+    {
+      "name": "ClientMenuCreateDto",
+      "source_file": "services/menu-service/src/dto/clientMenu.dto.js",
+      "fields": [
+        { "name": "name", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "type", "type": "string", "required": true, "nullable": false },
+        { "name": "notes", "type": "string", "required": false, "nullable": true },
+        { "name": "startDate", "type": "string", "required": false, "nullable": false },
+        { "name": "endDate", "type": "string", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "ClientMenuUpdateDto",
+      "source_file": "services/menu-service/src/dto/clientMenu.dto.js",
+      "fields": [
+        { "name": "name", "type": "string(min1)", "required": false, "nullable": false },
+        { "name": "type", "type": "string", "required": false, "nullable": false },
+        { "name": "notes", "type": "string", "required": false, "nullable": true },
+        { "name": "isActive", "type": "boolean", "required": false, "nullable": false },
+        { "name": "startDate", "type": "string", "required": false, "nullable": true },
+        { "name": "endDate", "type": "string", "required": false, "nullable": true },
+        { "name": "mealsToAdd", "type": "array", "required": false, "nullable": false },
+        { "name": "mealsToUpdate", "type": "array", "required": false, "nullable": false },
+        { "name": "mealsToDelete", "type": "array", "required": false, "nullable": false },
+        { "name": "mealOptionsToAdd", "type": "array", "required": false, "nullable": false },
+        { "name": "mealOptionsToDelete", "type": "array", "required": false, "nullable": false },
+        { "name": "mealOptionsToUpdate", "type": "array", "required": false, "nullable": false },
+        { "name": "vitaminsToAdd", "type": "array", "required": false, "nullable": false },
+        { "name": "vitaminsToUpdate", "type": "array", "required": false, "nullable": false },
+        { "name": "vitaminsToDelete", "type": "array", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "ClientMenuCreateFromTemplateDto",
+      "source_file": "services/menu-service/src/dto/clientMenu.dto.js",
+      "fields": [
+        { "name": "templateMenuId", "type": "string", "required": true, "nullable": false },
+        { "name": "name", "type": "string", "required": false, "nullable": false },
+        { "name": "selectedOptions", "type": "array<object{templateMealId,optionId}>", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "ClientMenuListQueryDto",
+      "source_file": "services/menu-service/src/dto/clientMenu.dto.js",
+      "fields": [
+        { "name": "includeInactive", "type": "string", "required": false, "nullable": false },
+        { "name": "clientId", "type": "string", "required": false, "nullable": false },
+        { "name": "coachId", "type": "string", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "ClientMenuCreateRequestDto",
+      "source_file": "services/gateway-service/src/dto/menu/clientMenu.dto.js",
+      "fields": [
+        { "name": "name", "type": "string(min1)", "required": true, "nullable": false },
+        { "name": "type", "type": "string", "required": true, "nullable": false },
+        { "name": "notes", "type": "string", "required": false, "nullable": true },
+        { "name": "startDate", "type": "string", "required": false, "nullable": false },
+        { "name": "endDate", "type": "string", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "ClientMenuUpdateRequestDto",
+      "source_file": "services/gateway-service/src/dto/menu/clientMenu.dto.js",
+      "fields": [
+        { "name": "name", "type": "string(min1)", "required": false, "nullable": false },
+        { "name": "type", "type": "string", "required": false, "nullable": false },
+        { "name": "notes", "type": "string", "required": false, "nullable": true },
+        { "name": "isActive", "type": "boolean", "required": false, "nullable": false },
+        { "name": "startDate", "type": "string", "required": false, "nullable": true },
+        { "name": "endDate", "type": "string", "required": false, "nullable": true },
+        { "name": "mealsToAdd", "type": "array", "required": false, "nullable": false },
+        { "name": "mealsToUpdate", "type": "array", "required": false, "nullable": false },
+        { "name": "mealsToDelete", "type": "array", "required": false, "nullable": false },
+        { "name": "vitaminsToAdd", "type": "array", "required": false, "nullable": false },
+        { "name": "vitaminsToUpdate", "type": "array", "required": false, "nullable": false },
+        { "name": "vitaminsToDelete", "type": "array", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "ClientMenuResponseDto",
+      "source_file": "services/gateway-service/src/dto/menu/clientMenu.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "clientId", "type": "string", "required": true, "nullable": false },
+        { "name": "coachId", "type": "string", "required": true, "nullable": false },
+        { "name": "name", "type": "string", "required": true, "nullable": false },
+        { "name": "type", "type": "string", "required": true, "nullable": false },
+        { "name": "notes", "type": "string", "required": true, "nullable": true },
+        { "name": "isActive", "type": "boolean", "required": true, "nullable": false },
+        { "name": "startDate", "type": "string", "required": true, "nullable": true },
+        { "name": "endDate", "type": "string", "required": true, "nullable": true },
+        { "name": "totalCalories", "type": "number", "required": true, "nullable": false },
+        { "name": "meals", "type": "array", "required": true, "nullable": false },
+        { "name": "vitamins", "type": "array", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "ClientMenuListResponseDto",
+      "source_file": "services/gateway-service/src/dto/menu/clientMenu.dto.js",
+      "fields": [
+        { "name": "data", "type": "ClientMenuResponseDto[]", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutProgramCreateRequestDto",
+      "source_file": "services/workout-service/src/dto/workoutProgram.dto.js",
+      "fields": [
+        { "name": "name", "type": "string(min2)", "required": true, "nullable": false },
+        { "name": "clientId", "type": "string", "required": true, "nullable": false },
+        { "name": "coachId", "type": "string", "required": true, "nullable": false },
+        { "name": "templateId", "type": "string", "required": false, "nullable": false },
+        { "name": "exercises", "type": "array", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutProgramUpdateRequestDto",
+      "source_file": "services/workout-service/src/dto/workoutProgram.dto.js",
+      "fields": [
+        { "name": "name", "type": "string", "required": false, "nullable": false },
+        { "name": "exercisesToAdd", "type": "array", "required": false, "nullable": false },
+        { "name": "exercisesToUpdate", "type": "array", "required": false, "nullable": false },
+        { "name": "exercisesToDelete", "type": "array", "required": false, "nullable": false }
+      ]
+    },
+    {
+      "name": "WorkoutProgramResponseDto",
+      "source_file": "services/workout-service/src/dto/workoutProgram.dto.js",
+      "fields": [
+        { "name": "id", "type": "string", "required": true, "nullable": false },
+        { "name": "name", "type": "string", "required": true, "nullable": false },
+        { "name": "clientId", "type": "string", "required": true, "nullable": false },
+        { "name": "coachId", "type": "string", "required": true, "nullable": false },
+        { "name": "templateId", "type": "string", "required": false, "nullable": true },
+        { "name": "createdAt", "type": "Date", "required": true, "nullable": false },
+        { "name": "updatedAt", "type": "Date", "required": true, "nullable": false },
+        { "name": "exercises", "type": "WorkoutExerciseResponseDto[]", "required": true, "nullable": false }
+      ]
+    },
+    {
+      "name": "getWorkoutPrograms.dto.js",
+      "source_file": "services/mcp-service/src/dtos/tools/workout/getWorkoutPrograms.dto.js",
+      "structures": [
+        "GetWorkoutProgramsToolInputDto",
+        "WorkoutExerciseResponseDto",
+        "WorkoutProgramResponseDto",
+        "GetWorkoutProgramsToolOutputDto"
+      ]
+    },
+    {
+      "name": "getWorkoutContext.dto.js",
+      "source_file": "services/mcp-service/src/dtos/tools/workout/getWorkoutContext.dto.js",
+      "structures": [
+        "GetWorkoutContextToolInputDto",
+        "GetWorkoutContextToolOutputDto"
+      ]
+    },
+    {
+      "name": "daySelection.dto.js",
+      "source_file": "services/client-tracking-service/src/dto/daySelection.dto.js",
+      "structures": [
+        "DaySelectionCreateDto",
+        "DayTypeEnum",
+        "DaySelectionResponseDto"
+      ]
+    },
+    {
+      "name": "metricsLog.dto.js",
+      "source_file": "services/client-tracking-service/src/dto/metricsLog.dto.js",
+      "structures": [
+        "MetricsLogCreateDto",
+        "MetricsLogResponseDto",
+        "MetricsHistoryResponseDto"
+      ]
+    },
+    {
+      "name": "weightLog.dto.js",
+      "source_file": "services/client-tracking-service/src/dto/weightLog.dto.js",
+      "structures": [
+        "WeightLogCreateDto",
+        "WeightLogUpdateDto",
+        "WeightLogResponseDto",
+        "WeightHistoryResponseDto"
+      ]
+    },
+    {
+      "name": "conversation.dto.js",
+      "source_file": "services/gateway-service/src/dto/conversation/conversation.dto.js",
+      "structures": [
+        "ConversationDto",
+        "ConversationResponseDto",
+        "ConversationListResponseDto"
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "name": "DayType",
+      "values": ["TRAINING", "REST"],
+      "appears_in": [
+        "daySelection.dto.js",
+        "mealLog.dto.js",
+        "dailyState.dto.js",
+        "clientMenu.dto.js"
+      ],
+      "product_meaning": "Sets day context for calories/menu selection",
+      "ui_implications": "Day toggle impacts targets and allowed meal logic"
+    },
+    {
+      "name": "EffortLevel",
+      "values": ["EASY", "NORMAL", "HARD", "FAILED", "SKIPPED"],
+      "appears_in": ["workoutLog.dto.js", "reportWorkout.dto.js"],
+      "product_meaning": "How workout session went",
+      "ui_implications": "Chip selector + completion analysis"
+    },
+    {
+      "name": "AIDecision",
+      "values": ["AUTO_REPLY", "COACH_REPLY"],
+      "appears_in": ["conversation Message model", "mcpResult.dto.js", "shouldCoachReply.dto.js"],
+      "product_meaning": "AI can answer vs escalate",
+      "ui_implications": "Show coach-pending handoff states"
+    },
+    {
+      "name": "MessageHandledBy",
+      "values": ["AI", "COACH"],
+      "appears_in": ["message.dto.js", "mark handled endpoint"],
+      "product_meaning": "Who resolved/handled client message",
+      "ui_implications": "Handler badges/timeline"
+    },
+    {
+      "name": "ConversationChannel",
+      "values": ["WHATSAPP", "TELEGRAM", "APP"],
+      "appears_in": ["conversation.dto.js", "webhook.dto.js"],
+      "product_meaning": "Transport channel",
+      "ui_implications": "Channel icon + fallback channel behaviors"
+    },
+    {
+      "name": "CoachMcpStatus",
+      "values": ["ok", "clarification_required", "out_of_scope", "escalation_required", "error"],
+      "appears_in": ["coachResult.dto.js"],
+      "product_meaning": "Coach assistant execution lifecycle",
+      "ui_implications": "Dedicated status UI states"
+    }
+  ],
+  "sample_payloads": {
+    "user_client": {
+      "id": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+      "email": "noa.levi@example.com",
+      "firstName": "Noa",
+      "lastName": "Levi",
+      "phone": "+972541112233",
+      "status": "active",
+      "role": "client",
+      "createdAt": "2026-02-20T09:12:44.102Z",
+      "updatedAt": "2026-03-18T10:30:21.501Z"
+    },
+    "daily_state": {
+      "data": {
+        "dayType": "TRAINING",
+        "calorieTargets": { "trainingDay": 2350, "restDay": 1950 },
+        "activeCaloriesAllowed": 2350,
+        "consumedCalories": 1480,
+        "remainingCalories": 870,
+        "meals": [
+          {
+            "id": "cmeallog_001",
+            "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+            "date": "2026-03-18T08:12:00.000Z",
+            "dayType": "TRAINING",
+            "calories": 620,
+            "protein": 42,
+            "carbs": 55,
+            "fat": 22,
+            "description": "Greek yogurt bowl + granola",
+            "matchedMenuItemId": "cmenuitem_breakfast_1",
+            "loggedAt": "2026-03-18T08:13:02.000Z"
+          }
+        ],
+        "workouts": [
+          {
+            "id": "cworklog_010",
+            "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+            "date": "2026-03-18T17:00:00.000Z",
+            "workoutType": "Upper A",
+            "effortLevel": "NORMAL",
+            "notes": "Good session",
+            "loggedAt": "2026-03-18T18:02:10.000Z",
+            "exercises": [
+              { "id": "cwex_100", "workoutLogId": "cworklog_010", "exerciseName": "Bench Press", "weight": 62.5 }
+            ]
+          }
+        ],
+        "weight": {
+          "id": "cw_300",
+          "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+          "date": "2026-03-18T06:50:00.000Z",
+          "weightKg": 78.4,
+          "notes": null,
+          "loggedAt": "2026-03-18T06:51:00.000Z"
+        },
+        "metrics": {
+          "id": "cm_700",
+          "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+          "date": "2026-03-18T00:00:00.000Z",
+          "steps": 9200,
+          "waterLiters": 2.1,
+          "sleepHours": 7.3,
+          "notes": "Slept late",
+          "updatedAt": "2026-03-18T14:09:02.000Z"
+        }
+      }
+    },
+    "meal_log": {
+      "data": {
+        "id": "cmeallog_002",
+        "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+        "date": "2026-03-18T13:05:00.000Z",
+        "dayType": "TRAINING",
+        "calories": 860,
+        "protein": 58,
+        "carbs": 84,
+        "fat": 31,
+        "description": "Chicken rice plate",
+        "matchedMenuItemId": "cmenuitem_lunch_2",
+        "loggedAt": "2026-03-18T13:06:12.000Z"
+      }
+    },
+    "workout_log": {
+      "data": {
+        "id": "cworklog_010",
+        "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+        "date": "2026-03-18T17:00:00.000Z",
+        "workoutType": "Upper A",
+        "effortLevel": "NORMAL",
+        "notes": "Good session",
+        "loggedAt": "2026-03-18T18:02:10.000Z",
+        "exercises": [
+          { "id": "cwex_100", "workoutLogId": "cworklog_010", "exerciseName": "Bench Press", "weight": 62.5 }
+        ]
+      }
+    },
+    "workout_program": {
+      "id": "cprog_77",
+      "name": "Upper / Lower 4-day",
+      "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+      "coachId": "8a1d9f04-5b89-43a9-b9c6-c0a9f6fcd201",
+      "templateId": "ctmpl_3",
+      "createdAt": "2026-03-05T09:20:00.000Z",
+      "updatedAt": "2026-03-17T11:42:00.000Z",
+      "exercises": [
+        {
+          "id": "cpex_1",
+          "programId": "cprog_77",
+          "exerciseId": "cex_bench",
+          "sets": 4,
+          "reps": "8-10",
+          "weight": 62.5,
+          "rest": 120,
+          "order": 0,
+          "notes": null,
+          "exercise": { "id": "cex_bench", "name": "Bench Press", "muscleGroup": "CHEST" }
+        }
+      ]
+    },
+    "menu": {
+      "id": "cmenu_44",
+      "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+      "coachId": "8a1d9f04-5b89-43a9-b9c6-c0a9f6fcd201",
+      "name": "Training Day Menu",
+      "type": "TRAINING",
+      "notes": "Higher carbs pre/post workout",
+      "isActive": true,
+      "startDate": "2026-03-01T00:00:00.000Z",
+      "endDate": null,
+      "totalCalories": 2350,
+      "meals": [
+        {
+          "id": "cmeal_1",
+          "name": "Lunch",
+          "notes": null,
+          "totalCalories": 780,
+          "selectedOptionId": "copt_11",
+          "options": [
+            {
+              "id": "copt_11",
+              "name": "Chicken Bowl",
+              "orderIndex": 0,
+              "items": [
+                {
+                  "id": "citem_500",
+                  "role": "PROTEIN",
+                  "grams": 180,
+                  "foodItem": { "id": "food_chicken", "name": "Chicken Breast", "caloriesPer100g": 165 }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vitamins": [
+        { "id": "cv_90", "vitaminId": "vmag", "name": "Magnesium", "description": "Evening", "notes": "After dinner" }
+      ]
+    },
+    "metrics_log": {
+      "id": "cm_700",
+      "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+      "date": "2026-03-18T00:00:00.000Z",
+      "steps": 9200,
+      "waterLiters": 2.1,
+      "sleepHours": 7.3,
+      "notes": "Slept late",
+      "updatedAt": "2026-03-18T14:09:02.000Z"
+    },
+    "weight_log": {
+      "data": {
+        "id": "cw_300",
+        "clientId": "5f36db2e-0db9-4f74-b10e-5c8eaa8f29d3",
+        "date": "2026-03-18T06:50:00.000Z",
+        "weightKg": 78.4,
+        "notes": null,
+        "loggedAt": "2026-03-18T06:51:00.000Z"
+      }
+    },
+    "conversation_state": {
+      "pending_meal_candidate": null,
+      "pending_meal_update": null,
+      "pending_workout_candidate": {
+        "workoutType": "Upper A",
+        "effortLevel": "NORMAL",
+        "exercises": [
+          { "exerciseName": "Bench Press", "weight": 62.5 },
+          { "exerciseName": "Lat Pulldown", "weight": 55 }
+        ],
+        "notes": "Good session",
+        "durationMin": 58,
+        "intensity": "MEDIUM",
+        "performedAsPlanned": true,
+        "caloriesBurnEstimate": 420
+      },
+      "pending_workout_update": null,
+      "awaiting_day_type": false,
+      "awaiting_missing_fields": {
+        "actionType": "report_workout",
+        "missingFields": ["exerciseWeights"],
+        "draftPayload": { "workoutType": "Upper A" }
+      },
+      "last_menu_check": {
+        "dayType": "TRAINING",
+        "inMenu": true,
+        "likelyMatch": "Chicken Bowl",
+        "mismatchReason": null,
+        "queryFoodText": "chicken rice"
+      },
+      "last_calorie_estimate": {
+        "queryFoodText": "protein bar",
+        "estimatedCalories": 210,
+        "portionAssumption": "1 bar",
+        "confidence": 0.72,
+        "inMenu": false,
+        "outsideMenu": true
+      },
+      "last_workout_context": {
+        "programId": "cprog_77",
+        "programName": "Upper / Lower 4-day",
+        "workoutDay": "Upper A",
+        "completionStatus": "NOT_REPORTED",
+        "exerciseCount": 5,
+        "expectedExercises": ["Bench Press", "Lat Pulldown"],
+        "availablePrograms": [
+          { "id": "cprog_77", "name": "Upper / Lower 4-day" }
+        ]
+      },
+      "resolved_day_type": {
+        "dayType": "TRAINING",
+        "source": "TOOL_DAILY_STATE",
+        "capturedAt": "2026-03-18T10:11:12.000Z"
+      },
+      "updatedAt": "2026-03-18T10:15:00.000Z"
+    },
+    "pending_coach_reply_item": {
+      "data": [
+        {
+          "id": "cmsg_982",
+          "conversationId": "cconv_200",
+          "sender": "CLIENT",
+          "contentType": "TEXT",
+          "text": "יש לי כאב חד בברך אחרי הסקוואט",
+          "mediaUrl": null,
+          "mediaMimeType": null,
+          "mediaDurationSec": null,
+          "mediaThumbnail": null,
+          "sourceMessageId": "tg_889100",
+          "autoGenerated": false,
+          "aiDecision": "COACH_REPLY",
+          "aiSuggestedReply": "תודה ששיתפת, המאמן יחזור אליך אישית.",
+          "handledAt": null,
+          "handledBy": null,
+          "createdAt": "2026-03-18T12:21:02.000Z",
+          "updatedAt": "2026-03-18T12:21:02.000Z"
+        }
+      ]
+    },
+    "assistant_mcp_result": {
+      "decision": "COACH_REPLY",
+      "replyText": null,
+      "coachSuggestedReply": "תודה ששיתפת. כדי לשמור עליך בטוח, המאמן יחזור אליך עם הנחיה מדויקת.",
+      "usedTools": ["get_daily_state", "should_coach_reply"]
+    }
+  },
+  "screen_mappings": [
+    {
+      "screen": "Home / Today",
+      "main_data_sources": ["DailyStateResponseDto", "DaySelectionResponseDto"],
+      "primary_actions": ["Fetch daily state", "Set day type"],
+      "secondary_actions": ["Quick links to meal/workout logs"],
+      "empty_states": ["No day type set", "No logs today"],
+      "error_states": ["Daily state fetch failure", "No active menu target"],
+      "design_notes": "Prioritize day type and remaining calories visibility"
+    },
+    {
+      "screen": "Nutrition",
+      "main_data_sources": ["ClientMenuListResponseDto", "ClientMenuResponseDto", "MealLogResponseDto"],
+      "primary_actions": ["View active menu", "Log meal"],
+      "secondary_actions": ["Update meal", "Calorie query via assistant"],
+      "empty_states": ["No active menu"],
+      "error_states": ["Day type required", "Menu mismatch warnings"],
+      "design_notes": "Expose confidence/source for estimated meals"
+    },
+    {
+      "screen": "Meal detail / edit",
+      "main_data_sources": ["MealLogResponseDto"],
+      "primary_actions": ["Edit macros", "Edit description"],
+      "secondary_actions": ["Change matchedMenuItemId"],
+      "empty_states": ["Meal log missing"],
+      "error_states": ["Update validation failure"],
+      "design_notes": "Keep fast inline edit interactions"
+    },
+    {
+      "screen": "Workout",
+      "main_data_sources": ["WorkoutProgramResponseDto", "WorkoutLogResponseDto", "DailyStateResponseDto"],
+      "primary_actions": ["View assigned program", "Report workout"],
+      "secondary_actions": ["Update workout log"],
+      "empty_states": ["No program assigned"],
+      "error_states": ["Missing required fields for report"],
+      "design_notes": "Differentiate planned vs performed views"
+    },
+    {
+      "screen": "Exercise detail / edit",
+      "main_data_sources": ["WorkoutLogResponseDto.exercises[]"],
+      "primary_actions": ["Update exercise weight"],
+      "secondary_actions": ["(Optional) rename exercise"],
+      "empty_states": ["No exercise rows"],
+      "error_states": ["Patch payload mismatch"],
+      "design_notes": "Treat weight as guaranteed editable field"
+    },
+    {
+      "screen": "Progress / Metrics",
+      "main_data_sources": ["MetricsLogResponseDto", "DailyStateResponseDto", "daily-state range"],
+      "primary_actions": ["Upsert steps/water/sleep"],
+      "secondary_actions": ["Date range filtering"],
+      "empty_states": ["No metrics yet"],
+      "error_states": ["Date serialization typing inconsistencies"],
+      "design_notes": "Favor cards with quick-add controls"
+    },
+    {
+      "screen": "Weight tracking",
+      "main_data_sources": ["WeightLogResponseDto"],
+      "primary_actions": ["Log weight", "Update latest"],
+      "secondary_actions": ["Add notes"],
+      "empty_states": ["No weight logs"],
+      "error_states": ["Update may require weightKg"],
+      "design_notes": "Use append-first timeline"
+    },
+    {
+      "screen": "Assistant chat",
+      "main_data_sources": ["McpResultDto", "ConversationStateDto", "MessageDto"],
+      "primary_actions": ["Send query", "Follow guided clarifications"],
+      "secondary_actions": ["Quick actions for calories/day type"],
+      "empty_states": ["No prior assistant context"],
+      "error_states": ["COACH_REPLY escalation", "Tool failure fallback"],
+      "design_notes": "Make escalation explicit and reassuring"
+    },
+    {
+      "screen": "Coach inbox / replies (client-side view)",
+      "main_data_sources": ["MessageDto"],
+      "primary_actions": ["Read coach/AI replies"],
+      "secondary_actions": ["Local acknowledgement"],
+      "empty_states": ["No replies yet"],
+      "error_states": ["Escalation pending"],
+      "design_notes": "Client does not have direct pending inbox API"
+    },
+    {
+      "screen": "Profile",
+      "main_data_sources": ["UserResponseDto", "UserInfoResponseDto"],
+      "primary_actions": ["Update profile info"],
+      "secondary_actions": ["Avatar update"],
+      "empty_states": ["No optional profile data"],
+      "error_states": ["Ownership/auth issues"],
+      "design_notes": "Keep upsert form resilient to partial data"
+    },
+    {
+      "screen": "Notifications",
+      "main_data_sources": ["MessageDto", "future Notification entity"],
+      "primary_actions": ["Open deep-linked content"],
+      "secondary_actions": ["Mark read"],
+      "empty_states": ["No notifications"],
+      "error_states": ["Fetch failure"],
+      "design_notes": "Backend notification center not yet modeled"
+    },
+    {
+      "screen": "Community feed (future)",
+      "main_data_sources": ["Future CommunityPost"],
+      "primary_actions": ["Browse posts"],
+      "secondary_actions": ["React/comment/share"],
+      "empty_states": ["No posts"],
+      "error_states": ["Moderation failures"],
+      "design_notes": "Requires new backend contracts"
+    },
+    {
+      "screen": "Stories bar (future)",
+      "main_data_sources": ["Future Story, StorySlide"],
+      "primary_actions": ["View stories"],
+      "secondary_actions": ["React/reply"],
+      "empty_states": ["No active stories"],
+      "error_states": ["Media load failures"],
+      "design_notes": "Needs expiry + media delivery contracts"
+    }
+  ],
+  "design_constraints": [
+    "Client self-context ownership is enforced on most trainee routes via requireOwnership.",
+    "No delete endpoints for meal/workout/weight logs; use edit/correction UX.",
+    "Clients cannot mutate menus/programs; those are coach-managed.",
+    "Day type is foundational for calorie/menu logic and can block assistant actions.",
+    "Metrics/day selection operations are upsert-per-day.",
+    "Conversation state persists with TTL in redis/memory for multi-step assistant flows.",
+    "Assistant tool failures and uncertainty can force escalation to coach reply.",
+    "Workout exercise patch docs and implementation diverge (docs imply full update; controller parses weight only).",
+    "Weight update docs and implementation diverge (controller parses create DTO).",
+    "Client menu list contract currently diverges from runtime payload shape (summary vs full nested).",
+    "Generated SDK date types for some metrics fields are loose objects due z.date schema generation.",
+    "Meal history service query is currently date-windowed (~30 days).",
+    "Public client messaging write contract is missing.",
+    "Client conversation-list contract is missing (only coach list exists).",
+    "Inbox pending logic and ai-triage handledAt behavior appear inconsistent and should be aligned before launch.",
+    "Day-boundary calculations rely on server timezone unless normalized."
+  ],
+  "missing_social_entities": [
+    {
+      "area": "stories",
+      "proposed_entities": ["Story", "StorySlide", "StoryView"],
+      "core_fields": ["id", "authorId", "mediaType", "mediaUrl", "caption", "createdAt", "expiresAt", "visibility", "viewerCount"],
+      "phase": "phase_2"
+    },
+    {
+      "area": "community_posts",
+      "proposed_entities": ["CommunityPost"],
+      "core_fields": ["id", "authorId", "text", "media", "tags", "createdAt", "editedAt", "visibility", "status"],
+      "phase": "phase_2"
+    },
+    {
+      "area": "reactions",
+      "proposed_entities": ["PostReaction", "CommentReaction", "StoryReaction"],
+      "core_fields": ["id", "userId", "targetType", "targetId", "reactionType", "createdAt"],
+      "phase": "phase_2"
+    },
+    {
+      "area": "comments",
+      "proposed_entities": ["PostComment", "CommentThread"],
+      "core_fields": ["id", "postId", "authorId", "text", "parentCommentId", "createdAt", "editedAt", "status"],
+      "phase": "phase_2"
+    },
+    {
+      "area": "social_feed",
+      "proposed_entities": ["FeedItem", "FeedCursor"],
+      "core_fields": ["id", "type", "actorId", "targetId", "rankScore", "createdAt", "reason", "cursor"],
+      "phase": "phase_2"
+    },
+    {
+      "area": "media_attachments",
+      "proposed_entities": ["MediaAsset", "UploadSession"],
+      "core_fields": ["id", "ownerId", "mimeType", "url", "thumbnailUrl", "durationSec", "sizeBytes", "processingStatus", "createdAt"],
+      "phase": "mvp"
+    },
+    {
+      "area": "profile_badges",
+      "proposed_entities": ["Badge", "UserBadge"],
+      "core_fields": ["id", "name", "icon", "criteria", "awardedAt", "sourceEvent"],
+      "phase": "phase_2"
+    },
+    {
+      "area": "streaks_achievements",
+      "proposed_entities": ["Streak", "Achievement", "UserAchievementEvent"],
+      "core_fields": ["id", "userId", "metricType", "currentCount", "bestCount", "lastQualifiedAt", "thresholds"],
+      "phase": "mvp_or_phase_2"
+    },
+    {
+      "area": "push_notification_center",
+      "proposed_entities": ["Notification", "NotificationPreference", "NotificationDelivery"],
+      "core_fields": ["id", "userId", "type", "title", "body", "deepLink", "status", "sentAt", "readAt", "channelPreferences"],
+      "phase": "mvp"
+    }
+  ]
+}

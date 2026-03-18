@@ -20,14 +20,13 @@ export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { setUser, setToken } = useAuth();
+  const { setUser, setSessionTokens, logout } = useAuth();
 
   async function login(email: string, password: string) {
     setLoading(true);
     setError(null);
 
     try {
-      /* 1️ LOGIN */
       const loginRes = await postApiAuthLogin({
         email,
         password,
@@ -35,16 +34,27 @@ export function useLogin() {
 
       const { user: baseUser, tokens } = loginRes;
 
-      if (!tokens?.accessToken) {
+      if (
+        typeof tokens?.accessToken !== "string" ||
+        tokens.accessToken.length === 0
+      ) {
         throw new Error("Missing access token");
       }
 
-      setToken(tokens.accessToken);
+      if (
+        typeof tokens?.refreshToken !== "string" ||
+        tokens.refreshToken.length === 0
+      ) {
+        throw new Error("Missing refresh token");
+      }
 
-      /* 2️ USER INFO */
+      setSessionTokens({
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      });
+
       const userInfo = await getApiUsersIdInfo(baseUser.id);
 
-      /* 3️ BUILD UI USER */
       const profile = {
         id: baseUser.id,
         email: baseUser.email,
@@ -60,12 +70,12 @@ export function useLogin() {
 
       setUser(profile);
 
-      /* 4 NAVIGATE */
       router.replace("/(dashboard)/dashboard");
 
       return profile;
     } catch (e) {
       console.error("LOGIN ERROR:", e);
+      await logout({ redirectToLogin: false });
       setError("אימייל או סיסמה לא נכונים");
       return null;
     } finally {

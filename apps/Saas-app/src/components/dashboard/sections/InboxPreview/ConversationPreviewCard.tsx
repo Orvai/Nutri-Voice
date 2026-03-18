@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import React from "react";
+import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
@@ -7,78 +7,69 @@ import { styles } from "../../styles";
 import { channelIcon, channelLabel, formatShortDateTime, timeAgo } from "../../utils";
 
 import type { UIConversation } from "../../../../types/ui/conversation/conversation.ui";
+import type { UIMessage } from "@/types/ui/conversation/message.ui";
 
-import type { UIMessage } from "@/types/ui/conversation/message.ui"; 
-import { useConversationMessages } from "../../../../hooks/coversation/useConversationMessages";
 import { useMarkMessageHandled } from "../../../../hooks/coversation/useMarkMessageHandled";
 
-function pickLastClientUnhandled(messages: UIMessage[] | undefined | null) {
-  if (!messages?.length) return null;
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const m = messages[i];
-    if (m.sender === "CLIENT" && !m.handledAt) return m;
+type Props = {
+  conversation: UIConversation;
+  pendingMessage?: UIMessage | null;
+};
+
+function getMessagePreview(message: UIMessage | null | undefined): string {
+  if (!message) return "אין כרגע הודעה ממתינה בשיחה.";
+  if (message.text?.trim()) return message.text;
+
+  switch (message.contentType) {
+    case "IMAGE":
+      return "נשלחה תמונה";
+    case "AUDIO":
+      return "נשלחה הודעת קול";
+    case "VIDEO":
+      return "נשלח וידאו";
+    default:
+      return "נשלחה הודעת מדיה";
   }
-  return null;
 }
 
-export default function ConversationPreviewCard({ conversation }: { conversation: UIConversation }) {
+export default function ConversationPreviewCard({ conversation, pendingMessage = null }: Props) {
   const router = useRouter();
-
-  const msgQ = useConversationMessages(conversation.id);
   const markHandled = useMarkMessageHandled(conversation.id);
 
-  const lastMsg = useMemo(() => {
-    const list = msgQ.data ?? [];
-    return list.length ? list[list.length - 1] : null;
-  }, [msgQ.data]);
-
-  const lastClientUnhandled = useMemo(
-    () => pickLastClientUnhandled(msgQ.data),
-    [msgQ.data]
-  );
-
-  const needsCoach = !!lastClientUnhandled;
+  const needsCoach = !!pendingMessage;
   const aiSuggested =
-    lastClientUnhandled?.aiDecision === "COACH_REPLY" && !!lastClientUnhandled?.aiSuggestedReply;
+    pendingMessage?.aiDecision === "COACH_REPLY" && !!pendingMessage?.aiSuggestedReply;
 
-    const openConversation = () => {
-        router.push({
-          pathname: "/chat",
-          params: {
-            clientId: conversation.clientId,
-          },
-        });
-      };
+  const displayTime = pendingMessage?.createdAt ?? conversation.lastMessageAt;
+  const previewText = getMessagePreview(pendingMessage);
+
+  const openConversation = () => {
+    router.push({
+      pathname: "/chat",
+      params: {
+        clientId: conversation.clientId,
+      },
+    });
+  };
 
   const onMarkHandled = () => {
-    if (!lastClientUnhandled) return;
-    markHandled.mutate({ messageId: lastClientUnhandled.id, handledBy: "COACH" });
+    if (!pendingMessage) return;
+    markHandled.mutate({ messageId: pendingMessage.id, handledBy: "COACH" });
   };
 
   return (
     <View style={[styles.card, needsCoach ? styles.cardAttention : null]}>
       <View style={[styles.rowReverse, { gap: 10, justifyContent: "space-between" }]}>
-        <View style={[styles.rowReverse, { gap: 10, flex: 1 }]}>
-          <View
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 17,
-              backgroundColor: "rgba(17,24,39,0.06)",
-              borderWidth: 1,
-              borderColor: "rgba(17,24,39,0.08)",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+        <View style={[styles.rowReverse, { gap: 10, flex: 1 }]}> 
+          <View style={styles.channelIconBubble}>
             <Ionicons name={channelIcon(conversation.channel) as any} size={16} color="#111827" />
           </View>
 
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>
-              {channelLabel(conversation.channel)} • {timeAgo(conversation.lastMessageAt)}
+              {channelLabel(conversation.channel)} • {timeAgo(displayTime)}
             </Text>
-            <Text style={styles.meta}>עודכן: {formatShortDateTime(conversation.lastMessageAt)}</Text>
+            <Text style={styles.meta}>עודכן: {formatShortDateTime(displayTime)}</Text>
           </View>
         </View>
 
@@ -87,40 +78,36 @@ export default function ConversationPreviewCard({ conversation }: { conversation
         </Pressable>
       </View>
 
-      {msgQ.isLoading ? (
-        <View style={{ paddingTop: 10 }}>
-          <ActivityIndicator />
+      <View style={styles.inboxBody}>
+        <View style={[styles.rowReverse, { gap: 8 }]}> 
+          <View style={[styles.inboxStatusPill, needsCoach ? styles.inboxStatusNeedAction : styles.inboxStatusClear]}>
+            <Text style={styles.inboxStatusText}>{needsCoach ? "דורש טיפול" : "תקין"}</Text>
+          </View>
+          {aiSuggested ? <Text style={[styles.meta, { marginTop: 0 }]}>יש הצעת AI</Text> : null}
         </View>
-      ) : !lastMsg ? (
-        <Text style={[styles.text, { paddingTop: 10 }]}>אין הודעות בשיחה עדיין</Text>
-      ) : (
-        <View style={{ paddingTop: 10, gap: 8 }}>
-          {needsCoach ? (
-            <View style={[styles.rowReverse, { gap: 8 }]}>
-              <Text style={[styles.title, { fontSize: 12 }]}>דורש טיפול</Text>
-              {aiSuggested ? <Text style={[styles.meta, { marginTop: 0 }]}>• יש הצעת AI</Text> : null}
-            </View>
-          ) : (
-            <Text style={[styles.meta, { marginTop: 0 }]}>סטטוס: תקין</Text>
-          )}
 
-          <Text style={[styles.meta, { marginTop: 0 }]}>הודעה אחרונה</Text>
-          <Text style={styles.text} numberOfLines={3}>
-            {lastMsg.text || "תוכן מדיה"}
-          </Text>
+        <Text style={[styles.meta, { marginTop: 0 }]}>הודעת לקוח</Text>
+        <Text style={styles.text} numberOfLines={3}>
+          {previewText}
+        </Text>
 
-          {aiSuggested ? (
-            <>
-              <Text style={[styles.meta, { marginTop: 0 }]}>הצעת AI</Text>
-              <Text style={styles.text} numberOfLines={3}>
-                {lastClientUnhandled?.aiSuggestedReply}
-              </Text>
-            </>
-          ) : null}
+        {aiSuggested ? (
+          <>
+            <Text style={[styles.meta, { marginTop: 0 }]}>הצעת AI לתגובה</Text>
+            <Text style={styles.text} numberOfLines={3}>
+              {pendingMessage?.aiSuggestedReply}
+            </Text>
+          </>
+        ) : null}
+
+        <View style={[styles.rowReverse, { justifyContent: "space-between", marginTop: 4 }]}> 
+          <Pressable style={styles.ghostBtn} onPress={openConversation}>
+            <Text style={styles.ghostBtnText}>מעבר לצ׳אט</Text>
+          </Pressable>
 
           {needsCoach ? (
             <Pressable
-              style={[styles.secondaryBtn, { alignSelf: "flex-end", opacity: markHandled.isPending ? 0.6 : 1 }]}
+              style={[styles.secondaryBtn, { opacity: markHandled.isPending ? 0.6 : 1 }]}
               onPress={onMarkHandled}
               disabled={markHandled.isPending}
             >
@@ -130,7 +117,7 @@ export default function ConversationPreviewCard({ conversation }: { conversation
             </Pressable>
           ) : null}
         </View>
-      )}
+      </View>
     </View>
   );
 }

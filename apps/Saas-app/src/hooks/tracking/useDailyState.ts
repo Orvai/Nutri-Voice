@@ -23,6 +23,18 @@ export function useDailyState(clientId?: string) {
 }
 
 export function useDailyStateRange(startDate: string, endDate: string, clientId?: string) {
+  return useDailyStateRangeWithOptions(startDate, endDate, clientId);
+}
+
+export function useDailyStateRangeWithOptions(
+  startDate: string,
+  endDate: string,
+  clientId?: string,
+  options?: {
+    enabled?: boolean;
+    staleTime?: number;
+  }
+) {
   return useQuery<DailyState[]>({
     queryKey: trackingKeys.rangeState(startDate, endDate, clientId),
     queryFn: async ({ signal }) => {
@@ -33,6 +45,7 @@ export function useDailyStateRange(startDate: string, endDate: string, clientId?
       
       return mapDailyStateList(res);
     },
-    enabled: !!startDate && !!endDate, 
+    enabled: (options?.enabled ?? true) && !!startDate && !!endDate,
+    staleTime: options?.staleTime ?? 0,
   });
 }

@@ -18,6 +18,12 @@ export const useMarkMessageHandled = (conversationId: string) => {
       qc.invalidateQueries({
         queryKey: conversationKeys.messages(conversationId),
       });
+      qc.invalidateQueries({
+        queryKey: conversationKeys.inbox(),
+      });
+      qc.invalidateQueries({
+        queryKey: conversationKeys.all,
+      });
     },
   });
 };

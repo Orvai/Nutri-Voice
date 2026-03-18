@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRequired } from "../../middleware/authRequired.js";
 import { requireCoach } from "../../middleware/requireRole.js";
+import { requireOwnership } from "../../middleware/requireOwnership.js";
 import { forward } from "../../utils/forward.js";
 
 const r = Router();
@@ -32,6 +33,13 @@ const BASE = process.env.TRACKING_SERVICE_URL;
 r.get(
   "/daily-state",
   authRequired,
+  (req, res, next) => {
+    if (req.user?.role === "coach" && !req.query?.clientId) {
+      return res.status(400).json({ message: "Coach must provide clientId" });
+    }
+    next();
+  },
+  requireOwnership,
   forward(BASE, "/internal/tracking/daily-state")
 );
 
@@ -74,7 +82,18 @@ r.get(
  *               items:
  *                 $ref: "#/components/schemas/DailyStateResponseDto"
  */
-r.get("/daily-state/range",authRequired,forward(BASE,"/internal/tracking/range-state"));
+r.get(
+  "/daily-state/range",
+  authRequired,
+  (req, res, next) => {
+    if (req.user?.role === "coach" && !req.query?.clientId) {
+      return res.status(400).json({ message: "Coach must provide clientId" });
+    }
+    next();
+  },
+  requireOwnership,
+  forward(BASE, "/internal/tracking/range-state")
+);
 
 
 /**
@@ -102,6 +121,7 @@ r.get("/daily-state/range",authRequired,forward(BASE,"/internal/tracking/range-s
 r.post(
   "/day-selection",
   authRequired,
+  requireOwnership,
   forward(BASE, "/internal/tracking/day-selection")
 );
 
@@ -131,6 +151,7 @@ r.get(
   "/day-selection/today/:clientId",
   authRequired,
   requireCoach,
+  requireOwnership,
   forward(BASE, "/internal/tracking/day-selection/today/:clientId")
 );
 

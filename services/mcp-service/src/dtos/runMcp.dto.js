@@ -27,6 +27,15 @@ export const RunMcpDto = z.object({
       content: z.string(),
     })
   ).optional().default([]), 
+
+  requestAudit: z
+    .object({
+      requestId: z.string().min(1),
+      actorId: z.string().min(1),
+      clientId: z.string().nullable().optional(),
+      toolName: z.string().nullable().optional(),
+    })
+    .optional(),
 }).superRefine((value, ctx) => {
   if (value.sender === "coach" && !value.userId) {
     ctx.addIssue({

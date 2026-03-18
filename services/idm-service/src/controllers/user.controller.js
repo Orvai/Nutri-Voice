@@ -73,10 +73,31 @@ const getUserByPhone = async (req, res, next) => {
   }
 };
 
+const checkCoachOwnership = async (req, res, next) => {
+  try {
+    const { coachId, clientId } = req.params;
+    if (!coachId || !clientId) {
+      return res.status(400).json({ message: "coachId and clientId are required" });
+    }
+
+    const owns = await S.coachOwnsClient({ coachId, clientId });
+    return res.json({
+      data: {
+        coachId,
+        clientId,
+        owns,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   createUser,
   updateUser,
   getUser,
   listUsers,
   getUserByPhone,
+  checkCoachOwnership,
 };

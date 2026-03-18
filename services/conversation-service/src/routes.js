@@ -64,6 +64,12 @@ router.post(
   Message.markHandled
 );
 
+router.get(
+  "/internal/messages/:id",
+  verifyInternalToken,
+  Message.getMessage
+);
+
 /* ============================================================
    INBOX – coach dashboard
 ============================================================ */

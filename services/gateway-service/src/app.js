@@ -11,11 +11,13 @@ import trackingRoutes from "./routes/tracking/index.js";
 import idmGatewayRoutes from "./routes/idm/index.js";
 import conversationRoutes from "./routes/conversation/index.js";
 import webhookRoutes from "./routes/conversation/webhook.routes.js";
+import coachRoutes from "./routes/coach/index.js";
 
 // Middleware Imports
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyJwt } from "./middleware/verifyJwt.js";
 import { verifyInternalToken } from "./middleware/verifyInternalToken.js";
+import { attachAuditContext } from "./middleware/attachAuditContext.js";
 import logger from "./middleware/logger.js";
 
 const app = express();
@@ -31,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(logger);
+app.use(attachAuditContext);
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get("/api/docs-json", (req, res) => res.json(swaggerSpec));
@@ -50,6 +53,7 @@ app.use("/api/workout", workoutRoutes);
 app.use("/api/tracking", trackingRoutes);
 app.use("/api", idmGatewayRoutes); 
 app.use("/api", conversationRoutes);
+app.use("/api", coachRoutes);
 
 // 7. Error Handler (Always Last)
 app.use(errorHandler);

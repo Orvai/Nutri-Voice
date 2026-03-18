@@ -1,4 +1,5 @@
 import axios from "axios";
+import { buildAuditContext, resolveClientId } from "./audit.js";
 
 export function forward(baseURL, targetPath, options = {}) {
   const { preservePath = false } = options;
@@ -30,8 +31,18 @@ export function forward(baseURL, targetPath, options = {}) {
           2. Identity Injection Logic                       
       ============================ */
       const user = req.user || {};
-      const actorId = user.id; // או user.userId
+      const actorId = user.actorId || user.id;
       const actorRole = user.role;
+      const subjectId = user.userId || user.id;
+      const audit = buildAuditContext(req, {
+        requestId: req.audit?.requestId,
+        toolName: req.audit?.toolName,
+      });
+      const resolvedClientId = resolveClientId(req);
+      const coachIdHeader =
+        req.headers["x-coach-id"] ||
+        user.coachId ||
+        (actorRole === "coach" ? actorId : undefined);
 
       /* ============================
           3. Build SAFE headers
@@ -41,13 +52,18 @@ export function forward(baseURL, targetPath, options = {}) {
         "x-internal-token": process.env.INTERNAL_TOKEN,
 
         // Identity Headers (Source of Truth for the Actor)
-        "x-user-id": actorId,
+        "x-user-id": subjectId,
         "x-role": actorRole,
         "x-session-id": user.sessionId,
-        
+        "x-actor-id": actorId,
+        "x-actor-type": user.actorType,
+        "x-tenant-id": user.tenantId,
 
-        "x-client-id": req.headers["x-client-id"] || (actorRole === 'client' ? actorId : undefined),
-        "x-coach-id": req.headers["x-coach-id"] || (actorRole === 'coach' ? actorId : undefined),
+        "x-client-id":
+          req.headers["x-client-id"] ||
+          resolvedClientId ||
+          (actorRole === "client" ? actorId : undefined),
+        "x-coach-id": coachIdHeader,
 
         // Pass-through headers 
         authorization: req.headers.authorization,
@@ -58,6 +74,8 @@ export function forward(baseURL, targetPath, options = {}) {
         "x-mcp-sender": req.headers["x-mcp-sender"],
         "x-mcp-client-id": req.headers["x-mcp-client-id"],
         "x-mcp-user-id": req.headers["x-mcp-user-id"],
+        "x-tool-name": req.headers["x-tool-name"] || audit.toolName,
+        "x-request-id": req.headers["x-request-id"] || audit.requestId,
 
         // Cache control
         "cache-control": "no-cache",
@@ -92,7 +110,9 @@ export function forward(baseURL, targetPath, options = {}) {
         config.data = req.body;
       }
 
-      console.log(`➡️ FORWARD: ${method.toUpperCase()} ${url} | Actor: ${actorId} (${actorRole})`);
+      console.log(
+        `➡️ FORWARD: ${method.toUpperCase()} ${url} | Actor: ${actorId} (${actorRole}) | requestId=${audit.requestId}`
+      );
 
       const response = await axios(config);
 

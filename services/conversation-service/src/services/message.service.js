@@ -5,6 +5,7 @@ const {
   CreateAiMessageDto,
   MarkClientMessageHandledDto,
   GetMessagesByConversationDto,
+  GetMessageByIdDto,
 } = require("../dtos/message.dto");
 
 const { MessageSender, MessageContentType } = require("@prisma/client");
@@ -112,10 +113,22 @@ const getMessagesByConversation = async (payload) => {
   });
 };
 
+const getMessageById = async (payload) => {
+  const { messageId } = GetMessageByIdDto.parse(payload);
+
+  return prisma.message.findUnique({
+    where: { id: messageId },
+    include: {
+      conversation: true,
+    },
+  });
+};
+
 module.exports = {
   createClientMessage,
   createCoachMessage,
   createAiMessage,
   markClientMessageHandled,
   getMessagesByConversation,
+  getMessageById,
 };

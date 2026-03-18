@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRequired } from "../../middleware/authRequired.js";
 import { requireCoach } from "../../middleware/requireRole.js";
+import { requireOwnership } from "../../middleware/requireOwnership.js";
 import { forward } from "../../utils/forward.js";
 
 const r = Router();
@@ -80,7 +81,16 @@ r.get("/programs/:programId",authRequired,requireCoach,forward(BASE, "/internal/
  *               items:
  *                 $ref: "#/components/schemas/WorkoutProgramResponseDto"
  */
-r.get("/:clientId/workout-programs",authRequired,forward(BASE, "/internal/workout/programs"));
+r.get(
+  "/:clientId/workout-programs",
+  authRequired,
+  requireOwnership,
+  (req, _res, next) => {
+    req.query.clientId = req.params.clientId;
+    next();
+  },
+  forward(BASE, "/internal/workout/programs")
+);
 
 /**
  * @openapi
@@ -111,7 +121,12 @@ r.get("/:clientId/workout-programs",authRequired,forward(BASE, "/internal/workou
  *       404:
  *         description: Workout program not found
  */
-r.get("/:clientId/workout-programs/:programId",authRequired,forward(BASE, "/internal/workout/programs/:programId"));
+r.get(
+  "/:clientId/workout-programs/:programId",
+  authRequired,
+  requireOwnership,
+  forward(BASE, "/internal/workout/programs/:programId")
+);
 
 /**
  * @openapi
@@ -152,7 +167,7 @@ r.get("/:clientId/workout-programs/:programId",authRequired,forward(BASE, "/inte
  *       403:
  *         description: Forbidden (coach only)
  */
-r.post("/:clientId/workout-programs",authRequired,requireCoach,(req, res, next) => {
+r.post("/:clientId/workout-programs",authRequired,requireCoach,requireOwnership,(req, res, next) => {
     req.body = {
       ...req.body,
       clientId: req.params.clientId,
@@ -198,7 +213,7 @@ r.post("/:clientId/workout-programs",authRequired,requireCoach,(req, res, next) 
  *       404:
  *         description: Workout program not found
  */
-r.put("/:clientId/workout-programs/:programId",authRequired,requireCoach,forward(BASE, "/internal/workout/programs/:programId"));
+r.put("/:clientId/workout-programs/:programId",authRequired,requireCoach,requireOwnership,forward(BASE, "/internal/workout/programs/:programId"));
 
 /**
  * @openapi
@@ -234,7 +249,7 @@ r.put("/:clientId/workout-programs/:programId",authRequired,requireCoach,forward
  *       404:
  *         description: Workout program not found
  */
-r.delete("/:clientId/workout-programs/:programId",authRequired,requireCoach,(req, res, next) => {
+r.delete("/:clientId/workout-programs/:programId",authRequired,requireCoach,requireOwnership,(req, res, next) => {
     req.body = {
       clientId: req.params.clientId,
       coachId: req.user.id,

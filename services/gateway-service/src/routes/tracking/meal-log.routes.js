@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRequired } from "../../middleware/authRequired.js";
 import { requireCoach } from "../../middleware/requireRole.js";
+import { requireOwnership } from "../../middleware/requireOwnership.js";
 import { forward } from "../../utils/forward.js";
 
 const r = Router();
@@ -32,6 +33,7 @@ const BASE = process.env.TRACKING_SERVICE_URL;
 r.post(
   "/meal-log",
   authRequired,
+  requireOwnership,
   forward(BASE, "/internal/tracking/meal-log")
 );
 
@@ -66,6 +68,7 @@ r.post(
 r.put(
   "/meal-log/:logId",
   authRequired,
+  requireOwnership,
   forward(BASE, "/internal/tracking/meal-log/:logId")
 );
 
@@ -95,6 +98,7 @@ r.get(
   "/meal-log/history/:clientId",
   authRequired,
   requireCoach,
+  requireOwnership,
   forward(BASE, "/internal/tracking/meal-log/history/:clientId")
 );
 

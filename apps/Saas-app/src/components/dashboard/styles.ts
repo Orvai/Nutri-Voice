@@ -32,6 +32,45 @@ export const styles = StyleSheet.create({
 
   rowReverse: { flexDirection: "row-reverse", alignItems: "center" },
 
+  channelIconBubble: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "rgba(17,24,39,0.06)",
+    borderWidth: 1,
+    borderColor: "rgba(17,24,39,0.08)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  inboxBody: {
+    paddingTop: 10,
+    gap: 8,
+  },
+
+  inboxStatusPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+
+  inboxStatusNeedAction: {
+    backgroundColor: "rgba(239,68,68,0.14)",
+    borderColor: "rgba(239,68,68,0.3)",
+  },
+
+  inboxStatusClear: {
+    backgroundColor: "rgba(34,197,94,0.1)",
+    borderColor: "rgba(34,197,94,0.2)",
+  },
+
+  inboxStatusText: {
+    fontSize: 11,
+    fontWeight: "900",
+    color: "#111827",
+  },
+
   title: { fontSize: 14, fontWeight: "900", color: "#111827", textAlign: "right" },
   meta: { marginTop: 2, fontSize: 12, color: "rgba(17,24,39,0.55)", textAlign: "right" },
   text: { fontSize: 13, color: "rgba(17,24,39,0.75)", textAlign: "right", lineHeight: 18 },

@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { authRequired } from "../../middleware/authRequired.js";
 import { requireCoach } from "../../middleware/requireRole.js";
+import { requireOwnership } from "../../middleware/requireOwnership.js";
+import {
+  resolveConversationClient,
+  resolveMessageClient,
+} from "../../middleware/resolveConversationClient.js";
 import { forward } from "../../utils/forward.js";
 
 const r = Router();
@@ -37,6 +42,8 @@ const BASE = process.env.CONVERSATION_SERVICE_URL;
 r.get(
   "/conversations/:id/messages",
   authRequired,
+  resolveConversationClient,
+  requireOwnership,
   forward(BASE, "/internal/conversations/:id/messages")
 );
 
@@ -72,6 +79,8 @@ r.post(
   "/conversations/:id/messages",
   authRequired,
   requireCoach,
+  resolveConversationClient,
+  requireOwnership,
   forward(BASE, "/internal/conversations/:id/messages")
 );
 
@@ -111,6 +120,8 @@ r.post(
 r.post(
   "/messages/:id/handled",
   authRequired,
+  resolveMessageClient,
+  requireOwnership,
   forward(BASE, "/internal/messages/:id/handled")
 );
 

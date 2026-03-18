@@ -3,6 +3,7 @@
 const {
   createCoachMessage,
   getMessagesByConversation,
+  getMessageById,
   markClientMessageHandled,
 } = require("../services/message.service");
 const {MarkClientMessageHandledDto} = require("../dtos/message.dto")
@@ -57,8 +58,22 @@ const markHandled = async (req, res, next) => {
   }
 };
 
+const getMessage = async (req, res, next) => {
+  try {
+    const messageId = req.params.id;
+    const message = await getMessageById({ messageId });
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+    return res.json({ data: message });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   listMessages,
   sendCoachMessage,
   markHandled,
+  getMessage,
 };
