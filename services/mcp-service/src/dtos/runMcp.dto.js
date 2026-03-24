@@ -8,6 +8,7 @@ export const RunMcpDto = z.object({
   
   clientId: z.string(),
   userId: z.string().optional(),
+  userGender: z.string().optional(),
   
   contentType: z.enum(["TEXT", "IMAGE", "AUDIO", "VIDEO"]).optional().default("TEXT"),
   media: z

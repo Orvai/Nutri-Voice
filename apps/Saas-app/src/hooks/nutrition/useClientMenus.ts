@@ -9,6 +9,27 @@ import {
   UINutritionMenuTab,
 } from "@/types/ui/nutrition/nutrition.types";
 
+type ClientMenuTabDto = {
+  id: string;
+  name: string;
+  type: string;
+  totalCalories: number;
+  allowedDaysPerWeek?: number;
+};
+
+function isClientMenuTabDto(value: unknown): value is ClientMenuTabDto {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const dto = value as Record<string, unknown>;
+  return (
+    typeof dto.id === "string" &&
+    typeof dto.name === "string" &&
+    typeof dto.type === "string" &&
+    typeof dto.totalCalories === "number" &&
+    (dto.allowedDaysPerWeek === undefined ||
+      typeof dto.allowedDaysPerWeek === "number")
+  );
+}
+
 /* =====================================
    Queries
 ===================================== */
@@ -18,8 +39,16 @@ export function useClientMenus(clientId?: string) {
     queryKey: nutritionKeys.clientMenus(clientId),
     enabled: !!clientId, 
     queryFn: async ({ signal }) => {
-      const res = await getApiClientMenus({ clientId: clientId! }, signal); 
-      return res.map(mapClientMenuToTab);
+      const res = (await getApiClientMenus(
+        { clientId: clientId! },
+        signal
+      )) as unknown[];
+
+      const normalizedMenus = res.flatMap((menu) =>
+        Array.isArray(menu) ? menu : [menu]
+      );
+
+      return normalizedMenus.filter(isClientMenuTabDto).map(mapClientMenuToTab);
     },
   });
 }
@@ -56,7 +85,7 @@ export function useUpdateClientMenu() {
         queryKey: nutritionKeys.clientMenu(id),
       });
       queryClient.invalidateQueries({
-        queryKey: nutritionKeys.clientMenus(),
+        queryKey: [...nutritionKeys.root, "clientMenus"],
       });
     },
   });

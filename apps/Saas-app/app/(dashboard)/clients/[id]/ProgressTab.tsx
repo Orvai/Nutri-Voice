@@ -117,7 +117,7 @@ export default function ProgressTab({ client }: { client: { id: string } }) {
             ) : (
               <ProgressSectionEmptyState
                 title="התנהגות קלורית"
-                message="לא נמצאו מספיק ימי יעד קלורי (יום אימון/מנוחה) להצגת דלתא קלורית."
+                message="לא נמצאו מספיק ימי יעד קלורי (יום העמסה/ללא העמסה) להצגת דלתא קלורית."
               />
             )}
 

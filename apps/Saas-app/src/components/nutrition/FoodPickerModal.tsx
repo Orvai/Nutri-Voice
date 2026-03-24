@@ -71,6 +71,7 @@ export default function FoodPickerModal({
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
+            style={styles.filtersBar}
             contentContainerStyle={styles.row}
           >
             <Pressable
@@ -112,7 +113,7 @@ export default function FoodPickerModal({
           </ScrollView>
 
           {/* List */}
-          <ScrollView>
+          <ScrollView style={styles.list}>
             {isLoading && (
               <Text style={styles.message}>
                 טוען מוצרים...

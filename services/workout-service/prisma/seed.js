@@ -24,70 +24,70 @@ function randomVideo() {
 // -------------------------
 const EXERCISES = [
   {
-    name: "Bench Press",
+    name: "לחיצת חזה",
     muscleGroup: MuscleGroup.CHEST,
     workoutTypes: [WorkoutType.A, WorkoutType.UPPER, WorkoutType.FBW],
     equipment: "Barbell",
     difficulty: "medium",
   },
   {
-    name: "Incline Dumbbell Press",
+    name: "לחיצת חזה בשיפוע עם משקולות",
     muscleGroup: MuscleGroup.CHEST,
     workoutTypes: [WorkoutType.A, WorkoutType.UPPER],
     equipment: "Dumbbell",
     difficulty: "medium",
   },
   {
-    name: "Lat Pulldown",
+    name: "משיכת פולי עליון",
     muscleGroup: MuscleGroup.BACK,
     workoutTypes: [WorkoutType.A, WorkoutType.FBW, WorkoutType.PULL],
     equipment: "Machine",
     difficulty: "easy",
   },
   {
-    name: "Barbell Row",
+    name: "חתירה במוט",
     muscleGroup: MuscleGroup.BACK,
     workoutTypes: [WorkoutType.B, WorkoutType.PULL],
     equipment: "Barbell",
     difficulty: "hard",
   },
   {
-    name: "Shoulder Press",
+    name: "לחיצת כתפיים",
     muscleGroup: MuscleGroup.SHOULDERS,
     workoutTypes: [WorkoutType.A, WorkoutType.UPPER],
     equipment: "Dumbbell",
     difficulty: "medium",
   },
   {
-    name: "Squat",
+    name: "סקוואט",
     muscleGroup: MuscleGroup.LEGS,
     workoutTypes: [WorkoutType.LEGS, WorkoutType.FBW, WorkoutType.A],
     equipment: "Barbell",
     difficulty: "hard",
   },
   {
-    name: "Leg Press",
+    name: "לחיצת רגליים",
     muscleGroup: MuscleGroup.LEGS,
     workoutTypes: [WorkoutType.LEGS, WorkoutType.FBW],
     equipment: "Machine",
     difficulty: "easy",
   },
   {
-    name: "Glute Bridge",
+    name: "גשר ישבן",
     muscleGroup: MuscleGroup.GLUTES,
     workoutTypes: [WorkoutType.GLUTES, WorkoutType.FBW],
     equipment: "Bodyweight",
     difficulty: "easy",
   },
   {
-    name: "Bicep Curl",
+    name: "כפיפת מרפקים",
     muscleGroup: MuscleGroup.BICEPS,
     workoutTypes: [WorkoutType.PULL, WorkoutType.A, WorkoutType.B],
     equipment: "Dumbbell",
     difficulty: "easy",
   },
   {
-    name: "Tricep Rope Pushdown",
+    name: "פשיטת מרפקים בכבל",
     muscleGroup: MuscleGroup.TRICEPS,
     workoutTypes: [WorkoutType.PUSH, WorkoutType.A],
     equipment: "Cable",
@@ -112,7 +112,7 @@ const WORKOUT_TEMPLATES = [
       MuscleGroup.BICEPS,
       MuscleGroup.TRICEPS,
     ],
-    name: "FBW – Beginner Male ECTO",
+    name: "אימון גוף מלא – גבר מתחיל אקטומורף",
   },
   {
     gender: Gender.MALE,
@@ -125,7 +125,7 @@ const WORKOUT_TEMPLATES = [
       MuscleGroup.TRICEPS,
       MuscleGroup.ABS,
     ],
-    name: "Workout A – Male ENDO Level 2",
+    name: "אימון A – גבר אנדומורף רמה 2",
   },
   {
     gender: Gender.FEMALE,
@@ -137,7 +137,7 @@ const WORKOUT_TEMPLATES = [
       MuscleGroup.LEGS,
       MuscleGroup.ABS,
     ],
-    name: "Lower Body – Female Beginner",
+    name: "פלג גוף תחתון – אישה מתחילה",
   },
 ];
 
@@ -160,8 +160,8 @@ async function main() {
     await prisma.exercise.create({
       data: {
         ...rest,
-        description: "Automatically seeded exercise",
-        notes: "Seed data",
+        description: "תרגיל שנוצר אוטומטית ב-seed",
+        notes: "נתוני seed",
         videoUrl,
         createdByCoachId: COACH_ID,
       },
@@ -173,7 +173,7 @@ async function main() {
     await prisma.workoutTemplate.create({
       data: {
         ...tmpl,
-        notes: "Seeded workout template",
+        notes: "תבנית אימון שנוצרה ב-seed",
       },
     });
   }

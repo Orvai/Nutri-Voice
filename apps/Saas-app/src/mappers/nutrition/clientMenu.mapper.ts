@@ -13,15 +13,19 @@ import {
    Tabs (list)
 ========================================= */
 export function mapClientMenuToTab(
-  dto: Pick<ClientMenuResponseDto, "id" | "name" | "type" | "totalCalories">
+  dto: Pick<
+    ClientMenuResponseDto,
+    "id" | "name" | "type" | "totalCalories" | "allowedDaysPerWeek"
+  >
 ): UINutritionMenuTab {
   const dayType = dto.type as UIDayType;
 
   return {
     id: dto.id,
-    label: dto.name,
+    label: dayTypeLabel(dayType),
     dayType,
     totalCalories: dto.totalCalories,
+    allowedDaysPerWeek: normalizeAllowedDaysPerWeek(dto.allowedDaysPerWeek),
   };
 }
 
@@ -35,10 +39,11 @@ export function mapClientMenu(
 
   return {
     id: dto.id,
-    name: dto.name,
+    name: dayTypeLabel(dayType),
     source: "client",
     dayType,
     totalCalories: dto.totalCalories,
+    allowedDaysPerWeek: normalizeAllowedDaysPerWeek(dto.allowedDaysPerWeek),
     notes: dto.notes,
     vitamins: dto.vitamins.map(mapVitamin),
     meals: dto.meals.map(mapMeal),
@@ -101,4 +106,15 @@ function mapFoodItem(
     caloriesPer100g: item.foodItem.caloriesPer100g ?? null,
     color: "#E5E7EB",
   };
+}
+
+function dayTypeLabel(dayType: UIDayType): string {
+  return dayType === "TRAINING" ? "יום העמסה" : "יום ללא העמסה";
+}
+
+function normalizeAllowedDaysPerWeek(value: unknown): number {
+  if (typeof value !== "number" || Number.isNaN(value)) return 7;
+  if (value < 0) return 0;
+  if (value > 7) return 7;
+  return Math.round(value);
 }

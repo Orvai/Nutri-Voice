@@ -104,6 +104,14 @@ const ResolvedDayTypeSchema = z.object({
   capturedAt: z.string().datetime(),
 }).strict();
 
+const OpenAiResponseSessionSchema = z.object({
+  provider: z.literal("responses").default("responses"),
+  lastResponseId: z.string().nullable().default(null),
+  lastStatus: z.enum(["completed", "incomplete", "failed", "unknown"]).default("unknown"),
+  chainStatus: z.enum(["OPEN", "CLOSED"]).default("OPEN"),
+  updatedAt: z.string().datetime(),
+}).strict();
+
 export const ConversationStateDto = z.object({
   pending_meal_candidate: MealCandidateSchema.nullable().default(null),
   pending_meal_update: MealUpdateSchema.nullable().default(null),
@@ -115,6 +123,7 @@ export const ConversationStateDto = z.object({
   last_calorie_estimate: LastCalorieEstimateSchema.nullable().default(null),
   last_workout_context: LastWorkoutContextSchema.nullable().default(null),
   resolved_day_type: ResolvedDayTypeSchema.nullable().default(null),
+  openai_response: OpenAiResponseSessionSchema.nullable().default(null),
   updatedAt: z.string().datetime(),
 });
 
@@ -129,6 +138,7 @@ export const ConversationStatePatchDto = z.object({
   last_calorie_estimate: LastCalorieEstimateSchema.nullable().optional(),
   last_workout_context: LastWorkoutContextSchema.nullable().optional(),
   resolved_day_type: ResolvedDayTypeSchema.nullable().optional(),
+  openai_response: OpenAiResponseSessionSchema.nullable().optional(),
   clearKeys: z.array(z.enum([
     "pending_meal_candidate",
     "pending_meal_update",
@@ -139,6 +149,7 @@ export const ConversationStatePatchDto = z.object({
     "last_calorie_estimate",
     "last_workout_context",
     "resolved_day_type",
+    "openai_response",
   ])).optional(),
 }).strict();
 
@@ -153,6 +164,7 @@ export const PendingActionToolInputDto = z.object({
   last_calorie_estimate: LastCalorieEstimateSchema.nullable().optional(),
   last_workout_context: LastWorkoutContextSchema.nullable().optional(),
   resolved_day_type: ResolvedDayTypeSchema.nullable().optional(),
+  openai_response: OpenAiResponseSessionSchema.nullable().optional(),
   clearKeys: z.array(z.enum([
     "pending_meal_candidate",
     "pending_meal_update",
@@ -163,5 +175,6 @@ export const PendingActionToolInputDto = z.object({
     "last_calorie_estimate",
     "last_workout_context",
     "resolved_day_type",
+    "openai_response",
   ])).optional(),
 }).strict();

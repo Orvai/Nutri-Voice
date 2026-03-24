@@ -4,7 +4,9 @@
   "type": "commonjs",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "seed:export": "node ../../scripts/prisma/export-service-seed.js --service-dir . --out prisma/seed.snapshot.js",
+    "seed:snapshot": "node prisma/seed.snapshot.js"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",

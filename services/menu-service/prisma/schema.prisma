@@ -37,7 +37,7 @@ enum MealItemRole {
 
 model FoodItem {
   id              String  @id @default(cuid())
-  name            String
+  name            String  @unique
   description     String?
   category        String
   caloriesPer100g Float
@@ -170,6 +170,7 @@ model ClientMenu {
 
   name        String
   type        DayType
+  allowedDaysPerWeek Int @default(7)
   notes       String?
   isActive    Boolean @default(true)
   totalCalories Float @default(0)

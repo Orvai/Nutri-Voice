@@ -25,10 +25,14 @@ export const styles = StyleSheet.create({
 
   filterText: {
     fontSize: 12,
+    textAlign: "right",
+    writingDirection: "rtl",
   },
 
   countText: {
     fontSize: 12,
     color: colors.neutral500,
+    textAlign: "right",
+    writingDirection: "rtl",
   },
 });

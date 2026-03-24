@@ -10,13 +10,16 @@ export const styles = StyleSheet.create({
     borderColor: colors.neutral200,
   },
   header: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    alignItems: "center",
+    gap: 10,
     marginBottom: 16,
     borderBottomWidth: 1,
     paddingBottom: 12,
     borderBottomColor: "#f1f5f9",
+  },
+  topRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   title: {
     fontSize: 20,
@@ -66,6 +69,48 @@ export const styles = StyleSheet.create({
   },
   caloriesUnit: {
     fontWeight: "600",
+  },
+  allowedDaysRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  allowedDaysLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  allowedDaysControls: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 6,
+  },
+  adjustButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.neutral300,
+    backgroundColor: "#f8fafc",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  adjustButtonText: {
+    fontSize: 18,
+    lineHeight: 18,
+    fontWeight: "700",
+    color: "#334155",
+  },
+  allowedDaysInput: {
+    width: 48,
+    height: 32,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.neutral300,
+    backgroundColor: colors.white,
+    fontWeight: "700",
+    color: "#111827",
+    textAlign: "center",
   },
   modalContainer: {
     flex: 1,

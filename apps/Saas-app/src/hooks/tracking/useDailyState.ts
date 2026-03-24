@@ -5,6 +5,7 @@ import { trackingKeys } from "@/queryKeys/trackingKeys";
 import { mapDailyState } from "@/mappers/tracking/daily-state.mapper";
 import { mapDailyStateList } from "@/mappers/tracking/daily-state-list.mapper";
 import { DailyState } from "@/types/ui/tracking/daily-state.ui";
+import { REALTIME_INTERVAL_MS } from "@/hooks/realtime/realtime.constants";
 
 /* =========================================
    Queries
@@ -16,8 +17,9 @@ export function useDailyState(clientId?: string) {
       const res = await getApiTrackingDailyState(clientId ? { clientId } : undefined, signal);
       return mapDailyState(res);
     },
-    refetchInterval: 30000,
+    refetchInterval: REALTIME_INTERVAL_MS.dailyState,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     staleTime: 0,
   });
 }

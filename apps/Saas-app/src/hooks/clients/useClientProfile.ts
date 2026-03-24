@@ -3,7 +3,9 @@ import { useClients } from "@/hooks/clients";
 import { useDailyState } from "@/hooks/tracking/useDailyState";
 
 export function useClientProfile(id: string) {
-  const { data: clients, isLoading: isLoadingClients } = useClients();
+  const { data: clients, isLoading: isLoadingClients } = useClients({
+    statusFilter: "all",
+  });
   
   const { data: dailyState, isLoading: isLoadingState } = useDailyState(id);
 

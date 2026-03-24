@@ -22,10 +22,41 @@ import logger from "./middleware/logger.js";
 
 const app = express();
 
+const DEFAULT_ALLOWED_ORIGIN = "http://localhost:8081";
+const NGROK_HOST_REGEX = /\.ngrok(?:-free)?\.(?:app|dev|io)$/i;
+
+const allowedOrigins = new Set(
+  (process.env.CORS_ORIGINS || DEFAULT_ALLOWED_ORIGIN)
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+);
+
+const isNgrokOrigin = (origin) => {
+  if (!origin) {
+    return false;
+  }
+
+  try {
+    const { protocol, hostname } = new URL(origin);
+    const isHttpProtocol = protocol === "http:" || protocol === "https:";
+    return isHttpProtocol && NGROK_HOST_REGEX.test(hostname);
+  } catch (_error) {
+    return false;
+  }
+};
+
 // 1. Basic Middleware
 app.use(
   cors({
-    origin: "http://localhost:8081", 
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin) || isNgrokOrigin(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(null, false);
+    },
     credentials: true,
   })
 );

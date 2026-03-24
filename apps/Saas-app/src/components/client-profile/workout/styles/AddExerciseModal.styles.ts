@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
 
   closeText: {
     textAlign: "right",
+    writingDirection: "rtl",
     color: colors.primary,
     fontSize: 16,
   },
@@ -23,6 +24,7 @@ export const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 16,
     textAlign: "right",
+    writingDirection: "rtl",
   },
 
   pickedCard: {
@@ -35,12 +37,14 @@ export const styles = StyleSheet.create({
 
   pickedName: {
     textAlign: "right",
+    writingDirection: "rtl",
     fontWeight: "800",
     color: colors.neutral800,
   },
 
   pickedMuscle: {
     textAlign: "right",
+    writingDirection: "rtl",
     color: colors.neutral500,
     marginTop: 2,
     fontSize: 12,
@@ -57,6 +61,7 @@ export const styles = StyleSheet.create({
 
   label: {
     textAlign: "right",
+    writingDirection: "rtl",
     color: colors.neutral800,
     marginBottom: 6,
   },
@@ -68,6 +73,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     textAlign: "right",
+    writingDirection: "rtl",
   },
 
   actions: {

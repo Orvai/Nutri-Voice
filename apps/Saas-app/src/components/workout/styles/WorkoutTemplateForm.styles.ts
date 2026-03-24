@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   label: {
     fontWeight: "700",
     textAlign: "right",
+    writingDirection: "rtl",
   },
 
   input: {
@@ -17,6 +18,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.white,
     textAlign: "right",
+    writingDirection: "rtl",
   },
 
   textArea: {

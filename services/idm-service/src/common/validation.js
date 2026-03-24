@@ -6,7 +6,12 @@ const validateDto = (schema, payload) => {
     return schema.parse(payload);
   } catch (err) {
     if (err instanceof ZodError) {
-      throw new AppError(400, 'Invalid request payload', 'INVALID_PAYLOAD', err.errors);
+      const details = Array.isArray(err.issues)
+        ? err.issues
+        : Array.isArray(err.errors)
+        ? err.errors
+        : undefined;
+      throw new AppError(400, 'Invalid request payload', 'INVALID_PAYLOAD', details);
     }
     throw err;
   }

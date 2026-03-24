@@ -1,6 +1,7 @@
 // src/services/workoutTemplate.service.js
 const { prisma } = require("../db/prisma");
 const { AppError } = require("../common/errors");
+const { localizeTemplate } = require("../common/workoutLocalization");
 
 const listTemplates = async (filters = {}) => {
   const where = {};
@@ -10,10 +11,12 @@ const listTemplates = async (filters = {}) => {
   if (filters.workoutType) where.workoutType = filters.workoutType;
   if (filters.level) where.level = filters.level;
 
-  return prisma.workoutTemplate.findMany({
+  const templates = await prisma.workoutTemplate.findMany({
     where,
     orderBy: { level: "asc" },
   });
+
+  return templates.map(localizeTemplate);
 };
 
 const getTemplateById = async (id) => {
@@ -21,11 +24,11 @@ const getTemplateById = async (id) => {
   if (!template) {
     throw new AppError(404, "Workout template not found");
   }
-  return template;
+  return localizeTemplate(template);
 };
 
 const createTemplate = async (data, coachId) => {
-  return prisma.workoutTemplate.create({
+  const created = await prisma.workoutTemplate.create({
     data: {
       gender: data.gender,
       level: data.level,
@@ -37,6 +40,8 @@ const createTemplate = async (data, coachId) => {
       createdByCoachId: coachId,
     },
   });
+
+  return localizeTemplate(created);
 };
 
 const updateTemplate = async (id, data, coachId) => {
@@ -62,10 +67,12 @@ const updateTemplate = async (id, data, coachId) => {
     notes: data.notes ?? template.notes,
   };
 
-  return prisma.workoutTemplate.update({
+  const updated = await prisma.workoutTemplate.update({
     where: { id },
     data: updateData,
   });
+
+  return localizeTemplate(updated);
 };
 
 const deleteTemplate = async (id, coachId) => {

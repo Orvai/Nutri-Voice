@@ -90,7 +90,7 @@ describe("runMcp", () => {
     expect(result.usedTools).toEqual(["report_meal"]);
   });
 
-  it("escalates to coach when any tool execution fails", async () => {
+  it("returns safe auto reply when any tool execution fails", async () => {
     runLLM.mockResolvedValueOnce({
       tool_calls: [
         {
@@ -110,8 +110,8 @@ describe("runMcp", () => {
 
     const result = await runMcp(baseInput);
 
-    expect(result.decision).toBe("COACH_REPLY");
-    expect(result.replyText).toBeNull();
+    expect(result.decision).toBe("AUTO_REPLY");
+    expect(result.replyText).toContain("תקלה זמנית");
     expect(result.usedTools).toEqual(["update_meal"]);
     expect(runLLM).toHaveBeenCalledTimes(1);
   });
@@ -334,7 +334,7 @@ describe("runMcp", () => {
     });
 
     expect(result.decision).toBe("AUTO_REPLY");
-    expect(result.replyText).toContain("אימון או מנוחה");
+    expect(result.replyText).toContain("העמסה או יום ללא העמסה");
     expect(result.usedTools).toEqual([]);
     expect(runLLM).not.toHaveBeenCalled();
   });
@@ -388,6 +388,33 @@ describe("runMcp", () => {
     expect(result.decision).toBe("AUTO_REPLY");
     expect(result.replyText).toContain("איני יכול לענות לך על זה");
     expect(result.usedTools).toEqual([]);
+    expect(runLLM).not.toHaveBeenCalled();
+  });
+
+  it("returns natural greeting reply for small talk and skips tools/llm", async () => {
+    const result = await runMcp({
+      ...baseInput,
+      userText: "מה קורה בראדר",
+    });
+
+    expect(result.decision).toBe("AUTO_REPLY");
+    expect(result.replyText).toContain("הכל טוב");
+    expect(result.usedTools).toEqual([]);
+    expect(callGateway).not.toHaveBeenCalled();
+    expect(runLLM).not.toHaveBeenCalled();
+  });
+
+  it("uses female greeting style for small talk when gender is female", async () => {
+    const result = await runMcp({
+      ...baseInput,
+      userGender: "female",
+      userText: "מה קורה",
+    });
+
+    expect(result.decision).toBe("AUTO_REPLY");
+    expect(result.replyText).toContain("מה קורה חיים שלי");
+    expect(result.usedTools).toEqual([]);
+    expect(callGateway).not.toHaveBeenCalled();
     expect(runLLM).not.toHaveBeenCalled();
   });
 
@@ -499,5 +526,14 @@ describe("runMcp", () => {
     expect(result.replyText).toContain("חסר לי עדיין");
     expect(result.usedTools).toEqual(["report_workout"]);
     expect(runLLM).toHaveBeenCalledTimes(2);
+  });
+
+  it("falls back to AUTO_REPLY when LLM request fails", async () => {
+    runLLM.mockRejectedValueOnce(new Error("LLM request failed"));
+
+    const result = await runMcp(baseInput);
+
+    expect(result.decision).toBe("AUTO_REPLY");
+    expect(result.replyText).toContain("תקלה זמנית");
   });
 });

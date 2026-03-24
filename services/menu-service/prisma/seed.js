@@ -77,34 +77,98 @@ async function seedFoodItems() {
   console.log("🥗 Seeding FoodItems...");
 
   const foods = [
+    // בשר ועוף
+    { name: "קציצת המבורגר", category: "בשר", caloriesPer100g: 220 },
+    { name: "סטייק אנטריקוט", category: "בשר", caloriesPer100g: 251 },
+    { name: "צלעות", category: "בשר", caloriesPer100g: 350 },
+    { name: "פרגיות", category: "בשר", caloriesPer100g: 160 },
     { name: "חזה עוף", category: "בשר", caloriesPer100g: 160 },
-    { name: "פרגיות", category: "בשר", caloriesPer100g: 200 },
-    { name: "כבד עוף", category: "בשר", caloriesPer100g: 165 },
-    { name: "פסטרמה עוף", category: "בשר מעובד", caloriesPer100g: 110 },
-    { name: "שניצלים", category: "בשר מטוגן", caloriesPer100g: 250 },
+    { name: "פסטרמה עוף", category: "בשר מעובד", caloriesPer100g: 120 },
+    { name: "שניצלים", category: "בשר מטוגן", caloriesPer100g: 220 },
     { name: "חזה הודו", category: "בשר", caloriesPer100g: 135 },
-    { name: "סלמון אפוי", category: "דגים", caloriesPer100g: 200 },
-    { name: "לברק אפוי", category: "דגים", caloriesPer100g: 190 },
-    { name: "טונה בשמן", category: "דגים", caloriesPer100g: 180 },
-    { name: "מעדן פרו", category: "מעדן חלבון", caloriesPer100g: 70 },
-    { name: "קוטג 1%", category: "גבינה", caloriesPer100g: 80 },
-    { name: "קוטג 5%", category: "גבינה", caloriesPer100g: 120 },
-    { name: "גבינה לבנה 3%", category: "גבינה", caloriesPer100g: 90 },
-    { name: 'גבן"ץ 9%', category: "גבינה צהובה", caloriesPer100g: 260 },
-    { name: "ביצים", category: "ביצים", caloriesPer100g: 155 },
-    { name: "חטיף חלבון", category: "חטיף", caloriesPer100g: 350 },
-    { name: "משקה חלבון", category: "משקה חלבון", caloriesPer100g: 60 },
-    { name: "פיתה לבנה", category: "מאפה", caloriesPer100g: 260 },
+    { name: "קבב", category: "בשר", caloriesPer100g: 240 },
+    { name: "רגל עוף", category: "בשר", caloriesPer100g: 143 },
+    { name: "משולש עוף", category: "בשר", caloriesPer100g: 200 },
+    { name: "שייטל", category: "בשר", caloriesPer100g: 170 },
+    { name: "סינטה", category: "בשר", caloriesPer100g: 212 },
+    { name: "אסאדו", category: "בשר", caloriesPer100g: 282 },
+
+    // דגים וביצים
+    { name: "דג טונה", category: "דגים", caloriesPer100g: 178 },
+    { name: "טונה בשמן", category: "דגים", caloriesPer100g: 154 },
+    { name: "ביצה", category: "ביצים", caloriesPer100g: 163 },
+
+    // פחמימות ודגנים
+    { name: "פיתה", category: "מאפה", caloriesPer100g: 240 },
+    { name: "אורז", category: "דגנים", caloriesPer100g: 100 },
+    { name: "פסטה", category: "דגנים", caloriesPer100g: 110 },
+    { name: "קוסקוס", category: "דגנים", caloriesPer100g: 112 },
+    { name: "פתיתים", category: "דגנים", caloriesPer100g: 110 },
     { name: "לחם פרוס", category: "מאפה", caloriesPer100g: 250 },
-    { name: "אורז לבן מבושל", category: "דגנים", caloriesPer100g: 130 },
-    { name: "פסטה מבושלת", category: "דגנים", caloriesPer100g: 160 },
-    { name: "קוסקוס מבושל", category: "דגנים", caloriesPer100g: 112 },
-    { name: "תפוח אדמה מבושל", category: "שורש", caloriesPer100g: 87 },
-    { name: "משולש פיצה", category: "ג'אנק", caloriesPer100g: 280 },
-    { name: "נאגטס", category: "ג'אנק", caloriesPer100g: 280 },
-    { name: "המבורגר", category: "ג'אנק", caloriesPer100g: 250 },
-    { name: "צ'יפס", category: "ג'אנק", caloriesPer100g: 320 },
-    { name: "מסטיק", category: "חטיף", caloriesPer100g: 300 },
+    { name: "טורטיה", category: "מאפה", caloriesPer100g: 293 },
+    { name: "לחמנייה", category: "מאפה", caloriesPer100g: 266 },
+    { name: "קרקרים", category: "מאפה", caloriesPer100g: 400 },
+    { name: 'תפו"א', category: "שורש", caloriesPer100g: 88 },
+    { name: "פיתה כוסמין", category: "מאפה", caloriesPer100g: 180 },
+    { name: "בורגול", category: "דגנים", caloriesPer100g: 90 },
+    { name: "פסטה בולונז", category: "דגנים", caloriesPer100g: 125 },
+    { name: "חלה", category: "מאפה", caloriesPer100g: 300 },
+    { name: "פרנה", category: "מאפה", caloriesPer100g: 240 },
+    { name: "שעועית לבנה", category: "קטניות", caloriesPer100g: 139 },
+    { name: "לחם מחמצת", category: "מאפה", caloriesPer100g: 289 },
+    { name: "כוסמת", category: "דגנים", caloriesPer100g: 92 },
+    { name: "חומוס גרגירים", category: "קטניות", caloriesPer100g: 164 },
+    { name: "פול", category: "קטניות", caloriesPer100g: 110 },
+    { name: "בטטה", category: "שורש", caloriesPer100g: 86 },
+    { name: "שיבולת שועל", category: "דגנים", caloriesPer100g: 389 },
+
+    // פירות וירקות
+    { name: "מנגו", category: "פרי", caloriesPer100g: 65 },
+    { name: "תותים", category: "פרי", caloriesPer100g: 33 },
+    { name: "תפוח", category: "פרי", caloriesPer100g: 52 },
+    { name: "בננה", category: "פרי", caloriesPer100g: 91 },
+    { name: "אוכמניות", category: "פרי", caloriesPer100g: 57 },
+    { name: "אבוקדו", category: "שומן", caloriesPer100g: 166 },
+    { name: "לבבות דקל", category: "ירק", caloriesPer100g: 28 },
+    { name: "מלפפון חמוץ", category: "ירק", caloriesPer100g: 11 },
+
+    // מוצרי חלב ותוספים
+    { name: "גבינה לבנה 1%", category: "גבינה", caloriesPer100g: 62 },
+    { name: "קוטג' 1%", category: "גבינה", caloriesPer100g: 62 },
+    { name: "גבינה לבנה 3%", category: "גבינה", caloriesPer100g: 76 },
+    { name: "קוטג' 3%", category: "גבינה", caloriesPer100g: 76 },
+    { name: "גבינה לבנה 5%", category: "גבינה", caloriesPer100g: 100 },
+    { name: "קוטג' 5%", category: "גבינה", caloriesPer100g: 100 },
+    { name: 'גבנ"ץ 9%', category: "גבינה צהובה", caloriesPer100g: 178 },
+    { name: 'גבנ"ץ 28%', category: "גבינה צהובה", caloriesPer100g: 321 },
+    { name: "חטיף חלבון", category: "חטיף", caloriesPer100g: 333 },
+    { name: "אבקת חלבון", category: "משקה חלבון", caloriesPer100g: 400 },
+    { name: "משקה חלבון גו", category: "משקה חלבון", caloriesPer100g: 53 },
+
+    // שונות (שומנים, נשנושים, צ'יט)
+    { name: "ספריי שמן", category: "שומן", caloriesPer100g: 884 },
+    { name: "מיונז", category: "שומן", caloriesPer100g: 600 },
+    { name: "סקיני פסטה", category: "תוספת", caloriesPer100g: 9 },
+    { name: "חטיף אצות", category: "חטיף", caloriesPer100g: 500 },
+    { name: "קינדר", category: "חטיף", caloriesPer100g: 555 },
+    { name: "מסטיק", category: "חטיף", caloriesPer100g: 200 },
+    { name: "וודקה אקסל טן", category: "אלכוהול", caloriesPer100g: 60 },
+
+    // ג'אנק פוד
+    { name: "המבורגר", category: "ג'אנק", caloriesPer100g: 333 },
+    { name: "נאגטס", category: "ג'אנק", caloriesPer100g: 266 },
+    { name: "חלה שניצל", category: "ג'אנק", caloriesPer100g: 233 },
+    { name: "סושי", category: "ג'אנק", caloriesPer100g: 175 },
+    { name: "עוגה", category: "מתוק", caloriesPer100g: 333 },
+    { name: "לאפה שווארמה", category: "ג'אנק", caloriesPer100g: 266 },
+    { name: "צ'יפס", category: "ג'אנק", caloriesPer100g: 233 },
+    { name: "עראיס", category: "ג'אנק", caloriesPer100g: 333 },
+    { name: "פיתה שווארמה", category: "ג'אנק", caloriesPer100g: 216 },
+    { name: "משולש פיצה", category: "ג'אנק", caloriesPer100g: 250 },
+    { name: "באגט שניצל", category: "ג'אנק", caloriesPer100g: 233 },
+    { name: "פלאפל", category: "ג'אנק", caloriesPer100g: 200 },
+    { name: "סושי מטוגן", category: "ג'אנק", caloriesPer100g: 227 },
+    { name: "טורטיה משולשת", category: "ג'אנק", caloriesPer100g: 300 },
   ];
 
   await prisma.foodItem.createMany({
@@ -143,7 +207,7 @@ async function seedTrainingMenu(foodMap) {
   const menu = await prisma.templateMenu.create({
     data: {
       coachId: COACH_ID,
-      name: "תפריט יום אימון",
+      name: "יום העמסה",
       dayType: DayType.TRAINING,
       notes: "תפריט מועשר בפחמימות לאנרגיה זמינה",
       totalCalories: 0,
@@ -172,21 +236,19 @@ async function seedTrainingMenu(foodMap) {
   await prisma.templateMenu.update({ where: { id: menu.id }, data: { totalCalories: proteinCalories } });
 }
 
-// --- הפונקציה החדשה עבור יום מנוחה ---
 async function seedRestDayMenu(foodMap) {
   console.log("🛌 Seeding Rest Day Menu...");
 
   const menu = await prisma.templateMenu.create({
     data: {
       coachId: COACH_ID,
-      name: "תפריט יום מנוחה",
+      name: "יום ללא העמסה",
       dayType: DayType.REST,
       notes: "תפריט דל פחמימה יחסית לשמירה על מאזן קלורי",
       totalCalories: 0,
     },
   });
 
-  // ארוחה 1 - ארוחת בוקר קלילה
   const meal = await prisma.templateMenuMeal.create({
     data: {
       templateMenuId: menu.id,
@@ -199,8 +261,8 @@ async function seedRestDayMenu(foodMap) {
     name: "אופציות חלביות",
     kind: MealTemplateKind.DAIRY_MEAL,
     items: [
-      { food: foodMap.get("מעדן פרו"), grams: 150, role: MealItemRole.PROTEIN },
-      { food: foodMap.get("קוטג 5%"), grams: 125, role: MealItemRole.PROTEIN },
+      { food: foodMap.get("משקה חלבון גו"), grams: 150, role: MealItemRole.PROTEIN },
+      { food: foodMap.get("קוטג' 5%"), grams: 125, role: MealItemRole.PROTEIN },
     ],
   });
 
@@ -215,7 +277,6 @@ async function seedRestDayMenu(foodMap) {
     },
   });
 
-  // עדכון קלוריות
   await prisma.templateMenuMeal.update({
     where: { id: meal.id },
     data: { totalCalories: dairyCalories },
@@ -238,11 +299,10 @@ async function main() {
     await clearDb();
     const foodMap = await seedFoodItems();
     await seedVitamins();
-    
-    // יצירת שני סוגי התפריטים
+
     await seedTrainingMenu(foodMap);
     await seedRestDayMenu(foodMap);
-    
+
     console.log("🌱 Seed completed successfully");
   } catch (err) {
     console.error("❌ Seed failed:", err);

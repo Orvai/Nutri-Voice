@@ -63,4 +63,34 @@ r.get("/clients", authRequired, requireCoach, async (req, res, next) => {
  */
 r.get("/clients/:id", authRequired, forward(BASE, "/internal/users/:id"));
 
+/**
+ * @openapi
+ * /api/clients/{id}/status:
+ *   patch:
+ *     tags: [Clients]
+ *     summary: Update client status (logical deactivate/reactivate)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [active, deleted, locked]
+ *     responses:
+ *       200:
+ *         description: Client status updated
+ */
+r.patch("/clients/:id/status", authRequired, requireCoach, forward(BASE, "/internal/users/:id"));
+
 export default r;

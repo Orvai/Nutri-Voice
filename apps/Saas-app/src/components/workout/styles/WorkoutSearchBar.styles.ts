@@ -11,5 +11,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     textAlign: "right",
+    writingDirection: "rtl",
   },
 });

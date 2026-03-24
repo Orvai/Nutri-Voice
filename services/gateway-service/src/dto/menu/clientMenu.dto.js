@@ -13,6 +13,7 @@ const IsoDate = z.string();
 export const ClientMenuCreateRequestDto = z.object({
   name: z.string().min(1),
   type: z.string(), // DayType enum validated in service
+  allowedDaysPerWeek: z.number().int().min(0).max(7).optional(),
   notes: z.string().nullable().optional(),
   startDate: IsoDate.optional(),
   endDate: IsoDate.optional(),
@@ -127,6 +128,7 @@ const ClientMenuVitaminDeleteDto = z.object({
 export const ClientMenuUpdateRequestDto = z.object({
   name: z.string().min(1).optional(),
   type: z.string().optional(),
+  allowedDaysPerWeek: z.number().int().min(0).max(7).optional(),
   notes: z.string().nullable().optional(),
   isActive: z.boolean().optional(),
   startDate: IsoDate.nullable().optional(),
@@ -177,6 +179,7 @@ export const ClientMenuResponseDto = z.object({
 
   name: z.string(),
   type: z.string(),
+  allowedDaysPerWeek: z.number().int().min(0).max(7),
 
   notes: z.string().nullable(),
   isActive: z.boolean(),

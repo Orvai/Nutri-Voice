@@ -2,12 +2,16 @@
 
 import type { ExerciseResponseDto } from "@common/api/sdk/schemas";
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
+import {
+  normalizeExerciseName,
+  normalizeMuscleGroup,
+} from "@/mappers/workout/workoutEnumMapper";
 
 export function mapExerciseDtoToUI(dto: ExerciseResponseDto): UIExercise {
   return {
     id: dto.id,
-    name: dto.name,
-    muscleGroup: dto.muscleGroup,
+    name: normalizeExerciseName(dto.name),
+    muscleGroup: normalizeMuscleGroup(dto.muscleGroup),
     equipment: dto.equipment ?? null,
     videoUrl: dto.videoUrl ?? null,
   };

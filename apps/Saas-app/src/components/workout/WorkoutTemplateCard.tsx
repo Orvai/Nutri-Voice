@@ -1,6 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 
 import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
+import { normalizeGender } from "@/mappers/workout/workoutEnumMapper";
 import { AvatarBadge } from "./common/AvatarBadge";
 import { theme } from "../../theme";
 import { styles } from "./styles/WorkoutTemplateCard.styles";
@@ -47,7 +48,7 @@ export default function WorkoutTemplateCard({ program, onSelect }: Props) {
         <View style={styles.metaRow}>
           {program.gender && (
             <Text style={[styles.metaText, { color: theme.text.subtitle }]}>
-              ⚧ {program.gender}
+              ⚧ {normalizeGender(program.gender)}
             </Text>
           )}
           {program.bodyType && (

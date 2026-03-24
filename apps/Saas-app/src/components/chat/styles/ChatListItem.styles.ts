@@ -9,6 +9,15 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#f1f5f9",
+    backgroundColor: colors.white,
+  },
+  activeContainer: {
+    backgroundColor: "#e0ebff",
+  },
+  waitingContainer: {
+    backgroundColor: "#ecfdf3",
+    borderRightWidth: 4,
+    borderRightColor: colors.success,
   },
   avatar: {
     width: 44,
@@ -29,16 +38,21 @@ export const styles = StyleSheet.create({
     textAlign: "right",
     marginTop: 2,
   },
-  badge: {
-    minWidth: 24,
+  waitingMessage: {
+    color: colors.success,
+    fontWeight: "700",
+  },
+  waitingBadge: {
+    minWidth: 44,
     height: 24,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.success,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
+    paddingHorizontal: 10,
   },
-  badgeText: {
+  waitingBadgeText: {
     color: colors.white,
     fontWeight: "700",
     fontSize: 12,

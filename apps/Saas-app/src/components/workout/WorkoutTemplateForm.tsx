@@ -12,11 +12,15 @@ import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 
 import {
   WorkoutTemplateCreateRequestDto,
-  WorkoutTemplateCreateRequestDtoGender,
   WorkoutTemplateCreateRequestDtoBodyType,
+  WorkoutTemplateCreateRequestDtoGender,
 } from "@common/api/sdk/schemas";
 
-import { MUSCLE_LABEL_TO_ENUM } from "@/mappers/workout/workoutEnumMapper";
+import {
+  CANONICAL_MUSCLE_GROUP_VALUES,
+  normalizeGender,
+  normalizeMuscleGroup,
+} from "@/mappers/workout/workoutEnumMapper";
 
 import { theme } from "../../theme";
 import { Chip } from "./common/Chip";
@@ -26,20 +30,11 @@ import { styles } from "./styles/WorkoutTemplateForm.styles";
    Constants
 ====================== */
 
-const DEFAULT_MUSCLE_GROUPS = [
-  "חזה",
-  "גב",
-  "כתפיים",
-  "רגליים",
-  "ישבן",
-  "יד_קדמית",
-  "יד_אחורית",
-  "בטן",
-];
+const DEFAULT_MUSCLE_GROUPS = [...CANONICAL_MUSCLE_GROUP_VALUES];
 
 const GENDER_OPTIONS: WorkoutTemplateCreateRequestDtoGender[] = [
-  "MALE",
-  "FEMALE",
+  "זכר",
+  "נקבה",
 ];
 
 const BODY_TYPE_OPTIONS: WorkoutTemplateCreateRequestDtoBodyType[] = [
@@ -69,10 +64,6 @@ const WORKOUT_TYPE_OPTIONS: {
 
 function uniq<T>(arr: T[]) {
   return Array.from(new Set(arr));
-}
-
-function normalizeMuscle(value?: string | null) {
-  return (value ?? "").trim();
 }
 
 /* ======================
@@ -120,12 +111,18 @@ export default function WorkoutTemplateForm({
     setName(initialTemplate.name ?? null);
     setWorkoutType(initialTemplate.workoutType ?? "");
     setLevel(String(initialTemplate.level ?? ""));
-    setGender(initialTemplate.gender as WorkoutTemplateCreateRequestDtoGender);
+    setGender(
+      normalizeGender(
+        initialTemplate.gender
+      ) as WorkoutTemplateCreateRequestDtoGender
+    );
     setBodyType(
       initialTemplate.bodyType as WorkoutTemplateCreateRequestDtoBodyType
     );
     setNotes(initialTemplate.notes ?? null);
-    setSelectedMuscleGroups(uniq(initialTemplate.muscleGroups ?? []));
+    setSelectedMuscleGroups(
+      uniq((initialTemplate.muscleGroups ?? []).map(normalizeMuscleGroup))
+    );
   }, [initialTemplate]);
 
   /* ======================
@@ -134,7 +131,7 @@ export default function WorkoutTemplateForm({
 
   const allMuscleOptions = useMemo(() => {
     const fromLib = exercises
-      .map((e) => normalizeMuscle(e.muscleGroup))
+      .map((e) => normalizeMuscleGroup(e.muscleGroup))
       .filter(Boolean);
 
     return uniq(fromLib.length ? fromLib : DEFAULT_MUSCLE_GROUPS);
@@ -146,38 +143,18 @@ export default function WorkoutTemplateForm({
     Number(level) > 0 &&
     selectedMuscleGroups.length > 0;
 
-/* ======================
+  /* ======================
       Submit
   ====================== */
-
-  const toTitleCase = (str: string) => {
-    if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  };
 
   const handleSubmit = () => {
     if (!isValid || !gender || workoutType === "") return;
 
-    const validEnumValues = Object.values(MUSCLE_LABEL_TO_ENUM);
-
-    const mappedMuscles = uniq(selectedMuscleGroups).map((label) => {
-
-      let mapped = MUSCLE_LABEL_TO_ENUM[label] || MUSCLE_LABEL_TO_ENUM[toTitleCase(label)];
-
-      if (!mapped && validEnumValues.includes(label)) {
-        mapped = label;
-      }
-
-      if (!mapped) {
-        console.error("❌ Failed to map label:", label);
-        throw new Error(`Unknown muscle label: ${label}`);
-      }
-      
-      return mapped;
-    });
+    const mappedMuscles = uniq(selectedMuscleGroups.map(normalizeMuscleGroup))
+      .filter(Boolean);
 
     onSubmit({
-      gender,
+      gender: normalizeGender(gender) as WorkoutTemplateCreateRequestDtoGender,
       workoutType,
       level: Number(level),
       muscleGroups: mappedMuscles,

@@ -14,6 +14,7 @@ import type { ClientMenuUpdateRequestDtoVitaminsToDeleteItem } from './clientMen
 export interface ClientMenuUpdateRequestDto {
   name?: string;
   type?: string;
+  allowedDaysPerWeek?: number;
   /** @nullable */
   notes?: string | null;
   isActive?: boolean;

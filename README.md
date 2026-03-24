@@ -21,6 +21,7 @@ It combines three pillars:
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Repository Structure](#repository-structure)
+- [Local Ngrok Exposure (SaaS App)](#local-ngrok-exposure-saas-app)
 - [Documentation](#documentation)
 - [Safety & Guardrails](#safety--guardrails)
 - [Roadmap](#roadmap)
@@ -139,6 +140,20 @@ flowchart LR
 │   └── mcp-service/              # MCP runtime (AI orchestration)
 └── orval.config.js               # SDK generation config
 ```
+
+---
+
+## Local Ngrok Exposure (SaaS App)
+
+Use Docker Compose to expose the web app while keeping everything local:
+
+```bash
+docker compose up -d saas-app saas-proxy gateway-service ngrok
+```
+
+- `saas-proxy` serves the app at `http://localhost:8081` and forwards `/api` to `gateway-service`
+- `ngrok` exposes only `saas-proxy`, so one public URL works for both frontend and API/webhooks
+- The ngrok inspector stays at `http://localhost:4040`
 
 ---
 

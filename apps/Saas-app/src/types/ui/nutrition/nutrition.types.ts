@@ -29,6 +29,7 @@ export interface UINutritionPlan {
   source: UINutritionSource;
   dayType: UIDayType;
   totalCalories: number;
+  allowedDaysPerWeek?: number | null;
   notes: string | null;
   vitamins: UIVitamin[];
   meals: UIMeal[];
@@ -141,4 +142,5 @@ export type UINutritionMenuTab = {
   label: string;
   dayType: UIDayType;
   totalCalories: number;
+  allowedDaysPerWeek?: number | null;
 };

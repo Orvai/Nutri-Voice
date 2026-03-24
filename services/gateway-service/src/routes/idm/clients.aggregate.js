@@ -48,6 +48,7 @@ export const aggregateClients = async (req, BASE) => {
             user.email ||
             user.phone ||
             "לא צוין",
+          status: user.status || "active",
 
           phone: user.phone || "",
           email: user.email || "",
@@ -69,6 +70,7 @@ export const aggregateClients = async (req, BASE) => {
         return {
           id: user.id,
           name: user.email || "Unknown",
+          status: user.status || "active",
           error: "Failed to fetch details"
         };
       }

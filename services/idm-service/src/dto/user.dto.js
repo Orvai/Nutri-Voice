@@ -28,6 +28,7 @@ const updateUserDto = z
     phone: z.string().trim().optional(),
     firstName: z.string().trim().optional(),
     lastName: z.string().trim().optional(),
+    status: userStatusEnum.optional(),
   })
   .strict()
   .superRefine((data, ctx) => {

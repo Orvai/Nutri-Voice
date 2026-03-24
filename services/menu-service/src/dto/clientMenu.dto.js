@@ -9,6 +9,7 @@ const ClientMenuCreateDto = z
   .object({
     name: z.string().min(1),
     type: z.string(),
+    allowedDaysPerWeek: z.number().int().min(0).max(7).optional(),
     notes: z.string().nullable().optional(),
     startDate: isoDateString.optional(),
     endDate: isoDateString.optional(),
@@ -162,6 +163,7 @@ const ClientMenuUpdateDto = z
   .object({
     name: z.string().min(1).optional(),
     type: z.string().optional(),
+    allowedDaysPerWeek: z.number().int().min(0).max(7).optional(),
     notes: z.string().nullable().optional(),
     isActive: z.boolean().optional(),
     startDate: isoDateString.nullable().optional(),

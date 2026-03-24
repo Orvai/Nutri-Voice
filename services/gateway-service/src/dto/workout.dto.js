@@ -4,7 +4,7 @@ const { z } = require("zod");
    ENUMS — gateway-side
 ====================================================== */
 
-const GenderEnum = z.enum(["MALE", "FEMALE"]);
+const GenderEnum = z.enum(["זכר", "נקבה"]);
 const BodyTypeEnum = z.enum(["ECTO", "ENDO"]);
 const WorkoutTypeEnum = z.enum([
   "A",
@@ -19,16 +19,16 @@ const WorkoutTypeEnum = z.enum([
   "LEGS",
 ]);
 const MuscleGroupEnum = z.enum([
-  "CHEST",
-  "BACK",
-  "SHOULDERS",
-  "LEGS",
-  "GLUTES",
-  "ARMS",
-  "BICEPS",
-  "TRICEPS",
-  "ABS",
-  "FULL_BODY",
+  "חזה",
+  "גב",
+  "כתפיים",
+  "רגליים",
+  "ישבן",
+  "ידיים",
+  "יד קדמית",
+  "יד אחורית",
+  "בטן",
+  "גוף מלא",
 ]);
 
 /* ======================================================

@@ -10,14 +10,14 @@ export type MuscleGroupEnum = typeof MuscleGroupEnum[keyof typeof MuscleGroupEnu
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MuscleGroupEnum = {
-  CHEST: 'CHEST',
-  BACK: 'BACK',
-  SHOULDERS: 'SHOULDERS',
-  LEGS: 'LEGS',
-  GLUTES: 'GLUTES',
-  ARMS: 'ARMS',
-  BICEPS: 'BICEPS',
-  TRICEPS: 'TRICEPS',
-  ABS: 'ABS',
-  FULL_BODY: 'FULL_BODY',
+  CHEST: 'חזה',
+  BACK: 'גב',
+  SHOULDERS: 'כתפיים',
+  LEGS: 'רגליים',
+  GLUTES: 'ישבן',
+  ARMS: 'ידיים',
+  BICEPS: 'יד קדמית',
+  TRICEPS: 'יד אחורית',
+  ABS: 'בטן',
+  FULL_BODY: 'גוף מלא',
 } as const;

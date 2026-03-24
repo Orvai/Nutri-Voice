@@ -10,6 +10,6 @@ export type ExerciseCreateRequestDtoGender = typeof ExerciseCreateRequestDtoGend
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ExerciseCreateRequestDtoGender = {
-  MALE: 'MALE',
-  FEMALE: 'FEMALE',
+  MALE: 'זכר',
+  FEMALE: 'נקבה',
 } as const;

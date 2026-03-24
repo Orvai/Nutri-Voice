@@ -8,6 +8,7 @@
 export interface ClientMenuCreateRequestDto {
   name: string;
   type: string;
+  allowedDaysPerWeek?: number;
   /** @nullable */
   notes?: string | null;
   startDate?: string;

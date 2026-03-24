@@ -10,6 +10,6 @@ export type WorkoutTemplateUpdateRequestDtoGender = typeof WorkoutTemplateUpdate
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WorkoutTemplateUpdateRequestDtoGender = {
-  MALE: 'MALE',
-  FEMALE: 'FEMALE',
+  MALE: 'זכר',
+  FEMALE: 'נקבה',
 } as const;

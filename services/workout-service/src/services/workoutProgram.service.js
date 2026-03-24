@@ -1,9 +1,6 @@
 const { prisma } = require("../db/prisma");
 const { AppError } = require("../common/errors");
-const {
-  WorkoutProgramCreateRequestDto,
-  WorkoutProgramUpdateRequestDto,
-} = require("../dto/workoutProgram.dto");
+const { localizeProgram } = require("../common/workoutLocalization");
 
 /* ==============================================================
    INCLUDE FULL RELATIONS — USED EVERYWHERE
@@ -78,10 +75,12 @@ const createProgram = async (data) => {
       });
     }
 
-    return tx.workoutProgram.findUnique({
+    const createdProgram = await tx.workoutProgram.findUnique({
       where: { id: program.id },
       include: programIncludes,
     });
+
+    return localizeProgram(createdProgram);
   });
 };
 
@@ -94,11 +93,13 @@ const listPrograms = async (filters = {}) => {
   if (filters.clientId) where.clientId = filters.clientId;
   if (filters.coachId) where.coachId = filters.coachId;
 
-  return prisma.workoutProgram.findMany({
+  const programs = await prisma.workoutProgram.findMany({
     where,
     orderBy: { createdAt: "desc" },
     include: programIncludes,
   });
+
+  return programs.map(localizeProgram);
 };
 
 /* ==============================================================
@@ -112,7 +113,7 @@ const getProgramById = async (id) => {
 
   if (!program) throw new AppError(404, "Workout program not found");
 
-  return program;
+  return localizeProgram(program);
 };
 
 /* ==============================================================
@@ -196,10 +197,12 @@ const updateProgram = async (id, data) => {
     await updateExercises(tx, id, data.exercisesToUpdate);
     await addExercises(tx, id, data.exercisesToAdd);
 
-    return tx.workoutProgram.findUnique({
+    const updatedProgram = await tx.workoutProgram.findUnique({
       where: { id },
       include: programIncludes,
     });
+
+    return localizeProgram(updatedProgram);
   });
 };
 /* ==============================================================

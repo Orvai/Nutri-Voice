@@ -10,6 +10,7 @@ import ClientDetails from "@/components/chat/ClientDetails";
 import { useCoachConversations } from "@/hooks/coversation/useCoachConversations";
 import { useConversation } from "@/hooks/coversation/useConversation";
 import { useConversationMessages } from "@/hooks/coversation/useConversationMessages";
+import { usePendingInboxMessages } from "@/hooks/coversation/usePendingInboxMessages";
 import { useSendCoachMessage } from "@/hooks/coversation/useSendCoachMessage";
 import { useMarkMessageHandled } from "@/hooks/coversation/useMarkMessageHandled";
 import { useClients } from "@/hooks/clients/useClients";
@@ -22,19 +23,78 @@ export default function ChatScreen() {
       Conversations list
   ========================= */
   const { data: conversations = [], isLoading: loadingConvs } = useCoachConversations();
+  const { data: pendingInboxMessages = [] } = usePendingInboxMessages();
+
+  const waitingConversationIds = useMemo(() => {
+    return new Set(
+      pendingInboxMessages
+        .filter((message) => message.sender === "CLIENT" && message.handledBy === null)
+        .map((message) => message.conversationId)
+    );
+  }, [pendingInboxMessages]);
+
+  const latestPendingByConversation = useMemo(() => {
+    const map = new Map<string, number>();
+
+    for (const message of pendingInboxMessages) {
+      if (message.sender !== "CLIENT" || message.handledBy !== null) continue;
+      const createdAtTs = new Date(message.createdAt).getTime();
+      if (!Number.isFinite(createdAtTs)) continue;
+
+      const previous = map.get(message.conversationId) ?? 0;
+      if (createdAtTs > previous) {
+        map.set(message.conversationId, createdAtTs);
+      }
+    }
+
+    return map;
+  }, [pendingInboxMessages]);
+
+  const sortedConversations = useMemo(() => {
+    return [...conversations].sort((a, b) => {
+      const aConversationTs = a.lastMessageAt
+        ? new Date(a.lastMessageAt).getTime()
+        : 0;
+      const bConversationTs = b.lastMessageAt
+        ? new Date(b.lastMessageAt).getTime()
+        : 0;
+
+      const aPendingTs = latestPendingByConversation.get(a.id) ?? 0;
+      const bPendingTs = latestPendingByConversation.get(b.id) ?? 0;
+
+      const aLatestTs = Math.max(Number.isFinite(aConversationTs) ? aConversationTs : 0, aPendingTs);
+      const bLatestTs = Math.max(Number.isFinite(bConversationTs) ? bConversationTs : 0, bPendingTs);
+
+      if (bLatestTs !== aLatestTs) {
+        return bLatestTs - aLatestTs;
+      }
+
+      const aWaiting = waitingConversationIds.has(a.id) ? 1 : 0;
+      const bWaiting = waitingConversationIds.has(b.id) ? 1 : 0;
+      if (bWaiting !== aWaiting) {
+        return bWaiting - aWaiting;
+      }
+
+      return a.id.localeCompare(b.id);
+    });
+  }, [conversations, latestPendingByConversation, waitingConversationIds]);
+
   useEffect(() => {
-    if (loadingConvs || conversations.length === 0) return;
+    if (loadingConvs || sortedConversations.length === 0) return;
     if (clientId) {
-      const target = conversations.find(c => c.clientId === clientId);
+      const target = sortedConversations.find(c => c.clientId === clientId);
       if (target && target.id !== activeConversationId) {
         setActiveConversationId(target.id);
         return;
       }
     }
-    if (!activeConversationId && !clientId) {
-      setActiveConversationId(conversations[0].id);
+    const hasActiveConversation = activeConversationId
+      ? sortedConversations.some((conversation) => conversation.id === activeConversationId)
+      : false;
+    if (!hasActiveConversation) {
+      setActiveConversationId(sortedConversations[0].id);
     }
-  }, [conversations, clientId, loadingConvs]); 
+  }, [sortedConversations, clientId, loadingConvs, activeConversationId]); 
   const { data: conversation } = useConversation(activeConversationId ?? "");
   const { data: messages = [] } = useConversationMessages(activeConversationId ?? "");
   const { data: clients = [] } = useClients();
@@ -82,8 +142,9 @@ export default function ChatScreen() {
   return (
     <View style={{ flex: 1, flexDirection: "row-reverse" }}>
       <ChatList
-        conversations={conversations}
+        conversations={sortedConversations}
         clients={clients}
+        waitingConversationIds={waitingConversationIds}
         activeId={activeConversationId}
         onSelect={(convId) => setActiveConversationId(convId)}
       />

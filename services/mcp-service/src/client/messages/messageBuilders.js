@@ -51,11 +51,26 @@ export function buildUserMessage({ userText, contentType, media }) {
   };
 }
 
-export function buildStateSystemMessage(state) {
+export function buildStateSystemMessage(state, userProfile = {}) {
+  const trustedContext = {
+    conversationState: state,
+    userProfile: {
+      gender: userProfile?.gender || null,
+    },
+  };
+
   return {
     role: "system",
     content:
-      "Conversation state (trusted runtime context, do not expose directly): " +
-      JSON.stringify(state),
+      "Runtime context (trusted, do not expose directly): " +
+      JSON.stringify(trustedContext),
+  };
+}
+
+export function buildToolResultMessage(callId, toolResult) {
+  return {
+    role: "tool",
+    tool_call_id: callId,
+    content: JSON.stringify(toolResult),
   };
 }

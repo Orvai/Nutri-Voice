@@ -1,6 +1,7 @@
 export type ClientExtended = {
   id: string;
   name: string;
+  status: string;
   phone: string;
   email: string;
   profileImageUrl: string | null;

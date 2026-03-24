@@ -147,8 +147,12 @@ const refreshToken = async (oldRefreshToken) => {
     if (!session || session.status !== 'active' || isAfter(new Date(), new Date(session.expiresAt)))
         throw new AppError(401, 'Session expired');
 
-    const user = await prisma.user.findUnique({ where: { id: session.userId }, select: { role: true } });
+    const user = await prisma.user.findUnique({
+        where: { id: session.userId },
+        select: { role: true, status: true },
+    });
     if (!user) throw new AppError(401, 'User not found');
+    if (user.status !== 'active') throw new AppError(401, 'User account is inactive');
 
     const accessToken = signAccess(session.id, session.userId, user.role);
     const newRefreshToken = signRefresh(session.id, session.userId, user.role);
@@ -173,6 +177,10 @@ const login = async (payload) => {
     if (user.status === 'locked' && user.lockUntil && user.lockUntil <= now) {
         await U.unlockAccount(user.id);
         user.status = 'active';
+    }
+
+    if (user.status !== 'active') {
+        throw new AppError(403, 'User account is inactive');
     }
 
     const ok = await verifyCredential(user.id, {password: data.password});

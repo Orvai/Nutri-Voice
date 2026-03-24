@@ -1,9 +1,26 @@
 const { z } = require("zod");
+const {
+  mapGenderToDb,
+  mapMuscleGroupToDb,
+} = require("../common/workoutLocalization");
 
-const GenderEnum = z.enum(["MALE", "FEMALE"]);
+const mappedEnum = (mapper, fieldName) =>
+  z.string().transform((value, ctx) => {
+    const mapped = mapper(value);
+    if (!mapped) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Invalid ${fieldName}`,
+      });
+      return z.NEVER;
+    }
+    return mapped;
+  });
+
+const GenderEnum = mappedEnum(mapGenderToDb, "gender");
 const BodyTypeEnum = z.enum(["ECTO", "ENDO"]);
 const WorkoutTypeEnum = z.enum(["A", "B", "FBW", "UPPER", "LOWER", "GLUTES", "HIIT", "PUSH", "PULL", "LEGS"]);
-const MuscleGroupEnum = z.enum(["CHEST", "BACK", "SHOULDERS", "LEGS", "GLUTES", "ARMS", "BICEPS", "TRICEPS", "ABS", "FULL_BODY"]);
+const MuscleGroupEnum = mappedEnum(mapMuscleGroupToDb, "muscleGroup");
 
 const ExerciseIdParamDto = z.object({
   id: z.string(),

@@ -1,6 +1,7 @@
 // src/services/exercise.service.js
 const { prisma } = require("../db/prisma");
 const { AppError } = require("../common/errors");
+const { localizeExercise } = require("../common/workoutLocalization");
 
 const createExercise = async (data, coachId) => {
   const exercise = await prisma.exercise.create({
@@ -19,7 +20,7 @@ const createExercise = async (data, coachId) => {
     },
   });
 
-  return exercise;
+  return localizeExercise(exercise);
 };
 
 const listExercises = async (filters = {}) => {
@@ -29,10 +30,12 @@ const listExercises = async (filters = {}) => {
   if (filters.muscleGroup) where.muscleGroup = filters.muscleGroup;
   if (filters.workoutType) where.workoutTypes = { has: filters.workoutType };
 
-  return prisma.exercise.findMany({
+  const exercises = await prisma.exercise.findMany({
     where,
     orderBy: { name: "asc" },
   });
+
+  return exercises.map(localizeExercise);
 };
 
 const getExerciseById = async (id) => {
@@ -40,7 +43,7 @@ const getExerciseById = async (id) => {
   if (!exercise) {
     throw new AppError(404, "Exercise not found");
   }
-  return exercise;
+  return localizeExercise(exercise);
 };
 
 const assertExerciseOwnership = (exercise, coachId) => {
@@ -61,7 +64,7 @@ const updateExercise = async (id, data, coachId) => {
 
   assertExerciseOwnership(exercise, coachId);
 
-  return prisma.exercise.update({
+  const updated = await prisma.exercise.update({
     where: { id },
     data: {
       name: data.name ?? exercise.name,
@@ -76,6 +79,8 @@ const updateExercise = async (id, data, coachId) => {
       difficulty: data.difficulty ?? exercise.difficulty,
     },
   });
+
+  return localizeExercise(updated);
 };
 
 const deleteExercise = async (id, coachId) => {
@@ -96,10 +101,12 @@ const saveExerciseVideo = async ({ id, videoUrl, coachId }) => {
 
   assertExerciseOwnership(exercise, coachId);
 
-  return prisma.exercise.update({
+  const updated = await prisma.exercise.update({
     where: { id },
     data: { videoUrl },
   });
+
+  return localizeExercise(updated);
 };
 
 module.exports = {

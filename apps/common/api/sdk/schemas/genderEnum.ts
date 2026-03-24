@@ -10,6 +10,6 @@ export type GenderEnum = typeof GenderEnum[keyof typeof GenderEnum];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GenderEnum = {
-  MALE: 'MALE',
-  FEMALE: 'FEMALE',
+  MALE: 'זכר',
+  FEMALE: 'נקבה',
 } as const;

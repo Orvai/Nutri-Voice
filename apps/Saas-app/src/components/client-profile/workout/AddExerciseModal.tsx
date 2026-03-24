@@ -9,27 +9,14 @@ import {
 } from "react-native";
 
 import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
+import { normalizeMuscleGroup } from "@/mappers/workout/workoutEnumMapper";
 
 import WorkoutSearchBar from "../../workout/WorkoutSearchBar";
 import WorkoutFilters from "../../workout/WorkoutFilters";
 import WorkoutExerciseGrid from "../../workout/WorkoutExerciseGrid";
 import { styles } from "./styles/AddExerciseModal.styles";
 
-const MUSCLE_MAP: Record<string, string> = {
-  חזה: "CHEST",
-  גב: "BACK",
-  רגליים: "LEGS",
-  כתפיים: "SHOULDERS",
-  "יד קדמית": "BICEPS",
-  "יד אחורית": "TRICEPS",
-  ישבן: "GLUTES",
-  בטן: "ABS",
-  הכל: "ALL",
-};
-
-const MUSCLE_LABELS: Record<string, string> = Object.fromEntries(
-  Object.entries(MUSCLE_MAP).map(([label, value]) => [value, label])
-);
+const ALL_MUSCLES = "הכל";
 
 type Props = {
   visible: boolean;
@@ -48,7 +35,7 @@ export default function AddExerciseModal({
 }: Props) {
   const [query, setQuery] = useState("");
   const [selectedMuscle, setSelectedMuscle] = useState(
-    muscleGroup ? MUSCLE_LABELS[muscleGroup] ?? muscleGroup : "הכל"
+    muscleGroup ? normalizeMuscleGroup(muscleGroup) : ALL_MUSCLES
   );
 
   const [pickedExercise, setPickedExercise] = useState<UIExercise | null>(null);
@@ -57,7 +44,7 @@ export default function AddExerciseModal({
 
   useEffect(() => {
     setSelectedMuscle(
-      muscleGroup ? MUSCLE_LABELS[muscleGroup] ?? muscleGroup : "הכל"
+      muscleGroup ? normalizeMuscleGroup(muscleGroup) : ALL_MUSCLES
     );
   }, [muscleGroup]);
 
@@ -70,20 +57,24 @@ export default function AddExerciseModal({
   }, [visible]);
 
   const filteredByMuscle = useMemo(() => {
+    const normalizedSelectedGroup = normalizeMuscleGroup(muscleGroup);
+
     if (muscleGroup) {
-      return exercises.filter((ex) => ex.muscleGroup === muscleGroup);
+      return exercises.filter(
+        (ex) => normalizeMuscleGroup(ex.muscleGroup) === normalizedSelectedGroup
+      );
     }
 
-    if (selectedMuscle === "הכל") return exercises;
-    const translated = MUSCLE_MAP[selectedMuscle];
-    return translated
-      ? exercises.filter((ex) => ex.muscleGroup === translated)
-      : exercises;
+    if (selectedMuscle === ALL_MUSCLES) return exercises;
+    return exercises.filter(
+      (ex) => normalizeMuscleGroup(ex.muscleGroup) === selectedMuscle
+    );
   }, [exercises, muscleGroup, selectedMuscle]);
 
   const finalFiltered = useMemo(() => {
+    const normalizedQuery = query.toLocaleLowerCase("he");
     return filteredByMuscle.filter((ex) =>
-      ex.name.toLowerCase().includes(query.toLowerCase())
+      ex.name.toLocaleLowerCase("he").includes(normalizedQuery)
     );
   }, [filteredByMuscle, query]);
 
@@ -116,8 +107,7 @@ export default function AddExerciseModal({
             <View style={styles.pickedCard}>
               <Text style={styles.pickedName}>{pickedExercise.name}</Text>
               <Text style={styles.pickedMuscle}>
-                {MUSCLE_LABELS[pickedExercise.muscleGroup] ??
-                  pickedExercise.muscleGroup}
+                {normalizeMuscleGroup(pickedExercise.muscleGroup)}
               </Text>
             </View>
 
@@ -161,13 +151,17 @@ export default function AddExerciseModal({
           </View>
         ) : (
           <>
-            <WorkoutSearchBar value={query} onChange={setQuery}placeholder="חפש תרגיל" />
+            <WorkoutSearchBar
+              value={query}
+              onChange={setQuery}
+              placeholder="חפש תרגיל"
+            />
 
             <WorkoutFilters
               selectedMuscle={selectedMuscle}
               muscleOptions={
                 muscleGroup
-                  ? [MUSCLE_LABELS[muscleGroup] ?? muscleGroup]
+                  ? [normalizeMuscleGroup(muscleGroup)]
                   : undefined
               }
               onChangeMuscle={setSelectedMuscle}

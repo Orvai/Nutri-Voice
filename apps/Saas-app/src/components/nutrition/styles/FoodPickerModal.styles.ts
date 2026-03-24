@@ -34,13 +34,25 @@ export const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row-reverse",
+    alignItems: "center",
     gap: 8,
+  },
+  filtersBar: {
+    flexGrow: 0,
+    flexShrink: 0,
+    minHeight: 44,
   },
   button: {
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
+    minHeight: 36,
+    justifyContent: "center",
+  },
+  list: {
+    flex: 1,
+    minHeight: 140,
   },
   buttonActive: {
     backgroundColor: "#0f766e",

@@ -46,7 +46,7 @@ const WorkoutTemplateUpdateDto = z
 const WorkoutTemplateResponseDto = z
   .object({
     id: z.string(),
-    gender: z.enum(["MALE", "FEMALE"]),
+    gender: z.enum(["זכר", "נקבה"]),
     level: z.number(),
     bodyType: z.enum(["ECTO", "ENDO"]).nullable(),
     workoutType: z.string(),

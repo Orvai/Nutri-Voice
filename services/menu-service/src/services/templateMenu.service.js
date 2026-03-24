@@ -5,6 +5,15 @@ const { createMealTemplate } = require("./mealTemplate.service");
 
 const withStatus = (e, s = 400) => Object.assign(e, { status: s });
 
+const pickLatestByDayType = (menus) => {
+  const map = new Map();
+  for (const menu of menus) {
+    if (!menu?.dayType || map.has(menu.dayType)) continue;
+    map.set(menu.dayType, menu);
+  }
+  return Array.from(map.values());
+};
+
 // =========================================================
 // CREATE Template Menu
 // =========================================================
@@ -75,7 +84,7 @@ const createTemplateMenu = async (data, coachId) => {
 // LIST Template Menus
 // =========================================================
 const listTemplateMenus = async ({ coachId }) => {
-  return prisma.templateMenu.findMany({
+  const scoped = await prisma.templateMenu.findMany({
     where: {
       ...(coachId && { coachId }),
     },
@@ -87,6 +96,36 @@ const listTemplateMenus = async ({ coachId }) => {
     },
     orderBy: { createdAt: "desc" },
   });
+
+  const scopedByType = pickLatestByDayType(scoped);
+
+  if (!coachId) {
+    return scopedByType;
+  }
+
+  const hasTraining = scopedByType.some((m) => m.dayType === "TRAINING");
+  const hasRest = scopedByType.some((m) => m.dayType === "REST");
+  if (hasTraining && hasRest) {
+    return scopedByType;
+  }
+
+  const fallback = await prisma.templateMenu.findMany({
+    select: {
+      id: true,
+      name: true,
+      dayType: true,
+      totalCalories: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const mergedByType = new Map(scopedByType.map((m) => [m.dayType, m]));
+  for (const menu of fallback) {
+    if (mergedByType.has(menu.dayType)) continue;
+    mergedByType.set(menu.dayType, menu);
+  }
+
+  return Array.from(mergedByType.values());
 };
 
 // =========================================================

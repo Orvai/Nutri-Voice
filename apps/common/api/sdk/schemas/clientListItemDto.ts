@@ -10,6 +10,7 @@ import type { ClientListItemDtoActivityLevel } from './clientListItemDtoActivity
 export interface ClientListItemDto {
   id: string;
   name: string;
+  status: 'active' | 'deleted' | 'locked';
   /** @nullable */
   phone: string | null;
   /** @nullable */

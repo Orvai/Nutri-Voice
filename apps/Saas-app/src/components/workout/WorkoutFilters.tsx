@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from "react-native";
+import { CANONICAL_MUSCLE_GROUP_VALUES } from "@/mappers/workout/workoutEnumMapper";
 import { styles } from "./styles/WorkoutFilters.styles";
 
 type Props = {
@@ -10,12 +11,7 @@ type Props = {
 
 const MUSCLE_OPTIONS = [
   "הכל",
-  "חזה",
-  "גב",
-  "רגליים",
-  "כתפיים",
-  "יד קדמית",
-  "יד אחורית",
+  ...CANONICAL_MUSCLE_GROUP_VALUES,
 ];
 
 export default function WorkoutFilters({

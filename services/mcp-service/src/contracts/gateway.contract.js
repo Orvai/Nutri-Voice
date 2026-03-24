@@ -39,6 +39,13 @@ export const GatewayContract = {
     clientContext: ClientContext.PATH,           
   },
 
+  DAILY_STATE_RANGE_GET: {
+    method: "GET",
+    path: "/api/tracking/daily-state/range",
+    role: GatewayRole.BOTH,
+    clientContext: ClientContext.PATH,
+  },
+
   DAY_SELECTION_TODAY_GET: {
     method: "GET",
     path: "/api/tracking/day-selection/today/{clientId}",

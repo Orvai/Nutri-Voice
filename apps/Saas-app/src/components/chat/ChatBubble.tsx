@@ -8,8 +8,7 @@ interface Props {
 }
 
 export default function ChatBubble({ message }: Props) {
-  const isCoach = message.sender === "COACH";
-  const isClient = message.sender === "CLIENT";
+  const isOutgoing = message.sender === "COACH" || message.sender === "AI";
   const isAI = message.sender === "AI";
 
   if (!message.text) return null;
@@ -18,33 +17,21 @@ export default function ChatBubble({ message }: Props) {
     <View
       style={[
         styles.container,
-        {
-          justifyContent: isCoach ? "flex-end" : "flex-start",
-        },
+        isOutgoing ? styles.outgoingContainer : styles.incomingContainer,
       ]}
     >
       <View
         style={[
           styles.bubble,
-          {
-            backgroundColor: isCoach
-              ? "#2563eb"
-              : isAI
-              ? "#f3f4f6"
-              : "#ffffff",
-
-            borderTopLeftRadius: isCoach ? 14 : 0,
-            borderTopRightRadius: isCoach ? 0 : 14,
-          },
+          isOutgoing ? styles.outgoingBubble : styles.incomingBubble,
+          isAI && styles.aiOutgoingBubble,
         ]}
       >
+        {isAI && <Text style={styles.botLabel}>בוט</Text>}
         <Text
           style={[
             styles.messageText,
-            {
-              color: isCoach ? "#ffffff" : "#111827",
-              textAlign: isCoach ? "left" : "right",
-            },
+            isOutgoing ? styles.outgoingMessageText : styles.incomingMessageText,
           ]}
         >
           {message.text}
@@ -53,10 +40,7 @@ export default function ChatBubble({ message }: Props) {
         <Text
           style={[
             styles.timeText,
-            {
-              color: isCoach ? "#e0e7ff" : "#6b7280",
-              textAlign: isCoach ? "left" : "right",
-            },
+            isOutgoing ? styles.outgoingTimeText : styles.incomingTimeText,
           ]}
         >
           {new Date(message.createdAt).toLocaleTimeString("he-IL", {

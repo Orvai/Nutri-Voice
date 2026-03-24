@@ -18,25 +18,32 @@ import {
 export function mapTemplateMenuToTab(
   dto: Pick<TemplateMenuResponseDto, "id" | "name" | "dayType" | "totalCalories">
 ): UINutritionMenuTab {
+  const dayType = dto.dayType as UIDayType;
   return {
     id: dto.id,
-    label: dto.name ?? (dto.dayType === "TRAINING" ? "יום אימון" : "יום מנוחה"),
-    dayType: dto.dayType as UIDayType,
+    label: dayTypeLabel(dayType),
+    dayType,
     totalCalories: dto.totalCalories,
   };
 }
 
 export function mapTemplateMenu(dto: TemplateMenuResponseDto): UINutritionPlan {
+  const dayType = dto.dayType as UIDayType;
   return {
     id: dto.id,
-    name: dto.name,
+    name: dayTypeLabel(dayType),
     source: "template",
-    dayType: dto.dayType as UIDayType,
+    dayType,
     totalCalories: dto.totalCalories,
+    allowedDaysPerWeek: null,
     notes: dto.notes,
     vitamins: dto.vitamins.map(mapVitamin),
     meals: dto.meals.map(mapMeal),
   };
+}
+
+function dayTypeLabel(dayType: UIDayType): string {
+  return dayType === "TRAINING" ? "יום העמסה" : "יום ללא העמסה";
 }
 
 /* =========================================

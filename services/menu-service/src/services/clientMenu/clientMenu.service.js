@@ -19,21 +19,41 @@ const {
 const { recomputeMenuCalories } = require("./helpers/recompute");
 
 const withStatus = (error, status) => Object.assign(error, { status });
+const pickLatestByType = (menus) => {
+  const map = new Map();
+  for (const menu of menus) {
+    if (!menu?.type || map.has(menu.type)) continue;
+    map.set(menu.type, menu);
+  }
+  return Array.from(map.values());
+};
 
 // =========================================================
 // CREATE empty ClientMenu
 // =========================================================
 const createClientMenu = async (data, coachId, clientId) => {
-  const menu = await prisma.clientMenu.create({
-    data: {
-      name: data.name,
-      clientId,
-      coachId,
-      type: data.type,
-      notes: data.notes ?? null,
-      startDate: data.startDate ? new Date(data.startDate) : undefined,
-      endDate: data.endDate ? new Date(data.endDate) : undefined,
-    },
+  const menu = await prisma.$transaction(async (tx) => {
+    await tx.clientMenu.updateMany({
+      where: {
+        clientId,
+        type: data.type,
+        isActive: true,
+      },
+      data: { isActive: false },
+    });
+
+    return tx.clientMenu.create({
+      data: {
+        name: data.name,
+        clientId,
+        coachId,
+        type: data.type,
+        allowedDaysPerWeek: data.allowedDaysPerWeek ?? undefined,
+        notes: data.notes ?? null,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
+        endDate: data.endDate ? new Date(data.endDate) : undefined,
+      },
+    });
   });
 
   return getClientMenu(menu.id);
@@ -48,11 +68,12 @@ const updateClientMenu = async (id, data) => {
     if (!existing)
       throw withStatus(new Error("Client menu not found"), 404);
 
-    await tx.clientMenu.update({
+    const updated = await tx.clientMenu.update({
       where: { id },
       data: {
         name: data.name ?? existing.name,
         type: data.type ?? existing.type,
+        allowedDaysPerWeek: data.allowedDaysPerWeek ?? existing.allowedDaysPerWeek,
         notes: data.notes ?? existing.notes,
         isActive: data.isActive ?? existing.isActive,
         startDate:
@@ -69,6 +90,18 @@ const updateClientMenu = async (id, data) => {
             : existing.endDate,
       },
     });
+
+    if (updated.isActive) {
+      await tx.clientMenu.updateMany({
+        where: {
+          clientId: updated.clientId,
+          type: updated.type,
+          isActive: true,
+          id: { not: id },
+        },
+        data: { isActive: false },
+      });
+    }
 
     await deleteMeals(tx, id, data.mealsToDelete);
     await updateMeals(tx, id, data.mealsToUpdate);
@@ -94,7 +127,7 @@ const updateClientMenu = async (id, data) => {
 const listClientMenus = async (query) => {
   const includeInactive = query.includeInactive === "true";
 
-  return prisma.clientMenu.findMany({
+  const menus = await prisma.clientMenu.findMany({
     where: {
       ...(query.clientId && { clientId: query.clientId }),
       ...(query.coachId && { coachId: query.coachId }),
@@ -104,6 +137,7 @@ const listClientMenus = async (query) => {
       id: true,
       name: true,
       type: true,
+      allowedDaysPerWeek: true,
       isActive: true,
       totalCalories: true,
       startDate: true,
@@ -111,6 +145,12 @@ const listClientMenus = async (query) => {
     },
     orderBy: { createdAt: "desc" },
   });
+
+  if (!includeInactive && query.clientId) {
+    return pickLatestByType(menus);
+  }
+
+  return menus;
 };
 
 // =========================================================
@@ -182,6 +222,15 @@ const createClientMenuFromTemplate = async (data) => {
 
     if (!template)
       throw withStatus(new Error("Template menu not found"), 404);
+
+    await tx.clientMenu.updateMany({
+      where: {
+        clientId,
+        type: template.dayType,
+        isActive: true,
+      },
+      data: { isActive: false },
+    });
 
     const clientMenu = await tx.clientMenu.create({
       data: {

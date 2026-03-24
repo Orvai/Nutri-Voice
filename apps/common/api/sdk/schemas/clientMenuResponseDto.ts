@@ -13,6 +13,7 @@ export interface ClientMenuResponseDto {
   coachId: string;
   name: string;
   type: string;
+  allowedDaysPerWeek: number;
   /** @nullable */
   notes: string | null;
   isActive: boolean;

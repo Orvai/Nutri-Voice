@@ -5,6 +5,7 @@ export function buildClient(c: ClientListItemDto): ClientExtended {
   return {
     id: c.id,
     name: c.name,
+    status: c.status ?? "active",
     phone: c.phone ?? "",
     email: c.email ?? "",
     profileImageUrl: c.profileImageUrl ?? null,

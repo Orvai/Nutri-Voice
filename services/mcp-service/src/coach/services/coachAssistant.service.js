@@ -142,12 +142,16 @@ function requiresClient(intent) {
 function findClientMatches(clients, userText) {
   const normalizedText = normalizeText(userText);
   if (!normalizedText) return [];
+  const textTokens = new Set(normalizedText.split(" ").filter(Boolean));
 
   return clients.filter((client) => {
     const idToken = normalizeText(client?.id || "");
     const nameToken = normalizeText(client?.name || "");
-    if (idToken && normalizedText.includes(idToken)) return true;
+    const nameTokens = nameToken.split(" ").filter((token) => token.length > 1);
+
+    if (idToken && (normalizedText.includes(idToken) || textTokens.has(idToken))) return true;
     if (nameToken && normalizedText.includes(nameToken)) return true;
+    if (nameTokens.some((token) => textTokens.has(token))) return true;
     return false;
   });
 }
@@ -440,15 +444,7 @@ export async function runCoachMcp(rawInput) {
     });
   }
 
-  let clientSnapshot = null;
-  if (context.clientId) {
-    clientSnapshot = await collectClientSnapshot({
-      inputMetadata: input.metadata || {},
-      context,
-      usedTools,
-      toolResults,
-    });
-  }
+  const clientSnapshot = null;
 
   if (intent === "client_overview") {
     const dailyState =
@@ -502,7 +498,7 @@ export async function runCoachMcp(rawInput) {
     return buildResult({
       status: "ok",
       summary: `סיכום הלקוח ${resolvedClient?.name || context.clientId} מוכן.`,
-      replyText: `לקוח ${resolvedClient?.name || context.clientId}: סוג יום ${dayType}, תפריטים ${activeMenus}, תוכניות אימון ${workoutPrograms}, שיחות ${conversations.length}, רשומות שבועיות ${weeklyEntries}.`,
+      replyText: `לקוח ${resolvedClient?.name || context.clientId}: dayType=${dayType}, menus=${activeMenus}, workoutPrograms=${workoutPrograms}, conversations=${conversations.length}, weeklyEntries=${weeklyEntries}.`,
       resolvedClient,
       toolResults,
       usedTools,
@@ -618,7 +614,7 @@ export async function runCoachMcp(rawInput) {
         ? `תוכנית האימון ${programId} עודכנה.`
         : `עדכון תוכנית האימון ${programId} נכשל.`,
       replyText: result.ok
-        ? `עדכנתי את תוכנית האימון ${programId}.`
+        ? `Updated workout program ${programId}.`
         : `לא הצלחתי לעדכן את תוכנית האימון ${programId}.`,
       resolvedClient,
       toolResults,

@@ -94,6 +94,11 @@ export function useNutritionMenuMutation(source: UINutritionSource) {
       }
     },
 
+    updateAllowedDaysPerWeek(menuId: string, allowedDaysPerWeek: number) {
+      if (source !== "client") return;
+      mutateClientMenu(menuId, { allowedDaysPerWeek });
+    },
+
     /* ===============================
        Vitamins
     =============================== */

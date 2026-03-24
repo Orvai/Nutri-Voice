@@ -7,16 +7,27 @@ import type { ClientExtended } from "@/types/client";
 interface Props {
   conversation: UIConversation;
   client: ClientExtended | null;
+  waitingForReply: boolean;
   active: boolean;
   onPress: () => void;
 }
 
+function formatLastMessageAt(value: string | null): string {
+  if (!value) return "ללא הודעות";
 
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "שיחה פעילה";
 
+  return date.toLocaleTimeString("he-IL", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default function ChatListItem({
   conversation,
   client,
+  waitingForReply,
   active,
   onPress,
 }: Props) {
@@ -32,7 +43,8 @@ export default function ChatListItem({
       onPress={onPress}
       style={[
         styles.container,
-        { backgroundColor: active ? "#e0ebff" : "#fff" },
+        waitingForReply && styles.waitingContainer,
+        active && styles.activeContainer,
       ]}
     >
       <Image source={avatarSource} style={styles.avatar} />
@@ -43,13 +55,23 @@ export default function ChatListItem({
           {client?.name ?? "לקוח לא ידוע"}
         </Text>
 
-        {/* TODO: last message preview (יגיע מה-conversation בעתיד) */}
-        <Text style={styles.lastMessage}>
-          שיחה פעילה
+        <Text
+          style={[
+            styles.lastMessage,
+            waitingForReply && styles.waitingMessage,
+          ]}
+        >
+          {waitingForReply
+            ? "ממתין למענה שלך"
+            : `עדכון אחרון: ${formatLastMessageAt(conversation.lastMessageAt)}`}
         </Text>
       </View>
 
-      {/* TODO: unread messages badge */}
+      {waitingForReply && (
+        <View style={styles.waitingBadge}>
+          <Text style={styles.waitingBadgeText}>חדש</Text>
+        </View>
+      )}
     </Pressable>
   );
 }

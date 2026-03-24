@@ -30,4 +30,23 @@ const getUserById = async (userId) => {
   return res.data;
 };
 
-module.exports = {getUserByPhone,getUserById,};
+const getUserInfoById = async (userId) => {
+  try {
+    const res = await axios.get(
+      `${IDM_BASE_URL}/internal/users/${userId}/info`,
+      {
+        headers: {
+          "x-internal-token": INTERNAL_TOKEN,
+        },
+        timeout: 5000,
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    if (error?.response?.status === 404) return null;
+    throw error;
+  }
+};
+
+module.exports = { getUserByPhone, getUserById, getUserInfoById };

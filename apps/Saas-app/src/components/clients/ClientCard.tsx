@@ -1,19 +1,29 @@
-import { View, Text, Image, Pressable } from "react-native";
+import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import { ClientExtended } from "../../types/client";
 import { styles } from "./styles/ClientCard.styles";
 
 type ClientCardProps = {
   client: ClientExtended;
+  isStatusUpdating: boolean;
+  onDeactivate: (client: ClientExtended) => void;
+  onReactivate: (client: ClientExtended) => void;
 };
 
-export default function ClientCard({ client }: ClientCardProps) {
+export default function ClientCard({
+  client,
+  isStatusUpdating,
+  onDeactivate,
+  onReactivate,
+}: ClientCardProps) {
   const goToProfile = () => {
     router.push({
       pathname: "/(dashboard)/clients/[id]",
       params: { id: client.id },
     });
   };
+
+  const isActive = String(client.status || "active").toLowerCase() === "active";
 
   const avatarSource =
     client.profileImageUrl
@@ -37,11 +47,26 @@ export default function ClientCard({ client }: ClientCardProps) {
         },
       ]}
     >
-      {/* Avatar */}
       <Image source={avatarSource} style={styles.avatar} />
 
-      {/* Name + Phone */}
       <View style={styles.infoContainer}>
+        <View style={styles.statusRow}>
+          <View
+            style={[
+              styles.statusDot,
+              isActive ? styles.statusDotActive : styles.statusDotInactive,
+            ]}
+          />
+          <Text
+            style={[
+              styles.statusText,
+              isActive ? styles.statusTextActive : styles.statusTextInactive,
+            ]}
+          >
+            {isActive ? "פעיל" : "לא פעיל"}
+          </Text>
+        </View>
+
         <Text style={styles.name}>
           {client.name || "לא צוין"}
         </Text>
@@ -49,6 +74,44 @@ export default function ClientCard({ client }: ClientCardProps) {
         <Text style={styles.phone}>
           {client.phone || "לא צוין"}
         </Text>
+
+        <View style={styles.actionsRow}>
+          {isActive ? (
+            <Pressable
+              onPress={(event) => {
+                event.stopPropagation?.();
+                onDeactivate(client);
+              }}
+              style={[styles.actionButton, styles.deactivateButton]}
+              disabled={isStatusUpdating}
+            >
+              {isStatusUpdating ? (
+                <ActivityIndicator size="small" color="#b91c1c" />
+              ) : (
+                <Text style={[styles.actionButtonText, styles.deactivateButtonText]}>
+                  השבת לקוח
+                </Text>
+              )}
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={(event) => {
+                event.stopPropagation?.();
+                onReactivate(client);
+              }}
+              style={[styles.actionButton, styles.reactivateButton]}
+              disabled={isStatusUpdating}
+            >
+              {isStatusUpdating ? (
+                <ActivityIndicator size="small" color="#166534" />
+              ) : (
+                <Text style={[styles.actionButtonText, styles.reactivateButtonText]}>
+                  הפעל מחדש
+                </Text>
+              )}
+            </Pressable>
+          )}
+        </View>
       </View>
 
       <Text style={styles.viewText}>

@@ -8,6 +8,7 @@ import type { ClientExtended } from "@/types/client";
 interface Props {
   conversations: UIConversation[];
   clients: ClientExtended[];
+  waitingConversationIds: Set<string>;
   activeId: string | null;
   onSelect: (conversationId: string) => void;
 }
@@ -15,6 +16,7 @@ interface Props {
 export default function ChatList({
   conversations,
   clients,
+  waitingConversationIds,
   activeId,
   onSelect,
 }: Props) {
@@ -30,6 +32,7 @@ export default function ChatList({
               key={conv.id}
               conversation={conv}
               client={client}
+              waitingForReply={waitingConversationIds.has(conv.id)}
               active={conv.id === activeId}
               onPress={() => onSelect(conv.id)}
             />

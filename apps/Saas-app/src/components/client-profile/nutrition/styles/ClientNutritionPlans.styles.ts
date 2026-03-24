@@ -19,6 +19,39 @@ export const styles = StyleSheet.create({
 
   emptyContainer: {
     padding: 20,
+    gap: 12,
+  },
+
+  emptyText: {
+    color: colors.neutral800,
+    fontSize: 15,
+    fontWeight: "600",
+  },
+
+  emptySubText: {
+    color: colors.neutral600,
+    fontSize: 13,
+  },
+
+  loadTemplatesButton: {
+    alignSelf: "flex-start",
+    backgroundColor: colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    minWidth: 190,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  loadTemplatesButtonPressed: {
+    opacity: 0.82,
+  },
+
+  loadTemplatesButtonText: {
+    color: colors.white,
+    fontWeight: "700",
+    fontSize: 14,
   },
 
   scroll: {
@@ -35,6 +68,61 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
+  },
+
+  weekSummaryCard: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.neutral200,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+    gap: 6,
+  },
+
+  weekSummaryRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  weekSummaryLabel: {
+    color: colors.neutral800,
+    fontWeight: "600",
+    fontSize: 14,
+  },
+
+  weekSummaryValue: {
+    minWidth: 74,
+    textAlign: "center",
+    borderWidth: 1,
+    borderColor: "#fdba74",
+    backgroundColor: "#fff7ed",
+    color: "#9a3412",
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontWeight: "700",
+  },
+
+  weekSummaryUnit: {
+    color: "#9a3412",
+    fontWeight: "700",
+  },
+
+  weekDaysText: {
+    textAlign: "right",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+
+  weekDaysOk: {
+    color: "#166534",
+  },
+
+  weekDaysWarning: {
+    color: "#b45309",
   },
 
   badge: {

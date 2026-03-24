@@ -8,6 +8,16 @@ const EnvSchema = z.object({
   GATEWAY_BASE_URL: z.string().url(),
   INTERNAL_TOKEN: z.string(),
   OPENAI_API_KEY: z.string().optional(),
+  OPENAI_API_MODE: z.enum(["chat", "responses", "auto"]).default("responses"),
+  OPENAI_RESPONSES_STORE: z
+    .preprocess((value) => {
+      if (value === undefined || value === null || value === "") return undefined;
+      if (typeof value === "boolean") return value;
+      if (typeof value === "string") return value.toLowerCase() === "true";
+      return Boolean(value);
+    }, z.boolean())
+    .default(true),
+  OPENAI_RESPONSES_CANARY_PERCENT: z.coerce.number().int().min(0).max(100).default(0),
   REDIS_URL: z.string().url().optional(),
   REDIS_TIMEOUT_MS: z.coerce.number().int().positive().default(2000),
   CONVERSATION_STATE_BACKEND: z.enum(["redis", "memory"]).default("redis"),

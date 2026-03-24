@@ -129,6 +129,20 @@ const incoming = async (req, res, next) => {
 
     res.json({ ok: true });
   } catch (err) {
+    if (
+      err?.message === "Unsupported webhook payload" ||
+      err?.message === "Unsupported Telegram message type"
+    ) {
+      console.log("ℹ️ [WEBHOOK][IGNORED]", {
+        reason: err.message,
+      });
+      return res.json({
+        ok: true,
+        ignored: true,
+        reason: err.message,
+      });
+    }
+
     next(err);
   }
 };

@@ -1,6 +1,7 @@
 const { prisma } = require("../db/prisma");
 const { AiTriageInputDto } = require("../dtos/aiTriage.dto");
 const { runMcp } = require("../clients/mcp.client");
+const { getUserInfoById } = require("../clients/idm.client");
 
 const triageClientMessage = async (payload) => {
   const { messageId } = AiTriageInputDto.parse(payload);
@@ -48,11 +49,24 @@ const triageClientMessage = async (payload) => {
     role: "client",
   };
 
+  let userGender;
+  try {
+    const userInfo = await getUserInfoById(message.conversation.clientId);
+    userGender = typeof userInfo?.gender === "string" ? userInfo.gender : undefined;
+  } catch (error) {
+    console.warn("Failed to fetch user info for MCP gender context", {
+      messageId,
+      clientId: message.conversation.clientId,
+      error: error?.message,
+    });
+  }
+
   const mcpResult = await runMcp({
     conversationId: message.conversationId,
     messageId: message.id,
     sender: "client",
     clientId: message.conversation.clientId,
+    userGender,
     contentType: message.contentType,
     media: message.mediaUrl
       ? {

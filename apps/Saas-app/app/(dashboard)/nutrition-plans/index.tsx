@@ -69,7 +69,7 @@ export default function NutritionPlansScreen() {
 
   const tabs = menus.map((p) => ({
     id: p.id,
-    label: p.dayType === "TRAINING" ? "יום אימון" : "יום מנוחה",
+    label: p.dayType === "TRAINING" ? "יום העמסה" : "יום ללא העמסה",
   }));
 
   return (
