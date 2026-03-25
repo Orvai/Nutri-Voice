@@ -22,6 +22,7 @@ It combines three pillars:
 - [Tech Stack](#tech-stack)
 - [Repository Structure](#repository-structure)
 - [Local Ngrok Exposure (SaaS App)](#local-ngrok-exposure-saas-app)
+- [Remote Docker Logs (Dozzle)](#remote-docker-logs-dozzle)
 - [Documentation](#documentation)
 - [Safety & Guardrails](#safety--guardrails)
 - [Roadmap](#roadmap)
@@ -154,6 +155,40 @@ docker compose up -d saas-app saas-proxy gateway-service ngrok
 - `saas-proxy` serves the app at `http://localhost:8081` and forwards `/api` to `gateway-service`
 - `ngrok` exposes only `saas-proxy`, so one public URL works for both frontend and API/webhooks
 - The ngrok inspector stays at `http://localhost:4040`
+
+---
+
+## Remote Docker Logs (Dozzle)
+
+Dozzle is a lightweight web UI for live Docker container logs. In this repo it runs internally and is exposed only through `saas-proxy` at `/logs/`, protected by nginx basic auth (browser-native username/password popup).
+
+### 1) Define basic-auth credentials in `.env`
+
+Set the credentials:
+
+```bash
+DOZZLE_BASIC_AUTH_USERNAME=vaitzman
+DOZZLE_BASIC_AUTH_PASSWORD=HBS
+```
+
+`saas-proxy` generates `docker/nginx/auth/dozzle.htpasswd` automatically at startup (bcrypt), so you do not need to run `htpasswd` manually.
+
+### 2) Start the stack
+
+```bash
+docker compose up -d --build saas-proxy dozzle
+```
+
+### 3) Access logs UI
+
+- Local: `http://localhost:8081/logs/`
+- Remote (via ngrok): `<your-ngrok-url>/logs/`
+
+If ngrok is running, you can inspect the public URL from `http://localhost:4040`.
+
+### Security warning
+
+Never expose Dozzle without protection. The `/logs/` route is intentionally behind basic auth because container logs can contain sensitive data (tokens, payloads, internal URLs, and user information).
 
 ---
 
