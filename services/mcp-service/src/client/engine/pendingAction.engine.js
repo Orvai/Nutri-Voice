@@ -135,9 +135,11 @@ export async function applyDayTypeFromShortReply({
     args: { dayType: extractedDayType },
     toolResult,
   });
+  const resolvedDayType =
+    toolResult?.data?.dayType || toolResult?.dayType || extractedDayType;
   context.conversationState = await rememberResolvedDayType(
     conversationId,
-    extractedDayType,
+    resolvedDayType,
     "USER_TEXT"
   );
 

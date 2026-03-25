@@ -65,6 +65,7 @@ export const styles = StyleSheet.create({
   actionsRow: {
     marginTop: 10,
     flexDirection: "row-reverse",
+    gap: 8,
   },
   actionButton: {
     borderRadius: 10,
@@ -89,6 +90,13 @@ export const styles = StyleSheet.create({
   },
   reactivateButtonText: {
     color: "#166534",
+  },
+  editButton: {
+    borderColor: "#bfdbfe",
+    backgroundColor: "#eff6ff",
+  },
+  editButtonText: {
+    color: "#1d4ed8",
   },
   viewText: {
     fontSize: 13,

@@ -1,6 +1,8 @@
 export type ClientExtended = {
   id: string;
   name: string;
+  firstName: string;
+  lastName: string;
   status: string;
   phone: string;
   email: string;

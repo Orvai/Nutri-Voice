@@ -15,7 +15,7 @@ function isSmallTalk(text) {
 }
 
 function isInDomain(text) {
-  return /תזונה|קלור|ארוחה|תפריט|חלבון|פחמ|שומן|אכל|אימון|מתאמן|תרגיל|סטים|חזרות|משקל|כושר|צעדים|מים|שינה|מנוחה|חיטוב|מסה|workout|nutrition/i.test(
+  return /תזונה|קלור|ארוחה|תפריט|חלבון|פחמ|שומן|אכל|אימון|מתאמן|תרגיל|סטים|חזרות|משקל|כושר|צעדים|מים|שינה|מנוחה|העמסה|ללא העמסה|יום העמסה|יום ללא העמסה|day type|training day|rest day|חיטוב|מסה|workout|nutrition/i.test(
     String(text || "")
   );
 }

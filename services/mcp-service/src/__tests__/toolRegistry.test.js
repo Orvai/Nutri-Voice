@@ -13,6 +13,13 @@ describe("tool registry consistency", () => {
     expect(toolRegistry.upsert_metrics_log.name).toBe("upsert_metrics_log");
   });
 
+  it("registers get_day_type_weekly_balance under the correct key", () => {
+    expect(toolRegistry.get_day_type_weekly_balance).toBeDefined();
+    expect(toolRegistry.get_day_type_weekly_balance.name).toBe(
+      "get_day_type_weekly_balance"
+    );
+  });
+
   it("executes ask_calories with the expected args/context signature", async () => {
     const result = await toolRegistry.ask_calories.execute(
       {},

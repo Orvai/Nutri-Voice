@@ -3,6 +3,7 @@
 import { GetDailyStateTool } from "./DailyState/getDailyState.tool.js";
 import {UpsertMetricsLogTool} from "./DailyState/upsertMetricsLog.tool.js"
 import { setDayTypeTool } from "./DailyState/setDayType.tool.js";
+import { getDayTypeWeeklyBalanceTool } from "./DailyState/getDayTypeWeeklyBalance.tool.js";
 import { AskCaloriesTool } from "./menu-meal/askCalories.tool.js";
 
 import { getMenuContextTool } from "./menu-meal/getMenuContext.tool.js";
@@ -28,6 +29,7 @@ export const toolRegistry = {
   get_daily_state: GetDailyStateTool,
   upsert_metrics_log: UpsertMetricsLogTool,
   set_day_type: setDayTypeTool,
+  get_day_type_weekly_balance: getDayTypeWeeklyBalanceTool,
   get_menu_context: getMenuContextTool,
   get_workout_programs: getWorkoutProgramsTool,
   get_workout_context: getWorkoutContextTool,

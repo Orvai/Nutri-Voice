@@ -7,6 +7,7 @@ export const setDayTypeTool = {
   description: `
 Declare today's day type.
 Use when user explicitly states today's type or when auto-resolution is clearly required.
+If weekly quota is exceeded, tool may auto-apply the alternative day type and return warning metadata.
 `,
 
   parameters: {

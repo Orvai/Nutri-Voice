@@ -65,6 +65,41 @@ r.get("/clients/:id", authRequired, forward(BASE, "/internal/users/:id"));
 
 /**
  * @openapi
+ * /api/clients/{id}:
+ *   patch:
+ *     tags: [Clients]
+ *     summary: Update client basic details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Client updated
+ */
+r.patch("/clients/:id", authRequired, requireCoach, forward(BASE, "/internal/users/:id"));
+
+/**
+ * @openapi
  * /api/clients/{id}/status:
  *   patch:
  *     tags: [Clients]

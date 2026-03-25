@@ -8,6 +8,7 @@ type ClientCardProps = {
   isStatusUpdating: boolean;
   onDeactivate: (client: ClientExtended) => void;
   onReactivate: (client: ClientExtended) => void;
+  onEdit: (client: ClientExtended) => void;
 };
 
 export default function ClientCard({
@@ -15,6 +16,7 @@ export default function ClientCard({
   isStatusUpdating,
   onDeactivate,
   onReactivate,
+  onEdit,
 }: ClientCardProps) {
   const goToProfile = () => {
     router.push({
@@ -76,6 +78,19 @@ export default function ClientCard({
         </Text>
 
         <View style={styles.actionsRow}>
+          <Pressable
+            onPress={(event) => {
+              event.stopPropagation?.();
+              onEdit(client);
+            }}
+            style={[styles.actionButton, styles.editButton]}
+            disabled={isStatusUpdating}
+          >
+            <Text style={[styles.actionButtonText, styles.editButtonText]}>
+              עריכה
+            </Text>
+          </Pressable>
+
           {isActive ? (
             <Pressable
               onPress={(event) => {

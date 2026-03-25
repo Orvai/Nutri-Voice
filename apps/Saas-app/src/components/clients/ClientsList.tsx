@@ -8,6 +8,7 @@ type ClientsListProps = {
   updatingClientId: string | null;
   onDeactivate: (client: ClientExtended) => void;
   onReactivate: (client: ClientExtended) => void;
+  onEdit: (client: ClientExtended) => void;
 };
 
 export default function ClientsList({
@@ -15,6 +16,7 @@ export default function ClientsList({
   updatingClientId,
   onDeactivate,
   onReactivate,
+  onEdit,
 }: ClientsListProps) {
   return (
     <View style={styles.container}>
@@ -25,6 +27,7 @@ export default function ClientsList({
           isStatusUpdating={updatingClientId === c.id}
           onDeactivate={onDeactivate}
           onReactivate={onReactivate}
+          onEdit={onEdit}
         />
       ))}
     </View>

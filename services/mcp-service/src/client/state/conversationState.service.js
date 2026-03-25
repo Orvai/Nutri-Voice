@@ -84,7 +84,8 @@ export async function updateConversationStateByTool({
     if (toolResult?.error || toolResult?.success === false) {
       return getConversationState(conversationId);
     }
-    const nextDayType = args?.dayType || toolResult?.data?.dayType || toolResult?.dayType || null;
+    const nextDayType =
+      toolResult?.data?.dayType || toolResult?.dayType || args?.dayType || null;
     return rememberResolvedDayType(conversationId, nextDayType, "SET_DAY_TYPE");
   }
 

@@ -2,6 +2,8 @@
 
 const prisma = require("../db/prisma");
 
+const isUniqueConstraintError = (error) => error?.code === "P2002";
+
 const createFoodItem = async (data) => {
   const foodData = {
     name: data.name,
@@ -10,9 +12,19 @@ const createFoodItem = async (data) => {
     caloriesPer100g: data.caloriesPer100g,
   };
 
-  return prisma.foodItem.create({
-    data: foodData,
-  });
+  try {
+    return await prisma.foodItem.create({
+      data: foodData,
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      const err = new Error("Food item with this name already exists");
+      err.status = 409;
+      throw err;
+    }
+
+    throw error;
+  }
 };
 
 const listFoodItems = async (query) => {
@@ -55,10 +67,20 @@ const updateFoodItem = async (id, data) => {
     caloriesPer100g: data.caloriesPer100g ?? undefined,
   };
 
-  return prisma.foodItem.update({
-    where: { id },
-    data: foodData,
-  });
+  try {
+    return await prisma.foodItem.update({
+      where: { id },
+      data: foodData,
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      const err = new Error("Food item with this name already exists");
+      err.status = 409;
+      throw err;
+    }
+
+    throw error;
+  }
 };
 
 const deleteFoodItem = async (id) => {

@@ -32,6 +32,20 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     textAlign: "right",
   },
+  addNewButton: {
+    alignSelf: "flex-end",
+    backgroundColor: "#ecfeff",
+    borderColor: "#99f6e4",
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  addNewButtonText: {
+    color: "#0f766e",
+    fontWeight: "700",
+    textAlign: "right",
+  },
   row: {
     flexDirection: "row-reverse",
     alignItems: "center",
@@ -54,6 +68,26 @@ export const styles = StyleSheet.create({
     flex: 1,
     minHeight: 140,
   },
+  quickCreateCard: {
+    borderWidth: 1,
+    borderColor: "#bae6fd",
+    backgroundColor: "#f0f9ff",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 8,
+    gap: 2,
+  },
+  quickCreateTitle: {
+    color: "#075985",
+    fontWeight: "700",
+    textAlign: "right",
+  },
+  quickCreateSubtitle: {
+    color: "#0369a1",
+    textAlign: "right",
+    fontSize: 12,
+  },
   buttonActive: {
     backgroundColor: "#0f766e",
     borderColor: "#0f766e",
@@ -75,5 +109,24 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.neutral500,
     padding: 10,
+  },
+  errorText: {
+    color: "#b91c1c",
+    textAlign: "right",
+    fontSize: 12,
+  },
+  submitButton: {
+    backgroundColor: "#0f766e",
+    borderRadius: 12,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  submitButtonDisabled: {
+    opacity: 0.5,
+  },
+  submitButtonText: {
+    color: "white",
+    fontWeight: "700",
   },
 });

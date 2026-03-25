@@ -99,6 +99,8 @@ const MfaVerifyResponseDto = z.object({
 const ClientListItemDto = z.object({
   id: z.string(),
   name: z.string(),
+  firstName: z.string().nullable().default(""),
+  lastName: z.string().nullable().default(""),
   status: z.enum(["active", "deleted", "locked"]).default("active"),
   phone: z.string().nullable(),
   email: z.string().nullable(),

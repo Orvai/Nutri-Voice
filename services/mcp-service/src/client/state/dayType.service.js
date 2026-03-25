@@ -11,7 +11,7 @@ export function extractDayTypeFromText(text) {
     /יום\s*ללא\s*העמסה|ללא\s*העמסה|בלי\s*העמסה/.test(normalized);
 
   const isTraining =
-    /יום\s*העמסה|העמסה|יום\s*אימון|אימון|התאמנתי|עשיתי אימון|סיימתי אימון/.test(
+    /יום\s*העמסה|העמסה/.test(
       normalized
     ) && !hasNoLoadKeyword;
 
@@ -76,7 +76,8 @@ export function syncDailyStateContext({ toolName, toolResult, args, context }) {
       return;
     }
 
-    const nextDayType = args?.dayType || toolResult?.data?.dayType || toolResult?.dayType;
+    const nextDayType =
+      toolResult?.data?.dayType || toolResult?.dayType || args?.dayType;
 
     if (nextDayType) {
       context.dailyState = {

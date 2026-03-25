@@ -4,11 +4,15 @@ const {
   updateFoodItem,
   deleteFoodItem,
 } = require("../services/food.service");
-const { FoodItemCreateRequestDto, FoodItemUpdateRequestDto, FoodListQueryDto } = require("../dto/food.dto");
+const {
+  FoodItemCreateDto,
+  FoodItemUpdateDto,
+  FoodListQueryDto,
+} = require("../dto/food.dto");
 
 const createFoodItemController = async (req, res, next) => {
   try {
-    const dto = FoodItemCreateRequestDto.parse(req.body);
+    const dto = FoodItemCreateDto.parse(req.body);
     const result = await createFoodItem(dto);
     res.status(201).json({
       message: "Food item created successfully",
@@ -29,7 +33,7 @@ const listFoodItemsController = async (req, res, next) => {
 };
 const updateFoodItemController = async (req, res, next) => {
   try {
-    const dto = FoodItemUpdateRequestDto.parse(req.body);
+    const dto = FoodItemUpdateDto.parse(req.body);
     const result = await updateFoodItem(req.params.id, dto);
     res.json({
       message: "Food item updated successfully",

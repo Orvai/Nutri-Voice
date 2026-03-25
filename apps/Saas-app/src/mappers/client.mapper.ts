@@ -2,9 +2,15 @@ import { ClientListItemDto } from "../../../common/api/sdk/schemas";
 import { ClientExtended } from "../types/client";
 
 export function buildClient(c: ClientListItemDto): ClientExtended {
+  const safeName = (c.name ?? "").trim();
+  const [derivedFirstName, ...derivedLastNameParts] = safeName.split(" ").filter(Boolean);
+  const derivedLastName = derivedLastNameParts.join(" ").trim();
+
   return {
     id: c.id,
     name: c.name,
+    firstName: c.firstName?.trim() || derivedFirstName || "",
+    lastName: c.lastName?.trim() || derivedLastName || "",
     status: c.status ?? "active",
     phone: c.phone ?? "",
     email: c.email ?? "",

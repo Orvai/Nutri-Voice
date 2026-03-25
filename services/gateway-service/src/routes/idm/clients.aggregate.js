@@ -48,6 +48,8 @@ export const aggregateClients = async (req, BASE) => {
             user.email ||
             user.phone ||
             "לא צוין",
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
           status: user.status || "active",
 
           phone: user.phone || "",
@@ -70,7 +72,21 @@ export const aggregateClients = async (req, BASE) => {
         return {
           id: user.id,
           name: user.email || "Unknown",
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
           status: user.status || "active",
+          phone: user.phone || "",
+          email: user.email || "",
+          profileImageUrl: null,
+          gender: null,
+          age: null,
+          height: null,
+          weight: null,
+          goals: null,
+          activityLevel: null,
+          creationDate: user.createdAt || null,
+          city: null,
+          address: null,
           error: "Failed to fetch details"
         };
       }

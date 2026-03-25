@@ -14,6 +14,7 @@ import { colors } from "../../../src/styles/colors";
 import ClientsSearchBar from "../../../src/components/clients/ClientSearchBar";
 import ClientsList from "../../../src/components/clients/ClientsList";
 import AddClientModal from "../../../src/components/clients/AddClientModal";
+import EditClientModal from "../../../src/components/clients/EditClientModal";
 
 import { useClients, useUpdateClientStatus } from "@/hooks/clients";
 import { ClientExtended } from "@/types/client";
@@ -76,6 +77,7 @@ export default function ClientsScreen() {
   const [updatingClientId, setUpdatingClientId] = useState<string | null>(null);
   const [clientPendingDeactivate, setClientPendingDeactivate] =
     useState<ClientExtended | null>(null);
+  const [clientPendingEdit, setClientPendingEdit] = useState<ClientExtended | null>(null);
   const [deleteConfirmValue, setDeleteConfirmValue] = useState("");
   const [statusActionError, setStatusActionError] = useState<string | null>(null);
 
@@ -164,6 +166,14 @@ export default function ClientsScreen() {
     }
   };
 
+  const openEditModal = (client: ClientExtended) => {
+    setClientPendingEdit(client);
+  };
+
+  const closeEditModal = () => {
+    setClientPendingEdit(null);
+  };
+
   const canConfirmDeactivate =
     deleteConfirmValue === DELETE_CONFIRMATION_TEXT && !updateClientStatus.isPending;
 
@@ -238,12 +248,19 @@ export default function ClientsScreen() {
           updatingClientId={updatingClientId}
           onDeactivate={requestDeactivate}
           onReactivate={reactivateClient}
+          onEdit={openEditModal}
         />
       )}
 
       <AddClientModal
         visible={isAddClientOpen}
         onClose={() => setIsAddClientOpen(false)}
+      />
+
+      <EditClientModal
+        visible={!!clientPendingEdit}
+        client={clientPendingEdit}
+        onClose={closeEditModal}
       />
 
       <Modal
