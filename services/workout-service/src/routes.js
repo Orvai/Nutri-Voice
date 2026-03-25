@@ -15,6 +15,7 @@ r.get("/internal/workout/exercises/:id", verifyInternalToken, Exercises.getExerc
 r.put("/internal/workout/exercises/:id", verifyInternalToken, Exercises.updateExercise);
 r.delete("/internal/workout/exercises/:id", verifyInternalToken, Exercises.deleteExercise);
 r.post("/internal/workout/exercises/:id/video",verifyInternalToken,videoUpload.single("file"),Exercises.uploadExerciseVideo);
+r.delete("/internal/workout/exercises/:id/video", verifyInternalToken, Exercises.deleteExerciseVideo);
 
 /* Workout Templates */
 r.get("/internal/workout/templates", verifyInternalToken, Templates.listTemplates);

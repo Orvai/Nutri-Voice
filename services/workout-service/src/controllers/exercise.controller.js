@@ -5,6 +5,7 @@ const {
   updateExercise,
   deleteExercise,
   saveExerciseVideo,
+  clearExerciseVideo,
 } = require("../services/exercise.service");
 
 const {
@@ -15,10 +16,29 @@ const {
 } = require("../dto/exercise.dto");
 const { AppError } = require("../common/errors");
 
+const resolveCoachId = (req) => {
+  const coachIdHeader = req.headers["x-coach-id"];
+  if (Array.isArray(coachIdHeader)) {
+    return coachIdHeader.find((value) => typeof value === "string" && value.trim())?.trim();
+  }
+
+  if (typeof coachIdHeader === "string" && coachIdHeader.trim()) {
+    return coachIdHeader.trim();
+  }
+
+  if (typeof req.body?.coachId === "string" && req.body.coachId.trim()) {
+    return req.body.coachId.trim();
+  }
+
+  return undefined;
+};
+
 const createExerciseController = async (req, res, next) => {
   try {
-    const payload = ExerciseCreateDto.parse(req.body);
-    const result = await createExercise(payload);
+    const cleanBody = { ...(req.body ?? {}) };
+    delete cleanBody.coachId;
+    const payload = ExerciseCreateDto.parse(cleanBody);
+    const result = await createExercise(payload, resolveCoachId(req));
     res.status(201).json({ message: "Exercise created", data: result });
   } catch (e) {
     next(e);
@@ -48,8 +68,10 @@ const getExerciseController = async (req, res, next) => {
 const updateExerciseController = async (req, res, next) => {
   try {
     const { id } = ExerciseIdParamDto.parse(req.params);
-    const payload = ExerciseUpdateDto.parse(req.body);
-    const result = await updateExercise(id, payload);
+    const cleanBody = { ...(req.body ?? {}) };
+    delete cleanBody.coachId;
+    const payload = ExerciseUpdateDto.parse(cleanBody);
+    const result = await updateExercise(id, payload, resolveCoachId(req));
     res.json({ message: "Exercise updated", data: result });
   } catch (e) {
     next(e);
@@ -59,7 +81,7 @@ const updateExerciseController = async (req, res, next) => {
 const deleteExerciseController = async (req, res, next) => {
   try {
     const { id } = ExerciseIdParamDto.parse(req.params);
-    await deleteExercise(id);
+    await deleteExercise(id, resolveCoachId(req));
     res.status(204).end();
   } catch (e) {
     next(e);
@@ -80,9 +102,24 @@ const uploadExerciseVideoController = async (req, res, next) => {
     await saveExerciseVideo({
       id,
       videoUrl,
+      coachId: resolveCoachId(req),
     });
 
     res.status(200).json({ message: "Video uploaded", videoUrl });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const deleteExerciseVideoController = async (req, res, next) => {
+  try {
+    const { id } = ExerciseIdParamDto.parse(req.params);
+    const result = await clearExerciseVideo({
+      id,
+      coachId: resolveCoachId(req),
+    });
+
+    res.status(200).json({ message: "Video removed", data: result });
   } catch (e) {
     next(e);
   }
@@ -96,4 +133,5 @@ module.exports = {
   updateExercise: updateExerciseController,
   deleteExercise: deleteExerciseController,
   uploadExerciseVideo: uploadExerciseVideoController,
+  deleteExerciseVideo: deleteExerciseVideoController,
 };

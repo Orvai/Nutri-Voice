@@ -153,7 +153,7 @@ r.delete("/exercises/:id",authRequired,requireCoach,
 
 /**
  * @openapi
- * /api/exercises/{id}/video:
+ * /api/workout/exercises/{id}/video:
  *   post:
  *     tags: [Exercises]
  *     summary: Upload or update exercise video
@@ -187,7 +187,31 @@ r.post("/exercises/:id/video",authRequired,requireCoach,forward(BASE, "/internal
 
 /**
  * @openapi
- * /api/exercises/uploads/{path}:
+ * /api/workout/exercises/{id}/video:
+ *   delete:
+ *     tags: [Exercises]
+ *     summary: Remove exercise video
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Video removed successfully
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Exercise not found
+ */
+r.delete("/exercises/:id/video",authRequired,requireCoach,forward(BASE, "/internal/workout/exercises/:id/video"));
+
+/**
+ * @openapi
+ * /api/workout/uploads/{path}:
  *   get:
  *     tags: [Exercises]
  *     summary: Serve uploaded exercise assets

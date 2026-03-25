@@ -3,7 +3,7 @@ import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   card: {
-    gap: 10,
+    gap: 12,
   },
 
   header: {
@@ -20,10 +20,16 @@ export const styles = StyleSheet.create({
 
   actionsRow: {
     flexDirection: "row-reverse",
-    justifyContent: "flex-start",
-    marginTop: 6,
+    justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
+  },
+
+  mediaSection: {
+    gap: 10,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: colors.neutral100,
   },
 
   videoBtn: {
@@ -40,11 +46,28 @@ export const styles = StyleSheet.create({
   },
 
   noVideoText: {
-    fontSize: 12,
+    fontSize: 11,
     textAlign: "right",
+    fontWeight: "600",
   },
 
-  uploaderWrap: {
-    marginTop: 8,
+  noVideoBadge: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    backgroundColor: colors.neutral100,
+  },
+
+  deleteVideoBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: "#fee2e2",
+  },
+
+  deleteVideoBtnText: {
+    color: "#b91c1c",
+    fontWeight: "700",
+    fontSize: 12,
   },
 });

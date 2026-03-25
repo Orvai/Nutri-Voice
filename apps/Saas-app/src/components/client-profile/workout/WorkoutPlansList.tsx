@@ -11,6 +11,7 @@ import {
 import type { UIWorkoutProgram } from "../../../types/ui/workout/workoutProgram.ui";
 import type { UIWorkoutTemplate } from "../../../types/ui/workout/workoutTemplate.ui";
 import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
+import type { ExerciseCreateRequestDto } from "@common/api/sdk/schemas";
 
 import WorkoutPlanCard from "./WorkoutPlanCard";
 import WorkoutTemplateCard from "../../workout/WorkoutTemplateCard";
@@ -34,6 +35,9 @@ type Props = {
     orderHint?: number,
     meta?: { sets: number; reps: string }
   ) => void | Promise<void>;
+  onCreateExercise: (
+    payload: ExerciseCreateRequestDto
+  ) => Promise<UIExercise>;
 
   onRemoveExercise: (
     programId: string,
@@ -59,6 +63,7 @@ export default function WorkoutPlansList({
   onCreateFromTemplate,
   allExercises,
   onAddExercise,
+  onCreateExercise,
   onRemoveExercise,
   onDeleteProgram,
   onUpdateProgramNotes,
@@ -151,6 +156,7 @@ export default function WorkoutPlansList({
             onAddExercise={(exercise, orderHint, meta) =>
               onAddExercise(activePlan.id, exercise, orderHint, meta)
             }
+            onCreateExercise={onCreateExercise}
             onRemoveExercise={(workoutExerciseId) =>
               onRemoveExercise(activePlan.id, workoutExerciseId)
             }

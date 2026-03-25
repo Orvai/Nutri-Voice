@@ -1,7 +1,10 @@
 // src/services/exercise.service.js
+const fs = require("fs/promises");
+const path = require("path");
 const { prisma } = require("../db/prisma");
 const { AppError } = require("../common/errors");
 const { localizeExercise } = require("../common/workoutLocalization");
+const { videoDir } = require("../middleware/videoUpload");
 
 const createExercise = async (data, coachId) => {
   const exercise = await prisma.exercise.create({
@@ -56,6 +59,48 @@ const assertExerciseOwnership = (exercise, coachId) => {
   }
 };
 
+const resolveUploadedVideoFileName = (videoUrl) => {
+  if (typeof videoUrl !== "string" || !videoUrl.trim()) {
+    return null;
+  }
+
+  const raw = videoUrl.trim();
+  let pathname = raw;
+
+  try {
+    pathname = new URL(raw).pathname;
+  } catch (_error) {
+    pathname = raw;
+  }
+
+  if (!pathname.startsWith("/uploads/videos/")) {
+    return null;
+  }
+
+  const fileName = path.basename(pathname);
+  return fileName || null;
+};
+
+const removeUploadedVideoFile = async (videoUrl) => {
+  const fileName = resolveUploadedVideoFileName(videoUrl);
+  if (!fileName) {
+    return;
+  }
+
+  const filePath = path.join(videoDir, fileName);
+
+  try {
+    await fs.unlink(filePath);
+  } catch (error) {
+    if (error?.code !== "ENOENT") {
+      console.warn("Failed to delete uploaded video file", {
+        filePath,
+        error: error?.message,
+      });
+    }
+  }
+};
+
 const updateExercise = async (id, data, coachId) => {
   const exercise = await prisma.exercise.findUnique({ where: { id } });
   if (!exercise) {
@@ -106,6 +151,32 @@ const saveExerciseVideo = async ({ id, videoUrl, coachId }) => {
     data: { videoUrl },
   });
 
+  if (exercise.videoUrl && exercise.videoUrl !== videoUrl) {
+    await removeUploadedVideoFile(exercise.videoUrl);
+  }
+
+  return localizeExercise(updated);
+};
+
+const clearExerciseVideo = async ({ id, coachId }) => {
+  const exercise = await prisma.exercise.findUnique({ where: { id } });
+  if (!exercise) {
+    throw new AppError(404, "Exercise not found");
+  }
+
+  assertExerciseOwnership(exercise, coachId);
+
+  if (!exercise.videoUrl) {
+    return localizeExercise(exercise);
+  }
+
+  const updated = await prisma.exercise.update({
+    where: { id },
+    data: { videoUrl: null },
+  });
+
+  await removeUploadedVideoFile(exercise.videoUrl);
+
   return localizeExercise(updated);
 };
 
@@ -116,4 +187,5 @@ module.exports = {
   updateExercise,
   deleteExercise,
   saveExerciseVideo,
+  clearExerciseVideo,
 };

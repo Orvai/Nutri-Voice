@@ -3,6 +3,7 @@ import { View, Text, Pressable, TextInput } from "react-native";
 
 import type { UIWorkoutProgram } from "../../../types/ui/workout/workoutProgram.ui";
 import type { UIExercise } from "../../../types/ui/workout/exercise.ui";
+import type { ExerciseCreateRequestDto } from "@common/api/sdk/schemas";
 
 import WorkoutCategory from "./WorkoutCategory";
 import AddExerciseModal from "./AddExerciseModal";
@@ -17,6 +18,9 @@ type Props = {
     orderHint?: number,
     meta?: { sets: number; reps: string }
   ) => void | Promise<void>;
+  onCreateExercise: (
+    payload: ExerciseCreateRequestDto
+  ) => Promise<UIExercise>;
 
   onRemoveExercise: (
     workoutExerciseId: string
@@ -40,6 +44,7 @@ export default function WorkoutPlanCard({
   plan,
   allExercises,
   onAddExercise,
+  onCreateExercise,
   onRemoveExercise,
   onDelete,
   onUpdateNotes,
@@ -143,6 +148,7 @@ export default function WorkoutPlanCard({
           setAddModalOpen(false);
           setSelectedMuscle(null);
         }}
+        onCreateExercise={onCreateExercise}
         onSelect={(exercise, meta) => {
           const maxOrder = plan.exercises.reduce(
             (acc, ex) => Math.max(acc, ex.order),

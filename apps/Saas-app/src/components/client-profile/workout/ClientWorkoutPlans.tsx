@@ -9,9 +9,12 @@ import { useUpdateWorkoutProgram } from "@/hooks/workout/workoutProgram/useClien
 import { useClientDeleteWorkoutProgram } from "@/hooks/workout/workoutProgram/useClientDeleteWorkoutProgram";
 import { useWorkoutTemplates } from "@/hooks/workout/workoutTemplate/useWorkoutTemplates";
 import { useExercises } from "@/hooks/workout/exercise/useExercises";
+import { useCreateExercise } from "@/hooks/workout/exercise/useCreateExercise";
 
 import type { UIExercise } from "@/types/ui/workout/exercise.ui";
 import type { UIWorkoutTemplate } from "@/types/ui/workout/workoutTemplate.ui";
+import type { ExerciseCreateRequestDto } from "@common/api/sdk/schemas";
+import { mapExerciseDtoToUI } from "@/mappers/workout/exercise.mapper";
 
 import { styles } from "./styles/ClientWorkoutPlans.styles";
 
@@ -54,6 +57,7 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
   const createProgramMutation = useCreateWorkoutProgram(clientId);
   const updateProgramMutation = useUpdateWorkoutProgram(clientId);
   const deleteProgramMutation = useClientDeleteWorkoutProgram(clientId);
+  const createExerciseMutation = useCreateExercise();
 
   /* =========================
      Derived
@@ -130,6 +134,11 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
     setActiveProgramId((prev) => (prev === programId ? null : prev));
   };
 
+  const handleCreateExercise = async (payload: ExerciseCreateRequestDto) => {
+    const created = await createExerciseMutation.mutateAsync(payload);
+    return mapExerciseDtoToUI(created);
+  };
+
   const handleUpdateProgramNotes = async (programId: string, notes: string) => {
     await updateProgramMutation.mutateAsync({
       programId,
@@ -194,6 +203,7 @@ export default function ClientWorkoutPlans({ clientId }: Props) {
       onCreateFromTemplate={handleCreateFromTemplate}
       allExercises={allExercises}
       onAddExercise={handleAddExercise}
+      onCreateExercise={handleCreateExercise}
       onRemoveExercise={handleRemoveExercise}
       onDeleteProgram={handleDeleteProgram}
       onUpdateProgramNotes={handleUpdateProgramNotes}

@@ -27,6 +27,22 @@ export const styles = StyleSheet.create({
     writingDirection: "rtl",
   },
 
+  createButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  createButtonText: {
+    color: colors.primary,
+    fontWeight: "700",
+  },
+
   pickedCard: {
     padding: 12,
     borderRadius: 12,
@@ -82,6 +98,39 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
 
+  createWrapper: {
+    gap: 12,
+  },
+
+  muscleOptions: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+
+  muscleChip: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.neutral200,
+    backgroundColor: colors.white,
+  },
+
+  muscleChipActive: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
+  },
+
+  muscleChipText: {
+    color: colors.neutral800,
+    fontWeight: "600",
+  },
+
+  muscleChipTextActive: {
+    color: colors.white,
+  },
+
   backButton: {
     paddingVertical: 10,
     paddingHorizontal: 14,
@@ -108,5 +157,21 @@ export const styles = StyleSheet.create({
   confirmButtonText: {
     color: colors.white,
     fontWeight: "800",
+  },
+
+  confirmButtonDisabled: {
+    opacity: 0.6,
+  },
+
+  textArea: {
+    minHeight: 90,
+    textAlignVertical: "top",
+  },
+
+  errorText: {
+    textAlign: "right",
+    writingDirection: "rtl",
+    color: colors.danger,
+    fontWeight: "600",
   },
 });

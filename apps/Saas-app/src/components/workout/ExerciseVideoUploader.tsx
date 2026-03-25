@@ -15,6 +15,7 @@ import { styles } from "./styles/ExerciseVideoUploader.styles";
 type Props = {
   exerciseId: string;
   onUploaded?: () => void;
+  buttonLabel?: string;
 };
 
 type NativeFileLike = {
@@ -26,6 +27,7 @@ type NativeFileLike = {
 export default function ExerciseVideoUploader({
   exerciseId,
   onUploaded,
+  buttonLabel = "העלה סרטון",
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState("");
@@ -73,6 +75,14 @@ export default function ExerciseVideoUploader({
     setFileName(file.name);
   };
 
+  const clearSelectedFile = () => {
+    setFileName("");
+    setNativeFile(null);
+    if (Platform.OS === "web" && inputRef.current) {
+      inputRef.current.value = "";
+    }
+  };
+
   /* =========================
      Upload
   ========================= */
@@ -86,8 +96,7 @@ export default function ExerciseVideoUploader({
         { id: exerciseId, file },
         {
           onSuccess: () => {
-            setFileName("");
-            if (inputRef.current) inputRef.current.value = "";
+            clearSelectedFile();
             onUploaded?.();
           },
           onError: () =>
@@ -101,11 +110,10 @@ export default function ExerciseVideoUploader({
     if (!nativeFile) return;
 
     uploadMutation.mutate(
-      { id: exerciseId, file: nativeFile as any },
+      { id: exerciseId, file: nativeFile },
       {
         onSuccess: () => {
-          setNativeFile(null);
-          setFileName("");
+          clearSelectedFile();
           onUploaded?.();
         },
         onError: () =>
@@ -118,12 +126,13 @@ export default function ExerciseVideoUploader({
      Render
   ========================= */
 
+  const hasFile = Boolean(fileName);
+
   return (
     <View style={styles.container}>
-      <Pressable
-        onPress={handlePick}
+      <View
         style={[
-          styles.pickButton,
+          styles.fileRow,
           {
             backgroundColor: theme.card.bg,
             borderColor: theme.card.border,
@@ -131,36 +140,55 @@ export default function ExerciseVideoUploader({
           },
         ]}
       >
+        <Pressable onPress={handlePick} style={styles.pickButton}>
+          <Text style={[styles.pickText, { color: theme.text.title }]}>
+            {hasFile ? "החלף קובץ" : "בחר קובץ וידאו"}
+          </Text>
+        </Pressable>
+
         <Text
+          numberOfLines={1}
           style={[
-            styles.pickText,
-            { color: theme.text.title },
+            styles.fileName,
+            { color: hasFile ? theme.text.title : theme.text.subtitle },
           ]}
         >
-          {fileName || "בחר קובץ וידאו"}
+          {hasFile ? fileName : "לא נבחר קובץ"}
         </Text>
-      </Pressable>
+      </View>
 
-      <Pressable
-        onPress={handleUpload}
-        disabled={!fileName || uploadMutation.isPending}
-        style={[
-          styles.uploadButton,
-          {
-            borderRadius: theme.card.radius,
-            backgroundColor:
-              !fileName || uploadMutation.isPending
-                ? undefined
-                : "#22c55e",
-          },
-          (!fileName || uploadMutation.isPending) &&
-            styles.uploadDisabled,
-        ]}
-      >
-        <Text style={styles.uploadText}>
-          {uploadMutation.isPending ? "מעלה…" : "העלה"}
-        </Text>
-      </Pressable>
+      <View style={styles.actionsRow}>
+        {hasFile ? (
+          <Pressable
+            onPress={clearSelectedFile}
+            style={styles.clearButton}
+            disabled={uploadMutation.isPending}
+          >
+            <Text style={styles.clearText}>נקה</Text>
+          </Pressable>
+        ) : null}
+
+        <Pressable
+          onPress={handleUpload}
+          disabled={!hasFile || uploadMutation.isPending}
+          style={[
+            styles.uploadButton,
+            {
+              borderRadius: theme.card.radius,
+              backgroundColor:
+                !hasFile || uploadMutation.isPending
+                  ? undefined
+                  : "#22c55e",
+            },
+            (!hasFile || uploadMutation.isPending) &&
+              styles.uploadDisabled,
+          ]}
+        >
+          <Text style={styles.uploadText}>
+            {uploadMutation.isPending ? "מעלה…" : buttonLabel}
+          </Text>
+        </Pressable>
+      </View>
 
       {Platform.OS === "web" && (
         <input

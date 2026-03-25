@@ -1,7 +1,30 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postApiExercisesIdVideo } from "@common/api/sdk/nutri-api";
-import type { PostApiExercisesIdVideoBody } from "@common/api/sdk/schemas";
+import { customFetcher } from "@common/api/sdk/fetcher";
 import { workoutKeys } from "@/queryKeys/workoutKeys";
+
+type UploadableVideoFile =
+  | File
+  | {
+      uri: string;
+      name: string;
+      type: string;
+    };
+
+const uploadWorkoutExerciseVideo = (
+  id: string,
+  file: UploadableVideoFile,
+  signal?: AbortSignal
+) => {
+  const formData = new FormData();
+  formData.append("file", file as any);
+
+  return customFetcher<void>({
+    url: `/api/workout/exercises/${id}/video`,
+    method: "POST",
+    data: formData,
+    signal,
+  });
+};
 
 export function useUploadExerciseVideo() {
   const queryClient = useQueryClient();
@@ -12,9 +35,9 @@ export function useUploadExerciseVideo() {
       file,
     }: {
       id: string;
-      file: File;
+      file: UploadableVideoFile;
     }) =>
-      postApiExercisesIdVideo(id, { file }),
+      uploadWorkoutExerciseVideo(id, file),
 
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
