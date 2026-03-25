@@ -3,62 +3,65 @@ import { colors } from "src/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    gap: 8,
-    marginTop: 8,
+    marginTop: 4,
   },
 
-  fileRow: {
+  row: {
     borderWidth: 1,
-    padding: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     flexDirection: "row-reverse",
     alignItems: "center",
-    gap: 10,
+    gap: 6,
   },
 
   pickButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
     borderRadius: 999,
     backgroundColor: colors.neutral100,
   },
 
   fileName: {
+    maxWidth: 130,
+    textAlign: "right",
+    fontSize: 11,
+    lineHeight: 14,
+  },
+
+  filePlaceholder: {
     flex: 1,
     textAlign: "right",
-    fontSize: 12,
+    fontSize: 11,
   },
 
   pickText: {
     textAlign: "right",
     fontWeight: "700",
-    fontSize: 12,
-  },
-
-  actionsRow: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    gap: 8,
+    fontSize: 11,
   },
 
   clearButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    width: 24,
+    height: 24,
     borderRadius: 999,
     backgroundColor: colors.neutral100,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   clearText: {
     color: colors.neutral700,
     fontWeight: "700",
+    fontSize: 11,
   },
 
   uploadButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
     alignItems: "center",
     justifyContent: "center",
-    minWidth: 120,
-    flex: 1,
+    minWidth: 72,
   },
 
   uploadDisabled: {
@@ -68,5 +71,6 @@ export const styles = StyleSheet.create({
   uploadText: {
     color: colors.white,
     fontWeight: "800",
+    fontSize: 11,
   },
 });

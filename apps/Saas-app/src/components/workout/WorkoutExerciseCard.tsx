@@ -62,7 +62,7 @@ export default function WorkoutExerciseCard({
               <View style={styles.actionsRow}>
                 {hasVideo ? (
                   <Pressable onPress={openVideo} style={styles.videoBtn}>
-                    <Text style={styles.videoBtnText}>▶ צפה בסרטון</Text>
+                    <Text style={styles.videoBtnText}>▶ צפייה</Text>
                   </Pressable>
                 ) : (
                   <View style={styles.noVideoBadge}>
@@ -81,7 +81,7 @@ export default function WorkoutExerciseCard({
                     disabled={deleteVideoMutation.isPending}
                   >
                     <Text style={styles.deleteVideoBtnText}>
-                      {deleteVideoMutation.isPending ? "מוחק…" : "מחק סרטון"}
+                      {deleteVideoMutation.isPending ? "מוחק…" : "מחק"}
                     </Text>
                   </Pressable>
                 ) : null}
@@ -89,7 +89,7 @@ export default function WorkoutExerciseCard({
 
               <ExerciseVideoUploader
                 exerciseId={item.id}
-                buttonLabel={hasVideo ? "החלף סרטון" : "העלה סרטון"}
+                buttonLabel={hasVideo ? "החלף" : "העלה"}
                 onUploaded={() => {}}
               />
             </View>

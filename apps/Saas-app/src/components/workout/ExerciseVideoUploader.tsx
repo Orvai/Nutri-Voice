@@ -1,11 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import {
-  Alert,
-  Platform,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Alert, Platform, Pressable, Text, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 
 import { theme } from "../../theme";
@@ -27,17 +21,12 @@ type NativeFileLike = {
 export default function ExerciseVideoUploader({
   exerciseId,
   onUploaded,
-  buttonLabel = "העלה סרטון",
+  buttonLabel = "העלה",
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState("");
   const [nativeFile, setNativeFile] = useState<NativeFileLike | null>(null);
-
   const uploadMutation = useUploadExerciseVideo();
-
-  /* =========================
-     Pick file
-  ========================= */
 
   const handlePick = async () => {
     try {
@@ -53,7 +42,6 @@ export default function ExerciseVideoUploader({
       });
 
       if (result.canceled) return;
-
       const asset = result.assets?.[0];
       if (!asset?.uri) return;
 
@@ -62,7 +50,6 @@ export default function ExerciseVideoUploader({
         name: asset.name ?? "video.mp4",
         type: asset.mimeType ?? "video/mp4",
       });
-
       setFileName(asset.name ?? "video.mp4");
     } catch {
       Alert.alert("שגיאה", "לא הצלחנו לבחור קובץ וידאו");
@@ -83,10 +70,6 @@ export default function ExerciseVideoUploader({
     }
   };
 
-  /* =========================
-     Upload
-  ========================= */
-
   const handleUpload = () => {
     if (Platform.OS === "web") {
       const file = inputRef.current?.files?.[0];
@@ -99,11 +82,9 @@ export default function ExerciseVideoUploader({
             clearSelectedFile();
             onUploaded?.();
           },
-          onError: () =>
-            Alert.alert("שגיאה", "העלאת הווידאו נכשלה"),
+          onError: () => Alert.alert("שגיאה", "העלאת הווידאו נכשלה"),
         }
       );
-
       return;
     }
 
@@ -116,15 +97,10 @@ export default function ExerciseVideoUploader({
           clearSelectedFile();
           onUploaded?.();
         },
-        onError: () =>
-          Alert.alert("שגיאה", "העלאת הווידאו נכשלה"),
+        onError: () => Alert.alert("שגיאה", "העלאת הווידאו נכשלה"),
       }
     );
   };
-
-  /* =========================
-     Render
-  ========================= */
 
   const hasFile = Boolean(fileName);
 
@@ -132,7 +108,7 @@ export default function ExerciseVideoUploader({
     <View style={styles.container}>
       <View
         style={[
-          styles.fileRow,
+          styles.row,
           {
             backgroundColor: theme.card.bg,
             borderColor: theme.card.border,
@@ -142,31 +118,32 @@ export default function ExerciseVideoUploader({
       >
         <Pressable onPress={handlePick} style={styles.pickButton}>
           <Text style={[styles.pickText, { color: theme.text.title }]}>
-            {hasFile ? "החלף קובץ" : "בחר קובץ וידאו"}
+            {hasFile ? "בחר אחר" : "בחר"}
           </Text>
         </Pressable>
 
-        <Text
-          numberOfLines={1}
-          style={[
-            styles.fileName,
-            { color: hasFile ? theme.text.title : theme.text.subtitle },
-          ]}
-        >
-          {hasFile ? fileName : "לא נבחר קובץ"}
-        </Text>
-      </View>
-
-      <View style={styles.actionsRow}>
         {hasFile ? (
-          <Pressable
-            onPress={clearSelectedFile}
-            style={styles.clearButton}
-            disabled={uploadMutation.isPending}
-          >
-            <Text style={styles.clearText}>נקה</Text>
-          </Pressable>
-        ) : null}
+          <>
+            <Text
+              numberOfLines={1}
+              style={[styles.fileName, { color: theme.text.subtitle }]}
+            >
+              {fileName}
+            </Text>
+
+            <Pressable
+              onPress={clearSelectedFile}
+              style={styles.clearButton}
+              disabled={uploadMutation.isPending}
+            >
+              <Text style={styles.clearText}>✕</Text>
+            </Pressable>
+          </>
+        ) : (
+          <Text style={[styles.filePlaceholder, { color: theme.text.subtitle }]}>
+            אין קובץ
+          </Text>
+        )}
 
         <Pressable
           onPress={handleUpload}
@@ -176,12 +153,9 @@ export default function ExerciseVideoUploader({
             {
               borderRadius: theme.card.radius,
               backgroundColor:
-                !hasFile || uploadMutation.isPending
-                  ? undefined
-                  : "#22c55e",
+                !hasFile || uploadMutation.isPending ? undefined : "#22c55e",
             },
-            (!hasFile || uploadMutation.isPending) &&
-              styles.uploadDisabled,
+            (!hasFile || uploadMutation.isPending) && styles.uploadDisabled,
           ]}
         >
           <Text style={styles.uploadText}>
