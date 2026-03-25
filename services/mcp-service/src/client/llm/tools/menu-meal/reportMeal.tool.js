@@ -15,7 +15,7 @@ export const reportMealTool = {
       fat: { type: "integer" },
       dayType: { type: "string", enum: ["TRAINING", "REST"] },
 
-      date: { type: "string", description: "ISO datetime (optional)" },
+      date: { type: "string", description: "ISO datetime in format of: 'YYYY-MM-DDTHH:MM:SSZ'", default: () => new Date().toISOString() },
       description: { type: "string" },
       matchedMenuItemId: { type: "string" },
       source: { type: "string", enum: ["MENU_MATCH", "ESTIMATE", "USER_PROVIDED"] },
