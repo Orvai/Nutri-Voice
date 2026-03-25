@@ -15,10 +15,18 @@ import { useSendCoachMessage } from "@/hooks/coversation/useSendCoachMessage";
 import { useMarkMessageHandled } from "@/hooks/coversation/useMarkMessageHandled";
 import { useClients } from "@/hooks/clients/useClients";
 import { conversationKeys } from "@/queryKeys/conversationKeys";
+
+type ChatClientFilter = "all" | "active" | "inactive";
+
+function isClientActive(status: string | null | undefined) {
+  return String(status || "active").toLowerCase() === "active";
+}
+
 export default function ChatScreen() {
   const qc = useQueryClient();
   const { clientId } = useLocalSearchParams<{ clientId: string }>();
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [clientFilter, setClientFilter] = useState<ChatClientFilter>("all");
   /* =========================
       Conversations list
   ========================= */
@@ -79,29 +87,85 @@ export default function ChatScreen() {
     });
   }, [conversations, latestPendingByConversation, waitingConversationIds]);
 
+  const { data: clients = [] } = useClients({ statusFilter: "all" });
+
+  const clientsById = useMemo(() => {
+    return new Map(clients.map((client) => [client.id, client]));
+  }, [clients]);
+
+  const conversationsByFilter = useMemo(() => {
+    return sortedConversations.filter((conversationItem) => {
+      if (clientFilter === "all") {
+        return true;
+      }
+
+      const clientForConversation = clientsById.get(conversationItem.clientId);
+      if (!clientForConversation) {
+        return false;
+      }
+
+      const active = isClientActive(clientForConversation.status);
+      return clientFilter === "active" ? active : !active;
+    });
+  }, [sortedConversations, clientFilter, clientsById]);
+
+  const filterCounts = useMemo(() => {
+    let active = 0;
+    let inactive = 0;
+
+    for (const conversationItem of sortedConversations) {
+      const clientForConversation = clientsById.get(conversationItem.clientId);
+      if (!clientForConversation) {
+        continue;
+      }
+
+      if (isClientActive(clientForConversation.status)) {
+        active += 1;
+      } else {
+        inactive += 1;
+      }
+    }
+
+    return {
+      all: sortedConversations.length,
+      active,
+      inactive,
+    };
+  }, [sortedConversations, clientsById]);
+
   useEffect(() => {
-    if (loadingConvs || sortedConversations.length === 0) return;
+    if (loadingConvs || conversationsByFilter.length === 0) return;
+
     if (clientId) {
-      const target = sortedConversations.find(c => c.clientId === clientId);
+      const target = conversationsByFilter.find((c) => c.clientId === clientId);
       if (target && target.id !== activeConversationId) {
         setActiveConversationId(target.id);
         return;
       }
     }
+
     const hasActiveConversation = activeConversationId
-      ? sortedConversations.some((conversation) => conversation.id === activeConversationId)
+      ? conversationsByFilter.some((conversationItem) => conversationItem.id === activeConversationId)
       : false;
+
     if (!hasActiveConversation) {
-      setActiveConversationId(sortedConversations[0].id);
+      setActiveConversationId(conversationsByFilter[0].id);
     }
-  }, [sortedConversations, clientId, loadingConvs, activeConversationId]); 
+  }, [conversationsByFilter, clientId, loadingConvs, activeConversationId]);
+
+  useEffect(() => {
+    if (!loadingConvs && conversationsByFilter.length === 0) {
+      setActiveConversationId(null);
+    }
+  }, [conversationsByFilter, loadingConvs]);
+
   const { data: conversation } = useConversation(activeConversationId ?? "");
   const { data: messages = [] } = useConversationMessages(activeConversationId ?? "");
-  const { data: clients = [] } = useClients();
+
   const activeClient = useMemo(() => {
     if (!conversation) return null;
-    return clients.find((c) => c.id === conversation.clientId) ?? null;
-  }, [conversation, clients]);
+    return clientsById.get(conversation.clientId) ?? null;
+  }, [conversation, clientsById]);
   const pendingClientMessage = useMemo(() => {
     return messages.find((m) => m.sender === "CLIENT" && m.handledBy === null) ?? null;
   }, [messages]);
@@ -142,10 +206,13 @@ export default function ChatScreen() {
   return (
     <View style={{ flex: 1, flexDirection: "row-reverse" }}>
       <ChatList
-        conversations={sortedConversations}
+        conversations={conversationsByFilter}
         clients={clients}
         waitingConversationIds={waitingConversationIds}
         activeId={activeConversationId}
+        clientFilter={clientFilter}
+        filterCounts={filterCounts}
+        onClientFilterChange={setClientFilter}
         onSelect={(convId) => setActiveConversationId(convId)}
       />
       <View style={{ flex: 1, flexDirection: "column" }}>

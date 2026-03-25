@@ -3,26 +3,54 @@ const axios = require("axios");
 const IDM_BASE_URL = process.env.IDM_SERVICE_URL;
 const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN;
 
-const getUserByPhone = async (phone) => {
-  const res = await axios.get(
-    `${IDM_BASE_URL}/internal/users/by-phone/${encodeURIComponent(phone)}`,
-    {
-      headers: {
-        "x-internal-token": INTERNAL_TOKEN,
-      },
-      timeout: 5000,
-    }
-  );
-
-  return res.data; // { id, role, phone, firstName, lastName, email }
+const INTERNAL_HEADERS = {
+  "x-internal-token": INTERNAL_TOKEN,
 };
+
+const listUsers = async () => {
+  const res = await axios.get(`${IDM_BASE_URL}/internal/users`, {
+    headers: INTERNAL_HEADERS,
+    timeout: 5000,
+  });
+
+  if (Array.isArray(res.data?.data)) {
+    return res.data.data;
+  }
+
+  if (Array.isArray(res.data)) {
+    return res.data;
+  }
+
+  return [];
+};
+
+const getUserByPhone = async (phone) => {
+  try {
+    const res = await axios.get(
+      `${IDM_BASE_URL}/internal/users/by-phone/${encodeURIComponent(phone)}`,
+      {
+        headers: INTERNAL_HEADERS,
+        timeout: 5000,
+      }
+    );
+
+    return res.data; // legacy active-user lookup
+  } catch (error) {
+    if (error?.response?.status !== 404) {
+      throw error;
+    }
+
+    const users = await listUsers();
+    const matched = users.find((user) => String(user?.phone || "") === String(phone));
+    return matched || null;
+  }
+};
+
 const getUserById = async (userId) => {
   const res = await axios.get(
     `${IDM_BASE_URL}/internal/users/${userId}`,
     {
-      headers: {
-        "x-internal-token": INTERNAL_TOKEN,
-      },
+      headers: INTERNAL_HEADERS,
       timeout: 5000,
     }
   );
@@ -35,9 +63,7 @@ const getUserInfoById = async (userId) => {
     const res = await axios.get(
       `${IDM_BASE_URL}/internal/users/${userId}/info`,
       {
-        headers: {
-          "x-internal-token": INTERNAL_TOKEN,
-        },
+        headers: INTERNAL_HEADERS,
         timeout: 5000,
       }
     );
